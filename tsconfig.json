@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "target": "es2020",
+  },
+  "include": [
+    "./**/*"
+  ]
+}
