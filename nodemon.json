@@ -6,9 +6,7 @@
     "node_modules"
   ],
   "watch": [
-    "routes",
-    "views",
-    "*.ts"
+    "src/**/*.ts"
   ],
   "exec": "npm start",
   "ext": "ts"
