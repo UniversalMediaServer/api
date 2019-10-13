@@ -10,6 +10,7 @@
     "build": "tsc",
     "dev": "nodemon",
     "start": "node ./bin/www",
+    "test": "node test/index.spec.ts",
     "watch": "tsc --watch"
   },
   "dependencies": {
