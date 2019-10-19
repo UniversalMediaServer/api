@@ -1,20 +1,24 @@
-const createError = require('http-errors');
-const express = require('express');
-import { Request, Response, NextFunction } from 'express';
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const logger = require('morgan');
+import * as createError from 'http-errors';
+import * as express from 'express';
+import { Request, Response, NextFunction, Application } from 'express';
+import * as path from 'path';
+import * as cookieParser from 'cookie-parser';
 
-const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
+import indexRouter from './routes/index';
+import usersRouter  from './routes/users';
 
-const app = express();
+const app: Application = express();
+
+import connect from './models/connection';
+
+const db: string = process.env.MONGO_URL;
+
+connect(db);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
-app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
