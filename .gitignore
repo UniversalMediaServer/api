@@ -61,3 +61,6 @@ typings/
 .next
 
 **/*.js
+
+!jest-mongodb-config.js
+!jest.config.js

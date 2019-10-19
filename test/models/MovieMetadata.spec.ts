@@ -1,0 +1,31 @@
+import * as  mongoose from 'mongoose';
+import MediaMetadataModel from '../../src/models/MediaMetadata';
+const mediaMetaData = { title: 'Interstellar', genres: ['Adventure', 'Drama', 'Sci-Fi'] };
+
+describe('Media Metadata Model', () => {
+
+  beforeAll(async() => {
+    await mongoose.connect(global.__MONGO_URI__, { useNewUrlParser: true, useUnifiedTopology: true });
+  });
+
+  afterAll(async() => {
+    await mongoose.disconnect();
+  });
+
+  it('should create Media Metadata record successfully', async() => {
+    const savedMedia = await MediaMetadataModel.create(mediaMetaData);
+    expect(savedMedia._id).toBeDefined();
+    expect(savedMedia.title).toBe('Interstellar');
+    expect(savedMedia.genres).toBeInstanceOf(Array);
+  });
+
+  it('should require title in document', async() => {
+    try {
+      await MediaMetadataModel.create({});
+    } catch(e) {
+      expect(e.message).toBe('MediaMetadata validation failed: title: Path `title` is required.');
+    }
+    
+  });
+    
+});
