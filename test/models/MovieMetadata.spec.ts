@@ -1,8 +1,8 @@
 import * as  mongoose from 'mongoose';
 import MediaMetadataModel from '../../src/models/MediaMetadata';
 const mediaMetaData = { title: 'Interstellar', genres: ['Adventure', 'Drama', 'Sci-Fi'] };
-// @ts-ignore
-const MongoUrl:any = global.__MONGO_URI__;
+const MongoUrl: string = process.env.MONGO_URL;
+
 describe('Media Metadata Model', () => {
 
   beforeAll(async() => {
