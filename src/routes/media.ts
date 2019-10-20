@@ -1,0 +1,10 @@
+import * as express from 'express';
+import { Request, Response, NextFunction } from 'express';
+import * as MediaController from '../controllers/media';
+const router = express.Router();
+
+router.get('/:osdbhash', function(req: Request, res: Response, next: NextFunction) {
+  MediaController.getByOsdbHash(req, res, next);
+});
+
+export default router;
