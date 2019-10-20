@@ -3,6 +3,7 @@ import * as express from 'express';
 import { Request, Response, NextFunction, Application } from 'express';
 import * as path from 'path';
 import * as cookieParser from 'cookie-parser';
+import * as helmet from 'helmet';
 
 import indexRouter from './routes/index';
 import usersRouter  from './routes/users';
@@ -20,6 +21,7 @@ connect(db);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
+app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
