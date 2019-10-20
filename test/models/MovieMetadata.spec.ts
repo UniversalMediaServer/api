@@ -17,6 +17,7 @@ describe('Media Metadata Model', () => {
     const savedMedia = await MediaMetadataModel.create(mediaMetaData);
     expect(savedMedia._id).toBeDefined();
     expect(savedMedia.title).toBe('Interstellar');
+    expect(savedMedia.osdbHash).toBe('8e245d9679d31e12');
     expect(savedMedia.genres).toBeInstanceOf(Array);
   });
 
