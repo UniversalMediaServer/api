@@ -17,6 +17,7 @@
     "cookie-parser": "~1.4.4",
     "debug": "^4.1.1",
     "express": "^4.17.1",
+    "express-async-handler": "^1.1.4",
     "hbs": "^4.0.6",
     "helmet": "^3.21.1",
     "http-errors": "^1.7.3",
