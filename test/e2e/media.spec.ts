@@ -9,7 +9,7 @@ const mongod = new MongoMemoryServer();
 const mediaMetaData = { title: 'Interstellar', genres: ['Adventure', 'Drama', 'Sci-Fi'], osdbHash: '8e245d9679d31e12' };
 const appUrl: string = 'http://localhost:3000'
 
-describe('Media Metadata Model', () => {
+describe('Media Metadata endpoints', () => {
 
   beforeAll(async() => {
     const mongoUrl = await mongod.getConnectionString();
@@ -29,7 +29,7 @@ describe('Media Metadata Model', () => {
     expect(res.status).toBe(204);
   });
 
-  it('should return a valid response for exisitng media record with osdb hash', async() => {
+  it('should return a valid response for existng media record with osdb hash', async() => {
     const res = await axios(`${appUrl}/api/media/8e245d9679d31e12`);
     expect(res.status).toBe(200);
     expect(res.data).toHaveProperty('_id');
