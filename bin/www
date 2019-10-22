@@ -5,7 +5,6 @@
  */
 
 const app = require('../src/app');
-const debug = require('debug')('universalmediaserver-api:server');
 const http = require('http');
 
 /**

@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "dev": "nodemon",
+    "dev": "DEBUG=*universalmediaserver-api:server nodemon",
     "start": "node ./bin/www",
     "test": "jest test/**/*.spec.js --silent --coverage --forceExit",
     "watch": "tsc --watch"

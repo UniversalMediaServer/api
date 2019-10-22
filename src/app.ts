@@ -1,6 +1,8 @@
 import * as express from 'express';
 import { Request, Response, NextFunction, Application } from 'express';
 import * as helmet from 'helmet';
+import * as Debug from 'debug';
+const debug = Debug('universalmediaserver-api:server');
 
 import indexRouter from './routes/index';
 import mediaRouter  from './routes/media';
@@ -11,6 +13,11 @@ import connect from './models/connection';
 
 const db: string = process.env.MONGO_URL;
 connect(db);
+
+app.use((req: Request, res: Response, next: NextFunction) => {
+  debug(`${req.method} ${req.url}`);
+  next();
+});
 
 app.use(helmet());
 app.use(express.json());
