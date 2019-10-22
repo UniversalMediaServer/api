@@ -1,3 +1,3 @@
-interface CustomError extends Error{
+interface CustomError extends Error {
   status?: number;
 }
