@@ -1,17 +1,14 @@
 import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
 import { Request, Response, NextFunction } from 'express';
+import * as asyncHandler from 'express-async-handler';
 
-export const getByOsdbHash = (req: Request, res: Response, next: NextFunction) => {
-  MediaMetadata.findOne({osdbHash: req.params.osdbhash}, (err: any, meta: MediaMetadataInterface) => {
-    if (err) {
-      return next(err);
-    }
+export const getByOsdbHash = asyncHandler(async(req: Request, res: Response, next: NextFunction) => {
+  const meta: MediaMetadataInterface = await MediaMetadata.findOne({osdbHash: req.params.osdbhash});
 
-    if (meta) {
-      return res.json(meta);
-    } 
+  if (meta) {
+    return res.json(meta);
+  } 
 
-    return res.sendStatus(204);
+  return res.sendStatus(204);
 
-  });
-};
+});

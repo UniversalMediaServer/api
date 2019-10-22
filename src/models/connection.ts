@@ -1,18 +1,13 @@
 import * as mongoose from 'mongoose';
 
 export default (db: string) => {
-  const connect = () => {
-    mongoose
-      .connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
-      .then(() => {
-        return console.log(`Successfully connected to ${new URL(db).hostname}`);
-      })
-      .catch(err => {
-        console.log(`Error connecting to database: ${err}`);
-        return process.exit(1);
-      });
+  const connect = async() => {
+    await mongoose.connect(db, { useNewUrlParser: true, useUnifiedTopology: true });
   };
-  connect();
+  connect().catch(error => console.error(error))
 
+  mongoose.connection.on('connected', () => {
+    console.log(`Successfully connected to ${new URL(db).hostname}`);
+  });
   mongoose.connection.on('disconnected', connect);
 };

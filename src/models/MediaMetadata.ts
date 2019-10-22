@@ -37,7 +37,7 @@ const MediaMetadataSchema: Schema = new Schema({
   seasonNumber: { type: String },
   episodeNumber: { type: String },
   year: { type: String },
-}, { collection: 'media_metadata' });
+}, { collection: 'media_metadata', versionKey: false });
 
 const MediaMetadata = mongoose.model<MediaMetadataInterface>('MediaMetadata', MediaMetadataSchema);
 export default MediaMetadata;
