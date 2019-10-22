@@ -1,6 +1,7 @@
 import * as mongoose from 'mongoose';
 
 export default (db: string) => {
+  if (!db) throw new Error('MONGO_URL required');
   const connect = async() => {
     await mongoose.connect(db, { useNewUrlParser: true, useUnifiedTopology: true });
   };
