@@ -20,7 +20,7 @@
     "express-async-handler": "^1.1.4",
     "helmet": "^3.21.1",
     "mongoose": "^5.7.5",
-    "opensubtitles-api": "https://github.com/SubJunk/opensubtitles-api/#RemoteFiles"
+    "opensubtitles-api": "https://github.com/js-kyle/opensubtitles-api/#RemoteFiles"
   },
   "devDependencies": {
     "@types/express": "^4.17.1",
@@ -28,7 +28,7 @@
     "@types/mongoose": "^5.5.22",
     "@types/node": "^12.7.12",
     "jest": "^24.9.0",
-    "mongodb-memory-server": "^5.2.8",
+    "mongodb-memory-server-core": "^6.0.1",
     "nodemon": "^1.19.3",
     "typescript": "^3.6.4"
   }
