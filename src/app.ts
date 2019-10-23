@@ -36,7 +36,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 // error handler
 app.use((err: CustomError, req: Request, res: Response, next: NextFunction) => {
   // set locals, only providing error in development
-  const isDev = req.app.get('env') === 'development';
+  const isDev = ['development', 'test'].includes(req.app.get('env'));
   res.locals.message = err.message;
   res.locals.error = isDev ? err : {};
   res.status(err.status || 500);
