@@ -25,7 +25,7 @@ describe('Media Metadata endpoints', () => {
   });
 
   it('should return a valid response for existing media record with osdb hash', async() => {
-    const res = await axios(`${appUrl}/api/media/8e245d9679d31e12`);
+    const res = await axios(`${appUrl}/api/media/8e245d9679d31e12/1234`);
     expect(res.status).toBe(200);
     expect(res.data).toHaveProperty('_id');
     expect(res.data).toHaveProperty('genres', ['Adventure', 'Drama', 'Sci-Fi'])
