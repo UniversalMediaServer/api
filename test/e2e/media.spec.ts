@@ -3,7 +3,7 @@ import MediaMetadataModel from '../../src/models/MediaMetadata';
 import * as mongoose from 'mongoose';
 import axios from 'axios';
 
-import { MongoMemoryServer } from 'mongodb-memory-server-core';
+import { MongoMemoryServer } from 'mongodb-memory-server';
 const mongod = new MongoMemoryServer();
 
 const mediaMetaData = { title: 'Interstellar', genres: ['Adventure', 'Drama', 'Sci-Fi'], osdbHash: 'f4245d9379d31e33' };
