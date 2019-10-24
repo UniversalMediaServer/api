@@ -1,14 +1,31 @@
 import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
 import { Request, Response, NextFunction } from 'express';
 import * as asyncHandler from 'express-async-handler';
+import osAPI from '../services/opensubtitles';
 
 export const getByOsdbHash = asyncHandler(async(req: Request, res: Response, next: NextFunction) => {
-  const meta: MediaMetadataInterface = await MediaMetadata.findOne({osdbHash: req.params.osdbhash});
+  let { osdbhash: osdbHash, filebytesize } = req.params;
+  let dbMeta: MediaMetadataInterface = await MediaMetadata.findOne({osdbHash});
 
-  if (meta) {
-    return res.json(meta);
-  } 
+  if (dbMeta) {
+    return res.json(dbMeta);
+  }
 
-  return res.sendStatus(204);
+  const osQuery = {
+    moviehash: osdbHash,
+    moviebytesize: parseInt(filebytesize),
+    extend: true
+  };
+
+  const osMeta: OpensubtitlesIdentifyResponse = await osAPI.identify(osQuery);
+  const newMetadata = {
+    title: osMeta.metadata.title,
+    imdbID: osMeta.metadata.imdbid,
+    osdbHash: osMeta.moviehash,
+    year: osMeta.metadata.year,
+  };
+
+  dbMeta = await MediaMetadata.create(newMetadata);
+  res.json(dbMeta);
 
 });
