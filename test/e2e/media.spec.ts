@@ -42,6 +42,11 @@ describe('Media Metadata endpoints', () => {
     expect(res.data).toHaveProperty('osdbHash', '8e245d9679d31e12')
     expect(res.data).toHaveProperty('title', 'The Simpsons Movie');
     expect(res.data).toHaveProperty('imdbID', 'tt0462538');
+    expect(res.data).toHaveProperty('subcount', '7');
+    expect(res.data).toHaveProperty('type', 'movie');
+    expect(res.data).toHaveProperty('goofs');
+    expect(res.data).toHaveProperty('trivia');
+    expect(res.data).toHaveProperty('tagline', 'See our family. And feel better about yours.');
 
     // should save to db
     let doc = await MediaMetadataModel.findOne({osdbHash: res.data.osdbHash});
@@ -51,6 +56,11 @@ describe('Media Metadata endpoints', () => {
     expect(doc).toHaveProperty('osdbHash', '8e245d9679d31e12')
     expect(doc).toHaveProperty('title', 'The Simpsons Movie');
     expect(doc).toHaveProperty('imdbID', 'tt0462538');
+    expect(res.data).toHaveProperty('subcount', '7');
+    expect(res.data).toHaveProperty('type', 'movie');
+    expect(res.data).toHaveProperty('goofs');
+    expect(res.data).toHaveProperty('trivia');
+    expect(res.data).toHaveProperty('tagline', 'See our family. And feel better about yours.');
   });
     
 });

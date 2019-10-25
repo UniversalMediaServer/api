@@ -4,7 +4,8 @@ import { Schema, Document } from 'mongoose';
 mongoose.set('useCreateIndex', true);
 
 export interface MediaMetadataInterface extends Document {
-  title: string;
+  subcount?: string;
+  title?: string;
   director?: string;
   imdbID?: string;
   osdbHash: string;
@@ -14,10 +15,15 @@ export interface MediaMetadataInterface extends Document {
   seasonNumber?: string;
   episodeNumber?: string;
   year?: string;
+  type?: string;
+  goofs?: string;
+  trivia?: string;
+  tagline?: string;
 }
 
 const MediaMetadataSchema: Schema = new Schema({
   title: { type: String, required: true },
+  subcount: { type: String },
   director: { type: String },
   imdbID: { type: String},
   osdbHash: { 
@@ -37,6 +43,10 @@ const MediaMetadataSchema: Schema = new Schema({
   seasonNumber: { type: String },
   episodeNumber: { type: String },
   year: { type: String },
+  type: { type: String },
+  goofs: { type: String },
+  trivia: { type: String },
+  tagline: { type: String },
 }, { collection: 'media_metadata', versionKey: false });
 
 const MediaMetadata = mongoose.model<MediaMetadataInterface>('MediaMetadata', MediaMetadataSchema);
