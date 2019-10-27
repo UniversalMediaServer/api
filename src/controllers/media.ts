@@ -23,6 +23,11 @@ export const getByOsdbHash = asyncHandler(async(req: Request, res: Response, nex
     imdbID: osMeta.metadata.imdbid,
     osdbHash: osMeta.moviehash,
     year: osMeta.metadata.year,
+    subcount: osMeta.subcount,
+    type: osMeta.type,
+    goofs: osMeta.metadata.goofs,
+    trivia: osMeta.metadata.trivia,
+    tagline: osMeta.metadata.tagline
   };
 
   dbMeta = await MediaMetadata.create(newMetadata);
