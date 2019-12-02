@@ -18,18 +18,18 @@
     "debug": "^4.1.1",
     "express": "^4.17.1",
     "express-async-handler": "^1.1.4",
-    "helmet": "^3.21.1",
-    "mongoose": "^5.7.5",
-    "opensubtitles-api": "https://github.com/js-kyle/opensubtitles-api#RemoteFiles"
+    "helmet": "^3.21.2",
+    "mongoose": "^5.7.13",
+    "opensubtitles-api": "https://github.com/vankasteelj/opensubtitles-api#master"
   },
   "devDependencies": {
-    "@types/express": "^4.17.1",
-    "@types/jest": "^24.0.19",
-    "@types/mongoose": "^5.5.22",
-    "@types/node": "^12.7.12",
+    "@types/express": "^4.17.2",
+    "@types/jest": "^24.0.23",
+    "@types/mongoose": "^5.5.32",
+    "@types/node": "^12.12.14",
     "jest": "^24.9.0",
     "mongodb-memory-server": "^6.0.1",
-    "nodemon": "^1.19.3",
-    "typescript": "^3.6.4"
+    "nodemon": "^2.0.1",
+    "typescript": "^3.7.2"
   }
 }
