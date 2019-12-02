@@ -20,7 +20,7 @@
     "express-async-handler": "^1.1.4",
     "helmet": "^3.21.2",
     "mongoose": "^5.7.13",
-    "opensubtitles-api": "https://github.com/js-kyle/opensubtitles-api#RemoteFiles"
+    "opensubtitles-api": "https://github.com/vankasteelj/opensubtitles-api#master"
   },
   "devDependencies": {
     "@types/express": "^4.17.2",
