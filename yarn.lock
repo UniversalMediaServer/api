@@ -3598,9 +3598,9 @@ once@^1.3.0, once@^1.3.1, once@^1.4.0:
   dependencies:
     wrappy "1"
 
-"opensubtitles-api@https://github.com/vankasteelj/opensubtitles-api#master":
+"opensubtitles-api@https://github.com/js-kyle/opensubtitles-api#RemoteFiles":
   version "5.0.1"
-  resolved "https://github.com/vankasteelj/opensubtitles-api#0af2510871666d5c38091dedacabc7274205278b"
+  resolved "https://github.com/js-kyle/opensubtitles-api#6943eb6dd53e3569f576a51a8a2719022a17b34e"
   dependencies:
     urijs "^1.19.1"
     xmlrpc "^1.3.2"
