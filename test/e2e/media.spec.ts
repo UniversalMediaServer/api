@@ -46,7 +46,7 @@ describe('Media Metadata endpoints', () => {
     expect(res.data).toHaveProperty('type', 'movie');
     expect(res.data).toHaveProperty('goofs');
     expect(res.data).toHaveProperty('trivia');
-    expect(res.data).toHaveProperty('tagline', 'See our family. And feel better about yours.');
+    expect(res.data).toHaveProperty('tagline');
 
     // should save to db
     let doc = await MediaMetadataModel.findOne({osdbHash: res.data.osdbHash});
@@ -60,7 +60,7 @@ describe('Media Metadata endpoints', () => {
     expect(res.data).toHaveProperty('type', 'movie');
     expect(res.data).toHaveProperty('goofs');
     expect(res.data).toHaveProperty('trivia');
-    expect(res.data).toHaveProperty('tagline', 'See our family. And feel better about yours.');
+    expect(res.data).toHaveProperty('tagline');
   });
     
 });
