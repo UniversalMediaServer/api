@@ -15,5 +15,5 @@ cache:
     - $HOME/.yarn
 
 script:
-  - node_modules/.bin/eslint src
+  - node_modules/.bin/eslint src/**/*.ts
   - yarn test

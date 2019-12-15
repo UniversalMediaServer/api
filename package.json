@@ -13,6 +13,104 @@
     "test": "jest test/**/*.spec.js --silent --coverage --forceExit",
     "watch": "tsc --watch"
   },
+  "eslintConfig": {
+    "env": {
+      "es6": true,
+      "node": true
+    },
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/eslint-recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:@typescript-eslint/recommended-requiring-type-checking"
+    ],
+    "globals": {
+      "Atomics": "readonly",
+      "SharedArrayBuffer": "readonly"
+    },
+    "parser": "@typescript-eslint/parser",
+    "plugins": ["@typescript-eslint"],
+    "parserOptions": {
+      "ecmaVersion": 2018,
+      "project": "./tsconfig.json",
+      "sourceType": "module"
+    },
+    "rules": {
+      "array-bracket-spacing": "error",
+      "block-spacing": "error",
+      "comma-dangle": [
+        "error",
+        "always-multiline"
+      ],
+      "comma-spacing": "error",
+      "comma-style": "error",
+      "computed-property-spacing": "error",
+      "curly": "error",
+      "eol-last": "error",
+      "func-call-spacing": "error",
+      "function-paren-newline": "error",
+      "indent": [
+        "error",
+        2,
+        {
+          "SwitchCase": 1
+        }
+      ],
+      "key-spacing": "error",
+      "keyword-spacing": "error",
+      "linebreak-style": [
+        "off",
+        "unix"
+      ],
+      "newline-per-chained-call": "error",
+      "no-console": "off",
+      "no-multiple-empty-lines": "error",
+      "no-unused-vars": [
+        "error",
+        {
+          "args": "none"
+        }
+      ],
+      "no-whitespace-before-property": "error",
+      "object-curly-newline": [
+        "error",
+        {
+          "multiline": true
+        }
+      ],
+      "object-curly-spacing": [
+        "error",
+        "always"
+      ],
+      "object-property-newline": [
+        "error",
+        {
+          "allowAllPropertiesOnSameLine": true
+        }
+      ],
+      "padded-blocks": [
+        "error",
+        "never"
+      ],
+      "quote-props": [
+        "error",
+        "consistent"
+      ],
+      "quotes": [
+        "error",
+        "single"
+      ],
+      "semi": "error",
+      "semi-spacing": "error",
+      "space-before-blocks": "error",
+      "space-before-function-paren": [
+        "error",
+        "never"
+      ],
+      "space-in-parens": "error",
+      "spaced-comment": "error"
+    }
+  },
   "dependencies": {
     "axios": "^0.19.0",
     "debug": "^4.1.1",
@@ -27,6 +125,7 @@
     "@types/jest": "^24.0.23",
     "@types/mongoose": "^5.5.34",
     "@types/node": "^12.12.17",
+    "@typescript-eslint/eslint-plugin": "^2.11.0",
     "@typescript-eslint/parser": "^2.11.0",
     "eslint": "^5.16.0",
     "jest": "^24.9.0",

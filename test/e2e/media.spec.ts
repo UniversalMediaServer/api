@@ -7,10 +7,9 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 const mongod = new MongoMemoryServer();
 
 const mediaMetaData = { title: 'Interstellar', genres: ['Adventure', 'Drama', 'Sci-Fi'], osdbHash: 'f4245d9379d31e33' };
-const appUrl: string = 'http://localhost:3000'
+const appUrl = 'http://localhost:3000';
 
 describe('Media Metadata endpoints', () => {
-
   beforeAll(async() => {
     const mongoUrl = await mongod.getConnectionString();
     process.env.MONGO_URL = mongoUrl;
@@ -28,8 +27,8 @@ describe('Media Metadata endpoints', () => {
     const res = await axios(`${appUrl}/api/media/f4245d9379d31e33/1234`);
     expect(res.status).toBe(200);
     expect(res.data).toHaveProperty('_id');
-    expect(res.data).toHaveProperty('genres', ['Adventure', 'Drama', 'Sci-Fi'])
-    expect(res.data).toHaveProperty('osdbHash', 'f4245d9379d31e33')
+    expect(res.data).toHaveProperty('genres', ['Adventure', 'Drama', 'Sci-Fi']);
+    expect(res.data).toHaveProperty('osdbHash', 'f4245d9379d31e33');
     expect(res.data).toHaveProperty('title', 'Interstellar');
   });
 
@@ -39,7 +38,7 @@ describe('Media Metadata endpoints', () => {
     expect(res.status).toBe(200);
     expect(res.data).toHaveProperty('_id');
     expect(res.data).toHaveProperty('year', '2007');
-    expect(res.data).toHaveProperty('osdbHash', '8e245d9679d31e12')
+    expect(res.data).toHaveProperty('osdbHash', '8e245d9679d31e12');
     expect(res.data).toHaveProperty('title', 'The Simpsons Movie');
     expect(res.data).toHaveProperty('imdbID', 'tt0462538');
     expect(res.data).toHaveProperty('subcount', '7');
@@ -49,11 +48,11 @@ describe('Media Metadata endpoints', () => {
     expect(res.data).toHaveProperty('tagline');
 
     // should save to db
-    let doc = await MediaMetadataModel.findOne({osdbHash: res.data.osdbHash});
+    const doc = await MediaMetadataModel.findOne({ osdbHash: res.data.osdbHash });
 
     expect(doc).toHaveProperty('_id');
     expect(doc).toHaveProperty('year', '2007');
-    expect(doc).toHaveProperty('osdbHash', '8e245d9679d31e12')
+    expect(doc).toHaveProperty('osdbHash', '8e245d9679d31e12');
     expect(doc).toHaveProperty('title', 'The Simpsons Movie');
     expect(doc).toHaveProperty('imdbID', 'tt0462538');
     expect(res.data).toHaveProperty('subcount', '7');
@@ -62,5 +61,4 @@ describe('Media Metadata endpoints', () => {
     expect(res.data).toHaveProperty('trivia');
     expect(res.data).toHaveProperty('tagline');
   });
-    
 });
