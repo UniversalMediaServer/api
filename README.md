@@ -9,6 +9,7 @@ You can run `nvm use` and `yvm use` from the project root if you have [Node vers
 ### Environment variables
 
 `MONGO_URL` URL to a running Mongo instance which includes user and password
+`OS_API_USERAGENT` an Open Subtitles User-Agent key. Defaults to a testing key `TemporaryUserAgent`
 
 ### Commands
 
