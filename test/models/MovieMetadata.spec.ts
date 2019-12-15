@@ -6,7 +6,6 @@ const mediaMetaData = { title: 'Interstellar', genres: ['Adventure', 'Drama', 'S
 const mongod = new MongoMemoryServer();
 
 describe('Media Metadata Model', () => {
-
   beforeAll(async() => {
     const mongoUrl = await mongod.getConnectionString();
     process.env.MONGO_URL = mongoUrl;
@@ -30,10 +29,9 @@ describe('Media Metadata Model', () => {
     delete doc.title;
     try {
       await MediaMetadataModel.create(doc);
-    } catch(e) {
+    } catch (e) {
       expect(e.message).toBe('MediaMetadata validation failed: title: Path `title` is required.');
     }
-    
   });
 
   it('should require osdb hash', async() => {
@@ -41,10 +39,9 @@ describe('Media Metadata Model', () => {
     delete doc.osdbHash;
     try {
       await MediaMetadataModel.create(doc);
-    } catch(e) {
+    } catch (e) {
       expect(e.message).toBe('MediaMetadata validation failed: osdbHash: Path `osdbHash` is required.');
     }
-    
   });
 
   it('should validate for a valid osdb hash', async() => {
@@ -52,10 +49,8 @@ describe('Media Metadata Model', () => {
     doc.osdbHash = 'a3e8hm1';
     try {
       await MediaMetadataModel.create(doc);
-    } catch(e) {
+    } catch (e) {
       expect(e.message).toBe('MediaMetadata validation failed: osdbHash: Invalid osdb hash length.');
     }
-    
   });
-    
 });
