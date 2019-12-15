@@ -10,4 +10,16 @@ You can run `nvm use` and `yvm use` from the project root if you have [Node vers
 
 `MONGO_URL` URL to a running Mongo instance which includes user and password
 
+### Commands
 
+#### `yarn watch`
+Watches for changes to TypeScript files and compiles them to JavaScript (use `yarn run build` to do it manually)
+
+#### `yarn dev`
+Runs the development server and restarts it when any file is changed
+
+#### `yarn start`
+Runs the server
+
+#### `yarn test`
+Runs the test suite
