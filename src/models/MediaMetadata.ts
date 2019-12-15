@@ -26,7 +26,7 @@ const MediaMetadataSchema: Schema = new Schema({
   subcount: { type: String },
   director: { type: String },
   imdbID: { type: String},
-  osdbHash: { 
+  osdbHash: {
     type: String,
     index: true,
     required: true,
@@ -47,7 +47,11 @@ const MediaMetadataSchema: Schema = new Schema({
   goofs: { type: String },
   trivia: { type: String },
   tagline: { type: String },
-}, { collection: 'media_metadata', versionKey: false });
+}, {
+  collection: 'media_metadata',
+  timestamps: true,
+  versionKey: false,
+});
 
 const MediaMetadata = mongoose.model<MediaMetadataInterface>('MediaMetadata', MediaMetadataSchema);
 export default MediaMetadata;
