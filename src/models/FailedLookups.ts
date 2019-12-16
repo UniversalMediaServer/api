@@ -4,9 +4,7 @@ import { Schema, Document } from 'mongoose';
 mongoose.set('useCreateIndex', true);
 
 interface FailedLookupsInterface extends Document {
-  added: boolean;
-  moviebytesize: number;
-  moviehash: string;
+  osdbHash: string;
 }
 
 const FailedLookupsSchema: Schema = new Schema({
@@ -15,7 +13,7 @@ const FailedLookupsSchema: Schema = new Schema({
     index: true,
     required: true,
     validate: {
-      validator: function(v): boolean {
+      validator: function(v: string): boolean {
         return v.length === 16;
       },
       msg: 'Invalid osdb hash length.',
