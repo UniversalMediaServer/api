@@ -10,9 +10,9 @@ interface OpensubtitlesIdentifyResponse {
     title: string;
     year: string;
     cast: {
-      [key:string]: string;
-    },
-    country: [string],
+      [key: string]: string;
+    };
+    country: [string];
     cover: string;
     directors: object;
     duration: string;
@@ -21,11 +21,11 @@ interface OpensubtitlesIdentifyResponse {
     trivia: string;
     goofs: string;
     votes: string;
-    language: [string],
-    aka: [string],
-    awards: [string],
+    language: [string];
+    aka: [string];
+    awards: [string];
     tagline: string;
-  },
+  };
   moviehash: string;
   moviebytesize: number;
   type: string;
