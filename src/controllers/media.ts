@@ -18,7 +18,15 @@ export const getByOsdbHash = asyncHandler(async(req: Request, res: Response) => 
     extend: true,
   };
 
-  const osMeta: OpensubtitlesIdentifyResponse = await osAPI.identify(osQuery);
+  let osMeta: OpensubtitlesIdentifyResponse;
+  try {
+    osMeta = await osAPI.identify(osQuery);
+  } catch (err) {
+    if (err.message === 'API seems offline') {
+      res.status(404).json({ message: 'OpenSubtitles API seems offline, please try again later' });
+    }
+    throw err;
+  }
 
   if (!osMeta.metadata) {
     await FailedLookups.create({ osdbHash });
