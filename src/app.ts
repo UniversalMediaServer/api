@@ -21,7 +21,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 app.use(helmet());
 app.use(express.json());
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({ extended: false }));
 
 app.use('/', indexRouter);
 app.use('/api/media', mediaRouter);
@@ -34,7 +34,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 // error handler
-app.use((err: CustomError, req: Request, res: Response, next: NextFunction) => {
+app.use((err: CustomError, req: Request, res: Response) => {
   // set locals, only providing error in development
   const isDev = ['development', 'test'].includes(req.app.get('env'));
   res.locals.message = err.message;

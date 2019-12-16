@@ -1,12 +1,12 @@
 import FailedLookups from '../models/FailedLookups';
 import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import * as asyncHandler from 'express-async-handler';
 import osAPI from '../services/opensubtitles';
 
-export const getByOsdbHash = asyncHandler(async(req: Request, res: Response, next: NextFunction) => {
-  let { osdbhash: osdbHash, filebytesize } = req.params;
-  let dbMeta: MediaMetadataInterface = await MediaMetadata.findOne({osdbHash});
+export const getByOsdbHash = asyncHandler(async(req: Request, res: Response) => {
+  const { osdbhash: osdbHash, filebytesize } = req.params;
+  let dbMeta: MediaMetadataInterface = await MediaMetadata.findOne({ osdbHash });
 
   if (dbMeta) {
     return res.json(dbMeta);
@@ -15,7 +15,7 @@ export const getByOsdbHash = asyncHandler(async(req: Request, res: Response, nex
   const osQuery = {
     moviehash: osdbHash,
     moviebytesize: parseInt(filebytesize),
-    extend: true
+    extend: true,
   };
 
   const osMeta: OpensubtitlesIdentifyResponse = await osAPI.identify(osQuery);
@@ -34,7 +34,7 @@ export const getByOsdbHash = asyncHandler(async(req: Request, res: Response, nex
     type: osMeta.type,
     goofs: osMeta.metadata.goofs,
     trivia: osMeta.metadata.trivia,
-    tagline: osMeta.metadata.tagline
+    tagline: osMeta.metadata.tagline,
   };
 
   dbMeta = await MediaMetadata.create(newMetadata);

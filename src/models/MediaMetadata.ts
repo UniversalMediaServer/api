@@ -25,17 +25,17 @@ const MediaMetadataSchema: Schema = new Schema({
   title: { type: String, required: true },
   subcount: { type: String },
   director: { type: String },
-  imdbID: { type: String},
+  imdbID: { type: String },
   osdbHash: {
     type: String,
     index: true,
     required: true,
     validate: {
-      validator: function(v) {
+      validator: function(v): boolean {
         return v.length === 16;
       },
       msg: 'Invalid osdb hash length.',
-    }
+    },
   },
   genres: [String],
   actors: [String],
