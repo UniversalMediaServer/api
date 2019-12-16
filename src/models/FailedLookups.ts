@@ -15,11 +15,11 @@ const FailedLookupsSchema: Schema = new Schema({
     index: true,
     required: true,
     validate: {
-      validator: function(v) {
+      validator: function(v): boolean {
         return v.length === 16;
       },
       msg: 'Invalid osdb hash length.',
-    }
+    },
   },
 }, {
   collection: 'failed_lookups',
