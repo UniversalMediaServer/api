@@ -10,7 +10,7 @@
     "build": "tsc",
     "dev": "DEBUG=*universalmediaserver-api:server nodemon",
     "start": "node ./bin/www",
-    "test": "jest test/**/*.spec.js --silent --coverage --forceExit",
+    "test": "jest test/**/*.spec.js --silent --coverage --forceExit --detectOpenHandles",
     "watch": "tsc --watch"
   },
   "eslintConfig": {

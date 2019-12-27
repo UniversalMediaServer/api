@@ -1,3 +1,4 @@
+import FailedLookups from '../models/FailedLookups';
 import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
 import { Request, Response } from 'express';
 import * as asyncHandler from 'express-async-handler';
@@ -17,7 +18,21 @@ export const getByOsdbHash = asyncHandler(async(req: Request, res: Response) => 
     extend: true,
   };
 
-  const osMeta: OpensubtitlesIdentifyResponse = await osAPI.identify(osQuery);
+  let osMeta: OpensubtitlesIdentifyResponse;
+  try {
+    osMeta = await osAPI.identify(osQuery);
+  } catch (err) {
+    if (err.message === 'API seems offline') {
+      res.status(404).json({ message: 'OpenSubtitles API seems offline, please try again later' });
+    }
+    throw err;
+  }
+
+  if (!osMeta.metadata) {
+    await FailedLookups.create({ osdbHash });
+    return res.status(200).json({ message: 'Metadata not found on OpenSubtitles' });
+  }
+
   const newMetadata = {
     title: osMeta.metadata.title,
     imdbID: osMeta.metadata.imdbid,
@@ -31,5 +46,5 @@ export const getByOsdbHash = asyncHandler(async(req: Request, res: Response) => 
   };
 
   dbMeta = await MediaMetadata.create(newMetadata);
-  res.json(dbMeta);
+  return res.json(dbMeta);
 });
