@@ -1,4 +1,5 @@
 import MediaMetadataModel from '../../src/models/MediaMetadata';
+import FailedLookupsModel from '../../src/models/FailedLookups';
 
 import * as mongoose from 'mongoose';
 import axios from 'axios';
@@ -60,5 +61,16 @@ describe('Media Metadata endpoints', () => {
     expect(res.data).toHaveProperty('goofs');
     expect(res.data).toHaveProperty('trivia');
     expect(res.data).toHaveProperty('tagline');
+  });
+
+  it('should create a failed lookup document when Open Subtitles cannot find metadata', async() => {
+    await FailedLookupsModel.deleteMany({});
+    try {
+      await axios(`${appUrl}/api/media/f4245d9379d31e30/1234`);
+    } catch (e) {
+      const doc = await FailedLookupsModel.findOne({ osdbHash: 'f4245d9379d31e300' });
+      expect(doc).toHaveProperty('_id');
+      expect(doc).toHaveProperty('osdbHash');
+    }
   });
 });
