@@ -29,7 +29,9 @@
       "SharedArrayBuffer": "readonly"
     },
     "parser": "@typescript-eslint/parser",
-    "plugins": ["@typescript-eslint"],
+    "plugins": [
+      "@typescript-eslint"
+    ],
     "parserOptions": {
       "ecmaVersion": 2018,
       "project": "./tsconfig.json",
@@ -117,6 +119,7 @@
     "express": "^4.17.1",
     "express-async-handler": "^1.1.4",
     "helmet": "^3.21.2",
+    "moment": "^2.24.0",
     "mongoose": "^5.8.1",
     "opensubtitles-api": "^5.1.0"
   },

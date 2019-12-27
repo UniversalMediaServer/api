@@ -19,6 +19,10 @@ export interface MediaMetadataInterface extends Document {
   goofs?: string;
   trivia?: string;
   tagline?: string;
+
+  // Added automatically:
+  createdAt: string;
+  updatedAt: string;
 }
 
 const MediaMetadataSchema: Schema = new Schema({

@@ -1,10 +1,14 @@
 import * as mongoose from 'mongoose';
-import { Schema, Document } from 'mongoose';
+import { Document, Schema } from 'mongoose';
 
 mongoose.set('useCreateIndex', true);
 
-interface FailedLookupsInterface extends Document {
+export interface FailedLookupsInterface extends Document {
   osdbHash: string;
+
+  // Added automatically:
+  createdAt: string;
+  updatedAt: string;
 }
 
 const FailedLookupsSchema: Schema = new Schema({
