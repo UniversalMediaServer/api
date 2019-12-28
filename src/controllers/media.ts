@@ -44,7 +44,7 @@ export const getByOsdbHash = asyncHandler(async(req: Request, res: Response) => 
   }
 
   if (!osMeta.metadata) {
-    await FailedLookups.update({ osdbHash }, null, { upsert: true, setDefaultsOnInsert: true });
+    await FailedLookups.update({ osdbHash }, {}, { upsert: true, setDefaultsOnInsert: true });
     return res.status(200).json({ message: MESSAGES.notFound });
   }
 

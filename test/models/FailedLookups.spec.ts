@@ -15,7 +15,6 @@ describe('Failed Lookups Model', () => {
     await mongoose.disconnect();
   });
 
-
   it('should require osdb hash', async() => {
     try {
       await FailedLookupsModel.create();
@@ -26,7 +25,7 @@ describe('Failed Lookups Model', () => {
 
   it('should validate for a valid osdb hash', async() => {
     try {
-      await FailedLookupsModel.create({osdbHash: 'a3e8hm1'});
+      await FailedLookupsModel.create({ osdbHash: 'a3e8hm1' });
     } catch (e) {
       expect(e.message).toBe('FailedLookups validation failed: osdbHash: Invalid osdb hash length.');
     }
