@@ -2,7 +2,7 @@ import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
 import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
 import { Request, Response } from 'express';
 import * as asyncHandler from 'express-async-handler';
-import moment = require('moment');
+import * as moment  from 'moment';
 import osAPI from '../services/opensubtitles';
 
 const MESSAGES = {
