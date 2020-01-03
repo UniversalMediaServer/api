@@ -7,7 +7,7 @@ import axios from 'axios';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 const mongod = new MongoMemoryServer();
 
-const mediaMetaData = { title: 'Interstellar', genres: ['Adventure', 'Drama', 'Sci-Fi'], osdbHash: 'f4245d9379d31e33' };
+const interstellarMetaData = { title: 'Interstellar', genres: ['Adventure', 'Drama', 'Sci-Fi'], osdbHash: 'f4245d9379d31e33' };
 const appUrl = 'http://localhost:3000';
 
 describe('Media Metadata endpoints', () => {
@@ -15,7 +15,7 @@ describe('Media Metadata endpoints', () => {
     const mongoUrl = await mongod.getConnectionString();
     process.env.MONGO_URL = mongoUrl;
     await mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
-    await MediaMetadataModel.create(mediaMetaData);
+    await MediaMetadataModel.create(interstellarMetaData);
     require('../../bin/www');
   });
 
@@ -25,11 +25,11 @@ describe('Media Metadata endpoints', () => {
   });
 
   it('should return a valid response for existing media record with osdb hash', async() => {
-    const res = await axios(`${appUrl}/api/media/f4245d9379d31e33/1234`);
+    const res = await axios(`${appUrl}/api/media/${interstellarMetaData.osdbHash}/1234`);
     expect(res.status).toBe(200);
     expect(res.data).toHaveProperty('_id');
     expect(res.data).toHaveProperty('genres', ['Adventure', 'Drama', 'Sci-Fi']);
-    expect(res.data).toHaveProperty('osdbHash', 'f4245d9379d31e33');
+    expect(res.data).toHaveProperty('osdbHash', interstellarMetaData.osdbHash);
     expect(res.data).toHaveProperty('title', 'Interstellar');
   });
 
@@ -65,12 +65,10 @@ describe('Media Metadata endpoints', () => {
 
   it('should create a failed lookup document when Open Subtitles cannot find metadata', async() => {
     await FailedLookupsModel.deleteMany({});
-    try {
-      await axios(`${appUrl}/api/media/f4245d9379d31e30/1234`);
-    } catch (e) {
-      const doc = await FailedLookupsModel.findOne({ osdbHash: 'f4245d9379d31e300' });
-      expect(doc).toHaveProperty('_id');
-      expect(doc).toHaveProperty('osdbHash');
-    }
+    const response = await axios(`${appUrl}/api/media/f4245d9379d31e30/1234`);
+    expect(response.data.message).toBe('Metadata not found on OpenSubtitles');
+    const doc = await FailedLookupsModel.findOne({ osdbHash: 'f4245d9379d31e30' });
+    expect(doc).toHaveProperty('_id');
+    expect(doc).toHaveProperty('osdbHash');
   });
 });

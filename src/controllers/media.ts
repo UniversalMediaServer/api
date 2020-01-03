@@ -1,8 +1,14 @@
-import FailedLookups from '../models/FailedLookups';
+import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
 import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
 import { Request, Response } from 'express';
 import * as asyncHandler from 'express-async-handler';
+import * as moment  from 'moment';
 import osAPI from '../services/opensubtitles';
+
+const MESSAGES = {
+  notFound: 'Metadata not found on OpenSubtitles',
+  openSubsOffline: 'OpenSubtitles API seems offline, please try again later',
+};
 
 export const getByOsdbHash = asyncHandler(async(req: Request, res: Response) => {
   const { osdbhash: osdbHash, filebytesize } = req.params;
@@ -10,6 +16,15 @@ export const getByOsdbHash = asyncHandler(async(req: Request, res: Response) => 
 
   if (dbMeta) {
     return res.json(dbMeta);
+  }
+
+  const recordFromFailedLookupsCollection: FailedLookupsInterface = await FailedLookups.findOne({ osdbHash });
+  if (recordFromFailedLookupsCollection) {
+    const dateOfLastFailedLookup = recordFromFailedLookupsCollection.updatedAt;
+    const numberOfDaysSinceLastAttempt = moment().diff(moment(dateOfLastFailedLookup), 'days');
+    if (numberOfDaysSinceLastAttempt < 30) {
+      return res.status(200).json({ message: MESSAGES.notFound });
+    }
   }
 
   const osQuery = {
@@ -23,14 +38,14 @@ export const getByOsdbHash = asyncHandler(async(req: Request, res: Response) => 
     osMeta = await osAPI.identify(osQuery);
   } catch (err) {
     if (err.message === 'API seems offline') {
-      res.status(404).json({ message: 'OpenSubtitles API seems offline, please try again later' });
+      res.status(404).json({ message: MESSAGES.openSubsOffline });
     }
     throw err;
   }
 
   if (!osMeta.metadata) {
-    await FailedLookups.create({ osdbHash });
-    return res.status(200).json({ message: 'Metadata not found on OpenSubtitles' });
+    await FailedLookups.updateOne({ osdbHash }, {}, { upsert: true, setDefaultsOnInsert: true });
+    return res.status(200).json({ message: MESSAGES.notFound });
   }
 
   const newMetadata = {
