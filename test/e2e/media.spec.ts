@@ -35,7 +35,13 @@ describe('Media Metadata endpoints', () => {
 
   it('should return a valid response for a new osdbhash, then store it', async() => {
     // using example file from https://trac.opensubtitles.org/projects/opensubtitles/wiki/HashSourceCodes
-    const res = await axios(`${appUrl}/api/media/8e245d9679d31e12/12909756`);
+    let res;
+    try {
+      res = await axios(`${appUrl}/api/media/8e245d9679d31e12/12909756`);
+    } catch (err) {
+      throw new Error(err.response);
+    }
+
     expect(res.status).toBe(200);
     expect(res.data).toHaveProperty('_id');
     expect(res.data).toHaveProperty('year', '2007');
@@ -65,7 +71,12 @@ describe('Media Metadata endpoints', () => {
 
   it('should create a failed lookup document when Open Subtitles cannot find metadata', async() => {
     await FailedLookupsModel.deleteMany({});
-    const response = await axios(`${appUrl}/api/media/f4245d9379d31e30/1234`);
+    let response;
+    try {
+      response = await axios(`${appUrl}/api/media/f4245d9379d31e30/1234`);
+    } catch (err) {
+      throw new Error(err.response);
+    }
     expect(response.data.message).toBe('Metadata not found on OpenSubtitles');
     const doc = await FailedLookupsModel.findOne({ osdbHash: 'f4245d9379d31e30' });
     expect(doc).toHaveProperty('_id');
