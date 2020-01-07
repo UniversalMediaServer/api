@@ -10,7 +10,7 @@
     "build": "tsc",
     "dev": "DEBUG=*universalmediaserver-api:server nodemon",
     "start": "node ./bin/www",
-    "test": "tsc && jest test/**/*.spec.js --silent --coverage --forceExit --detectOpenHandles",
+    "test": "jest test/**/*.spec.ts --silent --coverage --forceExit --detectOpenHandles",
     "watch": "tsc --watch"
   },
   "eslintConfig": {
@@ -134,6 +134,7 @@
     "jest": "^24.9.0",
     "mongodb-memory-server": "^6.2.1",
     "nodemon": "^2.0.2",
+    "ts-jest": "^24.3.0",
     "typescript": "^3.7.4"
   }
 }
