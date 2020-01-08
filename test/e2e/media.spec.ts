@@ -84,8 +84,6 @@ describe('Media Metadata endpoints', () => {
       expect(res.data).toHaveProperty('title', 'Interstellar');
     });
 
-    it.todo('should return a valid response for a new sanitized title, then store it', async() => {
-      //
-    });
+    it.todo('should return a valid response for a new sanitized title, then store it');
   });
 });
