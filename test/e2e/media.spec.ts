@@ -76,7 +76,7 @@ describe('Media Metadata endpoints', () => {
 
   describe('Get by sanitized title', () => {
     it('should return a valid response for existing media record with title', async() => {
-      const res = await axios(`${appUrl}/title`, { data: { 'title': 'Interstellar' } });
+      const res = await axios(`${appUrl}/api/media/title`, { data: { 'title': 'Interstellar' } });
       expect(res.status).toBe(200);
       expect(res.data).toHaveProperty('_id');
       expect(res.data).toHaveProperty('genres', ['Adventure', 'Drama', 'Sci-Fi']);
