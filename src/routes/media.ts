@@ -7,4 +7,8 @@ router.get('/:osdbhash/:filebytesize', function(req: Request, res: Response, nex
   MediaController.getByOsdbHash(req, res, next);
 });
 
+router.get('/title', function(req: Request, res: Response, next: NextFunction) {
+  MediaController.getBySanitizedTitle(req, res, next);
+});
+
 export default router;

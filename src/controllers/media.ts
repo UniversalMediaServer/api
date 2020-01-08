@@ -63,3 +63,15 @@ export const getByOsdbHash = asyncHandler(async(req: Request, res: Response) => 
   dbMeta = await MediaMetadata.create(newMetadata);
   return res.json(dbMeta);
 });
+
+export const getBySanitizedTitle = asyncHandler(async(req: Request, res: Response) => {
+  const { title } = req.body;
+
+  const dbMeta: MediaMetadataInterface = await MediaMetadata.findOne({ title });
+
+  if (dbMeta) {
+    return res.json(dbMeta);
+  }
+
+  return res.sendStatus(404);
+});
