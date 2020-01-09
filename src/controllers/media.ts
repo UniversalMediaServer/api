@@ -23,7 +23,7 @@ export const getByOsdbHash = asyncHandler(async(req: Request, res: Response) => 
     const dateOfLastFailedLookup = recordFromFailedLookupsCollection.updatedAt;
     const numberOfDaysSinceLastAttempt = moment().diff(moment(dateOfLastFailedLookup), 'days');
     if (numberOfDaysSinceLastAttempt < 30) {
-      return res.status(200).json({ message: MESSAGES.notFound });
+      return res.json(MESSAGES.notFound);
     }
   }
 
@@ -38,14 +38,15 @@ export const getByOsdbHash = asyncHandler(async(req: Request, res: Response) => 
     osMeta = await osAPI.identify(osQuery);
   } catch (err) {
     if (err.message === 'API seems offline') {
-      res.status(404).json({ message: MESSAGES.openSubsOffline });
+      err.message = MESSAGES.openSubsOffline;
+      res.status(404);
     }
     throw err;
   }
 
   if (!osMeta.metadata) {
     await FailedLookups.updateOne({ osdbHash }, {}, { upsert: true, setDefaultsOnInsert: true });
-    return res.status(200).json({ message: MESSAGES.notFound });
+    return res.json(MESSAGES.notFound);
   }
 
   const newMetadata = {

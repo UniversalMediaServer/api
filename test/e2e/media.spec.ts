@@ -57,18 +57,18 @@ describe('Media Metadata endpoints', () => {
     expect(doc).toHaveProperty('osdbHash', '8e245d9679d31e12');
     expect(doc).toHaveProperty('title', 'The Simpsons Movie');
     expect(doc).toHaveProperty('imdbID', 'tt0462538');
-    expect(res.body).toHaveProperty('subcount', '7');
-    expect(res.body).toHaveProperty('type', 'movie');
-    expect(res.body).toHaveProperty('goofs');
-    expect(res.body).toHaveProperty('trivia');
-    expect(res.body).toHaveProperty('tagline');
+    expect(doc).toHaveProperty('subcount', '7');
+    expect(doc).toHaveProperty('type', 'movie');
+    expect(doc).toHaveProperty('goofs');
+    expect(doc).toHaveProperty('trivia');
+    expect(doc).toHaveProperty('tagline');
   });
 
   it('should create a failed lookup document when Open Subtitles cannot find metadata', async() => {
     await FailedLookupsModel.deleteMany({});
     const response = await got(`${appUrl}/api/media/f4245d9379d31e30/1234`, { responseType: 'json' });
     // @ts-ignore
-    expect(response.body.message).toBe('Metadata not found on OpenSubtitles');
+    expect(response.body).toBe('Metadata not found on OpenSubtitles');
     const doc = await FailedLookupsModel.findOne({ osdbHash: 'f4245d9379d31e30' });
     expect(doc).toHaveProperty('_id');
     expect(doc).toHaveProperty('osdbHash');
