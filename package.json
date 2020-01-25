@@ -9,7 +9,8 @@
   "scripts": {
     "build": "tsc",
     "dev": "DEBUG=*universalmediaserver-api:server nodemon",
-    "start": "node ./bin/www",
+    "start": "ts-node --files src/app.ts",
+    "start:prod": "NODE_ENV=production ./node_modules/.bin/pm2 start -i 4 ts-node -- -P tsconfig.json --files ./src/app.ts",
     "test": "jest test/**/*.spec.ts --silent --coverage --forceExit --detectOpenHandles",
     "watch": "tsc --watch"
   },
@@ -121,7 +122,9 @@
     "helmet": "^3.21.2",
     "moment": "^2.24.0",
     "mongoose": "^5.8.4",
-    "opensubtitles-api": "^5.1.0"
+    "opensubtitles-api": "^5.1.0",
+    "pm2": "^4.2.3",
+    "ts-node": "^8.6.2"
   },
   "devDependencies": {
     "@types/express": "^4.17.2",

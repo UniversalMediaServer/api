@@ -24,3 +24,6 @@ Runs the server
 
 #### `yarn test`
 Runs the test suite
+
+### `yarn run start:prod`
+Starts the API in production mode, which uses PM2 for process management. TypeScript files are compiled in memory on application start.
