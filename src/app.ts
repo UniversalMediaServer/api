@@ -12,6 +12,7 @@ const app: Application = express();
 import connect from './models/connection';
 
 const db: string = process.env.MONGO_URL;
+const PORT: string = process.env.PORT || '3000';
 connect(db);
 
 app.use((req: Request, res: Response, next: NextFunction) => {
@@ -46,4 +47,8 @@ app.use((err: CustomError, req: Request, res: Response) => {
   res.send();
 });
 
-module.exports = app;
+const server = app.listen(PORT, () => {
+  console.log(`API listening on ${PORT}`);
+});
+
+export default server;
