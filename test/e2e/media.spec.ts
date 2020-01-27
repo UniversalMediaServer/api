@@ -16,7 +16,7 @@ describe('Media Metadata endpoints', () => {
     process.env.MONGO_URL = mongoUrl;
     await mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
     await MediaMetadataModel.create(interstellarMetaData);
-    require('../../bin/www');
+    require('../../src/app');
   });
 
   afterAll(async() => {
