@@ -25,7 +25,7 @@ describe('Media Metadata endpoints', () => {
   });
 
   it('should return a valid response for existing media record with osdb hash', async() => {
-    const res = await got(`${appUrl}/api/media/${interstellarMetaData.osdbHash}/1234`, { responseType: 'json' });
+    const res: any = await got(`${appUrl}/api/media/${interstellarMetaData.osdbHash}/1234`, { responseType: 'json' });
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveProperty('_id');
     expect(res.body).toHaveProperty('genres', ['Adventure', 'Drama', 'Sci-Fi']);
@@ -35,7 +35,7 @@ describe('Media Metadata endpoints', () => {
 
   it('should return a valid response for a new osdbhash, then store it', async() => {
     // using example file from https://trac.opensubtitles.org/projects/opensubtitles/wiki/HashSourceCodes
-    const res = await got(`${appUrl}/api/media/8e245d9679d31e12/12909756`, { responseType: 'json' });
+    const res: any = await got(`${appUrl}/api/media/8e245d9679d31e12/12909756`, { responseType: 'json' });
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveProperty('_id');
     expect(res.body).toHaveProperty('year', '2007');
@@ -49,7 +49,6 @@ describe('Media Metadata endpoints', () => {
     expect(res.body).toHaveProperty('tagline');
 
     // should save to db
-    // @ts-ignore
     const doc = await MediaMetadataModel.findOne({ osdbHash: res.body.osdbHash });
 
     expect(doc).toHaveProperty('_id');
@@ -66,8 +65,7 @@ describe('Media Metadata endpoints', () => {
 
   it('should create a failed lookup document when Open Subtitles cannot find metadata', async() => {
     await FailedLookupsModel.deleteMany({});
-    const response = await got(`${appUrl}/api/media/f4245d9379d31e30/1234`, { responseType: 'json' });
-    // @ts-ignore
+    const response: any = await got(`${appUrl}/api/media/f4245d9379d31e30/1234`, { responseType: 'json' });
     expect(response.body).toBe('Metadata not found on OpenSubtitles');
     const doc = await FailedLookupsModel.findOne({ osdbHash: 'f4245d9379d31e30' });
     expect(doc).toHaveProperty('_id');
