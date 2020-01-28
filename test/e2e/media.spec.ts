@@ -2,7 +2,7 @@ import MediaMetadataModel from '../../src/models/MediaMetadata';
 import FailedLookupsModel from '../../src/models/FailedLookups';
 
 import * as mongoose from 'mongoose';
-import axios from 'axios';
+import got from 'got';
 
 import { MongoMemoryServer } from 'mongodb-memory-server';
 const mongod = new MongoMemoryServer();
@@ -25,48 +25,48 @@ describe('Media Metadata endpoints', () => {
   });
 
   it('should return a valid response for existing media record with osdb hash', async() => {
-    const res = await axios(`${appUrl}/api/media/${interstellarMetaData.osdbHash}/1234`);
-    expect(res.status).toBe(200);
-    expect(res.data).toHaveProperty('_id');
-    expect(res.data).toHaveProperty('genres', ['Adventure', 'Drama', 'Sci-Fi']);
-    expect(res.data).toHaveProperty('osdbHash', interstellarMetaData.osdbHash);
-    expect(res.data).toHaveProperty('title', 'Interstellar');
+    const res: any = await got(`${appUrl}/api/media/${interstellarMetaData.osdbHash}/1234`, { responseType: 'json' });
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty('_id');
+    expect(res.body).toHaveProperty('genres', ['Adventure', 'Drama', 'Sci-Fi']);
+    expect(res.body).toHaveProperty('osdbHash', interstellarMetaData.osdbHash);
+    expect(res.body).toHaveProperty('title', 'Interstellar');
   });
 
   it('should return a valid response for a new osdbhash, then store it', async() => {
     // using example file from https://trac.opensubtitles.org/projects/opensubtitles/wiki/HashSourceCodes
-    const res = await axios(`${appUrl}/api/media/8e245d9679d31e12/12909756`);
-    expect(res.status).toBe(200);
-    expect(res.data).toHaveProperty('_id');
-    expect(res.data).toHaveProperty('year', '2007');
-    expect(res.data).toHaveProperty('osdbHash', '8e245d9679d31e12');
-    expect(res.data).toHaveProperty('title', 'The Simpsons Movie');
-    expect(res.data).toHaveProperty('imdbID', 'tt0462538');
-    expect(res.data).toHaveProperty('subcount', '7');
-    expect(res.data).toHaveProperty('type', 'movie');
-    expect(res.data).toHaveProperty('goofs');
-    expect(res.data).toHaveProperty('trivia');
-    expect(res.data).toHaveProperty('tagline');
+    const res: any = await got(`${appUrl}/api/media/8e245d9679d31e12/12909756`, { responseType: 'json' });
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty('_id');
+    expect(res.body).toHaveProperty('year', '2007');
+    expect(res.body).toHaveProperty('osdbHash', '8e245d9679d31e12');
+    expect(res.body).toHaveProperty('title', 'The Simpsons Movie');
+    expect(res.body).toHaveProperty('imdbID', 'tt0462538');
+    expect(res.body).toHaveProperty('subcount', '7');
+    expect(res.body).toHaveProperty('type', 'movie');
+    expect(res.body).toHaveProperty('goofs');
+    expect(res.body).toHaveProperty('trivia');
+    expect(res.body).toHaveProperty('tagline');
 
     // should save to db
-    const doc = await MediaMetadataModel.findOne({ osdbHash: res.data.osdbHash });
+    const doc = await MediaMetadataModel.findOne({ osdbHash: res.body.osdbHash });
 
     expect(doc).toHaveProperty('_id');
     expect(doc).toHaveProperty('year', '2007');
     expect(doc).toHaveProperty('osdbHash', '8e245d9679d31e12');
     expect(doc).toHaveProperty('title', 'The Simpsons Movie');
     expect(doc).toHaveProperty('imdbID', 'tt0462538');
-    expect(res.data).toHaveProperty('subcount', '7');
-    expect(res.data).toHaveProperty('type', 'movie');
-    expect(res.data).toHaveProperty('goofs');
-    expect(res.data).toHaveProperty('trivia');
-    expect(res.data).toHaveProperty('tagline');
+    expect(doc).toHaveProperty('subcount', '7');
+    expect(doc).toHaveProperty('type', 'movie');
+    expect(doc).toHaveProperty('goofs');
+    expect(doc).toHaveProperty('trivia');
+    expect(doc).toHaveProperty('tagline');
   });
 
   it('should create a failed lookup document when Open Subtitles cannot find metadata', async() => {
     await FailedLookupsModel.deleteMany({});
-    const response = await axios(`${appUrl}/api/media/f4245d9379d31e30/1234`);
-    expect(response.data.message).toBe('Metadata not found on OpenSubtitles');
+    const response: any = await got(`${appUrl}/api/media/f4245d9379d31e30/1234`, { responseType: 'json' });
+    expect(response.body).toBe('Metadata not found on OpenSubtitles');
     const doc = await FailedLookupsModel.findOne({ osdbHash: 'f4245d9379d31e30' });
     expect(doc).toHaveProperty('_id');
     expect(doc).toHaveProperty('osdbHash');
