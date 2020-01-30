@@ -64,3 +64,6 @@ typings/
 
 !jest-mongodb-config.js
 !jest.config.js
+
+# yarn 2 folder
+.yarn/
