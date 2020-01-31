@@ -20,7 +20,7 @@ yarn_get_tarball() {
     version=$2
     ## UMS CUSTOMIZATION - bypass version validation
     if echo $version; then
-      url="https://yarnpkg.com/downloads/$version/yarn-v$version.tar.gz"
+    url="https://github.com/yarnpkg/berry/archive/@yarnpkg/cli/$version.tar.gz"
     fi
   else
     url=https://yarnpkg.com/latest.tar.gz
