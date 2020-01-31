@@ -4,8 +4,8 @@ node_js:
   - "12"
 
 before_install:
-  - npm install -g yarn@"$(grep 'yarn' package.json | cut -d '"' -f4)"
-  - export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+  - bash build.sh --version 2.0.0-rc.27
+  - export PATH=$HOME/.yarn/bin:$PATH
 
 before_script:
   - yarn run build
