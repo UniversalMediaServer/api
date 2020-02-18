@@ -71,4 +71,19 @@ describe('Media Metadata endpoints', () => {
     expect(doc).toHaveProperty('_id');
     expect(doc).toHaveProperty('osdbHash');
   });
+
+  it('should search by title', async() => {
+    const body = JSON.stringify({ title: 'Homeland S02E05' });
+    const response: any = await got.post(`${appUrl}/api/media/title`, { responseType: 'json', headers: { 'content-type': 'application/json' }, body });
+    expect(response.body).toBeInstanceOf(Array);
+  });
+
+  it('should require title in body', async() => {
+    const body = JSON.stringify({});
+    try {
+      await got.post(`${appUrl}/api/media/title`, { responseType: 'json', headers: { 'content-type': 'application/json' }, body });
+    } catch (err) {
+      expect(err).toBeInstanceOf(Error);
+    }
+  });
 });

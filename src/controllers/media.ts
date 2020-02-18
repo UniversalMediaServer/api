@@ -1,6 +1,6 @@
 import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
 import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import * as asyncHandler from 'express-async-handler';
 import * as moment  from 'moment';
 import osAPI from '../services/opensubtitles';
@@ -63,4 +63,23 @@ export const getByOsdbHash = asyncHandler(async(req: Request, res: Response) => 
 
   dbMeta = await MediaMetadata.create(newMetadata);
   return res.json(dbMeta);
+});
+
+export const getBySanitizedTitle = asyncHandler(async(req: Request, res: Response, next: NextFunction) => {
+  const { title, language = 'eng' } = req.body;
+
+  if (!title) {
+    return next(new Error('title is required'));
+  }
+
+  const dbMeta: MediaMetadataInterface = await MediaMetadata.findOne({ title, language });
+
+  if (dbMeta) {
+    return res.json(dbMeta);
+  }
+
+  const { token } = await osAPI.login();
+  const { data } = await osAPI.api.SearchSubtitles(token, [{ query: title, sublanguageid: language }]);
+  // TODO what data do we actually want to store here?
+  return res.json(data);
 });
