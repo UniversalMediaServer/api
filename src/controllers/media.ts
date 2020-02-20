@@ -10,6 +10,21 @@ const MESSAGES = {
   openSubsOffline: 'OpenSubtitles API seems offline, please try again later',
 };
 
+export const FAILED_LOOKUP_SKIP_DAYS = 30;
+
+export const skipFailedLookup = async(dbQuery): Promise<boolean> => {
+  const recordFromFailedLookupsCollection: FailedLookupsInterface = await FailedLookups.findOne({ dbQuery });
+  if (!recordFromFailedLookupsCollection) {
+    return Promise.resolve(false);
+  }
+  const dateOfLastFailedLookup = recordFromFailedLookupsCollection.updatedAt;
+  const numberOfDaysSinceLastAttempt = moment().diff(moment(dateOfLastFailedLookup), 'days');
+  if (numberOfDaysSinceLastAttempt < FAILED_LOOKUP_SKIP_DAYS) {
+    return Promise.resolve(true);
+  } 
+  return Promise.resolve(false);
+};
+
 export const getByOsdbHash = asyncHandler(async(req: Request, res: Response) => {
   const { osdbhash: osdbHash, filebytesize } = req.params;
   let dbMeta: MediaMetadataInterface = await MediaMetadata.findOne({ osdbHash });
@@ -18,13 +33,8 @@ export const getByOsdbHash = asyncHandler(async(req: Request, res: Response) => 
     return res.json(dbMeta);
   }
 
-  const recordFromFailedLookupsCollection: FailedLookupsInterface = await FailedLookups.findOne({ osdbHash });
-  if (recordFromFailedLookupsCollection) {
-    const dateOfLastFailedLookup = recordFromFailedLookupsCollection.updatedAt;
-    const numberOfDaysSinceLastAttempt = moment().diff(moment(dateOfLastFailedLookup), 'days');
-    if (numberOfDaysSinceLastAttempt < 30) {
-      return res.json(MESSAGES.notFound);
-    }
+  if (await skipFailedLookup({ osdbHash })) {
+    return res.json(MESSAGES.notFound);
   }
 
   const osQuery = {
@@ -72,14 +82,32 @@ export const getBySanitizedTitle = asyncHandler(async(req: Request, res: Respons
     return next(new Error('title is required'));
   }
 
-  const dbMeta: MediaMetadataInterface = await MediaMetadata.findOne({ title, language });
+  const dbMeta: MediaMetadataInterface = await MediaMetadata.findOne({ title, 'metadata.language': language });
 
   if (dbMeta) {
     return res.json(dbMeta);
   }
 
+  if (await skipFailedLookup({ title, language })) {
+    return res.json(MESSAGES.notFound);
+  }
+
   const { token } = await osAPI.login();
   const { data } = await osAPI.api.SearchSubtitles(token, [{ query: title, sublanguageid: language }]);
-  // TODO what data do we actually want to store here?
-  return res.json(data);
+
+  if (!data) {
+    await FailedLookups.updateOne({ title, language }, {}, { upsert: true, setDefaultsOnInsert: true });
+    return res.json(MESSAGES.notFound);
+  }
+
+  const newMetadata = {
+    title,
+    metadata: { language },
+    imdbID: data[0].IDMovieImdb,
+    year: data[0].MovieYear,
+    type: data[0].MovieKind,
+  };
+
+  await MediaMetadata.create(newMetadata);
+  return res.json(newMetadata);
 });
