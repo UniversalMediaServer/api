@@ -1,6 +1,6 @@
 import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
 import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import * as asyncHandler from 'express-async-handler';
 import * as moment  from 'moment';
 import osAPI from '../services/opensubtitles';
@@ -12,17 +12,17 @@ const MESSAGES = {
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
 
-export const skipFailedLookup = async(dbQuery): Promise<boolean> => {
+export const isSkipFailedLookup = async(dbQuery): Promise<boolean> => {
   const recordFromFailedLookupsCollection: FailedLookupsInterface = await FailedLookups.findOne({ dbQuery });
   if (!recordFromFailedLookupsCollection) {
-    return Promise.resolve(false);
+    return false;
   }
   const dateOfLastFailedLookup = recordFromFailedLookupsCollection.updatedAt;
   const numberOfDaysSinceLastAttempt = moment().diff(moment(dateOfLastFailedLookup), 'days');
   if (numberOfDaysSinceLastAttempt < FAILED_LOOKUP_SKIP_DAYS) {
-    return Promise.resolve(true);
+    return true;
   } 
-  return Promise.resolve(false);
+  return false;
 };
 
 export const getByOsdbHash = asyncHandler(async(req: Request, res: Response) => {
@@ -33,7 +33,7 @@ export const getByOsdbHash = asyncHandler(async(req: Request, res: Response) => 
     return res.json(dbMeta);
   }
 
-  if (await skipFailedLookup({ osdbHash })) {
+  if (await isSkipFailedLookup({ osdbHash })) {
     return res.json(MESSAGES.notFound);
   }
 
@@ -75,11 +75,11 @@ export const getByOsdbHash = asyncHandler(async(req: Request, res: Response) => 
   return res.json(dbMeta);
 });
 
-export const getBySanitizedTitle = asyncHandler(async(req: Request, res: Response, next: NextFunction) => {
+export const getBySanitizedTitle = asyncHandler(async(req: Request, res: Response) => {
   const { title, language = 'eng' } = req.body;
 
   if (!title) {
-    return next(new Error('title is required'));
+    throw new Error('title is required');
   }
 
   const dbMeta: MediaMetadataInterface = await MediaMetadata.findOne({ title, 'metadata.language': language });
@@ -88,7 +88,7 @@ export const getBySanitizedTitle = asyncHandler(async(req: Request, res: Respons
     return res.json(dbMeta);
   }
 
-  if (await skipFailedLookup({ title, language })) {
+  if (await isSkipFailedLookup({ title, language })) {
     return res.json(MESSAGES.notFound);
   }
 

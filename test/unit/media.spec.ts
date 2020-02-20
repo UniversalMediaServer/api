@@ -16,14 +16,14 @@ describe('Media functions', () => {
     await mongoose.disconnect();
   });
 
-  describe('skipFailedLookup()', () => {
+  describe('isSkipFailedLookup()', () => {
     it(`should return false for record less than ${MediaController.FAILED_LOOKUP_SKIP_DAYS} days old`, async() => {
       await FailedLookupsModel.create({ osdbHash: 'f4245d9379d31e30' });
-      expect(await MediaController.skipFailedLookup({ osdbHash: 'f4245d9379d31e30' })).toEqual(false);
+      expect(await MediaController.isSkipFailedLookup({ osdbHash: 'f4245d9379d31e30' })).toEqual(false);
     });
 
     it('should return false for record not found', async() => {
-      expect(await MediaController.skipFailedLookup({ osdbHash: '0000000000000000' })).toEqual(false);
+      expect(await MediaController.isSkipFailedLookup({ osdbHash: '0000000000000000' })).toEqual(false);
     });
   });
 });
