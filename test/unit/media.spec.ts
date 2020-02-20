@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import FailedLookupsModel from '../../src/models/FailedLookups';
-import { FAILED_LOOKUP_SKIP_DAYS, skipFailedLookup } from '../../src/controllers/Media';
+import * as MediaController from '../../src/controllers/Media';
 
 const mongod = new MongoMemoryServer();
 
@@ -17,13 +17,13 @@ describe('Media functions', () => {
   });
 
   describe('skipFailedLookup()', () => {
-    it(`should return false for record less than ${FAILED_LOOKUP_SKIP_DAYS} days old`, async() => {
+    it(`should return false for record less than ${MediaController.FAILED_LOOKUP_SKIP_DAYS} days old`, async() => {
       await FailedLookupsModel.create({ osdbHash: 'f4245d9379d31e30' });
-      expect(await skipFailedLookup({ osdbHash: 'f4245d9379d31e30' })).toEqual(false);
+      expect(await MediaController.skipFailedLookup({ osdbHash: 'f4245d9379d31e30' })).toEqual(false);
     });
 
     it('should return false for record not found', async() => {
-      expect(await skipFailedLookup({ osdbHash: '0000000000000000' })).toEqual(false);
+      expect(await MediaController.skipFailedLookup({ osdbHash: '0000000000000000' })).toEqual(false);
     });
   });
 });
