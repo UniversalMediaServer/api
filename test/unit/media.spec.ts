@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import FailedLookupsModel from '../../src/models/FailedLookups';
-import * as MediaController from '../../src/controllers/Media';
+import * as MediaController from '../../src/controllers/media';
 
 const mongod = new MongoMemoryServer();
 
