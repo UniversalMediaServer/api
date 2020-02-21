@@ -33,7 +33,6 @@ const MediaMetadataSchema: Schema = new Schema({
   osdbHash: {
     type: String,
     index: true,
-    required: true,
     validate: {
       validator: function(v): boolean {
         return v.length === 16;

@@ -10,6 +10,21 @@ const MESSAGES = {
   openSubsOffline: 'OpenSubtitles API seems offline, please try again later',
 };
 
+export const FAILED_LOOKUP_SKIP_DAYS = 30;
+
+export const isSkipFailedLookup = async(dbQuery): Promise<boolean> => {
+  const recordFromFailedLookupsCollection: FailedLookupsInterface = await FailedLookups.findOne({ dbQuery });
+  if (!recordFromFailedLookupsCollection) {
+    return false;
+  }
+  const dateOfLastFailedLookup = recordFromFailedLookupsCollection.updatedAt;
+  const numberOfDaysSinceLastAttempt = moment().diff(moment(dateOfLastFailedLookup), 'days');
+  if (numberOfDaysSinceLastAttempt < FAILED_LOOKUP_SKIP_DAYS) {
+    return true;
+  } 
+  return false;
+};
+
 export const getByOsdbHash = asyncHandler(async(req: Request, res: Response) => {
   const { osdbhash: osdbHash, filebytesize } = req.params;
   let dbMeta: MediaMetadataInterface = await MediaMetadata.findOne({ osdbHash });
@@ -18,13 +33,8 @@ export const getByOsdbHash = asyncHandler(async(req: Request, res: Response) => 
     return res.json(dbMeta);
   }
 
-  const recordFromFailedLookupsCollection: FailedLookupsInterface = await FailedLookups.findOne({ osdbHash });
-  if (recordFromFailedLookupsCollection) {
-    const dateOfLastFailedLookup = recordFromFailedLookupsCollection.updatedAt;
-    const numberOfDaysSinceLastAttempt = moment().diff(moment(dateOfLastFailedLookup), 'days');
-    if (numberOfDaysSinceLastAttempt < 30) {
-      return res.json(MESSAGES.notFound);
-    }
+  if (await isSkipFailedLookup({ osdbHash })) {
+    return res.json(MESSAGES.notFound);
   }
 
   const osQuery = {
@@ -63,4 +73,41 @@ export const getByOsdbHash = asyncHandler(async(req: Request, res: Response) => 
 
   dbMeta = await MediaMetadata.create(newMetadata);
   return res.json(dbMeta);
+});
+
+export const getBySanitizedTitle = asyncHandler(async(req: Request, res: Response) => {
+  const { title, language = 'eng' } = req.body;
+
+  if (!title) {
+    throw new Error('title is required');
+  }
+
+  const dbMeta: MediaMetadataInterface = await MediaMetadata.findOne({ title, 'metadata.language': language });
+
+  if (dbMeta) {
+    return res.json(dbMeta);
+  }
+
+  if (await isSkipFailedLookup({ title, language })) {
+    return res.json(MESSAGES.notFound);
+  }
+
+  const { token } = await osAPI.login();
+  const { data } = await osAPI.api.SearchSubtitles(token, [{ query: title, sublanguageid: language }]);
+
+  if (!data) {
+    await FailedLookups.updateOne({ title, language }, {}, { upsert: true, setDefaultsOnInsert: true });
+    return res.json(MESSAGES.notFound);
+  }
+
+  const newMetadata = {
+    title,
+    metadata: { language },
+    imdbID: data[0].IDMovieImdb,
+    year: data[0].MovieYear,
+    type: data[0].MovieKind,
+  };
+
+  await MediaMetadata.create(newMetadata);
+  return res.json(newMetadata);
 });
