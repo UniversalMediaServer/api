@@ -25,7 +25,7 @@ export interface MediaMetadataInterface extends Document {
   updatedAt: string;
 }
 
-export const MediaMetadataSchema: Schema = new Schema({
+const MediaMetadataSchema: Schema = new Schema({
   title: { type: String, required: true },
   subcount: { type: String },
   director: { type: String },

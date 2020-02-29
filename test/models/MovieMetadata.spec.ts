@@ -64,4 +64,12 @@ describe('Media Metadata Model', () => {
     expect(record).toHaveProperty('title', 'Interstellar');
     expect(record.episodeTitle).toBeUndefined();
   });
+
+  it('should store real episode titles', async() => {
+    const doc = Object.assign({}, mediaMetaData);
+    doc.episodeTitle = 'Pilot';
+    const record = await MediaMetadataModel.create(doc);
+    expect(record).toHaveProperty('title', 'Interstellar');
+    expect(record).toHaveProperty('episodeTitle', 'Pilot');
+  });
 });
