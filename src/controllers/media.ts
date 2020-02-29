@@ -101,10 +101,12 @@ export const getBySanitizedTitle = asyncHandler(async(req: Request, res: Respons
   }
 
   const newMetadata = {
-    title,
+    episodeNumber: data[0].SeriesEpisode,
     metadata: { language },
-    imdbID: data[0].IDMovieImdb,
+    imdbID: 'tt' + data[0].IDMovieImdb, // OpenSubtitles returns the "tt" for hash searches but not query searches
     year: data[0].MovieYear,
+    seasonNumber: data[0].SeriesSeason,
+    title: data[0].MovieName,
     type: data[0].MovieKind,
   };
 
