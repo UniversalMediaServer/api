@@ -25,7 +25,7 @@ export interface MediaMetadataInterface extends Document {
   updatedAt: string;
 }
 
-const MediaMetadataSchema: Schema = new Schema({
+export const MediaMetadataSchema: Schema = new Schema({
   title: { type: String, required: true },
   subcount: { type: String },
   director: { type: String },
@@ -54,6 +54,13 @@ const MediaMetadataSchema: Schema = new Schema({
   collection: 'media_metadata',
   timestamps: true,
   versionKey: false,
+});
+
+MediaMetadataSchema.pre<MediaMetadataInterface>('save', function(next) {
+  if (this.episodeTitle.startsWith('Episode #')) {
+    this.episodeTitle = undefined;
+  }
+  next();
 });
 
 const MediaMetadata = mongoose.model<MediaMetadataInterface>('MediaMetadata', MediaMetadataSchema);

@@ -1,7 +1,7 @@
 import * as  mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import MediaMetadataModel from '../../src/models/MediaMetadata';
-const mediaMetaData = { title: 'Interstellar', genres: ['Adventure', 'Drama', 'Sci-Fi'], osdbHash: '8e245d9679d31e12' };
+const mediaMetaData = { title: 'Interstellar', genres: ['Adventure', 'Drama', 'Sci-Fi'], osdbHash: '8e245d9679d31e12', episodeTitle: 'Episode #51' };
 
 const mongod = new MongoMemoryServer();
 
@@ -10,6 +10,10 @@ describe('Media Metadata Model', () => {
     const mongoUrl = await mongod.getConnectionString();
     process.env.MONGO_URL = mongoUrl;
     await mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+  });
+
+  beforeEach(async() => {
+    await MediaMetadataModel.deleteMany({});
   });
 
   afterAll(async() => {
@@ -52,5 +56,12 @@ describe('Media Metadata Model', () => {
     } catch (e) {
       expect(e.message).toBe('MediaMetadata validation failed: osdbHash: Invalid osdb hash length.');
     }
+  });
+
+  it('should not store dummy episode titles', async() => {
+    const doc = Object.assign({}, mediaMetaData);
+    const record = await MediaMetadataModel.create(doc);
+    expect(record).toHaveProperty('title', 'Interstellar');
+    expect(record.episodeTitle).toBeUndefined();
   });
 });
