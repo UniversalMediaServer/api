@@ -11,7 +11,7 @@ export interface MediaMetadataInterface extends Document {
   osdbHash: string;
   genres?: Array<string>;
   actors?: Array<string>;
-  episodeTitle?: string; 
+  episodeTitle?: string;
   seasonNumber?: string;
   episodeNumber?: string;
   year?: string;
