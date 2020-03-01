@@ -4,6 +4,7 @@ import { Request, Response } from 'express';
 import * as asyncHandler from 'express-async-handler';
 import * as moment  from 'moment';
 import osAPI from '../services/opensubtitles';
+import imdbAPI from '../services/imdb-api';
 
 const MESSAGES = {
   notFound: 'Metadata not found on OpenSubtitles',
@@ -69,8 +70,21 @@ export const getByOsdbHash = asyncHandler(async(req: Request, res: Response) => 
     goofs: osMeta.metadata.goofs,
     trivia: osMeta.metadata.trivia,
     tagline: osMeta.metadata.tagline,
+    genres: osMeta.metadata.genres,
+    actors: Object.values(osMeta.metadata.cast),
   };
 
+  // if we're missing values for genres or actors, attempt to hydrate them from imdbAPI instead of OpenSubtitles
+  if ([newMetadata.genres, newMetadata.actors].some(val => val === undefined || []) && newMetadata.imdbID) {
+    try {
+      const imdbData: any = await imdbAPI.get({ id: newMetadata.imdbID });
+      newMetadata.actors = imdbData.actors.split(', ');
+      newMetadata.genres = imdbData.genres.split(', ');
+    } catch (e) {
+      // ignore error, this shouldn't make the request fail
+    }
+  }
+    
   dbMeta = await MediaMetadata.create(newMetadata);
   return res.json(dbMeta);
 });

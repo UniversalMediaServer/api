@@ -16,6 +16,7 @@ describe('Media Metadata endpoints', () => {
     process.env.MONGO_URL = mongoUrl;
     await mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
     await MediaMetadataModel.create(interstellarMetaData);
+    require('../mocks');
     require('../../src/app');
   });
 
@@ -48,6 +49,9 @@ describe('Media Metadata endpoints', () => {
       expect(res.body).toHaveProperty('goofs');
       expect(res.body).toHaveProperty('trivia');
       expect(res.body).toHaveProperty('tagline');
+      // from imdb API
+      expect(res.body).toHaveProperty('genres', ['Animation', 'Adventure', 'Comedy']);
+      expect(res.body).toHaveProperty('actors', ['Dan Castellaneta', 'Julie Kavner', 'Nancy Cartwright', 'Yeardley Smith']);
   
       // should save to db
       const doc = await MediaMetadataModel.findOne({ osdbHash: res.body.osdbHash });

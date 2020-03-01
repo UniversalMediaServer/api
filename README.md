@@ -10,6 +10,7 @@ You can run `nvm use` and `yvm use` from the project root if you have [Node vers
 
 `MONGO_URL` URL to a running Mongo instance which includes user and password
 `OS_API_USERAGENT` an Open Subtitles User-Agent key. Defaults to a testing key `TemporaryUserAgent`
+`IMDB_API_KEY` an API key from https://www.omdbapi.com/apikey.aspx
 
 ### Commands
 
@@ -25,5 +26,5 @@ Runs the server
 #### `yarn test`
 Runs the test suite
 
-### `yarn run start:prod`
+#### `yarn run start:prod`
 Starts the API in production mode, which uses PM2 for process management. TypeScript files are compiled in memory on application start.
