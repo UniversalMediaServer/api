@@ -1,8 +1,7 @@
-import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
+import FailedLookups from '../models/FailedLookups';
 import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
 import { Request, Response } from 'express';
 import * as asyncHandler from 'express-async-handler';
-import * as moment  from 'moment';
 import osAPI from '../services/opensubtitles';
 import imdbAPI from '../services/imdb-api';
 
