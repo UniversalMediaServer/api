@@ -1,8 +1,7 @@
-import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
+import FailedLookups from '../models/FailedLookups';
 import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
 import { Request, Response } from 'express';
 import * as asyncHandler from 'express-async-handler';
-import * as moment  from 'moment';
 import osAPI from '../services/opensubtitles';
 import imdbAPI from '../services/imdb-api';
 
@@ -13,28 +12,14 @@ const MESSAGES = {
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
 
-export const isSkipFailedLookup = async(dbQuery): Promise<boolean> => {
-  const recordFromFailedLookupsCollection: FailedLookupsInterface = await FailedLookups.findOne({ dbQuery });
-  if (!recordFromFailedLookupsCollection) {
-    return false;
-  }
-  const dateOfLastFailedLookup = recordFromFailedLookupsCollection.updatedAt;
-  const numberOfDaysSinceLastAttempt = moment().diff(moment(dateOfLastFailedLookup), 'days');
-  if (numberOfDaysSinceLastAttempt < FAILED_LOOKUP_SKIP_DAYS) {
-    return true;
-  } 
-  return false;
-};
-
 export const getByOsdbHash = asyncHandler(async(req: Request, res: Response) => {
   const { osdbhash: osdbHash, filebytesize } = req.params;
-  let dbMeta: MediaMetadataInterface = await MediaMetadata.findOne({ osdbHash });
+  let dbMeta: MediaMetadataInterface = await MediaMetadata.findOne({ osdbHash }).lean();
 
   if (dbMeta) {
     return res.json(dbMeta);
   }
-
-  if (await isSkipFailedLookup({ osdbHash })) {
+  if (await FailedLookups.findOne({ osdbHash }).lean()) {
     return res.json(MESSAGES.notFound);
   }
 
@@ -96,13 +81,13 @@ export const getBySanitizedTitle = asyncHandler(async(req: Request, res: Respons
     throw new Error('title is required');
   }
 
-  const dbMeta: MediaMetadataInterface = await MediaMetadata.findOne({ title, 'metadata.language': language });
+  const dbMeta: MediaMetadataInterface = await MediaMetadata.findOne({ title, 'metadata.language': language }).lean();
 
   if (dbMeta) {
     return res.json(dbMeta);
   }
 
-  if (await isSkipFailedLookup({ title, language })) {
+  if (await FailedLookups.findOne({ title, language }).lean()) {
     return res.json(MESSAGES.notFound);
   }
 
