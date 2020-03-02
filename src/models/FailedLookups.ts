@@ -1,6 +1,8 @@
 import * as mongoose from 'mongoose';
 import { Document, Schema } from 'mongoose';
 
+const DOCUMENT_EXPIRY_IN_SECONDS = 2592000; // 30 days
+
 mongoose.set('useCreateIndex', true);
 
 export interface FailedLookupsInterface extends Document {
@@ -31,6 +33,11 @@ const FailedLookupsSchema: Schema = new Schema({
   language: {
     type: String,
     index: true,
+  },
+  createdAt: {
+    type: Date,
+    expires: DOCUMENT_EXPIRY_IN_SECONDS,
+    default: Date.now // eslint-disable-line
   },
 }, {
   collection: 'failed_lookups',

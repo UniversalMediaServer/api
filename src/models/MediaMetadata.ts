@@ -1,6 +1,8 @@
 import * as mongoose from 'mongoose';
 import { Schema, Document } from 'mongoose';
 
+const DOCUMENT_EXPIRY_IN_SECONDS = 2592000; // 30 days
+
 mongoose.set('useCreateIndex', true);
 
 export interface MediaMetadataInterface extends Document {
@@ -50,6 +52,11 @@ const MediaMetadataSchema: Schema = new Schema({
   goofs: { type: String },
   trivia: { type: String },
   tagline: { type: String },
+  createdAt: {
+    type: Date,
+    expires: DOCUMENT_EXPIRY_IN_SECONDS,
+    default: Date.now // eslint-disable-line
+  },
 }, {
   collection: 'media_metadata',
   timestamps: true,

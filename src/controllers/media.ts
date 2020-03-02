@@ -33,8 +33,7 @@ export const getByOsdbHash = asyncHandler(async(req: Request, res: Response) => 
   if (dbMeta) {
     return res.json(dbMeta);
   }
-
-  if (await isSkipFailedLookup({ osdbHash })) {
+  if (await FailedLookups.findOne({ osdbHash })) {
     return res.json(MESSAGES.notFound);
   }
 
@@ -102,7 +101,7 @@ export const getBySanitizedTitle = asyncHandler(async(req: Request, res: Respons
     return res.json(dbMeta);
   }
 
-  if (await isSkipFailedLookup({ title, language })) {
+  if (await FailedLookups.findOne({ title, language })) {
     return res.json(MESSAGES.notFound);
   }
 
