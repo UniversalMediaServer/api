@@ -10,7 +10,23 @@ const MESSAGES = {
   openSubsOffline: 'OpenSubtitles API seems offline, please try again later',
 };
 
-export const FAILED_LOOKUP_SKIP_DAYS = 30;
+/**
+ * Checks whether our information is complete enough to not be
+ * added to the FailedLookups collection.
+ *
+ * @param mediaSoFar the incoming data to evaluate
+ */
+const isInformationCompleteEnough = (mediaSoFar): boolean => {
+  if (
+    !mediaSoFar.metadata ||
+    !mediaSoFar.metadata.actors ||
+    !mediaSoFar.metadata.genres ||
+    !mediaSoFar.metadata.title
+  ) {
+    return false;
+  }
+  return true;
+};
 
 export const getByOsdbHash = asyncHandler(async(req: Request, res: Response) => {
   const { osdbhash: osdbHash, filebytesize } = req.params;
@@ -40,36 +56,33 @@ export const getByOsdbHash = asyncHandler(async(req: Request, res: Response) => 
     throw err;
   }
 
-  if (!osMeta.metadata) {
-    await FailedLookups.updateOne({ osdbHash }, {}, { upsert: true, setDefaultsOnInsert: true });
-    return res.json(MESSAGES.notFound);
-  }
-
   const newMetadata = {
-    title: osMeta.metadata.title,
+    actors: Object.values(osMeta.metadata.cast),
+    genres: osMeta.metadata.genres,
+    goofs: osMeta.metadata.goofs,
     imdbID: osMeta.metadata.imdbid,
     osdbHash: osMeta.moviehash,
-    year: osMeta.metadata.year,
     subcount: osMeta.subcount,
-    type: osMeta.type,
-    goofs: osMeta.metadata.goofs,
-    trivia: osMeta.metadata.trivia,
     tagline: osMeta.metadata.tagline,
-    genres: osMeta.metadata.genres,
-    actors: Object.values(osMeta.metadata.cast),
+    title: osMeta.metadata.title.startsWith('Episode #') ? undefined : osMeta.metadata.title,
+    trivia: osMeta.metadata.trivia,
+    type: osMeta.type,
+    year: osMeta.metadata.year,
   };
 
-  // if we're missing values for genres or actors, attempt to hydrate them from imdbAPI instead of OpenSubtitles
-  if ([newMetadata.genres, newMetadata.actors].some(val => val === undefined || []) && newMetadata.imdbID) {
-    try {
-      const imdbData: any = await imdbAPI.get({ id: newMetadata.imdbID });
-      newMetadata.actors = imdbData.actors.split(', ');
-      newMetadata.genres = imdbData.genres.split(', ');
-    } catch (e) {
-      // ignore error, this shouldn't make the request fail
+  if (!isInformationCompleteEnough(newMetadata)) {
+    const imdbData: any = await imdbAPI.get({ id: newMetadata.imdbID });
+    newMetadata.actors = newMetadata.actors || imdbData.actors.split(', ');
+    newMetadata.genres = newMetadata.genres || imdbData.genres.split(', ');
+    newMetadata.title = newMetadata.title || imdbData.title;
+
+    if (!isInformationCompleteEnough(newMetadata)) {
+      await FailedLookups.updateOne({ osdbHash }, {}, { upsert: true, setDefaultsOnInsert: true });
+      return res.json(MESSAGES.notFound);
     }
   }
-    
+
+
   dbMeta = await MediaMetadata.create(newMetadata);
   return res.json(dbMeta);
 });

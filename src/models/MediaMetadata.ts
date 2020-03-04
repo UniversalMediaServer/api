@@ -63,12 +63,5 @@ const MediaMetadataSchema: Schema = new Schema({
   versionKey: false,
 });
 
-MediaMetadataSchema.pre<MediaMetadataInterface>('save', function(next) {
-  if (this.episodeTitle && this.episodeTitle.startsWith('Episode #')) {
-    this.episodeTitle = undefined;
-  }
-  next();
-});
-
 const MediaMetadata = mongoose.model<MediaMetadataInterface>('MediaMetadata', MediaMetadataSchema);
 export default MediaMetadata;
