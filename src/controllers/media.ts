@@ -1,31 +1,15 @@
-import FailedLookups from '../models/FailedLookups';
-import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
 import { Request, Response } from 'express';
 import * as asyncHandler from 'express-async-handler';
+
+import { ValidationError } from '../helpers/customErrors';
+import FailedLookups from '../models/FailedLookups';
+import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
 import osAPI from '../services/opensubtitles';
 import imdbAPI from '../services/imdb-api';
 
 const MESSAGES = {
   notFound: 'Metadata not found on OpenSubtitles',
   openSubsOffline: 'OpenSubtitles API seems offline, please try again later',
-};
-
-/**
- * Checks whether our information is complete enough to not be
- * added to the FailedLookups collection.
- *
- * @param mediaSoFar the incoming data to evaluate
- */
-const isInformationCompleteEnough = (mediaSoFar): boolean => {
-  if (
-    !mediaSoFar.metadata ||
-    !mediaSoFar.metadata.actors ||
-    !mediaSoFar.metadata.genres ||
-    !mediaSoFar.metadata.title
-  ) {
-    return false;
-  }
-  return true;
 };
 
 export const getByOsdbHash = asyncHandler(async(req: Request, res: Response) => {
@@ -70,21 +54,29 @@ export const getByOsdbHash = asyncHandler(async(req: Request, res: Response) => 
     year: osMeta.metadata.year,
   };
 
-  if (!isInformationCompleteEnough(newMetadata)) {
-    const imdbData: any = await imdbAPI.get({ id: newMetadata.imdbID });
-    newMetadata.actors = newMetadata.actors || imdbData.actors.split(', ');
-    newMetadata.genres = newMetadata.genres || imdbData.genres.split(', ');
-    newMetadata.title = newMetadata.title || imdbData.title;
-
-    if (!isInformationCompleteEnough(newMetadata)) {
-      await FailedLookups.updateOne({ osdbHash }, {}, { upsert: true, setDefaultsOnInsert: true });
-      return res.json(MESSAGES.notFound);
+  try {
+    dbMeta = await MediaMetadata.create(newMetadata);
+    return res.json(dbMeta);
+  } catch (e) {
+    if (e instanceof ValidationError) {
+      // continue for validation errors
+    } else {
+      throw e;
     }
   }
 
+  const imdbData: any = await imdbAPI.get({ id: newMetadata.imdbID });
+  newMetadata.actors = newMetadata.actors || imdbData.actors.split(', ');
+  newMetadata.genres = newMetadata.genres || imdbData.genres.split(', ');
+  newMetadata.title = newMetadata.title || imdbData.title;
 
-  dbMeta = await MediaMetadata.create(newMetadata);
-  return res.json(dbMeta);
+  try {
+    dbMeta = await MediaMetadata.create(newMetadata);
+    return res.json(dbMeta);
+  } catch (e) {
+    await FailedLookups.updateOne({ osdbHash }, {}, { upsert: true, setDefaultsOnInsert: true });
+    return res.json(MESSAGES.notFound);
+  }
 });
 
 export const getBySanitizedTitle = asyncHandler(async(req: Request, res: Response) => {
