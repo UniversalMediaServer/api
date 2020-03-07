@@ -1,7 +1,6 @@
+import { Context } from 'koa';
 import FailedLookups from '../models/FailedLookups';
 import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
-import { Request, Response } from 'express';
-import * as asyncHandler from 'express-async-handler';
 import osAPI from '../services/opensubtitles';
 import imdbAPI from '../services/imdb-api';
 
@@ -12,15 +11,15 @@ const MESSAGES = {
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
 
-export const getByOsdbHash = asyncHandler(async(req: Request, res: Response) => {
-  const { osdbhash: osdbHash, filebytesize } = req.params;
+export const getByOsdbHash = async(ctx: Context) => {
+  const { osdbhash: osdbHash, filebytesize } = ctx.params;
   let dbMeta: MediaMetadataInterface = await MediaMetadata.findOne({ osdbHash }).lean();
 
   if (dbMeta) {
-    return res.json(dbMeta);
+    return ctx.body = dbMeta;
   }
   if (await FailedLookups.findOne({ osdbHash }).lean()) {
-    return res.json(MESSAGES.notFound);
+    return ctx.body = MESSAGES.notFound;
   }
 
   const osQuery = {
@@ -35,14 +34,14 @@ export const getByOsdbHash = asyncHandler(async(req: Request, res: Response) => 
   } catch (err) {
     if (err.message === 'API seems offline') {
       err.message = MESSAGES.openSubsOffline;
-      res.status(404);
+      ctx.status = 404;
     }
     throw err;
   }
 
   if (!osMeta.metadata) {
     await FailedLookups.updateOne({ osdbHash }, {}, { upsert: true, setDefaultsOnInsert: true });
-    return res.json(MESSAGES.notFound);
+    return ctx.body = MESSAGES.notFound;
   }
 
   const newMetadata = {
@@ -71,11 +70,11 @@ export const getByOsdbHash = asyncHandler(async(req: Request, res: Response) => 
   }
     
   dbMeta = await MediaMetadata.create(newMetadata);
-  return res.json(dbMeta);
-});
+  return ctx.body = dbMeta;
+};
 
-export const getBySanitizedTitle = asyncHandler(async(req: Request, res: Response) => {
-  const { title, language = 'eng' } = req.body;
+export const getBySanitizedTitle = async(ctx: Context) => {
+  const { title, language = 'eng' } = ctx.request.body;
 
   if (!title) {
     throw new Error('title is required');
@@ -84,11 +83,11 @@ export const getBySanitizedTitle = asyncHandler(async(req: Request, res: Respons
   const dbMeta: MediaMetadataInterface = await MediaMetadata.findOne({ title, 'metadata.language': language }).lean();
 
   if (dbMeta) {
-    return res.json(dbMeta);
+    return ctx.body = dbMeta;
   }
 
   if (await FailedLookups.findOne({ title, language }).lean()) {
-    return res.json(MESSAGES.notFound);
+    return ctx.body = MESSAGES.notFound;
   }
 
   const { token } = await osAPI.login();
@@ -96,7 +95,7 @@ export const getBySanitizedTitle = asyncHandler(async(req: Request, res: Respons
 
   if (!data) {
     await FailedLookups.updateOne({ title, language }, {}, { upsert: true, setDefaultsOnInsert: true });
-    return res.json(MESSAGES.notFound);
+    return ctx.body = MESSAGES.notFound;
   }
 
   const newMetadata = {
@@ -110,5 +109,5 @@ export const getBySanitizedTitle = asyncHandler(async(req: Request, res: Respons
   };
 
   await MediaMetadata.create(newMetadata);
-  return res.json(newMetadata);
-});
+  return ctx.body = newMetadata;
+};

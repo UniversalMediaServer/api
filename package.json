@@ -117,9 +117,11 @@
   "dependencies": {
     "debug": "^4.1.1",
     "express": "^4.17.1",
-    "express-async-handler": "^1.1.4",
-    "helmet": "^3.21.3",
     "imdb-api": "^4.0.3",
+    "koa": "^2.11.0",
+    "koa-bodyparser": "^4.2.1",
+    "koa-helmet": "^5.2.0",
+    "koa-router": "^8.0.8",
     "mongoose": "^5.9.2",
     "opensubtitles-api": "^5.1.0",
     "pm2": "^4.2.3",

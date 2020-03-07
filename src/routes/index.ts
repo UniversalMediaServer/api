@@ -1,9 +1,9 @@
-import * as express from 'express';
-import { Request, Response } from 'express';
-const router = express.Router();
+import { Context } from 'koa';
+import * as Router from 'koa-router';
 
-router.get('/', function(req: Request, res: Response) {
-  return res.json({ status: 'OK' });
+const router = new Router();
+router.get('/', async(ctx: Context) => {
+  ctx.body = { status: 'OK' };
 });
 
 export default router;

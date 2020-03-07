@@ -1,13 +1,14 @@
-import * as express from 'express';
-import { Request, Response, NextFunction, Application } from 'express';
-import * as helmet from 'helmet';
+import * as Koa from 'koa';
+import { Context } from 'koa';
+import * as bodyParser from 'koa-bodyparser';
+import * as helmet from 'koa-helmet';
 import * as Debug from 'debug';
 const debug = Debug('universalmediaserver-api:server');
 
 import indexRouter from './routes/index';
 import mediaRouter  from './routes/media';
 
-const app: Application = express();
+const app = new Koa();
 
 import connect from './models/connection';
 
@@ -15,40 +16,30 @@ const db: string = process.env.MONGO_URL;
 const PORT: string = process.env.PORT || '3000';
 connect(db);
 
-app.use((req: Request, res: Response, next: NextFunction) => {
-  debug(`${req.method} ${req.url}`);
-  next();
-});
-
 app.use(helmet());
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
-app.use('/', indexRouter);
-app.use('/api/media', mediaRouter);
-
-// catch 404 and forward to error handler
-app.use((req: Request, res: Response, next: NextFunction) => {
-  const err: CustomError = new Error('Not found');
-  err.status = 404;
-  next(err);
-});
-
 // error handler
-app.use((err: CustomError, req: Request, res: Response) => {
-  // set locals, only providing error in development
-  const isDev = ['development', 'test'].includes(req.app.get('env'));
-  res.locals.message = err.message;
-  res.locals.error = isDev ? err : {};
-  res.status(err.status || 500);
-  if (isDev) {
-    console.error(err);
+app.use(async(ctx, next) => {
+  try {
+    await next();
+  } catch (err) {
+    ctx.status = err.status || 500;
+    ctx.body = err.message;
+    if (process.env.NODE_ENV !== 'production') {
+      console.error(err);
+    }
   }
-  res.send();
 });
 
-const server = app.listen(PORT, () => {
-  console.log(`API listening on ${PORT}`);
+app.use(async(ctx: Context, next) => {
+  debug(`${ctx.method} ${ctx.url}`);
+  await next();
 });
 
-export default server;
+app.use(bodyParser());
+app.use(mediaRouter.routes());
+app.use(indexRouter.routes());
+
+app.listen(PORT);
+console.log(`UMS API is up and running on port ${PORT}`);
+
+export default app;
