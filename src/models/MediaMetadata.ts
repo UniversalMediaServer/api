@@ -29,25 +29,17 @@ export interface MediaMetadataInterface extends Document {
 }
 
 const isRequiredFieldForTVEpisodesIncluded = (fieldToValidate: string): boolean => {
-  if (this.type === 'episode') {
-    if (fieldToValidate) {
-      return true;
-    } else {
-      throw new ValidationError(fieldToValidate + ' must not be empty for TV episodes');
-    }
+  if (this.type !== 'episode' || fieldToValidate) {
+    return true;
   }
-  return true;
+  throw new ValidationError(fieldToValidate + ' must not be empty for TV episodes');
 };
 
 const isRequiredFieldForMovieIncluded = (fieldToValidate: string): boolean => {
-  if (this.type === 'movie') {
-    if (fieldToValidate) {
-      return true;
-    } else {
-      throw new ValidationError(fieldToValidate + ' must not be empty for movies');
-    }
+  if (this.type !== 'movie' || fieldToValidate) {
+    return true;
   }
-  return true;
+  throw new ValidationError(fieldToValidate + ' must not be empty for TV movies');
 };
 
 const MediaMetadataSchema: Schema = new Schema({
