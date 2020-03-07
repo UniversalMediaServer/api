@@ -2,7 +2,7 @@ import { Context } from 'koa';
 import * as Router from 'koa-router';
 
 const router = new Router();
-router.get('/', async(ctx: Context) => {
+router.get('/', (ctx: Context) => {
   ctx.body = { status: 'OK' };
 });
 
