@@ -7,7 +7,19 @@ import got from 'got';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 const mongod = new MongoMemoryServer();
 
-const interstellarMetaData = { title: 'Interstellar', genres: ['Adventure', 'Drama', 'Sci-Fi'], osdbHash: 'f4245d9379d31e33' };
+const interstellarMetaData = {
+  directors: ['Christopher Nolan'],
+  genres: ['Adventure', 'Drama', 'Sci-Fi'],
+  imdbID: 'tt0816692',
+  osdbHash: 'f4245d9379d31e33',
+  title: 'Interstellar',
+  type: 'movie',
+  year: '2014',
+};
+const theSimpsonsMetaData = {
+  osdbHash: '8e245d9679d31e12',
+  title: 'The Simpsons Movie',
+};
 const appUrl = 'http://localhost:3000';
 
 describe('Media Metadata endpoints', () => {
@@ -30,26 +42,25 @@ describe('Media Metadata endpoints', () => {
       const res: any = await got(`${appUrl}/api/media/${interstellarMetaData.osdbHash}/1234`, { responseType: 'json' });
       expect(res.statusCode).toBe(200);
       expect(res.body).toHaveProperty('_id');
-      expect(res.body).toHaveProperty('genres', ['Adventure', 'Drama', 'Sci-Fi']);
+      expect(res.body).toHaveProperty('genres', interstellarMetaData.genres);
       expect(res.body).toHaveProperty('osdbHash', interstellarMetaData.osdbHash);
-      expect(res.body).toHaveProperty('title', 'Interstellar');
+      expect(res.body).toHaveProperty('title', interstellarMetaData.title);
     });
   
     it('should return a valid response for a new osdbhash, then store it', async() => {
       // using example file from https://trac.opensubtitles.org/projects/opensubtitles/wiki/HashSourceCodes
-      const res: any = await got(`${appUrl}/api/media/8e245d9679d31e12/12909756`, { responseType: 'json' });
+      const res: any = await got(`${appUrl}/api/media/${theSimpsonsMetaData.osdbHash}/12909756`, { responseType: 'json' });
       expect(res.statusCode).toBe(200);
       expect(res.body).toHaveProperty('_id');
       expect(res.body).toHaveProperty('year', '2007');
-      expect(res.body).toHaveProperty('osdbHash', '8e245d9679d31e12');
+      expect(res.body).toHaveProperty('osdbHash', theSimpsonsMetaData.osdbHash);
       expect(res.body).toHaveProperty('title', 'The Simpsons Movie');
       expect(res.body).toHaveProperty('imdbID', 'tt0462538');
-      expect(res.body).toHaveProperty('subcount', '7');
       expect(res.body).toHaveProperty('type', 'movie');
       expect(res.body).toHaveProperty('goofs');
       expect(res.body).toHaveProperty('trivia');
       expect(res.body).toHaveProperty('tagline');
-      // from imdb API
+      // from IMDb API
       expect(res.body).toHaveProperty('genres', ['Animation', 'Adventure', 'Comedy']);
       expect(res.body).toHaveProperty('actors', ['Dan Castellaneta', 'Julie Kavner', 'Nancy Cartwright', 'Yeardley Smith']);
   
@@ -58,10 +69,9 @@ describe('Media Metadata endpoints', () => {
   
       expect(doc).toHaveProperty('_id');
       expect(doc).toHaveProperty('year', '2007');
-      expect(doc).toHaveProperty('osdbHash', '8e245d9679d31e12');
+      expect(doc).toHaveProperty('osdbHash', theSimpsonsMetaData.osdbHash);
       expect(doc).toHaveProperty('title', 'The Simpsons Movie');
       expect(doc).toHaveProperty('imdbID', 'tt0462538');
-      expect(doc).toHaveProperty('subcount', '7');
       expect(doc).toHaveProperty('type', 'movie');
       expect(doc).toHaveProperty('goofs');
       expect(doc).toHaveProperty('trivia');

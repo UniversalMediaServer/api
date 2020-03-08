@@ -40,13 +40,18 @@ export const getByOsdbHash = asyncHandler(async(req: Request, res: Response) => 
     throw err;
   }
 
+  // Fail early if OpenSubtitles reports that it did not recognize the hash
+  if (osMeta.added === false) {
+    await FailedLookups.updateOne({ osdbHash }, {}, { upsert: true, setDefaultsOnInsert: true });
+    return res.json(MESSAGES.notFound);
+  }
+
   const newMetadata = {
     actors: Object.values(osMeta.metadata.cast),
     genres: osMeta.metadata.genres,
     goofs: osMeta.metadata.goofs,
     imdbID: osMeta.metadata.imdbid,
     osdbHash: osMeta.moviehash,
-    subcount: osMeta.subcount,
     tagline: osMeta.metadata.tagline,
     title: osMeta.metadata.title.startsWith('Episode #') ? undefined : osMeta.metadata.title,
     trivia: osMeta.metadata.trivia,

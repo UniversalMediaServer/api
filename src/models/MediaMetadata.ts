@@ -7,21 +7,20 @@ const DOCUMENT_EXPIRY_IN_SECONDS = 2592000; // 30 days
 mongoose.set('useCreateIndex', true);
 
 export interface MediaMetadataInterface extends Document {
-  subcount?: string;
-  title?: string;
-  director?: string;
-  imdbID?: string;
-  osdbHash: string;
-  genres?: Array<string>;
-  actors?: Array<string>;
-  episodeTitle?: string;
-  seasonNumber?: string;
+  actors: Array<string>;
+  directors: Array<string>;
   episodeNumber?: string;
-  year?: string;
-  type?: string;
+  episodeTitle?: string;
+  genres: Array<string>;
   goofs?: string;
-  trivia?: string;
+  imdbID: string;
+  osdbHash: string;
+  seasonNumber?: string;
   tagline?: string;
+  title: string;
+  trivia?: string;
+  type: string;
+  year: string;
 
   // Added automatically:
   createdAt: string;
@@ -35,13 +34,6 @@ const isRequiredFieldForTVEpisodesIncluded = (fieldToValidate: string): boolean 
   throw new ValidationError(fieldToValidate + ' must not be empty for TV episodes');
 };
 
-const isRequiredFieldForMovieIncluded = (fieldToValidate: string): boolean => {
-  if (this.type !== 'movie' || fieldToValidate) {
-    return true;
-  }
-  throw new ValidationError(fieldToValidate + ' must not be empty for TV movies');
-};
-
 const MediaMetadataSchema: Schema = new Schema({
   actors: { type: Array, required: true },
   createdAt: {
@@ -49,7 +41,7 @@ const MediaMetadataSchema: Schema = new Schema({
     expires: DOCUMENT_EXPIRY_IN_SECONDS,
     default: Date.now,
   },
-  director: { type: String, required: true },
+  directors: { type: Array, required: true },
   episodeNumber: {
     type: String,
     validate: { validator: isRequiredFieldForTVEpisodesIncluded },
@@ -62,7 +54,6 @@ const MediaMetadataSchema: Schema = new Schema({
   goofs: { type: String },
   imdbID: { type: String, required: true },
   title: { type: String, required: true },
-  subcount: { type: String },
   osdbHash: {
     type: String,
     index: true,
@@ -82,14 +73,18 @@ const MediaMetadataSchema: Schema = new Schema({
   tagline: { type: String },
   trivia: { type: String },
   type: { type: String, required: true },
-  year: {
-    type: String,
-    validate: { validator: isRequiredFieldForMovieIncluded },
-  },
+  year: { type: String, required: true },
 }, {
   collection: 'media_metadata',
   timestamps: true,
   versionKey: false,
+});
+
+MediaMetadataSchema.pre<MediaMetadataInterface>('save', function(next) {
+  if (this.episodeTitle && this.episodeTitle.startsWith('Episode #')) {
+    this.episodeTitle = undefined;
+  }
+  next();
 });
 
 const MediaMetadata = mongoose.model<MediaMetadataInterface>('MediaMetadata', MediaMetadataSchema);

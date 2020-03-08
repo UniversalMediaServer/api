@@ -1,7 +1,16 @@
 import * as  mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import MediaMetadataModel from '../../src/models/MediaMetadata';
-const mediaMetaData = { title: 'Interstellar', genres: ['Adventure', 'Drama', 'Sci-Fi'], osdbHash: '8e245d9679d31e12', episodeTitle: 'Episode #51' };
+const mediaMetaData = {
+  directors: ['Christopher Nolan'],
+  episodeTitle: 'Episode #51',
+  genres: ['Adventure', 'Drama', 'Sci-Fi'],
+  imdbID: 'tt0816692',
+  osdbHash: '8e245d9679d31e12',
+  title: 'Interstellar',
+  type: 'episode',
+  year: '2014',
+};
 
 const mongod = new MongoMemoryServer();
 
