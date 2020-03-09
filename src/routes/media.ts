@@ -1,14 +1,14 @@
-import * as express from 'express';
-import { Request, Response, NextFunction } from 'express';
+import * as Router from 'koa-router';
 import * as MediaController from '../controllers/media';
-const router = express.Router();
 
-router.get('/:osdbhash/:filebytesize', function(req: Request, res: Response, next: NextFunction) {
-  MediaController.getByOsdbHash(req, res, next);
+const router = new Router({ prefix: '/api/media' });
+
+router.get('/:osdbhash/:filebytesize', async(ctx) => {
+  await MediaController.getByOsdbHash(ctx);
 });
 
-router.post('/title', function(req: Request, res: Response, next: NextFunction) {
-  MediaController.getBySanitizedTitle(req, res, next);
+router.post('/title', async(ctx) => {
+  await MediaController.getBySanitizedTitle(ctx);
 });
 
 export default router;

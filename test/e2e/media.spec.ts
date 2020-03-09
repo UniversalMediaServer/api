@@ -80,7 +80,7 @@ describe('Media Metadata endpoints', () => {
   
     it('should create a failed lookup document when Open Subtitles cannot find metadata', async() => {
       await FailedLookupsModel.deleteMany({});
-      const response: any = await got(`${appUrl}/api/media/f4245d9379d31e30/1234`, { responseType: 'json' });
+      const response: any = await got(`${appUrl}/api/media/f4245d9379d31e30/1234`);
       expect(response.body).toBe('Metadata not found on OpenSubtitles');
       const doc = await FailedLookupsModel.findOne({ osdbHash: 'f4245d9379d31e30' });
       expect(doc).toHaveProperty('_id');
