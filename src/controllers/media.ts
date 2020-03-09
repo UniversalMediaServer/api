@@ -1,4 +1,5 @@
 import { Context } from 'koa';
+import * as _ from 'lodash';
 
 import { ValidationError } from '../helpers/customErrors';
 import FailedLookups from '../models/FailedLookups';
@@ -42,19 +43,20 @@ export const getByOsdbHash = async(ctx: Context) => {
   }
 
   // Fail early if OpenSubtitles reports that it did not recognize the hash
-  if (osMeta.added === false) {
+  if (!osMeta.metadata) {
     await FailedLookups.updateOne({ osdbHash }, {}, { upsert: true, setDefaultsOnInsert: true });
     return ctx.body = MESSAGES.notFound;
   }
 
+  // console.log(1,osMeta.metadata);
   const newMetadata = {
-    actors: Object.values(osMeta.metadata.cast),
-    genres: osMeta.metadata.genres,
+    actors: _.isEmpty(Object.values(osMeta.metadata.cast)) ? null : Object.values(osMeta.metadata.cast),
+    genres: _.isEmpty(osMeta.metadata.genres) ? null : osMeta.metadata.genres,
     goofs: osMeta.metadata.goofs,
     imdbID: osMeta.metadata.imdbid,
     osdbHash: osMeta.moviehash,
     tagline: osMeta.metadata.tagline,
-    title: osMeta.metadata.title.startsWith('Episode #') ? undefined : osMeta.metadata.title,
+    title: osMeta.metadata.title,
     trivia: osMeta.metadata.trivia,
     type: osMeta.type,
     year: osMeta.metadata.year,
@@ -62,9 +64,9 @@ export const getByOsdbHash = async(ctx: Context) => {
 
   try {
     dbMeta = await MediaMetadata.create(newMetadata);
-    return res.json(dbMeta);
+    return ctx.body = dbMeta;
   } catch (e) {
-    if (e instanceof ValidationError) {
+    if (e.name === 'ValidationError') {
       // continue for validation errors
     } else {
       throw e;
@@ -83,7 +85,7 @@ export const getByOsdbHash = async(ctx: Context) => {
     await FailedLookups.updateOne({ osdbHash }, {}, { upsert: true, setDefaultsOnInsert: true });
     return ctx.body = MESSAGES.notFound;
   }
-});
+};
 
 export const getBySanitizedTitle = async(ctx: Context) => {
   const { title, language = 'eng' } = ctx.request.body;
@@ -112,12 +114,12 @@ export const getBySanitizedTitle = async(ctx: Context) => {
 
   const newMetadata = {
     episodeNumber: data[0].SeriesEpisode,
-    metadata: { language },
     imdbID: 'tt' + data[0].IDMovieImdb, // OpenSubtitles returns the "tt" for hash searches but not query searches
-    year: data[0].MovieYear,
+    metadata: { language },
     seasonNumber: data[0].SeriesSeason,
     title: data[0].MovieName,
     type: data[0].MovieKind,
+    year: data[0].MovieYear,
   };
 
   await MediaMetadata.create(newMetadata);

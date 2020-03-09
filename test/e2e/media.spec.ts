@@ -62,7 +62,7 @@ describe('Media Metadata endpoints', () => {
       expect(res.body).toHaveProperty('tagline');
       // from IMDb API
       expect(res.body).toHaveProperty('genres', ['Animation', 'Adventure', 'Comedy']);
-      expect(res.body).toHaveProperty('actors', ['Dan Castellaneta', 'Julie Kavner', 'Nancy Cartwright', 'Yeardley Smith']);
+      expect(res.body).toHaveProperty('actors', ['Dan Castellaneta', 'Julie Kavner', 'Nancy Cartwright', 'Yeardley Smith', 'Hank Azaria', 'Harry Shearer', 'Pamela Hayden', 'Tress MacNeille', 'Albert Brooks', 'Karl Wiedergott', 'Marcia Wallace', 'Russi Taylor', 'Maggie Roswell', 'Phil Rosenthal', 'Billie Joe Armstrong']);
   
       // should save to db
       const doc = await MediaMetadataModel.findOne({ osdbHash: res.body.osdbHash });
