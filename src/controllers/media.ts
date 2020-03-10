@@ -1,7 +1,6 @@
 import { Context } from 'koa';
 import * as _ from 'lodash';
 
-import { ValidationError } from '../helpers/customErrors';
 import FailedLookups from '../models/FailedLookups';
 import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
 import osAPI from '../services/opensubtitles';
@@ -48,7 +47,6 @@ export const getByOsdbHash = async(ctx: Context) => {
     return ctx.body = MESSAGES.notFound;
   }
 
-  // console.log(1,osMeta.metadata);
   const newMetadata = {
     actors: _.isEmpty(Object.values(osMeta.metadata.cast)) ? null : Object.values(osMeta.metadata.cast),
     genres: _.isEmpty(osMeta.metadata.genres) ? null : osMeta.metadata.genres,
