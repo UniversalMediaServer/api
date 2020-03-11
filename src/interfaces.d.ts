@@ -5,19 +5,19 @@ interface CustomError extends Error {
 interface OpensubtitlesIdentifyResponse {
   added: boolean;
   metadata: {
-    aka: [string];
-    awards: [string];
+    aka: string[];
+    awards: string[];
     cast: {
       [key: string]: string;
     };
-    country: [string];
+    country: string[];
     cover: string;
     directors: object;
     duration: string;
-    genres: [string];
+    genres: string[];
     goofs: string;
     imdbid: string;
-    language: [string];
+    language: string[];
     rating: string;
     tagline: string;
     title: string;

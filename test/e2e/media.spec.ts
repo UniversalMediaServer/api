@@ -91,18 +91,8 @@ describe('Media Metadata endpoints', () => {
   describe('get by title', () => {
     it('should search by title and store it', async() => {
       const body = JSON.stringify({ title: 'Homeland S02E05' });
-      const response: any = await got.post(`${appUrl}/api/media/title`, { responseType: 'json', headers: { 'content-type': 'application/json' }, body });
-      expect(response.body).toEqual({
-        episodeNumber: '5',
-        imdbID: 'tt2325080',
-        metadata: { language: 'eng' },
-        seasonNumber: '2',
-        title: '"Homeland" Q&A',
-        type: 'episode',
-        year: '2012',
-      });
+      await got.post(`${appUrl}/api/media/title`, { responseType: 'json', headers: { 'content-type': 'application/json' }, body });
 
-      // should save to db
       const doc = await MediaMetadataModel.findOne({ title: '"Homeland" Q&A' });
       expect(doc).toHaveProperty('_id');
       expect(doc).toHaveProperty('episodeNumber', '5');

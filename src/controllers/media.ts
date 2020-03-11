@@ -1,3 +1,4 @@
+import { Movie } from 'imdb-api';
 import { Context } from 'koa';
 import * as _ from 'lodash';
 
@@ -13,7 +14,7 @@ const MESSAGES = {
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
 
-export const getByOsdbHash = async(ctx: Context) => {
+export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface | string> => {
   const { osdbhash: osdbHash, filebytesize } = ctx.params;
   let dbMeta: MediaMetadataInterface = await MediaMetadata.findOne({ osdbHash }).lean();
 
@@ -71,7 +72,7 @@ export const getByOsdbHash = async(ctx: Context) => {
     }
   }
 
-  const imdbData: any = await imdbAPI.get({ id: newMetadata.imdbID });
+  const imdbData: Movie = await imdbAPI.get({ id: newMetadata.imdbID });
   newMetadata.actors = newMetadata.actors || imdbData.actors.split(', ');
   newMetadata.genres = newMetadata.genres || imdbData.genres.split(', ');
   newMetadata.title = newMetadata.title || imdbData.title;
@@ -85,14 +86,14 @@ export const getByOsdbHash = async(ctx: Context) => {
   }
 };
 
-export const getBySanitizedTitle = async(ctx: Context) => {
+export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInterface | string> => {
   const { title, language = 'eng' } = ctx.request.body;
 
   if (!title) {
     throw new Error('title is required');
   }
 
-  const dbMeta: MediaMetadataInterface = await MediaMetadata.findOne({ title, 'metadata.language': language }).lean();
+  let dbMeta: MediaMetadataInterface = await MediaMetadata.findOne({ title, 'metadata.language': language }).lean();
 
   if (dbMeta) {
     return ctx.body = dbMeta;
@@ -120,6 +121,11 @@ export const getBySanitizedTitle = async(ctx: Context) => {
     year: data[0].MovieYear,
   };
 
-  await MediaMetadata.create(newMetadata);
-  return ctx.body = newMetadata;
+  try {
+    dbMeta = await MediaMetadata.create(newMetadata);
+    return ctx.body = dbMeta;
+  } catch (e) {
+    await FailedLookups.updateOne({ title, language }, {}, { upsert: true, setDefaultsOnInsert: true });
+    return ctx.body = MESSAGES.notFound;
+  }
 };
