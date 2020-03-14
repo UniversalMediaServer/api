@@ -39,6 +39,7 @@
       "sourceType": "module"
     },
     "rules": {
+      "@typescript-eslint/ban-ts-ignore": "off",
       "array-bracket-spacing": "error",
       "block-spacing": "error",
       "comma-dangle": [
