@@ -117,6 +117,7 @@
   },
   "dependencies": {
     "debug": "^4.1.1",
+    "episode-parser": "^1.5.0",
     "imdb-api": "^4.0.3",
     "koa": "^2.11.0",
     "koa-bodyparser": "^4.2.1",
