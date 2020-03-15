@@ -1,6 +1,7 @@
 import { SearchRequest } from 'imdb-api';
 import { Context } from 'koa';
 import * as _ from 'lodash';
+import * as episodeParser from 'episode-parser';
 
 import FailedLookups from '../models/FailedLookups';
 import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
@@ -26,10 +27,24 @@ const MESSAGES = {
  */
 const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Promise<MediaMetadataInterface> => {
   if (!imdbId) {
-    const searchResults = await imdbAPI.search(searchRequest);
-    // TODO Choose the most appropriate result instead of just the first
-    const searchResult = _.first(searchResults.results);
-    imdbId = searchResult.imdbid;
+    let searchResults;
+    try {
+      searchResults = await imdbAPI.search(searchRequest);
+      // TODO Choose the most appropriate result instead of just the first
+      const searchResult = _.first(searchResults.results);
+      // @ts-ignore
+      imdbId = searchResult.imdbid;
+    } catch (e) {
+      // no movie found, let's try get a TV episode
+      if (e.message.includes('Movie not found')) {
+        const parsedFilename = episodeParser(searchRequest.name);
+        const tvSeriesInfo = await imdbAPI.get({ name: parsedFilename.show });
+        // @ts-ignore
+        const allEpisodes = await tvSeriesInfo.episodes();
+        const currentEpisode = _.find(allEpisodes, { season: parsedFilename.season, episode: parsedFilename.episode });
+        imdbId = currentEpisode.imdbid;
+      }
+    }
   }
   const newMetadata: any = {};
   newMetadata.id = imdbId;
@@ -82,7 +97,6 @@ export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface
 
   // Fail early if OpenSubtitles reports that it did not recognize the hash
   if (!osMeta.metadata) {
-    console.log(1);
     await FailedLookups.updateOne({ osdbHash }, {}, { upsert: true, setDefaultsOnInsert: true });
     return ctx.body = MESSAGES.notFound;
   }
@@ -104,7 +118,6 @@ export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface
     dbMeta = await MediaMetadata.create(newMetadata);
     return ctx.body = dbMeta;
   } catch (e) {
-    console.log(2, e, newMetadata);
     if (e.name === 'ValidationError') {
       // continue for validation errors
     } else {
@@ -120,7 +133,6 @@ export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface
     dbMeta = await MediaMetadata.create(newMetadata);
     return ctx.body = dbMeta;
   } catch (e) {
-    console.log(3, e);
     await FailedLookups.updateOne({ osdbHash }, {}, { upsert: true, setDefaultsOnInsert: true });
     return ctx.body = MESSAGES.notFound;
   }
@@ -133,13 +145,13 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
     throw new Error('title is required');
   }
 
-  let dbMeta: MediaMetadataInterface = await MediaMetadata.findOne({ title, 'metadata.language': language }).lean();
+  let dbMeta: MediaMetadataInterface = await MediaMetadata.findOne({ title }).lean();
 
   if (dbMeta) {
     return ctx.body = dbMeta;
   }
 
-  if (await FailedLookups.findOne({ title, language }).lean()) {
+  if (await FailedLookups.findOne({ title }).lean()) {
     return ctx.body = MESSAGES.notFound;
   }
 
@@ -147,10 +159,12 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
   const imdbData: MediaMetadataInterface = await getFromIMDbAPI(null, searchRequest);
 
   try {
+    imdbData.title = title;
+    imdbData.imdbID = imdbData.id;
     dbMeta = await MediaMetadata.create(imdbData);
     return ctx.body = dbMeta;
   } catch (e) {
-    await FailedLookups.updateOne({ title, language }, {}, { upsert: true, setDefaultsOnInsert: true });
+    await FailedLookups.updateOne({ title }, {}, { upsert: true, setDefaultsOnInsert: true });
     return ctx.body = MESSAGES.notFound;
   }
 

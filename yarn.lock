@@ -1993,6 +1993,11 @@ enquirer@^2.3.2:
   dependencies:
     ansi-colors "^3.2.1"
 
+episode-parser@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/episode-parser/-/episode-parser-1.5.0.tgz#62865be6b10155514db5e83e915ae2a85886fea9"
+  integrity sha512-IyFRFEyMqg7Jp76YlzUoonnWdLYCrxMjjlVAC6DSfozFlg5x4/pXyvpL+VP1ovj5qJDMWb30zFLHL2V3HYfviw==
+
 error-inject@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/error-inject/-/error-inject-1.0.0.tgz#e2b3d91b54aed672f309d950d154850fa11d4f37"
