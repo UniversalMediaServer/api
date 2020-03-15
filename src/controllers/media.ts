@@ -1,4 +1,4 @@
-import { SearchRequest, search } from 'imdb-api';
+import { SearchRequest } from 'imdb-api';
 import { Context } from 'koa';
 import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
