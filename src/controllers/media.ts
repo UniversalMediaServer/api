@@ -27,27 +27,21 @@ const MESSAGES = {
  */
 const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Promise<MediaMetadataInterface> => {
   if (!imdbId) {
-    let searchResults;
-    try {
-      searchResults = await imdbAPI.search(searchRequest);
-      // TODO Choose the most appropriate result instead of just the first
-      const searchResult = _.first(searchResults.results);
+    const parsedFilename = episodeParser(searchRequest.name);
+    if (parsedFilename.show && parsedFilename.season && parsedFilename.episode) {
+      const tvSeriesInfo = await imdbAPI.get({ name: parsedFilename.show });
       // @ts-ignore
+      const allEpisodes = await tvSeriesInfo.episodes();
+      const currentEpisode = _.find(allEpisodes, { season: parsedFilename.season, episode: parsedFilename.episode });
+      imdbId = currentEpisode.imdbid;
+    } else {
+      const searchResults = await imdbAPI.search(searchRequest);
+      // TODO Choose the most appropriate result instead of just the first
+      const searchResult: any = _.first(searchResults.results);
       imdbId = searchResult.imdbid;
-    } catch (e) {
-      // no movie found, let's try get a TV episode
-      if (e.message.includes('Movie not found')) {
-        const parsedFilename = episodeParser(searchRequest.name);
-        const tvSeriesInfo = await imdbAPI.get({ name: parsedFilename.show });
-        // @ts-ignore
-        const allEpisodes = await tvSeriesInfo.episodes();
-        const currentEpisode = _.find(allEpisodes, { season: parsedFilename.season, episode: parsedFilename.episode });
-        imdbId = currentEpisode.imdbid;
-      }
     }
   }
-  const newMetadata: any = {};
-  newMetadata.id = imdbId;
+  const newMetadata: any = { id: imdbId };
 
   const imdbData = await imdbAPI.get({ id: imdbId });
 
