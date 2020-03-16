@@ -28,7 +28,8 @@ const MESSAGES = {
 const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Promise<MediaMetadataInterface> => {
   if (!imdbId) {
     const parsedFilename = episodeParser(searchRequest.name);
-    if (parsedFilename.show && parsedFilename.season && parsedFilename.episode) {
+    const isTVEpisode = parsedFilename.show && parsedFilename.season && parsedFilename.episode;
+    if (isTVEpisode) {
       const tvSeriesInfo = await imdbAPI.get({ name: parsedFilename.show });
       // @ts-ignore
       const allEpisodes = await tvSeriesInfo.episodes();
