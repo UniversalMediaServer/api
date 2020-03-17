@@ -14,7 +14,7 @@ export interface MediaMetadataInterface extends Document {
   genres: Array<string>;
   goofs?: string;
   imdbID: string;
-  osdbHash: string;
+  osdbHash?: string;
   seasonNumber?: string;
   tagline?: string;
   title: string;
@@ -27,11 +27,8 @@ export interface MediaMetadataInterface extends Document {
   updatedAt: string;
 }
 
-const isRequiredFieldForTVEpisodesIncluded = (fieldToValidate: string): boolean => {
-  if (this.type !== 'episode' || fieldToValidate) {
-    return true;
-  }
-  throw new ValidationError(fieldToValidate + ' must not be empty for TV episodes');
+const isTypeEpisode = function(): boolean {
+  return this.type === 'episode';
 };
 
 const MediaMetadataSchema: Schema = new Schema({
@@ -43,20 +40,20 @@ const MediaMetadataSchema: Schema = new Schema({
   },
   directors: { type: Array, required: true },
   episodeNumber: {
+    required: isTypeEpisode,
     type: String,
-    validate: { validator: isRequiredFieldForTVEpisodesIncluded },
   },
   episodeTitle: {
+    required: isTypeEpisode,
     type: String,
-    validate: { validator: isRequiredFieldForTVEpisodesIncluded },
   },
   genres: { type: Array, required: true },
   goofs: { type: String },
   imdbID: { type: String, required: true },
   title: { type: String, required: true },
   osdbHash: {
-    type: String,
     index: true,
+    type: String,
     validate: {
       validator: (hash: string): boolean => {
         if (hash.length !== 16) {
@@ -67,8 +64,8 @@ const MediaMetadataSchema: Schema = new Schema({
     },
   },
   seasonNumber: {
+    required: isTypeEpisode,
     type: String,
-    validate: { validator: isRequiredFieldForTVEpisodesIncluded },
   },
   tagline: { type: String },
   trivia: { type: String },

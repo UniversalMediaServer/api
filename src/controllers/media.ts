@@ -97,7 +97,7 @@ export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface
   }
 
   let newMetadata = {
-    actors: _.isEmpty(Object.values(osMeta.metadata.cast)) ? null : Object.values(osMeta.metadata.cast),
+    actors: _.isEmpty(_.values(osMeta.metadata.cast)) ? null : _.values(osMeta.metadata.cast),
     genres: _.isEmpty(osMeta.metadata.genres) ? null : osMeta.metadata.genres,
     goofs: osMeta.metadata.goofs,
     imdbID: osMeta.metadata.imdbid,
@@ -114,7 +114,12 @@ export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface
     return ctx.body = dbMeta;
   } catch (e) {
     if (e.name === 'ValidationError') {
-      // continue for validation errors
+      /*
+       * The database has given us a ValidationError which means that
+       * OpenSubtitles hasn't given us enough information to satisfy
+       * our schema constraints. Instead of failing here, we continue
+       * to attempt to supplement the information using OMDb.
+       */
     } else {
       throw e;
     }

@@ -15,19 +15,24 @@ describe('Failed Lookups Model', () => {
     await mongoose.disconnect();
   });
 
-  it('should require osdb hash', async() => {
+  it('should require osdb hash or title', async() => {
+    let err: Error;
     try {
-      await FailedLookupsModel.create();
+      const thing = await FailedLookupsModel.create({});
+      console.log(33, thing);
     } catch (e) {
-      expect(e.message).toBe('FailedLookups validation failed: osdbHash: Path `osdbHash` is required.');
+      err = e;
     }
+    expect(err.message).toBe('FailedLookups validation failed: title: Path `title` is required., osdbHash: Path `osdbHash` is required.');
   });
 
   it('should validate for a valid osdb hash', async() => {
+    let err: Error;
     try {
       await FailedLookupsModel.create({ osdbHash: 'a3e8hm1' });
     } catch (e) {
-      expect(e.message).toBe('FailedLookups validation failed: osdbHash: Invalid osdb hash length.');
+      err = e;
     }
+    expect(err.message).toBe('FailedLookups validation failed: osdbHash: Invalid osdb hash length.');
   });
 });

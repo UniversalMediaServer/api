@@ -6,9 +6,8 @@ const DOCUMENT_EXPIRY_IN_SECONDS = 2592000; // 30 days
 mongoose.set('useCreateIndex', true);
 
 export interface FailedLookupsInterface extends Document {
-  osdbHash: string;
-  title: string;
-  language: string;
+  osdbHash?: string;
+  title?: string;
 
   // Added automatically:
   createdAt: string;
@@ -17,8 +16,11 @@ export interface FailedLookupsInterface extends Document {
 
 const FailedLookupsSchema: Schema = new Schema({
   osdbHash: {
-    type: String,
     index: true,
+    required: function(): boolean {
+      return !this.title;
+    },
+    type: String,
     validate: {
       validator: function(v: string): boolean {
         return v.length === 16;
@@ -27,17 +29,16 @@ const FailedLookupsSchema: Schema = new Schema({
     },
   },
   title: {
-    type: String,
     index: true,
-  },
-  language: {
+    required: function(): boolean {
+      return !this.osdbHash;
+    },
     type: String,
-    index: true,
   },
   createdAt: {
-    type: Date,
+    default: Date.now,
     expires: DOCUMENT_EXPIRY_IN_SECONDS,
-    default: Date.now // eslint-disable-line
+    type: Date,
   },
 }, {
   collection: 'failed_lookups',
