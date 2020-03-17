@@ -19,7 +19,6 @@ describe('Failed Lookups Model', () => {
     let err: Error;
     try {
       const thing = await FailedLookupsModel.create({});
-      console.log(33, thing);
     } catch (e) {
       err = e;
     }
