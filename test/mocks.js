@@ -1,3 +1,4 @@
+/* eslint-disable */ 
 const nock = require('nock');
 
 nock('https://www.omdbapi.com:443', { 'encodedQueryParams': true })
@@ -5,3 +6,475 @@ nock('https://www.omdbapi.com:443', { 'encodedQueryParams': true })
   .get('/')
   .query({ 'i': 'tt0462538', 'plot': 'full', 'r': 'json' })
   .reply(200, { 'Title': 'The Simpsons Movie', 'Year': '2007', 'Rated': 'PG-13', 'Released': '27 Jul 2007', 'Runtime': '87 min', 'Genre': 'Animation, Adventure, Comedy', 'Director': 'David Silverman', 'Writer': 'James L. Brooks (screenplay), Matt Groening (screenplay), Al Jean (screenplay), Ian Maxtone-Graham (screenplay), George Meyer (screenplay), David Mirkin (screenplay), Mike Reiss (screenplay), Mike Scully (screenplay), Matt Selman (screenplay), John Swartzwelder (screenplay), Jon Vitti (screenplay), Joel H. Cohen (consultant writer), John Frink (consultant writer), Tim Long (consultant writer), Michael Price (consultant writer)', 'Actors': 'Dan Castellaneta, Julie Kavner, Nancy Cartwright, Yeardley Smith', 'Plot': 'Homer adopts a pig who\'s run away from Krusty Burger after Krusty tried to have him slaughtered, naming the pig \'Spider Pig.\' At the same time, the lake is protected after the audience sink the barge Green Day are on with garbage after they mention the environment. Meanwhile, Spider Pig\'s waste has filled up a silo in just 2 days, apparently with Homer\'s help. Homer can\'t get to the dump quickly so dumps the silo in the lake, polluting it. Russ Cargill, the villainous boss of the EPA, gives Arnold Schwarzenegger 5 options, forcing him to choose 4 (which is, unfortunately, to destroy Springfield) and putting a dome over Springfield to prevent evacuation. Homer, however, has escaped, along with his family. Can he stop the evil Cargill from annihilating his home town, and his family, who have been forced to return to Springfield?', 'Language': 'English', 'Country': 'USA', 'Awards': 'Nominated for 1 Golden Globe. Another 5 wins & 33 nominations.', 'Poster': 'https://m.media-amazon.com/images/M/MV5BMTgxMDczMTA5N15BMl5BanBnXkFtZTcwMzk1MzMzMw@@._V1_SX300.jpg', 'Ratings': [{ 'Source': 'Internet Movie Database', 'Value': '7.3/10' }, { 'Source': 'Rotten Tomatoes', 'Value': '88%' }, { 'Source': 'Metacritic', 'Value': '80/100' }], 'Metascore': '80', 'imdbRating': '7.3', 'imdbVotes': '298,859', 'imdbID': 'tt0462538', 'Type': 'movie', 'DVD': '18 Dec 2007', 'BoxOffice': '$183,100,000', 'Production': '20th Century Fox', 'Website': 'N/A', 'Response': 'True' });
+
+nock('https://www.omdbapi.com:443', {"encodedQueryParams":true})
+  .persist()
+  .get('/')
+  .query({"page":"1","r":"json","s":"Homeland%20S02E05"})
+  .reply(200, {"Response":"False","Error":"Movie not found!"}, [
+  'Date',
+  'Sat, 14 Mar 2020 22:28:32 GMT',
+  'Content-Type',
+  'application/json; charset=utf-8',
+  'Content-Length',
+  '47',
+  'Connection',
+  'close',
+  'Set-Cookie',
+  '__cfduid=df13d99716df1d0e0a28fba72ad71b5a91584224912; expires=Mon, 13-Apr-20 22:28:32 GMT; path=/; domain=.omdbapi.com; HttpOnly; SameSite=Lax',
+  'Cache-Control',
+  'public, max-age=86400',
+  'Expires',
+  'Sat, 14 Mar 2020 22:16:26 GMT',
+  'Last-Modified',
+  'Sat, 14 Mar 2020 21:16:26 GMT',
+  'Vary',
+  '*',
+  'X-AspNet-Version',
+  '4.0.30319',
+  'X-Powered-By',
+  'ASP.NET',
+  'Access-Control-Allow-Origin',
+  '*',
+  'CF-Cache-Status',
+  'HIT',
+  'Age',
+  '4326',
+  'Accept-Ranges',
+  'bytes',
+  'Expect-CT',
+  'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+  'Server',
+  'cloudflare',
+  'CF-RAY',
+  '57416da40c7efd3a-SYD'
+]);
+
+nock('https://www.omdbapi.com:443', {"encodedQueryParams":true})
+  .persist()
+  .get('/')
+  .query({"plot":"full","r":"json","t":"Homeland"})
+  .reply(200, {"Title":"Homeland","Year":"2011–2020","Rated":"TV-MA","Released":"02 Oct 2011","Runtime":"55 min","Genre":"Crime, Drama, Mystery, Thriller","Director":"N/A","Writer":"Alex Gansa, Howard Gordon","Actors":"Claire Danes, Mandy Patinkin, Rupert Friend, Maury Sterling","Plot":"Carrie Mathison, a CIA operations officer, is on probation after carrying out an unauthorized operation in Iraq. As a result, she has been reassigned to the Counter terrorism center. Whilst in Iraq, she was warned that an American prisoner had been turned by Al-Qaeda. When Nicholas Brody, a U.S. Marine Sergeant, is rescued after being held hostage since 2003, she suspects that he is the one. While Brody is received home as a war hero, Carrie goes to any lengths necessary to catch him out.","Language":"English","Country":"USA","Awards":"Won 5 Golden Globes. Another 55 wins & 172 nominations.","Poster":"https://m.media-amazon.com/images/M/MV5BYjY2ODA0NjYtMzlkMi00ZjY5LThiNjUtNzZjYzgxNjc0MzQzXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_SX300.jpg","Ratings":[{"Source":"Internet Movie Database","Value":"8.3/10"}],"Metascore":"N/A","imdbRating":"8.3","imdbVotes":"288,641","imdbID":"tt1796960","Type":"series","totalSeasons":"8","Response":"True"}, [
+  'Date',
+  'Sat, 14 Mar 2020 22:28:32 GMT',
+  'Content-Type',
+  'application/json; charset=utf-8',
+  'Content-Length',
+  '1216',
+  'Connection',
+  'close',
+  'Set-Cookie',
+  '__cfduid=d1b4be17e0d1520c1ea7ecafe5d18f9571584224912; expires=Mon, 13-Apr-20 22:28:32 GMT; path=/; domain=.omdbapi.com; HttpOnly; SameSite=Lax',
+  'Cache-Control',
+  'public, max-age=86400',
+  'Expires',
+  'Sat, 14 Mar 2020 22:39:50 GMT',
+  'Last-Modified',
+  'Sat, 14 Mar 2020 21:39:50 GMT',
+  'Vary',
+  '*',
+  'X-AspNet-Version',
+  '4.0.30319',
+  'X-Powered-By',
+  'ASP.NET',
+  'Access-Control-Allow-Origin',
+  '*',
+  'CF-Cache-Status',
+  'HIT',
+  'Age',
+  '2922',
+  'Accept-Ranges',
+  'bytes',
+  'Expect-CT',
+  'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+  'Server',
+  'cloudflare',
+  'CF-RAY',
+  '57416da53927fd1a-SYD'
+]);
+
+nock('https://www.omdbapi.com:443', {"encodedQueryParams":true})
+  .persist()
+  .get('/')
+  .query({"Season":"1","i":"tt1796960","r":"json"})
+  .reply(200, {"Title":"Homeland","Season":"1","totalSeasons":"8","Episodes":[{"Title":"Pilot","Released":"2011-10-02","Episode":"1","imdbRating":"8.4","imdbID":"tt1811020"},{"Title":"Grace","Released":"2011-10-09","Episode":"2","imdbRating":"8.0","imdbID":"tt1988308"},{"Title":"Semper I","Released":"2011-10-23","Episode":"4","imdbRating":"7.8","imdbID":"tt2011518"},{"Title":"Blind Spot","Released":"2011-10-30","Episode":"5","imdbRating":"8.4","imdbID":"tt2023998"},{"Title":"The Good Soldier","Released":"2011-11-06","Episode":"6","imdbRating":"8.5","imdbID":"tt2024865"},{"Title":"The Weekend","Released":"2011-11-13","Episode":"7","imdbRating":"8.9","imdbID":"tt2043149"},{"Title":"Achilles Heel","Released":"2011-11-20","Episode":"8","imdbRating":"8.4","imdbID":"tt2041952"},{"Title":"Crossfire","Released":"2011-11-27","Episode":"9","imdbRating":"8.2","imdbID":"tt2081742"},{"Title":"Representative Brody","Released":"2011-12-04","Episode":"10","imdbRating":"8.3","imdbID":"tt2081741"},{"Title":"The Vest","Released":"2011-12-11","Episode":"11","imdbRating":"8.7","imdbID":"tt2084389"},{"Title":"Marine One","Released":"2011-12-18","Episode":"12","imdbRating":"9.1","imdbID":"tt2084390"}],"Response":"True"}, [
+  'Date',
+  'Sat, 14 Mar 2020 22:28:32 GMT',
+  'Content-Type',
+  'application/json; charset=utf-8',
+  'Content-Length',
+  '1202',
+  'Connection',
+  'close',
+  'Set-Cookie',
+  '__cfduid=d1b4be17e0d1520c1ea7ecafe5d18f9571584224912; expires=Mon, 13-Apr-20 22:28:32 GMT; path=/; domain=.omdbapi.com; HttpOnly; SameSite=Lax',
+  'Cache-Control',
+  'public, max-age=86400',
+  'Expires',
+  'Sat, 14 Mar 2020 22:42:06 GMT',
+  'Last-Modified',
+  'Sat, 14 Mar 2020 21:42:06 GMT',
+  'Vary',
+  '*',
+  'X-AspNet-Version',
+  '4.0.30319',
+  'X-Powered-By',
+  'ASP.NET',
+  'Access-Control-Allow-Origin',
+  '*',
+  'CF-Cache-Status',
+  'HIT',
+  'Age',
+  '2786',
+  'Accept-Ranges',
+  'bytes',
+  'Expect-CT',
+  'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+  'Server',
+  'cloudflare',
+  'CF-RAY',
+  '57416da67a3efd1a-SYD'
+]);
+
+nock('https://www.omdbapi.com:443', {"encodedQueryParams":true})
+  .persist()
+  .get('/')
+  .query({"Season":"2","i":"tt1796960","r":"json"})
+  .reply(200, {"Title":"Homeland","Season":"2","totalSeasons":"8","Episodes":[{"Title":"The Smile","Released":"2012-09-30","Episode":"1","imdbRating":"8.5","imdbID":"tt2100961"},{"Title":"Beirut Is Back","Released":"2012-10-07","Episode":"2","imdbRating":"9.0","imdbID":"tt2385581"},{"Title":"State of Independence","Released":"2012-10-14","Episode":"3","imdbRating":"8.3","imdbID":"tt2385583"},{"Title":"New Car Smell","Released":"2012-10-21","Episode":"4","imdbRating":"8.8","imdbID":"tt2385585"},{"Title":"Q&A","Released":"2012-10-28","Episode":"5","imdbRating":"9.1","imdbID":"tt2325080"},{"Title":"A Gettysburg Address","Released":"2012-11-04","Episode":"6","imdbRating":"8.4","imdbID":"tt2352340"},{"Title":"The Clearing","Released":"2012-11-11","Episode":"7","imdbRating":"7.9","imdbID":"tt2355180"},{"Title":"I'll Fly Away","Released":"2012-11-18","Episode":"8","imdbRating":"8.3","imdbID":"tt2368314"},{"Title":"Two Hats","Released":"2012-11-25","Episode":"9","imdbRating":"8.6","imdbID":"tt2368332"},{"Title":"Broken Hearts","Released":"2012-12-02","Episode":"10","imdbRating":"8.7","imdbID":"tt2408792"},{"Title":"The Choice","Released":"2012-12-16","Episode":"12","imdbRating":"9.3","imdbID":"tt2408794"}],"Response":"True"}, [
+  'Date',
+  'Sat, 14 Mar 2020 22:28:32 GMT',
+  'Content-Type',
+  'application/json; charset=utf-8',
+  'Content-Length',
+  '1222',
+  'Connection',
+  'close',
+  'Set-Cookie',
+  '__cfduid=ddcbc3053a7bac78af0b644c2679693ad1584224912; expires=Mon, 13-Apr-20 22:28:32 GMT; path=/; domain=.omdbapi.com; HttpOnly; SameSite=Lax',
+  'Cache-Control',
+  'public, max-age=86400',
+  'Expires',
+  'Sat, 14 Mar 2020 22:42:06 GMT',
+  'Last-Modified',
+  'Sat, 14 Mar 2020 21:42:06 GMT',
+  'Vary',
+  '*',
+  'X-AspNet-Version',
+  '4.0.30319',
+  'X-Powered-By',
+  'ASP.NET',
+  'Access-Control-Allow-Origin',
+  '*',
+  'CF-Cache-Status',
+  'HIT',
+  'Age',
+  '2786',
+  'Accept-Ranges',
+  'bytes',
+  'Expect-CT',
+  'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+  'Server',
+  'cloudflare',
+  'CF-RAY',
+  '57416da67f27fd4e-SYD'
+]);
+
+nock('https://www.omdbapi.com:443', {"encodedQueryParams":true})
+  .persist()
+  .get('/')
+  .query({"Season":"4","i":"tt1796960","r":"json"})
+  .reply(200, {"Title":"Homeland","Season":"4","totalSeasons":"8","Episodes":[{"Title":"The Drone Queen","Released":"2014-10-05","Episode":"1","imdbRating":"8.4","imdbID":"tt3284012"},{"Title":"Trylon and Perisphere","Released":"2014-10-05","Episode":"2","imdbRating":"7.7","imdbID":"tt3505184"},{"Title":"Shalwar Kameez","Released":"2014-10-12","Episode":"3","imdbRating":"8.0","imdbID":"tt3505188"},{"Title":"Iron in the Fire","Released":"2014-10-19","Episode":"4","imdbRating":"8.0","imdbID":"tt3505186"},{"Title":"About a Boy","Released":"2014-10-26","Episode":"5","imdbRating":"7.7","imdbID":"tt3505192"},{"Title":"From A to B and Back Again","Released":"2014-11-02","Episode":"6","imdbRating":"9.0","imdbID":"tt3921048"},{"Title":"Redux","Released":"2014-11-09","Episode":"7","imdbRating":"8.8","imdbID":"tt3977324"},{"Title":"Halfway to a Donut","Released":"2014-11-16","Episode":"8","imdbRating":"9.1","imdbID":"tt3990534"},{"Title":"There's Something Else Going On","Released":"2014-11-23","Episode":"9","imdbRating":"9.6","imdbID":"tt4023224"},{"Title":"13 Hours in Islamabad","Released":"2014-12-07","Episode":"10","imdbRating":"9.4","imdbID":"tt3984158"},{"Title":"Krieg Nicht Lieb","Released":"2014-12-14","Episode":"11","imdbRating":"8.8","imdbID":"tt3960094"},{"Title":"Long Time Coming","Released":"2014-12-21","Episode":"12","imdbRating":"5.6","imdbID":"tt3952170"}],"Response":"True"}, [
+  'Date',
+  'Sat, 14 Mar 2020 22:28:32 GMT',
+  'Content-Type',
+  'application/json; charset=utf-8',
+  'Content-Length',
+  '1388',
+  'Connection',
+  'close',
+  'Set-Cookie',
+  '__cfduid=d1b4be17e0d1520c1ea7ecafe5d18f9571584224912; expires=Mon, 13-Apr-20 22:28:32 GMT; path=/; domain=.omdbapi.com; HttpOnly; SameSite=Lax',
+  'Cache-Control',
+  'public, max-age=86400',
+  'Expires',
+  'Sat, 14 Mar 2020 22:42:06 GMT',
+  'Last-Modified',
+  'Sat, 14 Mar 2020 21:42:06 GMT',
+  'Vary',
+  '*',
+  'X-AspNet-Version',
+  '4.0.30319',
+  'X-Powered-By',
+  'ASP.NET',
+  'Access-Control-Allow-Origin',
+  '*',
+  'CF-Cache-Status',
+  'HIT',
+  'Age',
+  '2786',
+  'Accept-Ranges',
+  'bytes',
+  'Expect-CT',
+  'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+  'Server',
+  'cloudflare',
+  'CF-RAY',
+  '57416da67a45fd1a-SYD'
+]);
+
+nock('https://www.omdbapi.com:443', {"encodedQueryParams":true})
+  .persist()
+  .get('/')
+  .query({"Season":"7","i":"tt1796960","r":"json"})
+  .reply(200, {"Title":"Homeland","Season":"7","totalSeasons":"8","Episodes":[{"Title":"Enemy of the State","Released":"2018-02-11","Episode":"1","imdbRating":"7.7","imdbID":"tt5959082"},{"Title":"Rebel Rebel","Released":"2018-02-18","Episode":"2","imdbRating":"7.7","imdbID":"tt7319318"},{"Title":"Standoff","Released":"2018-02-25","Episode":"3","imdbRating":"7.7","imdbID":"tt7367134"},{"Title":"Like Bad at Things","Released":"2018-03-04","Episode":"4","imdbRating":"8.7","imdbID":"tt7367140"},{"Title":"Species Jump","Released":"2018-03-18","Episode":"6","imdbRating":"8.4","imdbID":"tt7386408"},{"Title":"Andante","Released":"2018-03-25","Episode":"7","imdbRating":"8.0","imdbID":"tt7386416"},{"Title":"Lies, Amplifiers, F**king Twitter","Released":"2018-04-01","Episode":"8","imdbRating":"8.4","imdbID":"tt7386420"},{"Title":"Useful Idiot","Released":"2018-04-08","Episode":"9","imdbRating":"8.8","imdbID":"tt7386422"},{"Title":"All In","Released":"2018-04-22","Episode":"11","imdbRating":"8.9","imdbID":"tt7319316"},{"Title":"Paean to the People","Released":"2018-04-29","Episode":"12","imdbRating":"8.5","imdbID":"tt7126668"}],"Response":"True"}, [
+  'Date',
+  'Sat, 14 Mar 2020 22:28:32 GMT',
+  'Content-Type',
+  'application/json; charset=utf-8',
+  'Content-Length',
+  '1139',
+  'Connection',
+  'close',
+  'Set-Cookie',
+  '__cfduid=d016a2567df09359d77e4db5fe6386e501584224912; expires=Mon, 13-Apr-20 22:28:32 GMT; path=/; domain=.omdbapi.com; HttpOnly; SameSite=Lax',
+  'Cache-Control',
+  'public, max-age=86400',
+  'Expires',
+  'Sat, 14 Mar 2020 22:42:06 GMT',
+  'Last-Modified',
+  'Sat, 14 Mar 2020 21:42:06 GMT',
+  'Vary',
+  '*',
+  'X-AspNet-Version',
+  '4.0.30319',
+  'X-Powered-By',
+  'ASP.NET',
+  'Access-Control-Allow-Origin',
+  '*',
+  'CF-Cache-Status',
+  'HIT',
+  'Age',
+  '2786',
+  'Accept-Ranges',
+  'bytes',
+  'Expect-CT',
+  'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+  'Server',
+  'cloudflare',
+  'CF-RAY',
+  '57416da67f98d699-SYD'
+]);
+
+nock('https://www.omdbapi.com:443', {"encodedQueryParams":true})
+  .persist()
+  .get('/')
+  .query({"Season":"3","i":"tt1796960","r":"json"})
+  .reply(200, {"Title":"Homeland","Season":"3","totalSeasons":"8","Episodes":[{"Title":"Tin Man Is Down","Released":"2013-09-29","Episode":"1","imdbRating":"7.9","imdbID":"tt2473824"},{"Title":"Uh... Oh... Ah...","Released":"2013-10-06","Episode":"2","imdbRating":"7.3","imdbID":"tt2916284"},{"Title":"Tower of David","Released":"2013-10-13","Episode":"3","imdbRating":"7.3","imdbID":"tt2916290"},{"Title":"Game On","Released":"2013-10-20","Episode":"4","imdbRating":"8.2","imdbID":"tt2916300"},{"Title":"The Yoga Play","Released":"2013-10-27","Episode":"5","imdbRating":"8.1","imdbID":"tt2916302"},{"Title":"Still Positive","Released":"2013-11-03","Episode":"6","imdbRating":"8.0","imdbID":"tt2916304"},{"Title":"A Red Wheelbarrow","Released":"2013-11-17","Episode":"8","imdbRating":"8.5","imdbID":"tt2916310"},{"Title":"One Last Thing","Released":"2013-11-24","Episode":"9","imdbRating":"8.6","imdbID":"tt2916312"},{"Title":"Good Night","Released":"2013-12-01","Episode":"10","imdbRating":"8.9","imdbID":"tt2916314"},{"Title":"Big Man in Tehran","Released":"2013-12-08","Episode":"11","imdbRating":"9.3","imdbID":"tt2916316"},{"Title":"The Star","Released":"2013-12-15","Episode":"12","imdbRating":"8.5","imdbID":"tt2916318"}],"Response":"True"}, [
+  'Date',
+  'Sat, 14 Mar 2020 22:28:32 GMT',
+  'Content-Type',
+  'application/json; charset=utf-8',
+  'Content-Length',
+  '1233',
+  'Connection',
+  'close',
+  'Set-Cookie',
+  '__cfduid=d91cda8983490bed6d7f386f1a3cb6abe1584224912; expires=Mon, 13-Apr-20 22:28:32 GMT; path=/; domain=.omdbapi.com; HttpOnly; SameSite=Lax',
+  'Cache-Control',
+  'public, max-age=86400',
+  'Expires',
+  'Sat, 14 Mar 2020 22:42:06 GMT',
+  'Last-Modified',
+  'Sat, 14 Mar 2020 21:42:06 GMT',
+  'Vary',
+  '*',
+  'X-AspNet-Version',
+  '4.0.30319',
+  'X-Powered-By',
+  'ASP.NET',
+  'Access-Control-Allow-Origin',
+  '*',
+  'CF-Cache-Status',
+  'HIT',
+  'Age',
+  '2786',
+  'Accept-Ranges',
+  'bytes',
+  'Expect-CT',
+  'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+  'Server',
+  'cloudflare',
+  'CF-RAY',
+  '57416da67bfffe68-SYD'
+]);
+
+nock('https://www.omdbapi.com:443', {"encodedQueryParams":true})
+  .persist()
+  .get('/')
+  .query({"Season":"6","i":"tt1796960","r":"json"})
+  .reply(200, {"Title":"Homeland","Season":"6","totalSeasons":"8","Episodes":[{"Title":"Fair Game","Released":"2017-01-15","Episode":"1","imdbRating":"7.1","imdbID":"tt5261748"},{"Title":"The Man in the Basement","Released":"2017-01-22","Episode":"2","imdbRating":"7.3","imdbID":"tt5314806"},{"Title":"The Covenant","Released":"2017-01-29","Episode":"3","imdbRating":"7.5","imdbID":"tt5314802"},{"Title":"A Flash of Light","Released":"2017-02-12","Episode":"4","imdbRating":"7.9","imdbID":"tt5314810"},{"Title":"Casus Belli","Released":"2017-02-19","Episode":"5","imdbRating":"8.8","imdbID":"tt5314818"},{"Title":"The Return","Released":"2017-02-26","Episode":"6","imdbRating":"8.2","imdbID":"tt5314816"},{"Title":"Imminent Risk","Released":"2017-03-05","Episode":"7","imdbRating":"7.8","imdbID":"tt5314822"},{"Title":"alt.truth","Released":"2017-03-12","Episode":"8","imdbRating":"8.4","imdbID":"tt5314830"},{"Title":"Sock Puppets","Released":"2017-03-19","Episode":"9","imdbRating":"8.4","imdbID":"tt5314824"},{"Title":"The Flag House","Released":"2017-03-26","Episode":"10","imdbRating":"8.5","imdbID":"tt5314826"},{"Title":"R Is for Romeo","Released":"2017-04-02","Episode":"11","imdbRating":"8.9","imdbID":"tt5314832"},{"Title":"America First","Released":"2017-04-09","Episode":"12","imdbRating":"8.2","imdbID":"tt5314828"}],"Response":"True"}, [
+  'Date',
+  'Sat, 14 Mar 2020 22:28:32 GMT',
+  'Content-Type',
+  'application/json; charset=utf-8',
+  'Content-Length',
+  '1334',
+  'Connection',
+  'close',
+  'Set-Cookie',
+  '__cfduid=dce4007deee1a5865185355b51588473f1584224912; expires=Mon, 13-Apr-20 22:28:32 GMT; path=/; domain=.omdbapi.com; HttpOnly; SameSite=Lax',
+  'Cache-Control',
+  'public, max-age=86400',
+  'Expires',
+  'Sat, 14 Mar 2020 22:42:06 GMT',
+  'Last-Modified',
+  'Sat, 14 Mar 2020 21:42:06 GMT',
+  'Vary',
+  '*',
+  'X-AspNet-Version',
+  '4.0.30319',
+  'X-Powered-By',
+  'ASP.NET',
+  'Access-Control-Allow-Origin',
+  '*',
+  'CF-Cache-Status',
+  'HIT',
+  'Age',
+  '2786',
+  'Accept-Ranges',
+  'bytes',
+  'Expect-CT',
+  'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+  'Server',
+  'cloudflare',
+  'CF-RAY',
+  '57416da68fdcfd1e-SYD'
+]);
+
+nock('https://www.omdbapi.com:443', {"encodedQueryParams":true})
+  .persist()
+  .get('/')
+  .query({"Season":"5","i":"tt1796960","r":"json"})
+  .reply(200, {"Title":"Homeland","Season":"5","totalSeasons":"8","Episodes":[{"Title":"The Tradition of Hospitality","Released":"2015-10-11","Episode":"2","imdbRating":"8.5","imdbID":"tt4791472"},{"Title":"Super Powers","Released":"2015-10-18","Episode":"3","imdbRating":"8.3","imdbID":"tt4847018"},{"Title":"Why Is This Night Different?","Released":"2015-10-25","Episode":"4","imdbRating":"8.8","imdbID":"tt4840674"},{"Title":"Better Call Saul","Released":"2015-11-01","Episode":"5","imdbRating":"8.2","imdbID":"tt4847022"},{"Title":"Parabiosis","Released":"2015-11-08","Episode":"6","imdbRating":"8.2","imdbID":"tt4847026"},{"Title":"Oriole","Released":"2015-11-15","Episode":"7","imdbRating":"8.1","imdbID":"tt4847030"},{"Title":"All About Allison","Released":"2015-11-22","Episode":"8","imdbRating":"8.2","imdbID":"tt4847038"},{"Title":"The Litvinov Ruse","Released":"2015-11-29","Episode":"9","imdbRating":"9.1","imdbID":"tt4847040"},{"Title":"New Normal","Released":"2015-12-06","Episode":"10","imdbRating":"8.5","imdbID":"tt4847044"},{"Title":"A False Glimmer","Released":"2015-12-20","Episode":"12","imdbRating":"7.8","imdbID":"tt4626230"}],"Response":"True"}, [
+  'Date',
+  'Sat, 14 Mar 2020 22:28:32 GMT',
+  'Content-Type',
+  'application/json; charset=utf-8',
+  'Content-Length',
+  '1154',
+  'Connection',
+  'close',
+  'Set-Cookie',
+  '__cfduid=d1b4be17e0d1520c1ea7ecafe5d18f9571584224912; expires=Mon, 13-Apr-20 22:28:32 GMT; path=/; domain=.omdbapi.com; HttpOnly; SameSite=Lax',
+  'Cache-Control',
+  'public, max-age=86400',
+  'Expires',
+  'Sat, 14 Mar 2020 22:42:06 GMT',
+  'Last-Modified',
+  'Sat, 14 Mar 2020 21:42:06 GMT',
+  'Vary',
+  '*',
+  'X-AspNet-Version',
+  '4.0.30319',
+  'X-Powered-By',
+  'ASP.NET',
+  'Access-Control-Allow-Origin',
+  '*',
+  'CF-Cache-Status',
+  'HIT',
+  'Age',
+  '2786',
+  'Accept-Ranges',
+  'bytes',
+  'Expect-CT',
+  'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+  'Server',
+  'cloudflare',
+  'CF-RAY',
+  '57416da68a52fd1a-SYD'
+  ]);
+
+nock('https://www.omdbapi.com:443', {"encodedQueryParams":true})
+  .persist()
+  .get('/')
+  .query({"Season":"8","i":"tt1796960","r":"json"})
+  .reply(200, {"Title":"Homeland","Season":"8","totalSeasons":"8","Episodes":[{"Title":"Deception Indicated","Released":"2020-02-09","Episode":"1","imdbRating":"8.2","imdbID":"tt5959084"},{"Title":"Catch and Release","Released":"2020-02-16","Episode":"2","imdbRating":"8.2","imdbID":"tt8355876"},{"Title":"False Friends","Released":"2020-02-23","Episode":"3","imdbRating":"N/A","imdbID":"tt8355878"},{"Title":"Chalk One Up","Released":"2020-03-01","Episode":"4","imdbRating":"N/A","imdbID":"tt8355882"},{"Title":"Chalk Two Down","Released":"2020-03-08","Episode":"5","imdbRating":"N/A","imdbID":"tt8355884"},{"Title":"Two Minutes","Released":"2020-03-15","Episode":"6","imdbRating":"N/A","imdbID":"tt8355888"},{"Title":"F**ker Shot Me","Released":"2020-03-22","Episode":"7","imdbRating":"N/A","imdbID":"tt8355890"},{"Title":"Threnody(s)","Released":"2020-03-29","Episode":"8","imdbRating":"N/A","imdbID":"tt8355892"},{"Title":"Episode #8.9","Released":"N/A","Episode":"9","imdbRating":"N/A","imdbID":"tt8355894"},{"Title":"Designated Driver","Released":"2020-04-12","Episode":"10","imdbRating":"N/A","imdbID":"tt8355896"},{"Title":"The English Teacher","Released":"2020-04-19","Episode":"11","imdbRating":"N/A","imdbID":"tt8355898"},{"Title":"Episode #8.12","Released":"2020-04-26","Episode":"12","imdbRating":"N/A","imdbID":"tt7126670"}],"Response":"True"}, [
+  'Date',
+  'Sat, 14 Mar 2020 22:28:32 GMT',
+  'Content-Type',
+  'application/json; charset=utf-8',
+  'Content-Length',
+  '1343',
+  'Connection',
+  'close',
+  'Set-Cookie',
+  '__cfduid=d06ca165c110016f2525a9714ce5362281584224912; expires=Mon, 13-Apr-20 22:28:32 GMT; path=/; domain=.omdbapi.com; HttpOnly; SameSite=Lax',
+  'Cache-Control',
+  'public, max-age=86400',
+  'Expires',
+  'Sat, 14 Mar 2020 22:42:06 GMT',
+  'Last-Modified',
+  'Sat, 14 Mar 2020 21:42:06 GMT',
+  'Vary',
+  '*',
+  'X-AspNet-Version',
+  '4.0.30319',
+  'X-Powered-By',
+  'ASP.NET',
+  'Access-Control-Allow-Origin',
+  '*',
+  'CF-Cache-Status',
+  'HIT',
+  'Age',
+  '2786',
+  'Accept-Ranges',
+  'bytes',
+  'Expect-CT',
+  'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+  'Server',
+  'cloudflare',
+  'CF-RAY',
+  '57416da68b1dfd56-SYD'
+]);
+
+nock('https://www.omdbapi.com:443', {"encodedQueryParams":true})
+  .get('/')
+  .query({"i":"tt2325080","plot":"full","r":"json"})
+  .reply(200, {"Title":"Q&A","Year":"2012","Rated":"TV-MA","Released":"28 Oct 2012","Season":"2","Episode":"5","Runtime":"56 min","Genre":"Crime, Drama, Mystery, Thriller","Director":"Lesli Linka Glatter","Writer":"Alex Gansa (developed for american television by), Howard Gordon (developed for american television by), Gideon Raff (based on the original Israeli series \"Prisoners of War\" by), Henry Bromell","Actors":"Claire Danes, Damian Lewis, Morena Baccarin, David Harewood","Plot":"Brody finds himself prisoner again, but this time it's on American soil. Meanwhile, Carrie is forced to play second fiddle after her rash judgment call at the hotel as Estes is busy keeping Jessica off their trail.","Language":"English","Country":"USA","Awards":"N/A","Poster":"https://m.media-amazon.com/images/M/MV5BMTM2Nzk0NTYxOV5BMl5BanBnXkFtZTcwODg4NDg1OA@@._V1_SX300.jpg","Ratings":[{"Source":"Internet Movie Database","Value":"9.1/10"}],"Metascore":"N/A","imdbRating":"9.1","imdbVotes":"2977","imdbID":"tt2325080","seriesID":"tt1796960","Type":"episode","Response":"True"}, [
+  'Date',
+  'Sat, 14 Mar 2020 22:42:59 GMT',
+  'Content-Type',
+  'application/json; charset=utf-8',
+  'Content-Length',
+  '1055',
+  'Connection',
+  'close',
+  'Set-Cookie',
+  '__cfduid=de01db04a632a16092457679818615f621584225779; expires=Mon, 13-Apr-20 22:42:59 GMT; path=/; domain=.omdbapi.com; HttpOnly; SameSite=Lax',
+  'Cache-Control',
+  'public, max-age=86400',
+  'Expires',
+  'Sat, 14 Mar 2020 22:58:59 GMT',
+  'Last-Modified',
+  'Sat, 14 Mar 2020 21:58:59 GMT',
+  'Vary',
+  '*',
+  'X-AspNet-Version',
+  '4.0.30319',
+  'X-Powered-By',
+  'ASP.NET',
+  'Access-Control-Allow-Origin',
+  '*',
+  'CF-Cache-Status',
+  'HIT',
+  'Age',
+  '2640',
+  'Accept-Ranges',
+  'bytes',
+  'Expect-CT',
+  'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+  'Server',
+  'cloudflare',
+  'CF-RAY',
+  '574182cf1802da52-SYD'
+]);

@@ -1,4 +1,8 @@
+import { SearchRequest } from 'imdb-api';
 import { Context } from 'koa';
+import * as _ from 'lodash';
+import * as episodeParser from 'episode-parser';
+
 import FailedLookups from '../models/FailedLookups';
 import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
 import osAPI from '../services/opensubtitles';
@@ -9,9 +13,56 @@ const MESSAGES = {
   openSubsOffline: 'OpenSubtitles API seems offline, please try again later',
 };
 
+/**
+ * Attempts a query to the IMDb API and standardizes the response
+ * before returning.
+ *
+ * IMDb does not return goofs, osdbHash, tagline, trivia
+ *
+ * We use ts-ignore to be able to use episode data instead of just movie.
+ * @see https://github.com/worr/node-imdb-api/issues/72
+ *
+ * @param imdbId the IMDb ID
+ * @param searchRequest a query to perform in order to get the imdbId
+ */
+const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Promise<MediaMetadataInterface> => {
+  if (!imdbId) {
+    const parsedFilename = episodeParser(searchRequest.name);
+    const isTVEpisode = parsedFilename.show && parsedFilename.season && parsedFilename.episode;
+    if (isTVEpisode) {
+      const tvSeriesInfo = await imdbAPI.get({ name: parsedFilename.show });
+      // @ts-ignore
+      const allEpisodes = await tvSeriesInfo.episodes();
+      const currentEpisode = _.find(allEpisodes, { season: parsedFilename.season, episode: parsedFilename.episode });
+      imdbId = currentEpisode.imdbid;
+    } else {
+      const searchResults = await imdbAPI.search(searchRequest);
+      // TODO Choose the most appropriate result instead of just the first
+      const searchResult: any = _.first(searchResults.results);
+      imdbId = searchResult.imdbid;
+    }
+  }
+  const newMetadata: any = { id: imdbId };
+
+  const imdbData = await imdbAPI.get({ id: imdbId });
+
+  newMetadata.actors = _.isEmpty(imdbData.actors) ? null : imdbData.actors.split(', ');
+  newMetadata.directors = _.isEmpty(imdbData.director) ? null : imdbData.director.split(', ');
+  // @ts-ignore
+  newMetadata.episodeNumber = imdbData.episode;
+  newMetadata.episodeTitle = imdbData.title;
+  newMetadata.genres = _.isEmpty(imdbData.genres) ? null : imdbData.genres.split(', ');
+  // @ts-ignore
+  newMetadata.seasonNumber = imdbData.season;
+  newMetadata.type = imdbData.type;
+  newMetadata.year = imdbData.year.toString();
+
+  return newMetadata;
+};
+
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
 
-export const getByOsdbHash = async(ctx: Context) => {
+export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface | string> => {
   const { osdbhash: osdbHash, filebytesize } = ctx.params;
   let dbMeta: MediaMetadataInterface = await MediaMetadata.findOne({ osdbHash }).lean();
 
@@ -39,55 +90,99 @@ export const getByOsdbHash = async(ctx: Context) => {
     throw err;
   }
 
+  // Fail early if OpenSubtitles reports that it did not recognize the hash
   if (!osMeta.metadata) {
     await FailedLookups.updateOne({ osdbHash }, {}, { upsert: true, setDefaultsOnInsert: true });
     return ctx.body = MESSAGES.notFound;
   }
 
-  const newMetadata = {
-    title: osMeta.metadata.title,
+  let newMetadata = {
+    actors: _.isEmpty(_.values(osMeta.metadata.cast)) ? null : _.values(osMeta.metadata.cast),
+    genres: _.isEmpty(osMeta.metadata.genres) ? null : osMeta.metadata.genres,
+    goofs: osMeta.metadata.goofs,
     imdbID: osMeta.metadata.imdbid,
     osdbHash: osMeta.moviehash,
-    year: osMeta.metadata.year,
-    subcount: osMeta.subcount,
-    type: osMeta.type,
-    goofs: osMeta.metadata.goofs,
-    trivia: osMeta.metadata.trivia,
     tagline: osMeta.metadata.tagline,
-    genres: osMeta.metadata.genres,
-    actors: Object.values(osMeta.metadata.cast),
+    title: osMeta.metadata.title,
+    trivia: osMeta.metadata.trivia,
+    type: osMeta.type,
+    year: osMeta.metadata.year,
   };
 
-  // if we're missing values for genres or actors, attempt to hydrate them from imdbAPI instead of OpenSubtitles
-  if ([newMetadata.genres, newMetadata.actors].some(val => val === undefined || []) && newMetadata.imdbID) {
-    try {
-      const imdbData: any = await imdbAPI.get({ id: newMetadata.imdbID });
-      newMetadata.actors = imdbData.actors.split(', ');
-      newMetadata.genres = imdbData.genres.split(', ');
-    } catch (e) {
-      // ignore error, this shouldn't make the request fail
+  try {
+    dbMeta = await MediaMetadata.create(newMetadata);
+    return ctx.body = dbMeta;
+  } catch (e) {
+    if (e.name === 'ValidationError') {
+      /*
+       * The database has given us a ValidationError which means that
+       * OpenSubtitles hasn't given us enough information to satisfy
+       * our schema constraints. Instead of failing here, we continue
+       * to attempt to supplement the information using OMDb.
+       */
+    } else {
+      throw e;
     }
   }
-    
-  dbMeta = await MediaMetadata.create(newMetadata);
-  return ctx.body = dbMeta;
+
+  const imdbData: MediaMetadataInterface = await getFromIMDbAPI(newMetadata.imdbID);
+
+  newMetadata = _.merge(newMetadata, imdbData);
+
+  try {
+    dbMeta = await MediaMetadata.create(newMetadata);
+    return ctx.body = dbMeta;
+  } catch (e) {
+    await FailedLookups.updateOne({ osdbHash }, {}, { upsert: true, setDefaultsOnInsert: true });
+    return ctx.body = MESSAGES.notFound;
+  }
 };
 
-export const getBySanitizedTitle = async(ctx: Context) => {
+export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInterface | string> => {
   const { title, language = 'eng' } = ctx.request.body;
 
   if (!title) {
     throw new Error('title is required');
   }
 
-  const dbMeta: MediaMetadataInterface = await MediaMetadata.findOne({ title, 'metadata.language': language }).lean();
+  let dbMeta: MediaMetadataInterface = await MediaMetadata.findOne({ title }).lean();
 
   if (dbMeta) {
     return ctx.body = dbMeta;
   }
 
-  if (await FailedLookups.findOne({ title, language }).lean()) {
+  if (await FailedLookups.findOne({ title }).lean()) {
     return ctx.body = MESSAGES.notFound;
+  }
+
+  const searchRequest: SearchRequest = { name: title };
+  const imdbData: MediaMetadataInterface = await getFromIMDbAPI(null, searchRequest);
+
+  try {
+    imdbData.title = title;
+    imdbData.imdbID = imdbData.id;
+    dbMeta = await MediaMetadata.create(imdbData);
+    return ctx.body = dbMeta;
+  } catch (e) {
+    await FailedLookups.updateOne({ title }, {}, { upsert: true, setDefaultsOnInsert: true });
+    return ctx.body = MESSAGES.notFound;
+  }
+
+  /**
+   * OpenSubtitles-api doesn't return complete enough data from
+   * its SearchSubtitles function so this section of the code is
+   * intentionally unreachable until we can figure out how to search
+   * OpenSubtitles for that fallback data.
+   */
+  try {
+    dbMeta = await MediaMetadata.create(imdbData);
+    return ctx.body = dbMeta;
+  } catch (e) {
+    if (e.name === 'ValidationError') {
+      // continue for validation errors
+    } else {
+      throw e;
+    }
   }
 
   const { token } = await osAPI.login();
@@ -100,14 +195,18 @@ export const getBySanitizedTitle = async(ctx: Context) => {
 
   const newMetadata = {
     episodeNumber: data[0].SeriesEpisode,
-    metadata: { language },
     imdbID: 'tt' + data[0].IDMovieImdb, // OpenSubtitles returns the "tt" for hash searches but not query searches
-    year: data[0].MovieYear,
     seasonNumber: data[0].SeriesSeason,
     title: data[0].MovieName,
     type: data[0].MovieKind,
+    year: data[0].MovieYear,
   };
 
-  await MediaMetadata.create(newMetadata);
-  return ctx.body = newMetadata;
+  try {
+    dbMeta = await MediaMetadata.create(newMetadata);
+    return ctx.body = dbMeta;
+  } catch (e) {
+    await FailedLookups.updateOne({ title, language }, {}, { upsert: true, setDefaultsOnInsert: true });
+    return ctx.body = MESSAGES.notFound;
+  }
 };

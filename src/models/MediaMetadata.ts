@@ -1,62 +1,76 @@
 import * as mongoose from 'mongoose';
 import { Schema, Document } from 'mongoose';
+import { ValidationError } from '../helpers/customErrors';
 
 const DOCUMENT_EXPIRY_IN_SECONDS = 2592000; // 30 days
 
 mongoose.set('useCreateIndex', true);
 
 export interface MediaMetadataInterface extends Document {
-  subcount?: string;
-  title?: string;
-  director?: string;
-  imdbID?: string;
-  osdbHash: string;
-  genres?: Array<string>;
-  actors?: Array<string>;
-  episodeTitle?: string;
-  seasonNumber?: string;
+  actors: Array<string>;
+  directors: Array<string>;
   episodeNumber?: string;
-  year?: string;
-  type?: string;
+  episodeTitle?: string;
+  genres: Array<string>;
   goofs?: string;
-  trivia?: string;
+  imdbID: string;
+  osdbHash?: string;
+  seasonNumber?: string;
   tagline?: string;
+  title: string;
+  trivia?: string;
+  type: string;
+  year: string;
 
   // Added automatically:
   createdAt: string;
   updatedAt: string;
 }
 
+const isTypeEpisode = function(): boolean {
+  return this.type === 'episode';
+};
+
 const MediaMetadataSchema: Schema = new Schema({
-  title: { type: String, required: true },
-  subcount: { type: String },
-  director: { type: String },
-  imdbID: { type: String },
-  osdbHash: {
-    type: String,
-    index: true,
-    validate: {
-      validator: function(v): boolean {
-        return v.length === 16;
-      },
-      msg: 'Invalid osdb hash length.',
-    },
-  },
-  genres: { type: Array },
-  actors: { type: Array },
-  episodeTitle: { type: String },
-  seasonNumber: { type: String },
-  episodeNumber: { type: String },
-  year: { type: String },
-  type: { type: String },
-  goofs: { type: String },
-  trivia: { type: String },
-  tagline: { type: String },
+  actors: { type: Array, required: true },
   createdAt: {
     type: Date,
     expires: DOCUMENT_EXPIRY_IN_SECONDS,
-    default: Date.now // eslint-disable-line
+    default: Date.now,
   },
+  directors: { type: Array, required: true },
+  episodeNumber: {
+    required: isTypeEpisode,
+    type: String,
+  },
+  episodeTitle: {
+    required: isTypeEpisode,
+    type: String,
+  },
+  genres: { type: Array, required: true },
+  goofs: { type: String },
+  imdbID: { type: String, required: true },
+  title: { type: String, required: true },
+  osdbHash: {
+    index: true,
+    type: String,
+    validate: {
+      validator: (hash: string): boolean => {
+        if (hash.length !== 16) {
+          throw new ValidationError('Invalid osdb hash length.');
+        }
+        return true;
+      },
+    },
+  },
+  seasonNumber: {
+    required: isTypeEpisode,
+    type: String,
+  },
+  tagline: { type: String },
+  trivia: { type: String },
+  type: { type: String, required: true },
+  year: { type: String, required: true },
 }, {
   collection: 'media_metadata',
   timestamps: true,

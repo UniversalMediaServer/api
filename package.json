@@ -39,6 +39,7 @@
       "sourceType": "module"
     },
     "rules": {
+      "@typescript-eslint/ban-ts-ignore": "off",
       "array-bracket-spacing": "error",
       "block-spacing": "error",
       "comma-dangle": [
@@ -116,29 +117,32 @@
   },
   "dependencies": {
     "debug": "^4.1.1",
+    "episode-parser": "^1.5.0",
     "imdb-api": "^4.0.3",
     "koa": "^2.11.0",
     "koa-bodyparser": "^4.2.1",
     "koa-helmet": "^5.2.0",
     "koa-router": "^8.0.8",
-    "mongoose": "^5.9.2",
+    "lodash": "^4.17.15",
+    "mongoose": "^5.9.4",
     "opensubtitles-api": "^5.1.0",
     "pm2": "^4.2.3",
     "ts-node": "^8.6.2"
   },
   "devDependencies": {
-    "@types/jest": "^25.1.3",
-    "@types/mongoose": "^5.7.1",
+    "@types/jest": "^25.1.4",
+    "@types/lodash": "^4.14.149",
+    "@types/mongoose": "^5.7.5",
     "@types/node": "12",
-    "@typescript-eslint/eslint-plugin": "^2.21.0",
-    "@typescript-eslint/parser": "^2.21.0",
+    "@typescript-eslint/eslint-plugin": "^2.23.0",
+    "@typescript-eslint/parser": "^2.23.0",
     "eslint": "^6.8.0",
     "got": "^10.6.0",
     "jest": "^25.1.0",
-    "mongodb-memory-server": "^6.2.4",
-    "nock": "^12.0.1",
+    "mongodb-memory-server": "^6.3.2",
+    "nock": "^12.0.2",
     "nodemon": "^2.0.2",
     "ts-jest": "^25.2.1",
-    "typescript": "^3.8.2"
+    "typescript": "^3.8.3"
   }
 }

@@ -3,30 +3,30 @@ interface CustomError extends Error {
 }
 
 interface OpensubtitlesIdentifyResponse {
-  subcount: string;
   added: boolean;
   metadata: {
-    imdbid: string;
-    title: string;
-    year: string;
+    aka: string[];
+    awards: string[];
     cast: {
       [key: string]: string;
     };
-    country: [string];
+    country: string[];
     cover: string;
     directors: object;
     duration: string;
-    genres: [string];
-    rating: string;
-    trivia: string;
+    genres: string[];
     goofs: string;
-    votes: string;
-    language: [string];
-    aka: [string];
-    awards: [string];
+    imdbid: string;
+    language: string[];
+    rating: string;
     tagline: string;
+    title: string;
+    trivia: string;
+    votes: string;
+    year: string;
   };
-  moviehash: string;
   moviebytesize: number;
+  moviehash: string;
+  subcount: string;
   type: string;
 }

@@ -1,7 +1,18 @@
 import * as  mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import MediaMetadataModel from '../../src/models/MediaMetadata';
-const mediaMetaData = { title: 'Interstellar', genres: ['Adventure', 'Drama', 'Sci-Fi'], osdbHash: '8e245d9679d31e12', episodeTitle: 'Episode #51' };
+const mediaMetaData = {
+  directors: ['Christopher Nolan'],
+  episodeNumber: '3',
+  episodeTitle: 'Episode #51',
+  genres: ['Adventure', 'Drama', 'Sci-Fi'],
+  imdbID: 'tt0816692',
+  osdbHash: '8e245d9679d31e12',
+  seasonNumber: '2',
+  title: 'Interstellar',
+  type: 'episode',
+  year: '2014',
+};
 
 const mongod = new MongoMemoryServer();
 
@@ -31,31 +42,46 @@ describe('Media Metadata Model', () => {
   it('should require title in document', async() => {
     const doc = Object.assign({}, mediaMetaData);
     delete doc.title;
+    let err: Error;
     try {
       await MediaMetadataModel.create(doc);
     } catch (e) {
-      expect(e.message).toBe('MediaMetadata validation failed: title: Path `title` is required.');
+      err = e;
     }
+    expect(err.message).toBe('MediaMetadata validation failed: title: Path `title` is required.');
   });
 
-  it('should require osdb hash', async() => {
+  it('should require episodeNumber for episodes but not for movies', async() => {
     const doc = Object.assign({}, mediaMetaData);
-    delete doc.osdbHash;
+    delete doc.seasonNumber;
+    let err: Error;
     try {
       await MediaMetadataModel.create(doc);
     } catch (e) {
-      expect(e.message).toBe('MediaMetadata validation failed: osdbHash: Path `osdbHash` is required.');
+      err = e;
     }
+    expect(err.message).toBe('MediaMetadata validation failed: seasonNumber: Path `seasonNumber` is required.');
+
+    let err2: Error;
+    doc.type = 'movie';
+    try {
+      await MediaMetadataModel.create(doc);
+    } catch (e) {
+      err2 = e;
+    }
+    expect(err2).toBeUndefined();
   });
 
   it('should validate for a valid osdb hash', async() => {
     const doc = Object.assign({}, mediaMetaData);
     doc.osdbHash = 'a3e8hm1';
+    let err: Error;
     try {
       await MediaMetadataModel.create(doc);
     } catch (e) {
-      expect(e.message).toBe('MediaMetadata validation failed: osdbHash: Invalid osdb hash length.');
+      err = e;
     }
+    expect(err.message).toBe('MediaMetadata validation failed: osdbHash: Invalid osdb hash length.');
   });
 
   it('should not store dummy episode titles', async() => {
