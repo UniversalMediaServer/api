@@ -1,7 +1,7 @@
 import * as  mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import MediaMetadataModel from '../../src/models/MediaMetadata';
-import { isContext } from 'vm';
+
 const mediaMetaData = {
   directors: ['Christopher Nolan'],
   episodeNumber: '3',
