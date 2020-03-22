@@ -5,6 +5,7 @@ import * as episodeParser from 'episode-parser';
 
 import FailedLookups from '../models/FailedLookups';
 import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
+import EpisodeProcessing from '../models/EpisodeProcessing';
 import osAPI from '../services/opensubtitles';
 import imdbAPI from '../services/imdb-api';
 
@@ -25,7 +26,7 @@ const MESSAGES = {
  * @param imdbId the IMDb ID
  * @param searchRequest a query to perform in order to get the imdbId
  */
-const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Promise<MediaMetadataInterface> => {
+export const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Promise<MediaMetadataInterface> => {
   if (!imdbId) {
     const parsedFilename = episodeParser(searchRequest.name);
     const isTVEpisode = parsedFilename.show && parsedFilename.season && parsedFilename.episode;
@@ -35,6 +36,8 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
       const allEpisodes = await tvSeriesInfo.episodes();
       const currentEpisode = _.find(allEpisodes, { season: parsedFilename.season, episode: parsedFilename.episode });
       imdbId = currentEpisode.imdbid;
+      const remainingEpisodes = _.filter(allEpisodes, (e) => (e.imdbid !== imdbId) && e.imdbid);
+      await EpisodeProcessing.insertMany(remainingEpisodes);
     } else {
       const searchResults = await imdbAPI.search(searchRequest);
       // TODO Choose the most appropriate result instead of just the first
