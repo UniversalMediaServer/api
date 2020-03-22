@@ -61,6 +61,19 @@ describe('Media Metadata endpoints', () => {
       expect(res.body).toHaveProperty('trivia');
       expect(res.body).toHaveProperty('tagline');
       // from IMDb API
+      expect(res.body).toHaveProperty('ratings', [
+        { Source: 'Internet Movie Database', Value: '7.3/10' },
+        { Source: 'Rotten Tomatoes', Value: '88%' },
+        { Source: 'Metacritic', Value: '80/100' },
+      ]);
+      expect(res.body).toHaveProperty('metascore', '80');
+      expect(res.body).toHaveProperty('poster', 'https://m.media-amazon.com/images/M/MV5BMTgxMDczMTA5N15BMl5BanBnXkFtZTcwMzk1MzMzMw@@._V1_SX300.jpg');
+      expect(res.body).toHaveProperty('rated', 'PG-13');
+      expect(res.body).toHaveProperty('rating', 7.3);
+      expect(res.body).toHaveProperty('released', '2007-07-26T12:00:00.000Z');
+      expect(res.body).toHaveProperty('runtime', '87 min');
+      expect(res.body).toHaveProperty('votes', '298,859');
+      expect(res.body).toHaveProperty('boxoffice', '$183,100,000');
       expect(res.body).toHaveProperty('genres', ['Animation', 'Adventure', 'Comedy']);
       expect(res.body).toHaveProperty('actors', ['Dan Castellaneta', 'Julie Kavner', 'Nancy Cartwright', 'Yeardley Smith', 'Hank Azaria', 'Harry Shearer', 'Pamela Hayden', 'Tress MacNeille', 'Albert Brooks', 'Karl Wiedergott', 'Marcia Wallace', 'Russi Taylor', 'Maggie Roswell', 'Phil Rosenthal', 'Billie Joe Armstrong']);
   
