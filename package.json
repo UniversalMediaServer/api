@@ -11,7 +11,7 @@
     "dev": "DEBUG=*universalmediaserver-api:server nodemon",
     "start": "ts-node --files src/app.ts",
     "start:prod": "NODE_ENV=production ./node_modules/.bin/pm2 start -i 4 ts-node -- -P tsconfig.json --files ./src/app.ts",
-    "test": "IMDB_API_KEY=\"\" jest test/**/*.spec.ts --coverage --forceExit --detectOpenHandles",
+    "test": "unset IMDB_API_KEY && jest test/**/*.spec.ts --coverage --forceExit --detectOpenHandles",
     "watch": "tsc --watch"
   },
   "eslintConfig": {
