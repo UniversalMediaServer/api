@@ -13,6 +13,8 @@ const MESSAGES = {
   openSubsOffline: 'OpenSubtitles API seems offline, please try again later',
 };
 
+export const FAILED_LOOKUP_SKIP_DAYS = 30;
+
 /**
  * Attempts a query to the IMDb API and standardizes the response
  * before returning.
@@ -28,7 +30,7 @@ const MESSAGES = {
 const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Promise<MediaMetadataInterface> => {
   if (!imdbId) {
     const parsedFilename = episodeParser(searchRequest.name);
-    const isTVEpisode = parsedFilename.show && parsedFilename.season && parsedFilename.episode;
+    const isTVEpisode = parsedFilename && parsedFilename.show && parsedFilename.season && parsedFilename.episode;
     if (isTVEpisode) {
       const tvSeriesInfo = await imdbAPI.get({ name: parsedFilename.show });
       // @ts-ignore
@@ -47,20 +49,34 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
   const imdbData = await imdbAPI.get({ id: imdbId });
 
   newMetadata.actors = _.isEmpty(imdbData.actors) ? null : imdbData.actors.split(', ');
+  // @ts-ignore
+  newMetadata.awards = imdbData.awards;
+  // @ts-ignore
+  newMetadata.boxoffice = imdbData.boxoffice;
+  newMetadata.country = imdbData.country;
   newMetadata.directors = _.isEmpty(imdbData.director) ? null : imdbData.director.split(', ');
   // @ts-ignore
   newMetadata.episodeNumber = imdbData.episode;
   newMetadata.episodeTitle = imdbData.title;
   newMetadata.genres = _.isEmpty(imdbData.genres) ? null : imdbData.genres.split(', ');
+  newMetadata.metascore = imdbData.metascore;
+  // @ts-ignore
+  newMetadata.production = imdbData.production;
+  newMetadata.poster = imdbData.poster;
+  newMetadata.rated = imdbData.rated;
+  newMetadata.rating = imdbData.rating;
+  // @ts-ignore
+  newMetadata.ratings = imdbData.ratings;
+  newMetadata.released = imdbData.released;
+  newMetadata.runtime = imdbData.runtime;
   // @ts-ignore
   newMetadata.seasonNumber = imdbData.season;
   newMetadata.type = imdbData.type;
+  newMetadata.votes = imdbData.votes;
   newMetadata.year = imdbData.year.toString();
 
   return newMetadata;
 };
-
-export const FAILED_LOOKUP_SKIP_DAYS = 30;
 
 export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface | string> => {
   const { osdbhash: osdbHash, filebytesize } = ctx.params;

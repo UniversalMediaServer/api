@@ -1,6 +1,7 @@
 import * as  mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import MediaMetadataModel from '../../src/models/MediaMetadata';
+
 const mediaMetaData = {
   directors: ['Christopher Nolan'],
   episodeNumber: '3',
@@ -97,5 +98,13 @@ describe('Media Metadata Model', () => {
     const record = await MediaMetadataModel.create(doc);
     expect(record).toHaveProperty('title', 'Interstellar');
     expect(record).toHaveProperty('episodeTitle', 'Pilot');
+  });
+
+  describe('Virtuals', () => {
+    it('should return imdburl', async() => {
+      const doc = Object.assign({}, mediaMetaData);
+      const record = await MediaMetadataModel.create(doc);
+      expect(record).toHaveProperty('imdburl', 'https://www.imdb.com/title/tt0816692');
+    });
   });
 });
