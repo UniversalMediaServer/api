@@ -6,6 +6,8 @@ const DOCUMENT_EXPIRY_IN_SECONDS = 2592000; // 30 days
 
 mongoose.set('useCreateIndex', true);
 
+type ratingSource = 'Metacritic' | 'Rotten Tomatoes' | 'Metacritic';
+
 export interface MediaMetadataInterface extends Document {
   actors: Array<string>;
   awards?: string;
@@ -23,7 +25,7 @@ export interface MediaMetadataInterface extends Document {
   poster?: string;
   rated?: string; // e.g 'PG-13'
   rating?: number; // e.g. 6.7
-  ratings?: Array<{Source: string; Value: string}>; // e.g. {"Source": "Metacritic", "Value": "67/100"}
+  ratings?: Array<{Source: ratingSource; Value: string}>; // e.g. {"Source": "Metacritic", "Value": "67/100"}
   released?: Date;
   runtime?: string;
   seasonNumber?: string;
