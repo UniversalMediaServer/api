@@ -1,8 +1,6 @@
 import * as mongoose from 'mongoose';
 import { Document, Schema } from 'mongoose';
 
-mongoose.set('useCreateIndex', true);
-
 export interface EpisodeProcessingInterface extends Document {
   episode?: number;
   imdbid: string;
