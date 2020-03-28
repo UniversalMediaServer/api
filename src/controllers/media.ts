@@ -7,6 +7,7 @@ import FailedLookups from '../models/FailedLookups';
 import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
 import osAPI from '../services/opensubtitles';
 import imdbAPI from '../services/imdb-api';
+import { mapper } from '../utils/data-mapper';
 
 const MESSAGES = {
   notFound: 'Metadata not found on OpenSubtitles',
@@ -44,38 +45,11 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
       imdbId = searchResult.imdbid;
     }
   }
-  const newMetadata: any = { id: imdbId };
 
   const imdbData = await imdbAPI.get({ id: imdbId });
-
-  newMetadata.actors = _.isEmpty(imdbData.actors) ? null : imdbData.actors.split(', ');
-  // @ts-ignore
-  newMetadata.awards = imdbData.awards;
-  // @ts-ignore
-  newMetadata.boxoffice = imdbData.boxoffice;
-  newMetadata.country = imdbData.country;
-  newMetadata.directors = _.isEmpty(imdbData.director) ? null : imdbData.director.split(', ');
-  // @ts-ignore
-  newMetadata.episodeNumber = imdbData.episode;
-  newMetadata.episodeTitle = imdbData.title;
-  newMetadata.genres = _.isEmpty(imdbData.genres) ? null : imdbData.genres.split(', ');
-  newMetadata.metascore = imdbData.metascore;
-  // @ts-ignore
-  newMetadata.production = imdbData.production;
-  newMetadata.poster = imdbData.poster;
-  newMetadata.rated = imdbData.rated;
-  newMetadata.rating = imdbData.rating;
-  // @ts-ignore
-  newMetadata.ratings = imdbData.ratings;
-  newMetadata.released = imdbData.released;
-  newMetadata.runtime = imdbData.runtime;
-  // @ts-ignore
-  newMetadata.seasonNumber = imdbData.season;
-  newMetadata.type = imdbData.type;
-  newMetadata.votes = imdbData.votes;
-  newMetadata.year = imdbData.year.toString();
-
-  return newMetadata;
+  const metadata = mapper.parseIMDBAPIResponse(imdbData);
+  metadata.id = imdbId;
+  return metadata;
 };
 
 export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface | string> => {
@@ -112,18 +86,7 @@ export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface
     return ctx.body = MESSAGES.notFound;
   }
 
-  let newMetadata = {
-    actors: _.isEmpty(_.values(osMeta.metadata.cast)) ? null : _.values(osMeta.metadata.cast),
-    genres: _.isEmpty(osMeta.metadata.genres) ? null : osMeta.metadata.genres,
-    goofs: osMeta.metadata.goofs,
-    imdbID: osMeta.metadata.imdbid,
-    osdbHash: osMeta.moviehash,
-    tagline: osMeta.metadata.tagline,
-    title: osMeta.metadata.title,
-    trivia: osMeta.metadata.trivia,
-    type: osMeta.type,
-    year: osMeta.metadata.year,
-  };
+  let newMetadata = mapper.parseOpenSubtitlesResponse(osMeta);
 
   try {
     dbMeta = await MediaMetadata.create(newMetadata);
