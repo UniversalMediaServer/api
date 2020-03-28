@@ -20,6 +20,9 @@ Watches for changes to TypeScript files and compiles them to JavaScript (use `ya
 #### `yarn dev`
 Runs the development server and restarts it when any file is changed
 
+#### `yarn dev:cron`
+Runs the cron job feature using ts-node
+
 #### `yarn start`
 Runs the server
 
@@ -27,4 +30,4 @@ Runs the server
 Runs the test suite
 
 #### `yarn run start:prod`
-Starts the API in production mode, which uses PM2 for process management. TypeScript files are compiled in memory on application start.
+Starts the API and cron job in production mode, which uses PM2 for process management. TypeScript files are compiled in memory on application start.
