@@ -49,7 +49,7 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
   }
 
   const imdbData = await imdbAPI.get({ id: imdbId });
-  const metadata = mapper.parseIMDBAPIEpisodeResponse(imdbData);
+  const metadata = mapper.parseIMDBAPIResponse(imdbData);
   metadata.id = imdbId;
   return metadata;
 };
