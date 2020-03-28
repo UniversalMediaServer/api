@@ -8,7 +8,7 @@ import connect from '../models/connection';
 const db: string = process.env.MONGO_URL;
 connect(db);
 
-const processEpisodes = async(): Promise<void> => {
+export const processEpisodes = async(): Promise<void> => {
   const seriesIdsToProcess = await EpisodeProcessing.find({})
     .select({ seriesimdbid: 1, _id: 0 })
     .limit(5000)
@@ -37,11 +37,13 @@ const processEpisodes = async(): Promise<void> => {
   }
 };
 
-processEpisodes()
-  .then(() => {
-    process.exit(0);
-  })
-  .catch((e) => {
-    console.error(e);
-    process.exit(0);
-  });
+if (require.main === module) {
+  processEpisodes()
+    .then(() => {
+      process.exit(0);
+    })
+    .catch((e) => {
+      console.error(e);
+      process.exit(0);
+    });
+}

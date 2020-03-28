@@ -438,6 +438,7 @@ nock('https://www.omdbapi.com:443', {"encodedQueryParams":true})
 ]);
 
 nock('https://www.omdbapi.com:443', {"encodedQueryParams":true})
+  .persist()
   .get('/')
   .query({"i":"tt2325080","plot":"full","r":"json"})
   .reply(200, {"Title":"Q&A","Year":"2012","Rated":"TV-MA","Released":"28 Oct 2012","Season":"2","Episode":"5","Runtime":"56 min","Genre":"Crime, Drama, Mystery, Thriller","Director":"Lesli Linka Glatter","Writer":"Alex Gansa (developed for american television by), Howard Gordon (developed for american television by), Gideon Raff (based on the original Israeli series \"Prisoners of War\" by), Henry Bromell","Actors":"Claire Danes, Damian Lewis, Morena Baccarin, David Harewood","Plot":"Brody finds himself prisoner again, but this time it's on American soil. Meanwhile, Carrie is forced to play second fiddle after her rash judgment call at the hotel as Estes is busy keeping Jessica off their trail.","Language":"English","Country":"USA","Awards":"N/A","Poster":"https://m.media-amazon.com/images/M/MV5BMTM2Nzk0NTYxOV5BMl5BanBnXkFtZTcwODg4NDg1OA@@._V1_SX300.jpg","Ratings":[{"Source":"Internet Movie Database","Value":"9.1/10"}],"Metascore":"N/A","imdbRating":"9.1","imdbVotes":"2977","imdbID":"tt2325080","seriesID":"tt1796960","Type":"episode","Response":"True"}, [
@@ -477,4 +478,219 @@ nock('https://www.omdbapi.com:443', {"encodedQueryParams":true})
   'cloudflare',
   'CF-RAY',
   '574182cf1802da52-SYD'
+]);
+
+nock('https://www.omdbapi.com:443', {"encodedQueryParams":true})
+  .persist()
+  .get('/')
+  .query({"i":"tt3581932","plot":"full","r":"json"})
+  .reply(200, {"Title":"And Then There Were None","Year":"2015","Rated":"TV-14","Released":"26 Dec 2015","Runtime":"58 min","Genre":"Crime, Drama, Mystery, Thriller","Director":"N/A","Writer":"N/A","Actors":"Maeve Dermody, Charles Dance, Toby Stephens, Burn Gorman","Plot":"It's 1939 and Europe teeters on the brink of war. Ten strangers are invited to Indian Island, an isolated rock near the Devon coast in southern England. Cut off from the mainland, with their generous hosts Mr and Mrs U.N. Owen mysteriously absent, they are each accused of a terrible crime. As each member of the party starts to die one by one, the survivors realize that one of them is a killer and start to turn on each other.","Language":"English","Country":"UK","Awards":"1 win & 5 nominations.","Poster":"https://m.media-amazon.com/images/M/MV5BNjIzZDg2YWUtZGEwOS00OGM5LTgwZTgtMGVhMTFiZDhjMjExXkEyXkFqcGdeQXVyMjExMjk0ODk@._V1_SX300.jpg","Ratings":[{"Source":"Internet Movie Database","Value":"8.0/10"}],"Metascore":"N/A","imdbRating":"8.0","imdbVotes":"27,724","imdbID":"tt3581932","Type":"series","totalSeasons":"1","Response":"True"}, [
+  'Date',
+  'Sat, 28 Mar 2020 04:39:03 GMT',
+  'Content-Type',
+  'application/json; charset=utf-8',
+  'Content-Length',
+  '1100',
+  'Connection',
+  'close',
+  'Set-Cookie',
+  '__cfduid=d537db8c948f30d7f8bec3d812c6bbe871585370343; expires=Mon, 27-Apr-20 04:39:03 GMT; path=/; domain=.omdbapi.com; HttpOnly; SameSite=Lax',
+  'Cache-Control',
+  'public, max-age=86400',
+  'Expires',
+  'Sat, 28 Mar 2020 04:47:44 GMT',
+  'Last-Modified',
+  'Sat, 28 Mar 2020 03:47:44 GMT',
+  'Vary',
+  '*',
+  'X-AspNet-Version',
+  '4.0.30319',
+  'X-Powered-By',
+  'ASP.NET',
+  'Access-Control-Allow-Origin',
+  '*',
+  'CF-Cache-Status',
+  'HIT',
+  'Age',
+  '3079',
+  'Accept-Ranges',
+  'bytes',
+  'Expect-CT',
+  'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+  'Server',
+  'cloudflare',
+  'CF-RAY',
+  '57aeaa48c98dee96-AKL'
+]);
+
+nock('https://www.omdbapi.com:443', {"encodedQueryParams":true})
+  .persist()
+  .get('/')
+  .query({"Season":"1","i":"tt3581932","r":"json"})
+  .reply(200, {"Title":"And Then There Were None","Season":"1","totalSeasons":"1","Episodes":[{"Title":"Episode #1.1","Released":"N/A","Episode":"1","imdbRating":"N/A","imdbID":"tt3591512"},{"Title":"Episode #1.2","Released":"2015-12-27","Episode":"2","imdbRating":"8.6","imdbID":"tt3595914"},{"Title":"Episode #1.3","Released":"2015-12-28","Episode":"3","imdbRating":"8.9","imdbID":"tt3595916"}],"Response":"True"}, [
+  'Date',
+  'Sat, 28 Mar 2020 04:39:03 GMT',
+  'Content-Type',
+  'application/json; charset=utf-8',
+  'Content-Length',
+  '401',
+  'Connection',
+  'close',
+  'Set-Cookie',
+  '__cfduid=d97fb831f49ee6e7d75b34ccebc3bd7e21585370343; expires=Mon, 27-Apr-20 04:39:03 GMT; path=/; domain=.omdbapi.com; HttpOnly; SameSite=Lax',
+  'Cache-Control',
+  'public, max-age=86400',
+  'Expires',
+  'Sat, 28 Mar 2020 04:47:44 GMT',
+  'Last-Modified',
+  'Sat, 28 Mar 2020 03:47:44 GMT',
+  'Vary',
+  '*',
+  'X-AspNet-Version',
+  '4.0.30319',
+  'X-Powered-By',
+  'ASP.NET',
+  'Access-Control-Allow-Origin',
+  '*',
+  'CF-Cache-Status',
+  'HIT',
+  'Age',
+  '3078',
+  'Accept-Ranges',
+  'bytes',
+  'Expect-CT',
+  'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+  'Server',
+  'cloudflare',
+  'CF-RAY',
+  '57aeaa49cef4eea6-AKL'
+]);
+
+nock('https://www.omdbapi.com:443', {"encodedQueryParams":true})
+  .persist()
+  .get('/')
+  .query({"i":"tt3591512","plot":"full","r":"json"})
+  .reply(200, {"Title":"Episode #1.1","Year":"2015","Rated":"N/A","Released":"N/A","Season":"1","Episode":"1","Runtime":"N/A","Genre":"Mystery","Director":"N/A","Writer":"Agatha Christie (novel), Sarah Phelps (adaptation)","Actors":"N/A","Plot":"Ten strangers are marooned on an island, and they start to die one by one.","Language":"N/A","Country":"N/A","Awards":"N/A","Poster":"N/A","Ratings":[],"Metascore":"N/A","imdbRating":"N/A","imdbVotes":"N/A","imdbID":"tt3591512","seriesID":"tt3581932","Type":"episode","Response":"True"}, [
+  'Date',
+  'Sat, 28 Mar 2020 04:39:04 GMT',
+  'Content-Type',
+  'application/json; charset=utf-8',
+  'Content-Length',
+  '518',
+  'Connection',
+  'close',
+  'Set-Cookie',
+  '__cfduid=df0deab26096d9d01e6868305a9d8df3f1585370344; expires=Mon, 27-Apr-20 04:39:04 GMT; path=/; domain=.omdbapi.com; HttpOnly; SameSite=Lax',
+  'Cache-Control',
+  'public, max-age=86400',
+  'Expires',
+  'Sat, 28 Mar 2020 04:47:45 GMT',
+  'Last-Modified',
+  'Sat, 28 Mar 2020 03:47:45 GMT',
+  'Vary',
+  '*',
+  'X-AspNet-Version',
+  '4.0.30319',
+  'X-Powered-By',
+  'ASP.NET',
+  'Access-Control-Allow-Origin',
+  '*',
+  'CF-Cache-Status',
+  'HIT',
+  'Age',
+  '3079',
+  'Accept-Ranges',
+  'bytes',
+  'Expect-CT',
+  'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+  'Server',
+  'cloudflare',
+  'CF-RAY',
+  '57aeaa4a6dfcfb7c-AKL'
+]);
+
+nock('https://www.omdbapi.com:443', {"encodedQueryParams":true})
+  .persist()
+  .get('/')
+  .query({"i":"tt3595914","plot":"full","r":"json"})
+  .reply(200, {"Title":"Episode #1.2","Year":"2015","Rated":"TV-14","Released":"27 Dec 2015","Season":"1","Episode":"2","Runtime":"55 min","Genre":"Crime, Drama, Mystery","Director":"Craig Viveiros, Basi Akpabio, Rebecca Keane","Writer":"Sarah Phelps (screenplay), Agatha Christie (novel)","Actors":"Maeve Dermody, Charles Dance, Miranda Richardson, Toby Stephens","Plot":"Accusations fly amongst the eight survivors with ex-mercenary soldier Philip Lombard admitting his guilt to Vera and religious spinster Emily Brent making excuses for her accusation. A search party is organized to hunt the killer. Owen, in vain and former General MacArthur is despairing, seeming to lose his mind - and then his life. Two more murders follow, leaving only five little soldiers on the table and it is apparent that the killer is one of the five remaining guests.","Language":"English","Country":"UK","Awards":"N/A","Poster":"https://m.media-amazon.com/images/M/MV5BZWU3YWRlZWMtZWI5NC00N2U4LWI4NGUtNjZkODFjZDJkNGEyXkEyXkFqcGdeQXVyMTExNDQ2MTI@._V1_SX300.jpg","Ratings":[{"Source":"Internet Movie Database","Value":"8.6/10"}],"Metascore":"N/A","imdbRating":"8.6","imdbVotes":"487","imdbID":"tt3595914","seriesID":"tt3581932","Type":"episode","Response":"True"}, [
+  'Date',
+  'Sat, 28 Mar 2020 04:39:04 GMT',
+  'Content-Type',
+  'application/json; charset=utf-8',
+  'Content-Length',
+  '1232',
+  'Connection',
+  'close',
+  'Set-Cookie',
+  '__cfduid=d44c51c970f5d97bb0c022cd95d13bbdd1585370344; expires=Mon, 27-Apr-20 04:39:04 GMT; path=/; domain=.omdbapi.com; HttpOnly; SameSite=Lax',
+  'Cache-Control',
+  'public, max-age=86400',
+  'Expires',
+  'Sat, 28 Mar 2020 04:47:46 GMT',
+  'Last-Modified',
+  'Sat, 28 Mar 2020 03:47:46 GMT',
+  'Vary',
+  '*',
+  'X-AspNet-Version',
+  '4.0.30319',
+  'X-Powered-By',
+  'ASP.NET',
+  'Access-Control-Allow-Origin',
+  '*',
+  'CF-Cache-Status',
+  'HIT',
+  'Age',
+  '3078',
+  'Accept-Ranges',
+  'bytes',
+  'Expect-CT',
+  'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+  'Server',
+  'cloudflare',
+  'CF-RAY',
+  '57aeaa4b2c31fb94-AKL'
+]);
+
+nock('https://www.omdbapi.com:443', {"encodedQueryParams":true})
+  .persist()
+  .get('/')
+  .query({"i":"tt3595916","plot":"full","r":"json"})
+  .reply(200, {"Title":"Episode #1.3","Year":"2015","Rated":"N/A","Released":"28 Dec 2015","Season":"1","Episode":"3","Runtime":"57 min","Genre":"Crime, Drama, Mystery","Director":"Craig Viveiros, Basi Akpabio, Rebecca Keane","Writer":"Sarah Phelps (screenplay), Agatha Christie (novel)","Actors":"Maeve Dermody, Burn Gorman, Charles Dance, Toby Stephens","Plot":"Tempers fray as night falls and Judge Wargrave explains the reason for his being brought to the island. Next day there is another soldier missing and hysteria and suspicion take hold, relieved by drunken partying. Soon there are only two guests left, each believing the other to be the serial killer - unless, of course, the real murderer is still alive. Either way when the boatman comes to collect the guests he will find that the rhyme has come true.","Language":"English","Country":"UK","Awards":"N/A","Poster":"https://m.media-amazon.com/images/M/MV5BZDhlZTkwMjItODFkOS00NDk1LWI1NGMtM2Y0YTk5NzY4M2U1XkEyXkFqcGdeQXVyMjExMjk0ODk@._V1_SX300.jpg","Ratings":[{"Source":"Internet Movie Database","Value":"8.9/10"}],"Metascore":"N/A","imdbRating":"8.9","imdbVotes":"291","imdbID":"tt3595916","seriesID":"tt3581932","Type":"episode","Response":"True"}, [
+  'Date',
+  'Sat, 28 Mar 2020 04:39:04 GMT',
+  'Content-Type',
+  'application/json; charset=utf-8',
+  'Content-Length',
+  '1198',
+  'Connection',
+  'close',
+  'Set-Cookie',
+  '__cfduid=d09a33657aefc493bd25f1dd18b1f2b861585370344; expires=Mon, 27-Apr-20 04:39:04 GMT; path=/; domain=.omdbapi.com; HttpOnly; SameSite=Lax',
+  'Cache-Control',
+  'public, max-age=86400',
+  'Expires',
+  'Sat, 28 Mar 2020 04:47:46 GMT',
+  'Last-Modified',
+  'Sat, 28 Mar 2020 03:47:46 GMT',
+  'Vary',
+  '*',
+  'X-AspNet-Version',
+  '4.0.30319',
+  'X-Powered-By',
+  'ASP.NET',
+  'Access-Control-Allow-Origin',
+  '*',
+  'CF-Cache-Status',
+  'HIT',
+  'Age',
+  '3078',
+  'Accept-Ranges',
+  'bytes',
+  'Expect-CT',
+  'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+  'Server',
+  'cloudflare',
+  'CF-RAY',
+  '57aeaa4bcde4fb98-AKL'
 ]);
