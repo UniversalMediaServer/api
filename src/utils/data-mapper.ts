@@ -66,7 +66,7 @@ const imdbMap = {
   'votes': 'votes',
   'year': {
     key: 'year',
-    transform: val => val.toString(),
+    transform: val => val ? val.toString() : '',
   },
 };
 
@@ -75,7 +75,7 @@ class UmsDataMapper {
     return objectMapper(openSubtitlesData, openSubtitlesMap);
   }
 
-  parseIMDBAPIResponse(imdbData): MediaMetadataInterface {
+  parseIMDBAPIEpisodeResponse(imdbData): MediaMetadataInterface {
     return objectMapper(imdbData, imdbMap);
   }
 }
