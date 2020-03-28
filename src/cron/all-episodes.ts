@@ -6,12 +6,13 @@ import { mapper } from '../utils/data-mapper';
 import connect from '../models/connection';
 
 const db: string = process.env.MONGO_URL;
+const NUM_SERIES_TO_PROCESS = 1000;
 connect(db);
 
 export const processEpisodes = async(): Promise<void> => {
   const seriesIdsToProcess = await EpisodeProcessing.find({})
     .select({ seriesimdbid: 1, _id: 0 })
-    .limit(5000)
+    .limit(NUM_SERIES_TO_PROCESS)
     .lean();
 
   const allImdbIds = _.map(_.values(seriesIdsToProcess), 'seriesimdbid');
