@@ -113,7 +113,7 @@ describe('Data mapper', () => {
 
   describe('imdbAPI responses', () => {
     it('should parse to expected flat structure', () => {
-      const parsed = mapper.parseIMDBAPIResponse(imdbApiData);
+      const parsed = mapper.parseIMDBAPIEpisodeResponse(imdbApiData);
       expect(parsed.actors).toEqual(['Claire Danes', 'Damian Lewis', 'Rupert Friend', 'Morena Baccarin']);
       expect(parsed.awards).toEqual('N/A');
       expect(parsed.country).toEqual('USA');
