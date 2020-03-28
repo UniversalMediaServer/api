@@ -90,7 +90,7 @@ describe('Data mapper', () => {
       expect(parsed.type).toEqual(openSubtitlesData.type);
       expect(parsed.year).toEqual(openSubtitlesData.metadata.year);
       expect(parsed.votes).toEqual(openSubtitlesData.metadata.votes);
-      expect(parsed.genres).toEqual(null);
+      expect(parsed.poster).toEqual(openSubtitlesData.metadata.cover);
       expect(parsed.actors).toEqual([
         'Dan Castellaneta',
         'Julie Kavner',
