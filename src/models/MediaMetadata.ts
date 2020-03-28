@@ -4,8 +4,6 @@ import { ValidationError } from '../helpers/customErrors';
 
 const DOCUMENT_EXPIRY_IN_SECONDS = 2592000; // 30 days
 
-mongoose.set('useCreateIndex', true);
-
 type ratingSource = 'Metacritic' | 'Rotten Tomatoes' | 'Metacritic';
 
 export interface MediaMetadataInterface extends Document {
