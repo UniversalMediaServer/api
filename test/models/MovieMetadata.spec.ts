@@ -21,7 +21,7 @@ describe('Media Metadata Model', () => {
   beforeAll(async() => {
     const mongoUrl = await mongod.getConnectionString();
     process.env.MONGO_URL = mongoUrl;
-    await mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+    await mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true });
   });
 
   beforeEach(async() => {

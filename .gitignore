@@ -65,3 +65,4 @@ typings/
 !jest-mongodb-config.js
 !jest.config.js
 !test/mocks.js
+!ecosystem.config.js

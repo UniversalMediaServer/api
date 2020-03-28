@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
 
 import FailedLookups from '../models/FailedLookups';
+import EpisodeProcessing from '../models/EpisodeProcessing';
 import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
 import osAPI from '../services/opensubtitles';
 import imdbAPI from '../services/imdb-api';
@@ -38,6 +39,7 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
       const allEpisodes = await tvSeriesInfo.episodes();
       const currentEpisode = _.find(allEpisodes, { season: parsedFilename.season, episode: parsedFilename.episode });
       imdbId = currentEpisode.imdbid;
+      await EpisodeProcessing.create({ seriesimdbid: tvSeriesInfo.imdbid });
     } else {
       const searchResults = await imdbAPI.search(searchRequest);
       // TODO Choose the most appropriate result instead of just the first
@@ -47,7 +49,7 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
   }
 
   const imdbData = await imdbAPI.get({ id: imdbId });
-  const metadata = mapper.parseIMDBAPIResponse(imdbData);
+  const metadata = mapper.parseIMDBAPIEpisodeResponse(imdbData);
   metadata.id = imdbId;
   return metadata;
 };
