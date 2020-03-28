@@ -75,7 +75,7 @@ class UmsDataMapper {
     return objectMapper(openSubtitlesData, openSubtitlesMap);
   }
 
-  parseIMDBAPIResponse(imdbData): MediaMetadataInterface {
+  parseIMDBAPIEpisodeResponse(imdbData): MediaMetadataInterface {
     return objectMapper(imdbData, imdbMap);
   }
 }
