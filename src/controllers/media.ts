@@ -7,7 +7,7 @@ import FailedLookups from '../models/FailedLookups';
 import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
 import osAPI from '../services/opensubtitles';
 import imdbAPI from '../services/imdb-api';
-import { mapper } from '../../src/utils/data-mapper';
+import { mapper } from '../utils/data-mapper';
 
 const MESSAGES = {
   notFound: 'Metadata not found on OpenSubtitles',
