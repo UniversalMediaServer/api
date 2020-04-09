@@ -1,4 +1,5 @@
 import * as  mongoose from 'mongoose';
+import * as _ from 'lodash';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import MediaMetadataModel from '../../src/models/MediaMetadata';
 
@@ -105,6 +106,20 @@ describe('Media Metadata Model', () => {
       const doc = Object.assign({}, mediaMetaData);
       const record = await MediaMetadataModel.create(doc);
       expect(record).toHaveProperty('imdburl', 'https://www.imdb.com/title/tt0816692');
+    });
+  });
+
+  describe('Indexes', () => {
+    it('use should index when find by osdbHash', async() => {
+      await MediaMetadataModel.create(mediaMetaData);
+      const response = await MediaMetadataModel.findOne({ osdbHash: mediaMetaData.osdbHash }, {}, { explain: 1 }).exec();
+      expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'stage'])).toEqual('IXSCAN');
+    });
+
+    it('use should index when find by title', async() => {
+      await MediaMetadataModel.create(mediaMetaData);
+      const response = await MediaMetadataModel.findOne({ title: mediaMetaData.title }, {}, { explain: 1 }).exec();
+      expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'stage'])).toEqual('IXSCAN');
     });
   });
 });

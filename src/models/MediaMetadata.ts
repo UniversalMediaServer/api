@@ -90,7 +90,7 @@ const MediaMetadataSchema: Schema = new Schema({
     type: String,
   },
   tagline: { type: String },
-  title: { type: String, required: true },
+  title: { type: String, required: true, index: true },
   trivia: { type: String },
   type: { type: String, required: true },
   votes: { type: String },
