@@ -1,4 +1,5 @@
 import MediaMetadata from '../../src/models/MediaMetadata';
+import SeriesMetadata from '../../src/models/SeriesMetadata';
 import EpisodeProcessing from '../../src/models/EpisodeProcessing';
 import * as _ from 'lodash';
 
@@ -21,11 +22,18 @@ describe('Episode processing cron job', () => {
   afterAll(async() => {
     await MediaMetadata.deleteMany({});
     await EpisodeProcessing.deleteMany({});
+    await SeriesMetadata.deleteMany({});
     await mongoose.disconnect();
   });
 
-  it('should create MediaMetadata documents for each episode', async() => {
+  it('should create MediaMetadata and SeriesMetadata documents for each episode', async() => {
+    const series = await SeriesMetadata.find({});
     const episodes = await MediaMetadata.find({});
+
+    expect(series[0].imdbID).toEqual('tt3581932');
+    expect(series[0].title).toEqual('And Then There Were None');
+
+    expect(series.length).toEqual(1);
     expect(episodes.length).toEqual(3);
 
     const episodeOne = _.find(episodes, { episodeNumber: '1' });

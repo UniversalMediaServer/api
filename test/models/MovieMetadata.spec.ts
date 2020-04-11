@@ -110,13 +110,13 @@ describe('Media Metadata Model', () => {
   });
 
   describe('Indexes', () => {
-    it('use should index when find by osdbHash', async() => {
+    it('should use index when find by osdbHash', async() => {
       await MediaMetadataModel.create(mediaMetaData);
       const response = await MediaMetadataModel.findOne({ osdbHash: mediaMetaData.osdbHash }, {}, { explain: 1 }).exec();
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'stage'])).toEqual('IXSCAN');
     });
 
-    it('use should index when find by title', async() => {
+    it('should use index when find by title', async() => {
       await MediaMetadataModel.create(mediaMetaData);
       const response = await MediaMetadataModel.findOne({ title: mediaMetaData.title }, {}, { explain: 1 }).exec();
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'stage'])).toEqual('IXSCAN');

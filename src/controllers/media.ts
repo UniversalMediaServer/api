@@ -201,7 +201,7 @@ export const getSeriesByTitle = async(ctx: Context): Promise<SeriesMetadataInter
     throw new Error('title is required');
   }
 
-  let dbMeta: SeriesMetadataInterface = await SeriesMetadata.findOne({ $text: { $search: dirOrFilename, $caseSensitive: false } }).lean();
+  let dbMeta: SeriesMetadataInterface = await SeriesMetadata.findSimilarSeries(dirOrFilename);
 
   if (dbMeta) {
     return ctx.body = dbMeta;
