@@ -1,5 +1,5 @@
 import MediaMetadataModel from '../../src/models/MediaMetadata';
-import SeriesMetadataModel, { SeriesMetadataInterface } from '../../src/models/SeriesMetadata';
+import SeriesMetadataModel from '../../src/models/SeriesMetadata';
 import FailedLookupsModel from '../../src/models/FailedLookups';
 
 import * as mongoose from 'mongoose';
@@ -145,6 +145,29 @@ describe('Media Metadata endpoints', () => {
       body = JSON.stringify({ title: 'Homeland series 1' });
       response = await got.post(`${appUrl}/api/media/seriestitle`, { responseType: 'json', headers: { 'content-type': 'application/json' }, body });
       expect(response.body._id).toEqual(newDocumentId);
+    });
+  });
+
+  describe('get by imdbid', () => {
+    it('should return a movie by imdbid', async() => {
+      const body = JSON.stringify({ imdbid: 'tt0462538' });
+      const response: any = await got.post(`${appUrl}/api/media/imdbid`, { responseType: 'json', headers: { 'content-type': 'application/json' }, body });
+      expect(response.body.title).toEqual('The Simpsons Movie');
+      expect(response.body.type).toEqual('movie');
+    });
+
+    it('should return a series by imdbid', async() => {
+      const body = JSON.stringify({ imdbid: 'tt1796960' });
+      const response: any = await got.post(`${appUrl}/api/media/imdbid`, { responseType: 'json', headers: { 'content-type': 'application/json' }, body });
+      expect(response.body.title).toEqual('Homeland');
+      expect(response.body.type).toEqual('series');
+    });
+
+    it('should return an episode by imdbid', async() => {
+      const body = JSON.stringify({ imdbid: 'tt3388032' });
+      const response: any = await got.post(`${appUrl}/api/media/imdbid`, { responseType: 'json', headers: { 'content-type': 'application/json' }, body });
+      expect(response.body.episodeTitle).toEqual('Proof of Concept');
+      expect(response.body.type).toEqual('episode');
     });
   });
 });

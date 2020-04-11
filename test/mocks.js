@@ -694,3 +694,85 @@ nock('https://www.omdbapi.com:443', {"encodedQueryParams":true})
   'CF-RAY',
   '57aeaa4bcde4fb98-AKL'
 ]);
+
+nock('https://www.omdbapi.com:443', {"encodedQueryParams":true})
+  .get('/')
+  .query({"i":"tt1796960","plot":"full","r":"json"})
+  .reply(200, {"Title":"Homeland","Year":"2011–2020","Rated":"TV-MA","Released":"02 Oct 2011","Runtime":"55 min","Genre":"Crime, Drama, Mystery, Thriller","Director":"N/A","Writer":"Alex Gansa, Howard Gordon","Actors":"Claire Danes, Mandy Patinkin, Rupert Friend, Maury Sterling","Plot":"Carrie Mathison, a CIA operations officer, is on probation after carrying out an unauthorized operation in Iraq. As a result, she has been reassigned to the Counter terrorism center. Whilst in Iraq, she was warned that an American prisoner had been turned by Al-Qaeda. When Nicholas Brody, a U.S. Marine Sergeant, is rescued after being held hostage since 2003, she suspects that he is the one. While Brody is received home as a war hero, Carrie goes to any lengths necessary to catch him out.","Language":"English","Country":"USA","Awards":"Won 5 Golden Globes. Another 55 wins & 172 nominations.","Poster":"https://m.media-amazon.com/images/M/MV5BYjY2ODA0NjYtMzlkMi00ZjY5LThiNjUtNzZjYzgxNjc0MzQzXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_SX300.jpg","Ratings":[{"Source":"Internet Movie Database","Value":"8.3/10"}],"Metascore":"N/A","imdbRating":"8.3","imdbVotes":"290,809","imdbID":"tt1796960","Type":"series","totalSeasons":"8","Response":"True"}, [
+    'Date',
+    'Sat, 11 Apr 2020 22:16:11 GMT',
+    'Content-Type',
+    'application/json; charset=utf-8',
+    'Content-Length',
+    '1216',
+    'Connection',
+    'close',
+    'Set-Cookie',
+    '__cfduid=dbda6d7914eff5d847a440ed03c37aaef1586643371; expires=Mon, 11-May-20 22:16:11 GMT; path=/; domain=.omdbapi.com; HttpOnly; SameSite=Lax',
+    'Cache-Control',
+    'public, max-age=86400',
+    'Expires',
+    'Sat, 11 Apr 2020 22:52:46 GMT',
+    'Last-Modified',
+    'Sat, 11 Apr 2020 21:52:46 GMT',
+    'Vary',
+    '*',
+    'X-AspNet-Version',
+    '4.0.30319',
+    'X-Powered-By',
+    'ASP.NET',
+    'Access-Control-Allow-Origin',
+    '*',
+    'CF-Cache-Status',
+    'HIT',
+    'Age',
+    '1404',
+    'Accept-Ranges',
+    'bytes',
+    'Expect-CT',
+    'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+    'Server',
+    'cloudflare',
+    'CF-RAY',
+    '5828120db8a8fd52-SYD'
+]);
+
+nock('https://www.omdbapi.com:443', {"encodedQueryParams":true})
+.get('/')
+.query({"i":"tt3388032","plot":"full","r":"json"})
+.reply(200, {"Title":"Proof of Concept","Year":"2014","Rated":"TV-MA","Released":"18 May 2014","Season":"1","Episode":"7","Runtime":"28 min","Genre":"Comedy","Director":"Mike Judge","Writer":"Clay Tarver, Mike Judge (created by), John Altschuler (created by), Dave Krinsky (created by)","Actors":"Thomas Middleditch, T.J. Miller, Josh Brener, Martin Starr","Plot":"Richard has trouble getting Pied Piper ready in time for the TechCrunch Disrupt, while Erlich realizes he slept with the wife of one of the judges of the contest.","Language":"English","Country":"USA","Awards":"N/A","Poster":"https://m.media-amazon.com/images/M/MV5BYjgxNzViZTAtYTVlMS00MzU3LWIzZWEtZGZkNDRjNjQwYzA3XkEyXkFqcGdeQXVyMjg2MTMyNTM@._V1_SX300.jpg","Ratings":[{"Source":"Internet Movie Database","Value":"8.6/10"}],"Metascore":"N/A","imdbRating":"8.6","imdbVotes":"1581","imdbID":"tt3388032","seriesID":"tt2575988","Type":"episode","Response":"True"}, [
+  'Date',
+  'Sat, 11 Apr 2020 22:28:57 GMT',
+  'Content-Type',
+  'application/json; charset=utf-8',
+  'Content-Length',
+  '912',
+  'Connection',
+  'close',
+  'Set-Cookie',
+  '__cfduid=d3d98114cadb9c92e30841b79f5383ebb1586644137; expires=Mon, 11-May-20 22:28:57 GMT; path=/; domain=.omdbapi.com; HttpOnly; SameSite=Lax',
+  'Cache-Control',
+  'public, max-age=86400',
+  'Expires',
+  'Sat, 11 Apr 2020 23:28:57 GMT',
+  'Last-Modified',
+  'Sat, 11 Apr 2020 22:28:57 GMT',
+  'Vary',
+  '*',
+  'X-AspNet-Version',
+  '4.0.30319',
+  'X-Powered-By',
+  'ASP.NET',
+  'Access-Control-Allow-Origin',
+  '*',
+  'CF-Cache-Status',
+  'MISS',
+  'Accept-Ranges',
+  'bytes',
+  'Expect-CT',
+  'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+  'Server',
+  'cloudflare',
+  'CF-RAY',
+  '582824c0ec36fd26-SYD'
+]);
