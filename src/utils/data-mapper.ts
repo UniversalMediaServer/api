@@ -1,6 +1,7 @@
 import * as objectMapper from 'object-mapper';
 import * as _ from 'lodash';
 import { MediaMetadataInterface } from '../models/MediaMetadata';
+import { SeriesMetadataInterface } from '../models/SeriesMetadata';
 
 const openSubtitlesMap = {  
   'metadata.cast': [
@@ -35,7 +36,7 @@ const openSubtitlesMap = {
   'metadata.votes': 'votes',
 };
 
-const imdbMap = {
+const imdbEpisodeMap = {
   'actors': {
     key: 'actors?',
     transform: val => _.isEmpty(val) ? null : val.split(', '),
@@ -66,7 +67,46 @@ const imdbMap = {
   'votes': 'votes',
   'year': {
     key: 'year',
-    transform: val => val.toString(),
+    transform: val => val ? val.toString() : undefined,
+  },
+};
+
+const imdbSeriesMap = {
+  'actors': {
+    key: 'actors?',
+    transform: val => _.isEmpty(val) ? null : val.split(', '),
+  },
+  'awards': 'awards',
+  'country': 'country',
+  'director': {
+    key: 'directors?',
+    transform: val => _.isEmpty(val) ? null : val.split(', '),
+  },
+  'end_year': {
+    key: 'endYear',
+    transform: val => val ? val.toString() : undefined,
+  },
+  'imdbid': 'imdbID',
+  'title': 'title',
+  'genres': {
+    key: 'genres?',
+    transform: val => _.isEmpty(val) ? null : val.split(', '),
+  },
+  'metascore': 'metascore',
+  'plot': 'plot',
+  'poster': 'poster',
+  'rated': 'rated',
+  'rating': 'rating',
+  'ratings': 'ratings',
+  'start_year': {
+    key: 'startYear',
+    transform: val => val ? val.toString() : undefined,
+  },
+  'totalseasons': 'totalSeasons',
+  'votes': 'votes',
+  'year': {
+    key: 'year',
+    transform: val => val ? val.toString() : undefined,
   },
 };
 
@@ -76,7 +116,11 @@ class UmsDataMapper {
   }
 
   parseIMDBAPIEpisodeResponse(imdbData): MediaMetadataInterface {
-    return objectMapper(imdbData, imdbMap);
+    return objectMapper(imdbData, imdbEpisodeMap);
+  }
+
+  parseIMDBAPISeriesResponse(imdbData): SeriesMetadataInterface {
+    return objectMapper(imdbData, imdbSeriesMap);
   }
 }
 

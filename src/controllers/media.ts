@@ -6,6 +6,7 @@ import * as episodeParser from 'episode-parser';
 import FailedLookups from '../models/FailedLookups';
 import EpisodeProcessing from '../models/EpisodeProcessing';
 import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
+import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import osAPI from '../services/opensubtitles';
 import imdbAPI from '../services/imdb-api';
 import { mapper } from '../utils/data-mapper';
@@ -13,6 +14,7 @@ import { mapper } from '../utils/data-mapper';
 const MESSAGES = {
   notFound: 'Metadata not found on OpenSubtitles',
   openSubsOffline: 'OpenSubtitles API seems offline, please try again later',
+  seriesNotFound: 'Metadata not found for series',
 };
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
@@ -190,4 +192,34 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
     await FailedLookups.updateOne({ title, language }, {}, { upsert: true, setDefaultsOnInsert: true });
     return ctx.body = MESSAGES.notFound;
   }
+};
+
+export const getSeriesByTitle = async(ctx: Context): Promise<SeriesMetadataInterface | string> => {
+  let { title: dirOrFilename } = ctx.request.body;
+
+  if (!dirOrFilename) {
+    throw new Error('title is required');
+  }
+
+  let dbMeta: SeriesMetadataInterface = await SeriesMetadata.findOne({ $text: { $search: dirOrFilename, $caseSensitive: false } }).lean();
+
+  if (dbMeta) {
+    return ctx.body = dbMeta;
+  }
+
+  if (await FailedLookups.findOne({ title: dirOrFilename, type: 'series' }).lean()) {
+    return ctx.body = MESSAGES.notFound;
+  }
+
+  const parsed = episodeParser(dirOrFilename);
+  dirOrFilename = parsed && parsed.show ? parsed.show : dirOrFilename;
+  const tvSeriesInfo = await imdbAPI.get({ name: dirOrFilename });
+
+  if (!tvSeriesInfo) {
+    await FailedLookups.updateOne({ title: dirOrFilename, type: 'series' }, {}, { upsert: true, setDefaultsOnInsert: true });
+    return ctx.body = MESSAGES.notFound;
+  }
+  const metadata = mapper.parseIMDBAPISeriesResponse(tvSeriesInfo);
+  dbMeta = await SeriesMetadata.create(metadata);
+  return ctx.body = dbMeta;
 };
