@@ -6,6 +6,7 @@ const DOCUMENT_EXPIRY_IN_SECONDS = 2592000; // 30 days
 export interface FailedLookupsInterface extends Document {
   osdbHash?: string;
   title?: string;
+  type?: string;
 
   // Added automatically:
   createdAt: string;
@@ -33,6 +34,7 @@ const FailedLookupsSchema: Schema = new Schema({
     },
     type: String,
   },
+  type: { type: String, index: true },
   createdAt: {
     default: Date.now,
     expires: DOCUMENT_EXPIRY_IN_SECONDS,

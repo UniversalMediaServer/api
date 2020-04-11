@@ -1,4 +1,5 @@
 import MediaMetadataModel from '../../src/models/MediaMetadata';
+import SeriesMetadataModel, { SeriesMetadataInterface } from '../../src/models/SeriesMetadata';
 import FailedLookupsModel from '../../src/models/FailedLookups';
 
 import * as mongoose from 'mongoose';
@@ -33,8 +34,7 @@ describe('Media Metadata endpoints', () => {
   });
 
   afterAll(async() => {
-    await MediaMetadataModel.deleteMany({});
-    await mongoose.disconnect();
+    await mongoose.connection.dropDatabase();
   });
 
   describe('get by osdb hash', () => {
@@ -120,6 +120,31 @@ describe('Media Metadata endpoints', () => {
       } catch (err) {
         expect(err).toBeInstanceOf(Error);
       }
+    });
+  });
+  describe('get series by directory or filename', () => {
+    it('should return series metadata', async() => {
+      let body = JSON.stringify({ title: 'Homeland S02E05' });
+      // this request populates the series metadata
+      let response: any = await got.post(`${appUrl}/api/media/seriestitle`, { responseType: 'json', headers: { 'content-type': 'application/json' }, body });
+      const newDocumentId = response.body._id;
+      const doc = await SeriesMetadataModel.findOne();
+      expect(doc).toHaveProperty('totalSeasons', 8);
+      expect(doc).toHaveProperty('title', 'Homeland');
+      expect(doc).toHaveProperty('startYear', '2011');
+
+      // similar searches should return the same series metadata document
+      body = JSON.stringify({ title: 'Homeland Season one' });
+      response = await got.post(`${appUrl}/api/media/seriestitle`, { responseType: 'json', headers: { 'content-type': 'application/json' }, body });
+      expect(response.body._id).toEqual(newDocumentId);
+
+      body = JSON.stringify({ title: 'HoMelAnD   ' });
+      response = await got.post(`${appUrl}/api/media/seriestitle`, { responseType: 'json', headers: { 'content-type': 'application/json' }, body });
+      expect(response.body._id).toEqual(newDocumentId);
+
+      body = JSON.stringify({ title: 'Homeland series 1' });
+      response = await got.post(`${appUrl}/api/media/seriestitle`, { responseType: 'json', headers: { 'content-type': 'application/json' }, body });
+      expect(response.body._id).toEqual(newDocumentId);
     });
   });
 });

@@ -11,4 +11,8 @@ router.post('/title', async(ctx) => {
   await MediaController.getBySanitizedTitle(ctx);
 });
 
+router.post('/seriestitle', async(ctx) => {
+  await MediaController.getSeriesByTitle(ctx);
+});
+
 export default router;

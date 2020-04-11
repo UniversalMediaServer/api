@@ -2,6 +2,7 @@ import * as _ from 'lodash';
 import EpisodeProcessing from '../models/EpisodeProcessing';
 import imdbAPI from '../services/imdb-api';
 import MediaMetadata from '../models/MediaMetadata';
+import SeriesMetadata from '../models/SeriesMetadata';
 import { mapper } from '../utils/data-mapper';
 import connect from '../models/connection';
 
@@ -18,6 +19,8 @@ export const processEpisodes = async(): Promise<void> => {
   const allImdbIds = _.map(_.values(seriesIdsToProcess), 'seriesimdbid');
   for (const seriesId of allImdbIds) {
     const tvSeriesInfo = await imdbAPI.get({ id: seriesId });
+    const metadata = mapper.parseIMDBAPISeriesResponse(tvSeriesInfo);
+    await SeriesMetadata.create(metadata);
     // @ts-ignore
     const allEpisodes = await tvSeriesInfo.episodes();
     const metadataDocuments = [];
