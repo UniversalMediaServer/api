@@ -50,7 +50,14 @@ const imdbEpisodeMap = {
   },
   'episode': 'episodeNumber',
   'imdbid': 'imdbID',
-  'title': 'episodeTitle',
+  'title': [{
+    key: 'episodeTitle',
+    transform: val => val,
+  },
+  {
+    key: 'title',
+    transform: val => val,
+  }],
   'genres': {
     key: 'genres?',
     transform: val => _.isEmpty(val) ? null : val.split(', '),
@@ -64,7 +71,10 @@ const imdbEpisodeMap = {
   'released': 'released',
   'runtime': 'runtime',
   'season': 'seasonNumber',
-  'type': 'type',
+  'type': {
+    key: 'type',
+    transform: val => 'episode',
+  },
   'votes': 'votes',
   'year': {
     key: 'year',
@@ -104,7 +114,10 @@ const imdbSeriesMap = {
     transform: val => val ? val.toString() : undefined,
   },
   'totalseasons': 'totalSeasons',
-  'type': 'type',
+  'type': {
+    key: 'type',
+    transform: val => 'series',
+  },
   'votes': 'votes',
   'year': {
     key: 'year',
@@ -138,7 +151,10 @@ const imdbMovieMap = {
   'released': 'released',
   'runtime': 'runtime',
   'title': 'title',
-  'type': 'type',
+  'type': {
+    key: 'type',
+    transform: val => 'movie',
+  },
   'votes': 'votes',
   'year': {
     key: 'year',
