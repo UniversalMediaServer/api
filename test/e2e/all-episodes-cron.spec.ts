@@ -20,10 +20,7 @@ describe('Episode processing cron job', () => {
   });
 
   afterAll(async() => {
-    await MediaMetadata.deleteMany({});
-    await EpisodeProcessing.deleteMany({});
-    await SeriesMetadata.deleteMany({});
-    await mongoose.disconnect();
+    await mongoose.connection.dropDatabase();
   });
 
   it('should create MediaMetadata and SeriesMetadata documents for each episode', async() => {
