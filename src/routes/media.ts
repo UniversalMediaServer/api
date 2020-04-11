@@ -15,4 +15,8 @@ router.post('/seriestitle', async(ctx) => {
   await MediaController.getSeriesByTitle(ctx);
 });
 
+router.post('/imdbid', async(ctx) => {
+  await MediaController.getByImdbID(ctx);
+});
+
 export default router;

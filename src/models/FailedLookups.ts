@@ -34,6 +34,10 @@ const FailedLookupsSchema: Schema = new Schema({
     },
     type: String,
   },
+  imdbId: {
+    index: true,
+    type: String,
+  },
   type: { type: String, index: true },
   createdAt: {
     default: Date.now,

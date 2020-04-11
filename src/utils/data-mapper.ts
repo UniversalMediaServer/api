@@ -49,6 +49,7 @@ const imdbEpisodeMap = {
     transform: val => _.isEmpty(val) ? null : val.split(', '),
   },
   'episode': 'episodeNumber',
+  'imdbid': 'imdbID',
   'title': 'episodeTitle',
   'genres': {
     key: 'genres?',
@@ -103,6 +104,41 @@ const imdbSeriesMap = {
     transform: val => val ? val.toString() : undefined,
   },
   'totalseasons': 'totalSeasons',
+  'type': 'type',
+  'votes': 'votes',
+  'year': {
+    key: 'year',
+    transform: val => val ? val.toString() : undefined,
+  },
+};
+
+const imdbMovieMap = {
+  'actors': {
+    key: 'actors?',
+    transform: val => _.isEmpty(val) ? null : val.split(', '),
+  },
+  'awards': 'awards',
+  'boxoffice': 'boxoffice',
+  'country': 'country',
+  'director': {
+    key: 'directors?',
+    transform: val => _.isEmpty(val) ? null : val.split(', '),
+  },
+  'genres': {
+    key: 'genres?',
+    transform: val => _.isEmpty(val) ? null : val.split(', '),
+  },
+  'imdbid': 'imdbID',
+  'metascore': 'metascore',
+  'production': 'production',
+  'poster': 'poster',
+  'rated': 'rated',
+  'rating': 'rating',
+  'ratings': 'ratings',
+  'released': 'released',
+  'runtime': 'runtime',
+  'title': 'title',
+  'type': 'type',
   'votes': 'votes',
   'year': {
     key: 'year',
@@ -121,6 +157,10 @@ class UmsDataMapper {
 
   parseIMDBAPISeriesResponse(imdbData): SeriesMetadataInterface {
     return objectMapper(imdbData, imdbSeriesMap);
+  }
+
+  parseIMDBAPIMovieResponse(imdbData): MediaMetadataInterface {
+    return objectMapper(imdbData, imdbMovieMap);
   }
 }
 
