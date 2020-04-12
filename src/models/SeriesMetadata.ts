@@ -21,6 +21,7 @@ export interface SeriesMetadataInterface extends Document {
   startYear?: string;
   endYear?: string;
   title: string;
+  type: 'series';
   totalSeasons?: number;
   votes?: string;
   year: string;
@@ -45,7 +46,7 @@ const SeriesMetadataSchema: Schema = new Schema({
   },
   directors: { type: Array },
   genres: { type: Array, required: true },
-  imdbID: { type: String, required: true },
+  imdbID: { type: String, required: true, index: true },
   metascore: { type: String },
   plot: { type: String },
   poster: { type: String },
@@ -56,6 +57,7 @@ const SeriesMetadataSchema: Schema = new Schema({
   endYear: { type: String },
   title: { type: String, required: true },
   totalSeasons: { type: Number },
+  type: { type: String, default: 'series', required: true },
   votes: { type: String },
   year: { type: String },
 }, {

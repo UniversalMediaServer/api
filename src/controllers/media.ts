@@ -51,7 +51,16 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
   }
 
   const imdbData = await imdbAPI.get({ id: imdbId });
-  const metadata = mapper.parseIMDBAPIEpisodeResponse(imdbData);
+
+  let metadata;
+  if (imdbData.type === 'movie') {
+    metadata = mapper.parseIMDBAPIMovieResponse(imdbData);
+  } else if (imdbData.type === 'series') {
+    metadata = mapper.parseIMDBAPISeriesResponse(imdbData);
+  } else {
+    metadata = mapper.parseIMDBAPIEpisodeResponse(imdbData);
+  }
+  
   metadata.id = imdbId;
   return metadata;
 };
@@ -222,4 +231,36 @@ export const getSeriesByTitle = async(ctx: Context): Promise<SeriesMetadataInter
   const metadata = mapper.parseIMDBAPISeriesResponse(tvSeriesInfo);
   dbMeta = await SeriesMetadata.create(metadata);
   return ctx.body = dbMeta;
+};
+
+export const getByImdbID = async(ctx: Context): Promise<any> => {
+  const { imdbid } = ctx.request.body;
+
+  const [mediaMetadata, seriesMetadata] = await Promise.all([MediaMetadata.findOne({ imdbID: imdbid }).lean(), SeriesMetadata.findOne({ imdbID: imdbid }).lean()]);
+
+  if (mediaMetadata) {
+    return ctx.body = mediaMetadata;
+  }
+
+  if (seriesMetadata) {
+    return ctx.body = seriesMetadata;
+  }
+
+  if (await FailedLookups.findOne({ imdbID: imdbid }).lean()) {
+    return ctx.body = MESSAGES.notFound;
+  }
+  const imdbData: MediaMetadataInterface = await getFromIMDbAPI(imdbid);
+
+  try {
+    let dbMeta;
+    if (imdbData.type === 'series') {
+      dbMeta = await SeriesMetadata.create(imdbData);
+    } else {
+      dbMeta = await MediaMetadata.create(imdbData);
+    }
+    return ctx.body = dbMeta;
+  } catch (e) {
+    await FailedLookups.updateOne({ imdbId: imdbid }, {}, { upsert: true, setDefaultsOnInsert: true });
+    return ctx.body = MESSAGES.notFound;
+  }
 };

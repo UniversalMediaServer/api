@@ -49,7 +49,15 @@ const imdbEpisodeMap = {
     transform: val => _.isEmpty(val) ? null : val.split(', '),
   },
   'episode': 'episodeNumber',
-  'title': 'episodeTitle',
+  'imdbid': 'imdbID',
+  'title': [{
+    key: 'episodeTitle',
+    transform: val => val,
+  },
+  {
+    key: 'title',
+    transform: val => val,
+  }],
   'genres': {
     key: 'genres?',
     transform: val => _.isEmpty(val) ? null : val.split(', '),
@@ -63,7 +71,10 @@ const imdbEpisodeMap = {
   'released': 'released',
   'runtime': 'runtime',
   'season': 'seasonNumber',
-  'type': 'type',
+  'type': {
+    key: 'type',
+    transform: val => 'episode',
+  },
   'votes': 'votes',
   'year': {
     key: 'year',
@@ -103,6 +114,47 @@ const imdbSeriesMap = {
     transform: val => val ? val.toString() : undefined,
   },
   'totalseasons': 'totalSeasons',
+  'type': {
+    key: 'type',
+    transform: val => 'series',
+  },
+  'votes': 'votes',
+  'year': {
+    key: 'year',
+    transform: val => val ? val.toString() : undefined,
+  },
+};
+
+const imdbMovieMap = {
+  'actors': {
+    key: 'actors?',
+    transform: val => _.isEmpty(val) ? null : val.split(', '),
+  },
+  'awards': 'awards',
+  'boxoffice': 'boxoffice',
+  'country': 'country',
+  'director': {
+    key: 'directors?',
+    transform: val => _.isEmpty(val) ? null : val.split(', '),
+  },
+  'genres': {
+    key: 'genres?',
+    transform: val => _.isEmpty(val) ? null : val.split(', '),
+  },
+  'imdbid': 'imdbID',
+  'metascore': 'metascore',
+  'production': 'production',
+  'poster': 'poster',
+  'rated': 'rated',
+  'rating': 'rating',
+  'ratings': 'ratings',
+  'released': 'released',
+  'runtime': 'runtime',
+  'title': 'title',
+  'type': {
+    key: 'type',
+    transform: val => 'movie',
+  },
   'votes': 'votes',
   'year': {
     key: 'year',
@@ -121,6 +173,10 @@ class UmsDataMapper {
 
   parseIMDBAPISeriesResponse(imdbData): SeriesMetadataInterface {
     return objectMapper(imdbData, imdbSeriesMap);
+  }
+
+  parseIMDBAPIMovieResponse(imdbData): MediaMetadataInterface {
+    return objectMapper(imdbData, imdbMovieMap);
   }
 }
 
