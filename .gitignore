@@ -65,4 +65,5 @@ typings/
 !jest-mongodb-config.js
 !jest.config.js
 !test/mocks.js
+!test/opensubtitles-mocks.js
 !ecosystem.config.js
