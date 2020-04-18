@@ -82,9 +82,9 @@ export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface
     extend: true,
   };
 
-  let osMeta: OpensubtitlesIdentifyResponse;
+  let openSubtitlesResponse: OpensubtitlesIdentifyResponse;
   try {
-    osMeta = await osAPI.identify(osQuery);
+    openSubtitlesResponse = await osAPI.identify(osQuery);
   } catch (err) {
     if (err.message === 'API seems offline') {
       err.message = MESSAGES.openSubsOffline;
@@ -94,35 +94,29 @@ export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface
   }
 
   // Fail early if OpenSubtitles reports that it did not recognize the hash
-  if (!osMeta.metadata) {
+  if (!openSubtitlesResponse.metadata) {
     await FailedLookups.updateOne({ osdbHash }, {}, { upsert: true, setDefaultsOnInsert: true });
     return ctx.body = MESSAGES.notFound;
   }
 
-  let newMetadata = mapper.parseOpenSubtitlesResponse(osMeta);
+  const parsedOpenSubtitlesResponse = mapper.parseOpenSubtitlesResponse(openSubtitlesResponse);
 
-  try {
-    dbMeta = await MediaMetadata.create(newMetadata);
-    return ctx.body = dbMeta;
-  } catch (e) {
-    if (e.name === 'ValidationError') {
-      /*
-       * The database has given us a ValidationError which means that
-       * OpenSubtitles hasn't given us enough information to satisfy
-       * our schema constraints. Instead of failing here, we continue
-       * to attempt to supplement the information using OMDb.
-       */
-    } else {
-      throw e;
-    }
+  const parsedIMDbResponse: MediaMetadataInterface = await getFromIMDbAPI(parsedOpenSubtitlesResponse.imdbID);
+
+  // Work around seasons coming back from OpenSubtitles as 30 when they're not
+  if (
+    parsedIMDbResponse.seasonNumber &&
+    parsedIMDbResponse.seasonNumber !== '30' &&
+    parsedOpenSubtitlesResponse.seasonNumber &&
+    parsedOpenSubtitlesResponse.seasonNumber === '30'
+  ) {
+    delete parsedOpenSubtitlesResponse.seasonNumber;
   }
 
-  const imdbData: MediaMetadataInterface = await getFromIMDbAPI(newMetadata.imdbID);
-
-  newMetadata = _.merge(newMetadata, imdbData);
+  const combinedResponse = _.merge(parsedOpenSubtitlesResponse, parsedIMDbResponse);
 
   try {
-    dbMeta = await MediaMetadata.create(newMetadata);
+    dbMeta = await MediaMetadata.create(combinedResponse);
     return ctx.body = dbMeta;
   } catch (e) {
     await FailedLookups.updateOne({ osdbHash }, {}, { upsert: true, setDefaultsOnInsert: true });
