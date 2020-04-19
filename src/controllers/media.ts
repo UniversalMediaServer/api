@@ -100,7 +100,6 @@ export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface
   }
 
   const parsedOpenSubtitlesResponse = mapper.parseOpenSubtitlesResponse(openSubtitlesResponse);
-  console.log(parsedOpenSubtitlesResponse)
   const parsedIMDbResponse: MediaMetadataInterface = await getFromIMDbAPI(parsedOpenSubtitlesResponse.imdbID);
   const combinedResponse = _.merge(parsedOpenSubtitlesResponse, parsedIMDbResponse);
 
