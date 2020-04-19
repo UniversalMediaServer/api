@@ -134,7 +134,7 @@
     "@types/jest": "^25.2.1",
     "@types/lodash": "^4.14.150",
     "@types/mongoose": "^5.7.12",
-    "@types/node": "12",
+    "@types/node": "13",
     "@typescript-eslint/eslint-plugin": "^2.27.0",
     "@typescript-eslint/parser": "^2.28.0",
     "eslint": "^6.8.0",
