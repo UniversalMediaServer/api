@@ -100,19 +100,7 @@ export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface
   }
 
   const parsedOpenSubtitlesResponse = mapper.parseOpenSubtitlesResponse(openSubtitlesResponse);
-
   const parsedIMDbResponse: MediaMetadataInterface = await getFromIMDbAPI(parsedOpenSubtitlesResponse.imdbID);
-
-  // Work around seasons coming back from OpenSubtitles as 30 when they're not
-  if (
-    parsedIMDbResponse.seasonNumber &&
-    parsedIMDbResponse.seasonNumber !== '30' &&
-    parsedOpenSubtitlesResponse.seasonNumber &&
-    parsedOpenSubtitlesResponse.seasonNumber === '30'
-  ) {
-    delete parsedOpenSubtitlesResponse.seasonNumber;
-  }
-
   const combinedResponse = _.merge(parsedOpenSubtitlesResponse, parsedIMDbResponse);
 
   try {
