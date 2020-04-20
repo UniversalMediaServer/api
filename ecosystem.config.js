@@ -6,11 +6,14 @@ module.exports = {
   apps: [
     {
       name: 'API',
-      script: 'ts-node --files ./src/app.ts',
+      script: './node_modules/.bin/ts-node',
+      args: 'src/app.ts',
       env: { NODE_ENV: 'production' },
+      env_production: { NODE_ENV: 'production' },
       instances: 4,
+      interpreter: 'node_modules/.bin/ts-node',
       exec_mode: 'cluster',
-      watch: true,
+      watch: ['src'],
       autorestart: true,
     },
     {
