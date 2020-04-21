@@ -6,7 +6,8 @@ module.exports = {
   apps: [
     {
       name: 'API',
-      script: 'ts-node --files ./src/app.ts',
+      script: 'ts-node',
+      args: '--files ./src/app.ts',
       env: { NODE_ENV: 'production' },
       instances: 4,
       exec_mode: 'cluster',
@@ -15,7 +16,8 @@ module.exports = {
     },
     {
       name: 'CRON',
-      script: 'ts-node --files ./src/cron/all-episodes.ts',
+      script: 'ts-node',
+      args: ' --files ./src/cron/all-episodes.ts',
       instances: 1,
       cron_restart: '0,30 * * * *',
       autorestart: false,
