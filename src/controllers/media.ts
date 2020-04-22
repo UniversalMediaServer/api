@@ -74,7 +74,7 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
  *
  * @param imdbId 
  */
-const setSeriesMetadataByIMDbID = async(imdbId: string): Promise<any> => {
+const setSeriesMetadataByIMDbID = async(imdbId: string): Promise<SeriesMetadataInterface> => {
   if (!imdbId) {
     throw new Error('IMDb ID not supplied');
   }
@@ -153,9 +153,9 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
   }
 
   const searchRequest: SearchRequest = { name: title };
-  console.log(0, searchRequest);
   const imdbData: MediaMetadataInterface = await getFromIMDbAPI(null, searchRequest);
 
+  console.log(0, imdbData);
   if (imdbData.type === 'episode') {
     const tvSeries: SeriesMetadataInterface = await setSeriesMetadataByIMDbID(imdbData.seriesIMDbID);
     if (tvSeries) {
