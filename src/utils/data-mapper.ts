@@ -63,6 +63,7 @@ const imdbEpisodeMap = {
   'released': 'released',
   'runtime': 'runtime',
   'season': 'seasonNumber',
+  'seriesID': 'seriesIMDbId',
   'title': {
     key: 'episodeTitle',
     transform: val => val,

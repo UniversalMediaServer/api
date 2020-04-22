@@ -27,6 +27,7 @@ export interface MediaMetadataInterface extends Document {
   released?: Date;
   runtime?: string;
   seasonNumber?: string;
+  seriesIMDbID?: string;
   tagline?: string;
   title: string;
   trivia?: string;
@@ -89,6 +90,7 @@ const MediaMetadataSchema: Schema = new Schema({
     required: isTypeEpisode,
     type: String,
   },
+  seriesIMDbID: { type: String },
   tagline: { type: String },
   title: { type: String, index: true, required: true },
   trivia: { type: String },

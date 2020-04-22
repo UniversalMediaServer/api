@@ -65,6 +65,21 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
   return metadata;
 };
 
+/**
+ * Sets and returns series metadata by IMDb ID.
+ *
+ * @param imdbId 
+ */
+const setSeriesMetadataByIMDbID = async(imdbId: string): Promise<any> => {
+  const imdbData: MediaMetadataInterface = await getFromIMDbAPI(imdbId);
+
+  if (!imdbData) {
+    return null;
+  }
+
+  return SeriesMetadata.create(imdbData);
+};
+
 export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface | string> => {
   const { osdbhash: osdbHash, filebytesize } = ctx.params;
   let dbMeta: MediaMetadataInterface = await MediaMetadata.findOne({ osdbHash }).lean();
@@ -133,7 +148,7 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
   const imdbData: MediaMetadataInterface = await getFromIMDbAPI(null, searchRequest);
 
   if (imdbData.type === 'episode') {
-    const tvSeries: SeriesMetadataInterface = await SeriesMetadata.findOne({ imdbID: imdbData.imdbID });
+    const tvSeries: SeriesMetadataInterface = await setSeriesMetadataByIMDbID(imdbData.seriesIMDbID);
     if (tvSeries) {
       imdbData.title = tvSeries.title;
     }

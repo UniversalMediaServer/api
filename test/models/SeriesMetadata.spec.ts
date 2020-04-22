@@ -1,5 +1,4 @@
 import * as  mongoose from 'mongoose';
-import * as _ from 'lodash';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import SeriesMetadataModel from '../../src/models/SeriesMetadata';
 
