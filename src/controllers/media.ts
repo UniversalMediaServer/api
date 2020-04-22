@@ -41,9 +41,11 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
     const isTVEpisode = parsedFilename && parsedFilename.show && parsedFilename.season && parsedFilename.episode;
     if (isTVEpisode) {
       const tvSeriesInfo = await imdbAPI.get({ name: parsedFilename.show });
+      console.log(2, tvSeriesInfo);
       // @ts-ignore
       const allEpisodes = await tvSeriesInfo.episodes();
       const currentEpisode = _.find(allEpisodes, { season: parsedFilename.season, episode: parsedFilename.episode });
+      console.log(3, currentEpisode);
       imdbId = currentEpisode.imdbid;
       await EpisodeProcessing.create({ seriesimdbid: tvSeriesInfo.imdbid });
     } else {
