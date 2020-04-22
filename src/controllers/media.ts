@@ -75,6 +75,10 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
  * @param imdbId 
  */
 const setSeriesMetadataByIMDbID = async(imdbId: string): Promise<any> => {
+  if (!imdbId) {
+    throw new Error('IMDb ID not supplied');
+  }
+
   const imdbData: MediaMetadataInterface = await getFromIMDbAPI(imdbId);
 
   if (!imdbData) {
