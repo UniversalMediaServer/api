@@ -32,6 +32,10 @@ export const FAILED_LOOKUP_SKIP_DAYS = 30;
  * @param searchRequest a query to perform in order to get the imdbId
  */
 const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Promise<MediaMetadataInterface> => {
+  if (!imdbId && !searchRequest) {
+    throw new Error('All parameters were falsy');
+  }
+
   if (!imdbId) {
     const parsedFilename = episodeParser(searchRequest.name);
     const isTVEpisode = parsedFilename && parsedFilename.show && parsedFilename.season && parsedFilename.episode;
