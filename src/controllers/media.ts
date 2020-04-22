@@ -149,6 +149,7 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
   }
 
   const searchRequest: SearchRequest = { name: title };
+  console.log(0, searchRequest);
   const imdbData: MediaMetadataInterface = await getFromIMDbAPI(null, searchRequest);
 
   if (imdbData.type === 'episode') {
