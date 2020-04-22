@@ -44,12 +44,12 @@ const openSubtitlesData = {
   type: 'movie',
 };
 
-const imdbApiData = {
+const imdbApiEpisode = {
   title: 'One Last Thing',
   year: 2013,
   rated: 'TV-MA',
   released: '2013-11-23T11:00:00.000Z',
-  season: 30,
+  season: 3,
   episode: 9,
   runtime: '57 min',
   genres: 'Crime, Drama, Mystery, Thriller',
@@ -69,7 +69,6 @@ const imdbApiData = {
   seriesid: 'tt1796960',
   type: 'episode',
   response: 'True',
-  name: 'One Last Thing',
   series: true,
   imdburl: 'https://www.imdb.com/title/tt2916312',
 };
@@ -113,12 +112,13 @@ describe('Data mapper', () => {
 
   describe('imdbAPI responses', () => {
     it('should parse to expected flat structure', () => {
-      const parsed = mapper.parseIMDBAPIEpisodeResponse(imdbApiData);
+      const parsed = mapper.parseIMDBAPIEpisodeResponse(imdbApiEpisode);
       expect(parsed.actors).toEqual(['Claire Danes', 'Damian Lewis', 'Rupert Friend', 'Morena Baccarin']);
       expect(parsed.awards).toEqual('N/A');
       expect(parsed.country).toEqual('USA');
       expect(parsed.directors).toEqual(['Jeffrey Reiner']);
       expect(parsed.episodeNumber).toEqual(9);
+      expect(parsed.episodeTitle).toEqual(imdbApiEpisode.title);
       expect(parsed.genres).toEqual(['Crime', 'Drama', 'Mystery', 'Thriller']);
       expect(parsed.poster).toEqual('https://m.media-amazon.com/images/M/MV5BMTc0NDc2Nzg0MV5BMl5BanBnXkFtZTgwMzA2MzM2MDE@._V1_SX300.jpg');
       expect(parsed.rated).toEqual('TV-MA');
@@ -126,7 +126,7 @@ describe('Data mapper', () => {
       expect(parsed.ratings).toEqual([{ Source: 'Internet Movie Database', Value: '8.6/10' }]);
       expect(parsed.released).toEqual('2013-11-23T11:00:00.000Z');
       expect(parsed.runtime).toEqual('57 min');
-      expect(parsed.seasonNumber).toEqual(imdbApiData.season);
+      expect(parsed.seasonNumber).toEqual(imdbApiEpisode.season);
       expect(parsed.type).toEqual('episode');
       expect(parsed.votes).toEqual('2211');
       expect(typeof parsed.year).toBe('string');  

@@ -57,7 +57,7 @@ describe('Series Metadata Model', () => {
       expect(result._id).toEqual(document._id);
     });
 
-    it('should not return doucment for arbitrary search terms', async() => {
+    it('should not return document for arbitrary search terms', async() => {
       let result = await SeriesMetadataModel.findSimilarSeries('Homeland');
       expect(result).toEqual(null);
 

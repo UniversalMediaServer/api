@@ -60,7 +60,7 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
   } else {
     metadata = mapper.parseIMDBAPIEpisodeResponse(imdbData);
   }
-  
+
   metadata.id = imdbId;
   return metadata;
 };
@@ -132,9 +132,14 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
   const searchRequest: SearchRequest = { name: title };
   const imdbData: MediaMetadataInterface = await getFromIMDbAPI(null, searchRequest);
 
+  if (imdbData.type === 'episode') {
+    const tvSeries: SeriesMetadataInterface = await SeriesMetadata.findOne({ imdbID: imdbData.id });
+    if (tvSeries) {
+      imdbData.title = tvSeries.title;
+    }
+  }
+
   try {
-    imdbData.title = title;
-    imdbData.imdbID = imdbData.id;
     dbMeta = await MediaMetadata.create(imdbData);
     return ctx.body = dbMeta;
   } catch (e) {
