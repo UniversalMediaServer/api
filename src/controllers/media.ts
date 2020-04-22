@@ -137,6 +137,8 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
     if (tvSeries) {
       imdbData.title = tvSeries.title;
     }
+  } else {
+    imdbData.title = title;
   }
 
   try {
