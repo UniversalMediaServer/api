@@ -89,8 +89,12 @@ const setSeriesMetadataByIMDbID = async(imdbId: string): Promise<SeriesMetadataI
     throw new Error('IMDb ID not supplied');
   }
 
-  const imdbData: MediaMetadataInterface = await getFromIMDbAPI(imdbId);
+  const existingSeries: SeriesMetadataInterface = await SeriesMetadata.findOne({ imdbID: imdbId });
+  if (existingSeries) {
+    return existingSeries;
+  }
 
+  const imdbData: MediaMetadataInterface = await getFromIMDbAPI(imdbId);
   if (!imdbData) {
     return null;
   }
@@ -187,10 +191,7 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
   }
 
   if (imdbData.type === 'episode') {
-    const tvSeries: SeriesMetadataInterface = await setSeriesMetadataByIMDbID(imdbData.seriesIMDbID);
-    if (tvSeries) {
-      imdbData.title = tvSeries.title;
-    }
+    await setSeriesMetadataByIMDbID(imdbData.seriesIMDbID);
   }
 
   try {
