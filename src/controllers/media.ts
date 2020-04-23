@@ -36,11 +36,13 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
     throw new Error('All parameters were falsy');
   }
 
+  let tvSeriesInfo;
+
   if (!imdbId) {
     const parsedFilename = episodeParser(searchRequest.name);
     const isTVEpisode = parsedFilename && parsedFilename.show && parsedFilename.season && parsedFilename.episode;
     if (isTVEpisode) {
-      const tvSeriesInfo = await imdbAPI.get({ name: parsedFilename.show });
+      tvSeriesInfo = await imdbAPI.get({ name: parsedFilename.show });
       console.log(2, tvSeriesInfo);
       // @ts-ignore
       const allEpisodes = await tvSeriesInfo.episodes();
@@ -57,6 +59,7 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
   }
 
   const imdbData = await imdbAPI.get({ id: imdbId });
+  console.log(4, imdbData);
 
   let metadata;
   if (imdbData.type === 'movie') {
