@@ -47,7 +47,7 @@ const SeriesMetadataSchema: Schema = new Schema({
   directors: { type: Array },
   endYear: { type: String },
   genres: { type: Array, required: true },
-  imdbID: { type: String, required: true, index: true },
+  imdbID: { type: String, required: true, index: true, unique: true },
   metascore: { type: String },
   plot: { type: String },
   poster: { type: String },

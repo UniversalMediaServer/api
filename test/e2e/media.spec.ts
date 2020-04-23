@@ -104,14 +104,23 @@ describe('Media Metadata endpoints', () => {
   describe('get by title', () => {
     it('should search by title and store it', async() => {
       const body = JSON.stringify({ title: 'Homeland S02E05' });
-      await got.post(`${appUrl}/api/media/title`, { responseType: 'json', headers: { 'content-type': 'application/json' }, body });
+      const response = await got.post(`${appUrl}/api/media/title`, { responseType: 'json', headers: { 'content-type': 'application/json' }, body });
+      expect(response.body).toHaveProperty('_id');
 
-      const doc = await MediaMetadataModel.findOne({ title: 'Homeland S02E05' });
-      expect(doc).toHaveProperty('_id');
-      expect(doc).toHaveProperty('episodeNumber', '5');
-      expect(doc).toHaveProperty('seasonNumber');
-      expect(doc).toHaveProperty('type', 'episode');
-      expect(doc).toHaveProperty('year', '2012');
+      const episode = await MediaMetadataModel.findOne({ searchMatches: { $in: ['Homeland S02E05'] } });
+      expect(episode).toHaveProperty('_id');
+      expect(episode).toHaveProperty('episodeNumber', '5');
+      expect(episode).toHaveProperty('imdbID', 'tt2325080');
+      expect(episode).toHaveProperty('seasonNumber', '2');
+      expect(episode).toHaveProperty('seriesIMDbID', 'tt1796960');
+      expect(episode).toHaveProperty('type', 'episode');
+      expect(episode).toHaveProperty('year', '2012');
+
+      const series = await SeriesMetadataModel.findOne();
+      expect(series).toHaveProperty('imdbID', 'tt1796960');
+      expect(series).toHaveProperty('totalSeasons', 8);
+      expect(series).toHaveProperty('title', 'Homeland');
+      expect(series).toHaveProperty('startYear', '2011');
     });
 
     it('should require title in body', async() => {
@@ -167,7 +176,8 @@ describe('Media Metadata endpoints', () => {
     it('should return an episode by imdbid', async() => {
       const body = JSON.stringify({ imdbid: 'tt3388032' });
       const response: any = await got.post(`${appUrl}/api/media/imdbid`, { responseType: 'json', headers: { 'content-type': 'application/json' }, body });
-      expect(response.body.episodeTitle).toEqual('Proof of Concept');
+      expect(response.body).toBeTruthy();
+      expect(response.body.title).toEqual('Proof of Concept');
       expect(response.body.type).toEqual('episode');
     });
   });

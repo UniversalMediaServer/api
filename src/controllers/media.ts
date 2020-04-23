@@ -38,16 +38,20 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
 
   let tvSeriesInfo;
 
+  /**
+   * We need the IMDb ID for the imdbAPI get request below so here we get it.
+   * Along the way, if the result is an episode, we also instruct our episode
+   * processor to asynchronously add the other episodes for that series to the
+   * queue.
+   */
   if (!imdbId) {
     const parsedFilename = episodeParser(searchRequest.name);
     const isTVEpisode = parsedFilename && parsedFilename.show && parsedFilename.season && parsedFilename.episode;
     if (isTVEpisode) {
       tvSeriesInfo = await imdbAPI.get({ name: parsedFilename.show });
-      console.log(2, tvSeriesInfo);
       // @ts-ignore
       const allEpisodes = await tvSeriesInfo.episodes();
       const currentEpisode = _.find(allEpisodes, { season: parsedFilename.season, episode: parsedFilename.episode });
-      console.log(3, currentEpisode);
       imdbId = currentEpisode.imdbid;
       await EpisodeProcessing.create({ seriesimdbid: tvSeriesInfo.imdbid });
     } else {
@@ -59,18 +63,21 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
   }
 
   const imdbData = await imdbAPI.get({ id: imdbId });
-  console.log(4, imdbData);
+  if (!imdbData) {
+    return null;
+  }
 
   let metadata;
   if (imdbData.type === 'movie') {
     metadata = mapper.parseIMDBAPIMovieResponse(imdbData);
   } else if (imdbData.type === 'series') {
     metadata = mapper.parseIMDBAPISeriesResponse(imdbData);
-  } else {
+  } else if (imdbData.type === 'episode') {
     metadata = mapper.parseIMDBAPIEpisodeResponse(imdbData);
+  } else {
+    throw new Error('Received a type we did not expect');
   }
 
-  metadata.imdbID = imdbId;
   return metadata;
 };
 
@@ -147,12 +154,13 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
     throw new Error('title is required');
   }
 
-  let dbMeta: MediaMetadataInterface = await MediaMetadata.findOne({ title }).lean();
-
-  if (dbMeta) {
-    return ctx.body = dbMeta;
+  // If we already have a result, return it
+  const existingResultFromSearchMatch: MediaMetadataInterface = await MediaMetadata.findOne({ searchMatches: { $in: [title] } }).lean();
+  if (existingResultFromSearchMatch) {
+    return ctx.body = existingResultFromSearchMatch;
   }
 
+  // If we already failed to get a result, return early
   if (await FailedLookups.findOne({ title }).lean()) {
     return ctx.body = MESSAGES.notFound;
   }
@@ -160,18 +168,37 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
   const searchRequest: SearchRequest = { name: title };
   const imdbData: MediaMetadataInterface = await getFromIMDbAPI(null, searchRequest);
 
-  console.log(0, imdbData);
+  if (!imdbData) {
+    await FailedLookups.updateOne({ title }, {}, { upsert: true, setDefaultsOnInsert: true });
+    return ctx.body = MESSAGES.notFound;
+  }
+
+  /**
+   * If we already have a result based on IMDb ID, return it after adding
+   * this new searchMatch to the array.
+   */
+  const existingResultFromIMDbID: MediaMetadataInterface = await MediaMetadata.findOne({ imdbID: imdbData.seriesIMDbID }).lean();
+  if (existingResultFromIMDbID) {
+    const updatedResult = await MediaMetadata.findOneAndUpdate(
+      { imdbID: imdbData.seriesIMDbID },
+      { $push: { searchMatches: title } },
+      { new: true },
+    ).lean();
+    // @ts-ignore
+    return ctx.body = updatedResult;
+  }
+
   if (imdbData.type === 'episode') {
     const tvSeries: SeriesMetadataInterface = await setSeriesMetadataByIMDbID(imdbData.seriesIMDbID);
     if (tvSeries) {
       imdbData.title = tvSeries.title;
     }
   }
-  console.log(1, title, imdbData);
 
   try {
-    dbMeta = await MediaMetadata.create(imdbData);
-    return ctx.body = dbMeta;
+    imdbData.searchMatches = [title];
+    const newlyCreatedResult = await MediaMetadata.create(imdbData);
+    return ctx.body = newlyCreatedResult;
   } catch (e) {
     await FailedLookups.updateOne({ title }, {}, { upsert: true, setDefaultsOnInsert: true });
     return ctx.body = MESSAGES.notFound;
@@ -184,8 +211,8 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
    * OpenSubtitles for that fallback data.
    */
   try {
-    dbMeta = await MediaMetadata.create(imdbData);
-    return ctx.body = dbMeta;
+    const newlyCreatedResult = await MediaMetadata.create(imdbData);
+    return ctx.body = newlyCreatedResult;
   } catch (e) {
     if (e.name === 'ValidationError') {
       // continue for validation errors
@@ -212,8 +239,8 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
   };
 
   try {
-    dbMeta = await MediaMetadata.create(newMetadata);
-    return ctx.body = dbMeta;
+    const newlyCreatedResult = await MediaMetadata.create(newMetadata);
+    return ctx.body = newlyCreatedResult;
   } catch (e) {
     await FailedLookups.updateOne({ title, language }, {}, { upsert: true, setDefaultsOnInsert: true });
     return ctx.body = MESSAGES.notFound;

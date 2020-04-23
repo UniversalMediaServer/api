@@ -118,8 +118,8 @@ describe('Data mapper', () => {
       expect(parsed.country).toEqual('USA');
       expect(parsed.directors).toEqual(['Jeffrey Reiner']);
       expect(parsed.episodeNumber).toEqual(9);
-      expect(parsed.episodeTitle).toEqual(imdbApiEpisode.title);
       expect(parsed.genres).toEqual(['Crime', 'Drama', 'Mystery', 'Thriller']);
+      expect(parsed.imdbID).toEqual(imdbApiEpisode.imdbid);
       expect(parsed.poster).toEqual('https://m.media-amazon.com/images/M/MV5BMTc0NDc2Nzg0MV5BMl5BanBnXkFtZTgwMzA2MzM2MDE@._V1_SX300.jpg');
       expect(parsed.rated).toEqual('TV-MA');
       expect(parsed.rating).toEqual(8.6);
@@ -127,6 +127,8 @@ describe('Data mapper', () => {
       expect(parsed.released).toEqual('2013-11-23T11:00:00.000Z');
       expect(parsed.runtime).toEqual('57 min');
       expect(parsed.seasonNumber).toEqual(imdbApiEpisode.season);
+      expect(parsed.seriesIMDbID).toEqual(imdbApiEpisode.seriesid);
+      expect(parsed.title).toEqual(imdbApiEpisode.title);
       expect(parsed.type).toEqual('episode');
       expect(parsed.votes).toEqual('2211');
       expect(typeof parsed.year).toBe('string');  
