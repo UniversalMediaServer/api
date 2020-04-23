@@ -89,7 +89,7 @@ const setSeriesMetadataByIMDbID = async(imdbId: string): Promise<SeriesMetadataI
     throw new Error('IMDb ID not supplied');
   }
 
-  const existingSeries: SeriesMetadataInterface = await SeriesMetadata.findOne({ imdbID: imdbId });
+  const existingSeries: SeriesMetadataInterface = await SeriesMetadata.findOne({ imdbID: imdbId }).lean();
   if (existingSeries) {
     return existingSeries;
   }
