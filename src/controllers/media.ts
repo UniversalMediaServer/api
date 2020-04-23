@@ -36,8 +36,6 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
     throw new Error('All parameters were falsy');
   }
 
-  let tvSeriesInfo;
-
   /**
    * We need the IMDb ID for the imdbAPI get request below so here we get it.
    * Along the way, if the result is an episode, we also instruct our episode
@@ -48,7 +46,7 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
     const parsedFilename = episodeParser(searchRequest.name);
     const isTVEpisode = parsedFilename && parsedFilename.show && parsedFilename.season && parsedFilename.episode;
     if (isTVEpisode) {
-      tvSeriesInfo = await imdbAPI.get({ name: parsedFilename.show });
+      const tvSeriesInfo = await imdbAPI.get({ name: parsedFilename.show });
       // @ts-ignore
       const allEpisodes = await tvSeriesInfo.episodes();
       const currentEpisode = _.find(allEpisodes, { season: parsedFilename.season, episode: parsedFilename.episode });
