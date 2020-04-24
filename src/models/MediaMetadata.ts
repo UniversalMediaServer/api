@@ -53,6 +53,7 @@ const MediaMetadataSchema: Schema = new Schema({
     type: Date,
     expires: DOCUMENT_EXPIRY_IN_SECONDS,
     default: Date.now,
+    select: false,
   },
   directors: { type: Array, required: true },
   episodeNumber: {
@@ -82,7 +83,7 @@ const MediaMetadataSchema: Schema = new Schema({
   ratings: { type: Array, required: true },
   released: { type: Date },
   runtime: { type: String },
-  searchMatches: { type: Array, index: true },
+  searchMatches: { type: Array, index: true, select: false },
   seasonNumber: {
     required: isTypeEpisode,
     type: String,

@@ -113,8 +113,10 @@ describe('Media Metadata endpoints', () => {
       expect(episode).toHaveProperty('imdbID', 'tt2325080');
       expect(episode).toHaveProperty('seasonNumber', '2');
       expect(episode).toHaveProperty('seriesIMDbID', 'tt1796960');
+      expect(episode).toHaveProperty('title', 'Q&A');
       expect(episode).toHaveProperty('type', 'episode');
       expect(episode).toHaveProperty('year', '2012');
+      expect(episode.searchMatches).toBeUndefined();
 
       const series = await SeriesMetadataModel.findOne();
       expect(series).toHaveProperty('imdbID', 'tt1796960');
@@ -176,7 +178,6 @@ describe('Media Metadata endpoints', () => {
     it('should return an episode by imdbid', async() => {
       const body = JSON.stringify({ imdbid: 'tt3388032' });
       const response: any = await got.post(`${appUrl}/api/media/imdbid`, { responseType: 'json', headers: { 'content-type': 'application/json' }, body });
-      expect(response.body).toBeTruthy();
       expect(response.body.title).toEqual('Proof of Concept');
       expect(response.body.type).toEqual('episode');
     });
