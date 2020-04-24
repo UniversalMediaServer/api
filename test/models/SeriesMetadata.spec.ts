@@ -1,5 +1,4 @@
 import * as  mongoose from 'mongoose';
-import * as _ from 'lodash';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import SeriesMetadataModel from '../../src/models/SeriesMetadata';
 
@@ -57,7 +56,7 @@ describe('Series Metadata Model', () => {
       expect(result._id).toEqual(document._id);
     });
 
-    it('should not return doucment for arbitrary search terms', async() => {
+    it('should not return document for arbitrary search terms', async() => {
       let result = await SeriesMetadataModel.findSimilarSeries('Homeland');
       expect(result).toEqual(null);
 

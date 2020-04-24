@@ -50,14 +50,6 @@ const imdbEpisodeMap = {
   },
   'episode': 'episodeNumber',
   'imdbid': 'imdbID',
-  'title': [{
-    key: 'episodeTitle',
-    transform: val => val,
-  },
-  {
-    key: 'title',
-    transform: val => val,
-  }],
   'genres': {
     key: 'genres?',
     transform: val => _.isEmpty(val) ? null : val.split(', '),
@@ -71,6 +63,8 @@ const imdbEpisodeMap = {
   'released': 'released',
   'runtime': 'runtime',
   'season': 'seasonNumber',
+  'seriesid': 'seriesIMDbID',
+  'title': 'title',
   'type': {
     key: 'type',
     transform: val => 'episode',

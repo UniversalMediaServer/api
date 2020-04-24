@@ -13,7 +13,6 @@ export interface MediaMetadataInterface extends Document {
   country?: string;
   directors: Array<string>;
   episodeNumber?: string;
-  episodeTitle?: string;
   genres: Array<string>;
   goofs?: string;
   imdbID: string;
@@ -26,7 +25,9 @@ export interface MediaMetadataInterface extends Document {
   ratings?: Array<{Source: ratingSource; Value: string}>; // e.g. {"Source": "Metacritic", "Value": "67/100"}
   released?: Date;
   runtime?: string;
+  searchMatches?: Array<string>;
   seasonNumber?: string;
+  seriesIMDbID?: string;
   tagline?: string;
   title: string;
   trivia?: string;
@@ -39,8 +40,8 @@ export interface MediaMetadataInterface extends Document {
   updatedAt: string;
 }
 
-const isTypeEpisode = function(): boolean {
-  return this.type === 'episode';
+const isTypeEpisode = function(context?: MediaMetadataInterface): boolean {
+  return context ? context.type === 'episode' : this.type === 'episode';
 };
 
 const MediaMetadataSchema: Schema = new Schema({
@@ -52,19 +53,16 @@ const MediaMetadataSchema: Schema = new Schema({
     type: Date,
     expires: DOCUMENT_EXPIRY_IN_SECONDS,
     default: Date.now,
+    select: false,
   },
   directors: { type: Array, required: true },
   episodeNumber: {
     required: isTypeEpisode,
     type: String,
   },
-  episodeTitle: {
-    required: isTypeEpisode,
-    type: String,
-  },
   genres: { type: Array, required: true },
   goofs: { type: String },
-  imdbID: { type: String, required: true },
+  imdbID: { type: String, index: true, required: true, unique: true },
   osdbHash: {
     index: true,
     type: String,
@@ -85,12 +83,14 @@ const MediaMetadataSchema: Schema = new Schema({
   ratings: { type: Array, required: true },
   released: { type: Date },
   runtime: { type: String },
+  searchMatches: { type: Array, index: true, select: false },
   seasonNumber: {
     required: isTypeEpisode,
     type: String,
   },
+  seriesIMDbID: { type: String },
   tagline: { type: String },
-  title: { type: String, index: true, required: true },
+  title: { type: String, index: true, required: function(): boolean { return !isTypeEpisode(this); } },
   trivia: { type: String },
   type: { type: String, required: true },
   votes: { type: String },
@@ -102,8 +102,8 @@ const MediaMetadataSchema: Schema = new Schema({
 });
 
 MediaMetadataSchema.pre<MediaMetadataInterface>('save', function(next) {
-  if (this.episodeTitle && this.episodeTitle.startsWith('Episode #')) {
-    this.episodeTitle = undefined;
+  if (this.title && this.title.startsWith('Episode #')) {
+    this.title = undefined;
   }
   next();
 });

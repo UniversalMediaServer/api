@@ -6,10 +6,10 @@ import MediaMetadataModel from '../../src/models/MediaMetadata';
 const mediaMetaData = {
   directors: ['Christopher Nolan'],
   episodeNumber: '3',
-  episodeTitle: 'Episode #51',
   genres: ['Adventure', 'Drama', 'Sci-Fi'],
   imdbID: 'tt0816692',
   osdbHash: '8e245d9679d31e12',
+  searchMatches: ['Interstellar (2014)'],
   seasonNumber: '2',
   title: 'Interstellar',
   type: 'episode',
@@ -41,9 +41,10 @@ describe('Media Metadata Model', () => {
     expect(savedMedia.genres).toBeInstanceOf(Array);
   });
 
-  it('should require title in document', async() => {
-    const doc = Object.assign({}, mediaMetaData);
+  it('should require title in a movie', async() => {
+    const doc = _.cloneDeep(mediaMetaData);
     delete doc.title;
+    doc.type = 'movie';
     let err: Error;
     try {
       await MediaMetadataModel.create(doc);
@@ -53,8 +54,15 @@ describe('Media Metadata Model', () => {
     expect(err.message).toBe('MediaMetadata validation failed: title: Path `title` is required.');
   });
 
+  it('should allow empty title in an episode', async() => {
+    const doc = _.cloneDeep(mediaMetaData);
+    delete doc.title;
+    const response = await MediaMetadataModel.create(doc);
+    expect(response.year).toBe('2014');
+  });
+
   it('should require episodeNumber for episodes but not for movies', async() => {
-    const doc = Object.assign({}, mediaMetaData);
+    const doc = _.cloneDeep(mediaMetaData);
     delete doc.seasonNumber;
     let err: Error;
     try {
@@ -75,7 +83,7 @@ describe('Media Metadata Model', () => {
   });
 
   it('should validate for a valid osdb hash', async() => {
-    const doc = Object.assign({}, mediaMetaData);
+    const doc = _.cloneDeep(mediaMetaData);
     doc.osdbHash = 'a3e8hm1';
     let err: Error;
     try {
@@ -87,18 +95,16 @@ describe('Media Metadata Model', () => {
   });
 
   it('should not store dummy episode titles', async() => {
-    const doc = Object.assign({}, mediaMetaData);
+    const doc = _.cloneDeep(mediaMetaData);
+    doc.title = 'Episode #51';
     const record = await MediaMetadataModel.create(doc);
-    expect(record).toHaveProperty('title', 'Interstellar');
-    expect(record.episodeTitle).toBeUndefined();
+    expect(record.title).toBeUndefined();
   });
 
   it('should store real episode titles', async() => {
-    const doc = Object.assign({}, mediaMetaData);
-    doc.episodeTitle = 'Pilot';
+    const doc = _.cloneDeep(mediaMetaData);
     const record = await MediaMetadataModel.create(doc);
     expect(record).toHaveProperty('title', 'Interstellar');
-    expect(record).toHaveProperty('episodeTitle', 'Pilot');
   });
 
   describe('Virtuals', () => {
@@ -112,14 +118,26 @@ describe('Media Metadata Model', () => {
   describe('Indexes', () => {
     it('should use index when find by osdbHash', async() => {
       await MediaMetadataModel.create(mediaMetaData);
-      const response = await MediaMetadataModel.findOne({ osdbHash: mediaMetaData.osdbHash }, {}, { explain: 1 }).exec();
-      expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'stage'])).toEqual('IXSCAN');
+      const response = await MediaMetadataModel.findOne({ osdbHash: mediaMetaData.osdbHash }, null, { explain: 1 }).exec();
+      expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'inputStage', 'stage'])).toEqual('IXSCAN');
+      expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'stage'])).toEqual('FETCH');
+      expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'stage'])).toEqual('PROJECTION');
     });
 
     it('should use index when find by title', async() => {
       await MediaMetadataModel.create(mediaMetaData);
-      const response = await MediaMetadataModel.findOne({ title: mediaMetaData.title }, {}, { explain: 1 }).exec();
-      expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'stage'])).toEqual('IXSCAN');
+      const response = await MediaMetadataModel.findOne({ title: mediaMetaData.title }, null, { explain: 1 }).exec();
+      expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'inputStage', 'stage'])).toEqual('IXSCAN');
+      expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'stage'])).toEqual('FETCH');
+      expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'stage'])).toEqual('PROJECTION');
+    });
+
+    it('should use index when find by searchMatches', async() => {
+      await MediaMetadataModel.create(mediaMetaData);
+      const response = await MediaMetadataModel.findOne({ searchMatches: { $in: [mediaMetaData.searchMatches[0]] } }, null, { explain: 1 }).exec();
+      expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'inputStage', 'stage'])).toEqual('IXSCAN');
+      expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'stage'])).toEqual('FETCH');
+      expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'stage'])).toEqual('PROJECTION');
     });
   });
 });
