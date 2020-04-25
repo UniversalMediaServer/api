@@ -84,7 +84,7 @@ const setSeriesMetadataByIMDbID = async(imdbId: string): Promise<SeriesMetadataI
     throw new Error('IMDb ID not supplied');
   }
 
-  const existingSeries: SeriesMetadataInterface = await SeriesMetadata.findOne({ imdbID: imdbId }).lean();
+  const existingSeries: SeriesMetadataInterface = await SeriesMetadata.findOne({ imdbID: imdbId }, null, { lean: true }).exec();
   if (existingSeries) {
     return existingSeries;
   }
@@ -99,12 +99,12 @@ const setSeriesMetadataByIMDbID = async(imdbId: string): Promise<SeriesMetadataI
 
 export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface | string> => {
   const { osdbhash: osdbHash, filebytesize } = ctx.params;
-  let dbMeta: MediaMetadataInterface = await MediaMetadata.findOne({ osdbHash }).lean();
+  let dbMeta: MediaMetadataInterface = await MediaMetadata.findOne({ osdbHash }, null, { lean: true }).exec();
 
   if (dbMeta) {
     return ctx.body = dbMeta;
   }
-  if (await FailedLookups.findOne({ osdbHash }).lean()) {
+  if (await FailedLookups.findOne({ osdbHash }, '_id', { lean: true }).exec()) {
     throw new MediaNotFoundError();
   }
 
@@ -118,7 +118,7 @@ export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface
 
   // Fail early if OpenSubtitles reports that it did not recognize the hash
   if (!openSubtitlesResponse.metadata) {
-    await FailedLookups.updateOne({ osdbHash }, {}, { upsert: true, setDefaultsOnInsert: true });
+    await FailedLookups.updateOne({ osdbHash }, {}, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
 
@@ -130,7 +130,7 @@ export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface
     dbMeta = await MediaMetadata.create(combinedResponse);
     return ctx.body = dbMeta;
   } catch (e) {
-    await FailedLookups.updateOne({ osdbHash }, {}, { upsert: true, setDefaultsOnInsert: true });
+    await FailedLookups.updateOne({ osdbHash }, {}, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
 };
@@ -143,13 +143,13 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
   }
 
   // If we already have a result, return it
-  const existingResultFromSearchMatch: MediaMetadataInterface = await MediaMetadata.findOne({ searchMatches: { $in: [title] } }).lean();
+  const existingResultFromSearchMatch: MediaMetadataInterface = await MediaMetadata.findOne({ searchMatches: { $in: [title] } }, null, { lean: true }).exec();
   if (existingResultFromSearchMatch) {
     return ctx.body = existingResultFromSearchMatch;
   }
 
   // If we already failed to get a result, return early
-  if (await FailedLookups.findOne({ title }).lean()) {
+  if (await FailedLookups.findOne({ title }, '_id', { lean: true }).exec()) {
     throw new MediaNotFoundError();
   }
 
@@ -157,7 +157,7 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
   const imdbData: MediaMetadataInterface = await getFromIMDbAPI(null, searchRequest);
 
   if (!imdbData) {
-    await FailedLookups.updateOne({ title }, {}, { upsert: true, setDefaultsOnInsert: true });
+    await FailedLookups.updateOne({ title }, {}, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
 
@@ -165,13 +165,13 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
    * If we already have a result based on IMDb ID, return it after adding
    * this new searchMatch to the array.
    */
-  const existingResultFromIMDbID: MediaMetadataInterface = await MediaMetadata.findOne({ imdbID: imdbData.seriesIMDbID }).lean();
+  const existingResultFromIMDbID: MediaMetadataInterface = await MediaMetadata.findOne({ imdbID: imdbData.seriesIMDbID }, null, { lean: true }).exec();
   if (existingResultFromIMDbID) {
     const updatedResult = await MediaMetadata.findOneAndUpdate(
       { imdbID: imdbData.seriesIMDbID },
       { $push: { searchMatches: title } },
-      { new: true },
-    ).lean();
+      { new: true, lean: true },
+    ).exec();
     // @ts-ignore
     return ctx.body = updatedResult;
   }
@@ -185,7 +185,7 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
     const newlyCreatedResult = await MediaMetadata.create(imdbData);
     return ctx.body = newlyCreatedResult;
   } catch (e) {
-    await FailedLookups.updateOne({ title }, {}, { upsert: true, setDefaultsOnInsert: true });
+    await FailedLookups.updateOne({ title }, {}, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
 
@@ -245,7 +245,7 @@ export const getSeriesByTitle = async(ctx: Context): Promise<SeriesMetadataInter
     return ctx.body = dbMeta;
   }
 
-  if (await FailedLookups.findOne({ title: dirOrFilename, type: 'series' }).lean()) {
+  if (await FailedLookups.findOne({ title: dirOrFilename, type: 'series' }, '_id', { lean: true  }).exec()) {
     throw new MediaNotFoundError();
   }
 
@@ -254,7 +254,7 @@ export const getSeriesByTitle = async(ctx: Context): Promise<SeriesMetadataInter
   const tvSeriesInfo = await imdbAPI.get({ name: dirOrFilename });
 
   if (!tvSeriesInfo) {
-    await FailedLookups.updateOne({ title: dirOrFilename, type: 'series' }, {}, { upsert: true, setDefaultsOnInsert: true });
+    await FailedLookups.updateOne({ title: dirOrFilename, type: 'series' }, {}, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
   const metadata = mapper.parseIMDBAPISeriesResponse(tvSeriesInfo);
@@ -265,7 +265,7 @@ export const getSeriesByTitle = async(ctx: Context): Promise<SeriesMetadataInter
 export const getByImdbID = async(ctx: Context): Promise<any> => {
   const { imdbid } = ctx.request.body;
 
-  const [mediaMetadata, seriesMetadata] = await Promise.all([MediaMetadata.findOne({ imdbID: imdbid }).lean(), SeriesMetadata.findOne({ imdbID: imdbid }).lean()]);
+  const [mediaMetadata, seriesMetadata] = await Promise.all([MediaMetadata.findOne({ imdbID: imdbid }, null, { lean: true }).exec(), SeriesMetadata.findOne({ imdbID: imdbid }, null, { lean: true }).exec()]);
 
   if (mediaMetadata) {
     return ctx.body = mediaMetadata;
@@ -275,7 +275,7 @@ export const getByImdbID = async(ctx: Context): Promise<any> => {
     return ctx.body = seriesMetadata;
   }
 
-  if (await FailedLookups.findOne({ imdbID: imdbid }).lean()) {
+  if (await FailedLookups.findOne({ imdbID: imdbid }, null, { lean: true }).exec()) {
     throw new MediaNotFoundError();
   }
   const imdbData: MediaMetadataInterface = await getFromIMDbAPI(imdbid);
@@ -289,7 +289,7 @@ export const getByImdbID = async(ctx: Context): Promise<any> => {
     }
     return ctx.body = dbMeta;
   } catch (e) {
-    await FailedLookups.updateOne({ imdbId: imdbid }, {}, { upsert: true, setDefaultsOnInsert: true });
+    await FailedLookups.updateOne({ imdbId: imdbid }, {}, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
 };
