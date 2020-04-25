@@ -108,3 +108,9 @@ nock('https://www.omdbapi.com:443', {"encodedQueryParams":true})
   .get('/')
   .query({"i":"tt3388032","plot":"full","r":"json"})
   .reply(200, {"Title":"Proof of Concept","Year":"2014","Rated":"TV-MA","Released":"18 May 2014","Season":"1","Episode":"7","Runtime":"28 min","Genre":"Comedy","Director":"Mike Judge","Writer":"Clay Tarver, Mike Judge (created by), John Altschuler (created by), Dave Krinsky (created by)","Actors":"Thomas Middleditch, T.J. Miller, Josh Brener, Martin Starr","Plot":"Richard has trouble getting Pied Piper ready in time for the TechCrunch Disrupt, while Erlich realizes he slept with the wife of one of the judges of the contest.","Language":"English","Country":"USA","Awards":"N/A","Poster":"https://m.media-amazon.com/images/M/MV5BYjgxNzViZTAtYTVlMS00MzU3LWIzZWEtZGZkNDRjNjQwYzA3XkEyXkFqcGdeQXVyMjg2MTMyNTM@._V1_SX300.jpg","Ratings":[{"Source":"Internet Movie Database","Value":"8.6/10"}],"Metascore":"N/A","imdbRating":"8.6","imdbVotes":"1581","imdbID":"tt3388032","seriesID":"tt2575988","Type":"episode","Response":"True"});
+
+nock('https://www.omdbapi.com:443', {"encodedQueryParams":true})
+  .persist()
+  .get('/')
+  .query({"i":"mocked-outage-id","plot":"full","r":"json"})
+  .reply(503);

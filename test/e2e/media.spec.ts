@@ -199,5 +199,18 @@ describe('Media Metadata endpoints', () => {
       expect(response.body.title).toEqual('Proof of Concept');
       expect(response.body.type).toEqual('episode');
     });
+
+    it('should NOT create a failed lookup document when IMDB api is down', async() => {
+      await FailedLookupsModel.deleteMany({});
+      const body = JSON.stringify({ imdbid: 'mocked-outage-id' });
+      let error;
+      try {
+        await got.post(`${appUrl}/api/media/imdbid`, { responseType: 'json', headers: { 'content-type': 'application/json' }, body });
+      } catch (e) {
+        error = e;
+      }
+      expect(error.message).toEqual('Response code 503 (Service Unavailable)');
+      expect(await FailedLookupsModel.countDocuments({})).toEqual(0);
+    });
   });
 });
