@@ -10,12 +10,7 @@ import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadat
 import osAPI from '../services/opensubtitles';
 import imdbAPI from '../services/imdb-api';
 import { mapper } from '../utils/data-mapper';
-
-const MESSAGES = {
-  notFound: 'Metadata not found on OpenSubtitles',
-  openSubsOffline: 'OpenSubtitles API seems offline, please try again later',
-  seriesNotFound: 'Metadata not found for series',
-};
+import { MediaNotFoundError } from '../helpers/customErrors';
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
 
@@ -110,7 +105,7 @@ export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface
     return ctx.body = dbMeta;
   }
   if (await FailedLookups.findOne({ osdbHash }).lean()) {
-    return ctx.body = MESSAGES.notFound;
+    throw new MediaNotFoundError();
   }
 
   const osQuery = {
@@ -119,21 +114,12 @@ export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface
     extend: true,
   };
 
-  let openSubtitlesResponse: OpensubtitlesIdentifyResponse;
-  try {
-    openSubtitlesResponse = await osAPI.identify(osQuery);
-  } catch (err) {
-    if (err.message === 'API seems offline') {
-      err.message = MESSAGES.openSubsOffline;
-      ctx.status = 404;
-    }
-    throw err;
-  }
+  const openSubtitlesResponse = await osAPI.identify(osQuery);
 
   // Fail early if OpenSubtitles reports that it did not recognize the hash
   if (!openSubtitlesResponse.metadata) {
     await FailedLookups.updateOne({ osdbHash }, {}, { upsert: true, setDefaultsOnInsert: true });
-    return ctx.body = MESSAGES.notFound;
+    throw new MediaNotFoundError();
   }
 
   const parsedOpenSubtitlesResponse = mapper.parseOpenSubtitlesResponse(openSubtitlesResponse);
@@ -145,7 +131,7 @@ export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface
     return ctx.body = dbMeta;
   } catch (e) {
     await FailedLookups.updateOne({ osdbHash }, {}, { upsert: true, setDefaultsOnInsert: true });
-    return ctx.body = MESSAGES.notFound;
+    throw new MediaNotFoundError();
   }
 };
 
@@ -164,7 +150,7 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
 
   // If we already failed to get a result, return early
   if (await FailedLookups.findOne({ title }).lean()) {
-    return ctx.body = MESSAGES.notFound;
+    throw new MediaNotFoundError();
   }
 
   const searchRequest: SearchRequest = { name: title };
@@ -172,7 +158,7 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
 
   if (!imdbData) {
     await FailedLookups.updateOne({ title }, {}, { upsert: true, setDefaultsOnInsert: true });
-    return ctx.body = MESSAGES.notFound;
+    throw new MediaNotFoundError();
   }
 
   /**
@@ -200,7 +186,7 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
     return ctx.body = newlyCreatedResult;
   } catch (e) {
     await FailedLookups.updateOne({ title }, {}, { upsert: true, setDefaultsOnInsert: true });
-    return ctx.body = MESSAGES.notFound;
+    throw new MediaNotFoundError();
   }
 
   /**
@@ -225,7 +211,7 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
 
   if (!data) {
     await FailedLookups.updateOne({ title, language }, {}, { upsert: true, setDefaultsOnInsert: true });
-    return ctx.body = MESSAGES.notFound;
+    throw new MediaNotFoundError();
   }
 
   const newMetadata = {
@@ -242,7 +228,7 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
     return ctx.body = newlyCreatedResult;
   } catch (e) {
     await FailedLookups.updateOne({ title, language }, {}, { upsert: true, setDefaultsOnInsert: true });
-    return ctx.body = MESSAGES.notFound;
+    throw new MediaNotFoundError();
   }
 };
 
@@ -260,7 +246,7 @@ export const getSeriesByTitle = async(ctx: Context): Promise<SeriesMetadataInter
   }
 
   if (await FailedLookups.findOne({ title: dirOrFilename, type: 'series' }).lean()) {
-    return ctx.body = MESSAGES.notFound;
+    throw new MediaNotFoundError();
   }
 
   const parsed = episodeParser(dirOrFilename);
@@ -269,7 +255,7 @@ export const getSeriesByTitle = async(ctx: Context): Promise<SeriesMetadataInter
 
   if (!tvSeriesInfo) {
     await FailedLookups.updateOne({ title: dirOrFilename, type: 'series' }, {}, { upsert: true, setDefaultsOnInsert: true });
-    return ctx.body = MESSAGES.notFound;
+    throw new MediaNotFoundError();
   }
   const metadata = mapper.parseIMDBAPISeriesResponse(tvSeriesInfo);
   dbMeta = await SeriesMetadata.create(metadata);
@@ -290,7 +276,7 @@ export const getByImdbID = async(ctx: Context): Promise<any> => {
   }
 
   if (await FailedLookups.findOne({ imdbID: imdbid }).lean()) {
-    return ctx.body = MESSAGES.notFound;
+    throw new MediaNotFoundError();
   }
   const imdbData: MediaMetadataInterface = await getFromIMDbAPI(imdbid);
 
@@ -304,6 +290,6 @@ export const getByImdbID = async(ctx: Context): Promise<any> => {
     return ctx.body = dbMeta;
   } catch (e) {
     await FailedLookups.updateOne({ imdbId: imdbid }, {}, { upsert: true, setDefaultsOnInsert: true });
-    return ctx.body = MESSAGES.notFound;
+    throw new MediaNotFoundError();
   }
 };
