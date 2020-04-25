@@ -2,6 +2,9 @@ import MediaMetadataModel from '../../src/models/MediaMetadata';
 import SeriesMetadataModel from '../../src/models/SeriesMetadata';
 import FailedLookupsModel from '../../src/models/FailedLookups';
 
+// import * as nock from 'nock'
+// nock.recorder.rec()
+
 import * as mongoose from 'mongoose';
 import got from 'got';
 
@@ -93,14 +96,29 @@ describe('Media Metadata endpoints', () => {
     
     it('should create a failed lookup document when Open Subtitles cannot find metadata', async() => {
       await FailedLookupsModel.deleteMany({});
+      let error;
       try {
         await got(`${appUrl}/api/media/f4245d9379d31e30/1234`);
       } catch (e) {
-        //
+        error = e;
       }
+      expect(error.message).toEqual('Response code 404 (Not Found)');
       const doc = await FailedLookupsModel.findOne({ osdbHash: 'f4245d9379d31e30' });
       expect(doc).toHaveProperty('_id');
       expect(doc).toHaveProperty('osdbHash');
+    });
+
+    it('should NOT create a failed lookup document when Open Subtitles is offline', async() => {
+      await FailedLookupsModel.deleteMany({});
+      let error;
+      try {
+        await got(`${appUrl}/api/media/h4245d9379d31e33/12223334`);
+      } catch (e) {
+        error = e;
+      }
+      expect(error.message).toEqual('Response code 503 (Service Unavailable)');
+      const doc = await FailedLookupsModel.findOne({ osdbHash: 'h4245d9379d31e33' });
+      expect(doc).toEqual(null);
     });
   });
 
