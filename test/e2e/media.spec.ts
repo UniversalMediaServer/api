@@ -2,9 +2,6 @@ import MediaMetadataModel from '../../src/models/MediaMetadata';
 import SeriesMetadataModel from '../../src/models/SeriesMetadata';
 import FailedLookupsModel from '../../src/models/FailedLookups';
 
-// import * as nock from 'nock'
-// nock.recorder.rec()
-
 import * as mongoose from 'mongoose';
 import got from 'got';
 
