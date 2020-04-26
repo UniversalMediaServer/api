@@ -4,6 +4,7 @@ import FailedLookupsModel from '../../src/models/FailedLookups';
 
 import * as mongoose from 'mongoose';
 import got from 'got';
+import * as stoppable from 'stoppable';
 
 import { MongoMemoryServer } from 'mongodb-memory-server';
 const mongod = new MongoMemoryServer();
@@ -22,6 +23,7 @@ const theSimpsonsMetaData = {
   title: 'The Simpsons Movie',
 };
 const appUrl = 'http://localhost:3000';
+let server;
 
 describe('Media Metadata endpoints', () => {
   beforeAll(async() => {
@@ -31,10 +33,12 @@ describe('Media Metadata endpoints', () => {
     await MediaMetadataModel.create(interstellarMetaData);
     require('../mocks');
     require('../opensubtitles-mocks');
-    require('../../src/app');
+    server = require('../../src/app').server;
+    stoppable(server, 0);
   });
 
   afterAll(async() => {
+    server.stop();
     await mongoose.connection.dropDatabase();
   });
 
