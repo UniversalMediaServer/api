@@ -123,6 +123,7 @@ export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface
   try {
     openSubtitlesResponse = await osAPI.identify(osQuery);
   } catch (err) {
+    console.log(err);
     if (err.message === 'API seems offline') {
       err.message = MESSAGES.openSubsOffline;
       ctx.status = 404;
