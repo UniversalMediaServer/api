@@ -11,7 +11,7 @@
     "dev:cron": "ts-node --files ./src/cron/all-episodes.ts",
     "start": "ts-node --files src/app.ts",
     "start:prod": "./node_modules/.bin/pm2 start ecosystem.config.js",
-    "test": "unset IMDB_API_KEY && OS_API_USERAGENT=OS_API_MOCK_KEY jest test/**/*.spec.ts --coverage --forceExit --detectOpenHandles",
+    "test": "unset IMDB_API_KEY && OS_API_USERAGENT=OS_API_MOCK_KEY && jest test/**/*.spec.ts --coverage --forceExit --detectOpenHandles",
     "watch": "tsc --watch"
   },
   "eslintConfig": {
@@ -126,7 +126,7 @@
     "lodash": "^4.17.15",
     "mongoose": "^5.9.10",
     "object-mapper": "^6.2.0",
-    "opensubtitles-api": "5.1.0",
+    "opensubtitles-api": "git+https://github.com/js-kyle/opensubtitles-api.git#bugfix_followup",
     "pm2": "^4.4.0",
     "stoppable": "^1.1.0",
     "ts-node": "^8.9.0"
