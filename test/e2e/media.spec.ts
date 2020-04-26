@@ -103,6 +103,15 @@ describe('Media Metadata endpoints', () => {
       expect(doc).toHaveProperty('_id');
       expect(doc).toHaveProperty('osdbHash');
     });
+
+    it('should not throw an exception when Open Subtitles passes bad data', async() => {
+      await FailedLookupsModel.deleteMany({});
+      const response: any = await got(`${appUrl}/api/media/a04cfbeafc4af7eb/884419440`);
+      expect(response.body).toBe('Metadata not found on OpenSubtitles');
+      const doc = await FailedLookupsModel.findOne({ osdbHash: 'a04cfbeafc4af7eb' });
+      expect(doc).toHaveProperty('_id');
+      expect(doc).toHaveProperty('osdbHash');
+    });
   });
 
   describe('get by title', () => {
