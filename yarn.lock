@@ -4678,9 +4678,10 @@ only@~0.0.2:
   resolved "https://registry.yarnpkg.com/only/-/only-0.0.2.tgz#2afde84d03e50b9a8edc444e30610a70295edfb4"
   integrity sha1-Kv3oTQPlC5qO3EROMGEKcCle37Q=
 
-"opensubtitles-api@git+https://github.com/js-kyle/opensubtitles-api.git#bugfix_followup":
-  version "5.1.1"
-  resolved "git+https://github.com/js-kyle/opensubtitles-api.git#ff4eac85a44bae93f438ba3b7da8d8530ffd24b4"
+opensubtitles-api@^5.1.2:
+  version "5.1.2"
+  resolved "https://registry.yarnpkg.com/opensubtitles-api/-/opensubtitles-api-5.1.2.tgz#750c9e808fbf6b006225150e062de0876ff41288"
+  integrity sha512-uGc9+/hbi1VkYGwNS0yBEeN9+URQvfZUcX3JtFBYWkwU/cUUVGbgLiI4Sx3SmumKtNoXjYDhJ9SoFTT0jVNOUQ==
   dependencies:
     urijs "^1.19.1"
     xmlrpc "^1.3.2"
