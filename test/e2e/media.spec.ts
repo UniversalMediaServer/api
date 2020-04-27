@@ -25,7 +25,7 @@ const theSimpsonsMetaData = {
   title: 'The Simpsons Movie',
 };
 
-const prisonBreakMetadata = {
+const prisonBreakEpisodeMetadata = {
   osdbHash: 'aad16027e51ff49f',
   seriesIMDbID: 'tt0455275',
   episodeNumber: '4',
@@ -126,13 +126,13 @@ describe('Media Metadata endpoints', () => {
     it('episodelookup should make an EpisodeProcessing document to process series later', async() => {
       await FailedLookupsModel.deleteMany({});
       await EpisodeProcessing.deleteMany({});
-      await got(`${appUrl}/api/media/${prisonBreakMetadata.osdbHash}/1234`);
-      const doc = await MediaMetadata.findOne({ osdbHash: prisonBreakMetadata.osdbHash });
+      await got(`${appUrl}/api/media/${prisonBreakEpisodeMetadata.osdbHash}/1234`);
+      const doc = await MediaMetadata.findOne({ osdbHash: prisonBreakEpisodeMetadata.osdbHash });
       expect(doc).toHaveProperty('_id');
-      expect(doc).toHaveProperty('episodeNumber', prisonBreakMetadata.episodeNumber);
-      expect(doc).toHaveProperty('title', prisonBreakMetadata.title);
+      expect(doc).toHaveProperty('episodeNumber', prisonBreakEpisodeMetadata.episodeNumber);
+      expect(doc).toHaveProperty('title', prisonBreakEpisodeMetadata.title);
 
-      const doc2 = await EpisodeProcessing.findOne({ seriesimdbid: prisonBreakMetadata.seriesIMDbID });
+      const doc2 = await EpisodeProcessing.findOne({ seriesimdbid: prisonBreakEpisodeMetadata.seriesIMDbID });
       expect(doc2).toBeTruthy();
     });
   });
