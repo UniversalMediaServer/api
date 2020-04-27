@@ -7,6 +7,8 @@ import got from 'got';
 import * as stoppable from 'stoppable';
 
 import { MongoMemoryServer } from 'mongodb-memory-server';
+import EpisodeProcessing from '../../src/models/EpisodeProcessing';
+import MediaMetadata from '../../src/models/MediaMetadata';
 const mongod = new MongoMemoryServer();
 
 const interstellarMetaData = {
@@ -22,6 +24,14 @@ const theSimpsonsMetaData = {
   osdbHash: '8e245d9679d31e12',
   title: 'The Simpsons Movie',
 };
+
+const prisonBreakMetadata = {
+  osdbHash: 'aad16027e51ff49f',
+  seriesIMDbID: 'tt0455275',
+  episodeNumber: '4',
+  title: 'Cute Poison',
+};
+
 const appUrl = 'http://localhost:3000';
 let server;
 
@@ -111,6 +121,19 @@ describe('Media Metadata endpoints', () => {
       const doc = await FailedLookupsModel.findOne({ osdbHash: 'a04cfbeafc4af7eb' });
       expect(doc).toHaveProperty('_id');
       expect(doc).toHaveProperty('osdbHash');
+    });
+
+    it('episodelookup should make an EpisodeProcessing document to process series later', async() => {
+      await FailedLookupsModel.deleteMany({});
+      await EpisodeProcessing.deleteMany({});
+      await got(`${appUrl}/api/media/${prisonBreakMetadata.osdbHash}/1234`);
+      const doc = await MediaMetadata.findOne({ osdbHash: prisonBreakMetadata.osdbHash });
+      expect(doc).toHaveProperty('_id');
+      expect(doc).toHaveProperty('episodeNumber', prisonBreakMetadata.episodeNumber);
+      expect(doc).toHaveProperty('title', prisonBreakMetadata.title);
+
+      const doc2 = await EpisodeProcessing.findOne({ seriesimdbid: prisonBreakMetadata.seriesIMDbID });
+      expect(doc2).toBeTruthy();
     });
   });
 
