@@ -46,7 +46,7 @@ app.use(bodyParser());
 app.use(mediaRouter.routes());
 app.use(indexRouter.routes());
 
-app.listen(PORT);
+export const server = app.listen(PORT);
 console.log(`UMS API is up and running on port ${PORT}`);
 
 export default app;

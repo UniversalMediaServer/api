@@ -4,8 +4,11 @@ import FailedLookupsModel from '../../src/models/FailedLookups';
 
 import * as mongoose from 'mongoose';
 import got from 'got';
+import * as stoppable from 'stoppable';
 
 import { MongoMemoryServer } from 'mongodb-memory-server';
+import EpisodeProcessing from '../../src/models/EpisodeProcessing';
+import MediaMetadata from '../../src/models/MediaMetadata';
 const mongod = new MongoMemoryServer();
 
 const interstellarMetaData = {
@@ -21,7 +24,16 @@ const theSimpsonsMetaData = {
   osdbHash: '8e245d9679d31e12',
   title: 'The Simpsons Movie',
 };
+
+const prisonBreakEpisodeMetadata = {
+  osdbHash: 'aad16027e51ff49f',
+  seriesIMDbID: 'tt0455275',
+  episodeNumber: '4',
+  title: 'Cute Poison',
+};
+
 const appUrl = 'http://localhost:3000';
+let server;
 
 describe('Media Metadata endpoints', () => {
   beforeAll(async() => {
@@ -31,10 +43,12 @@ describe('Media Metadata endpoints', () => {
     await MediaMetadataModel.create(interstellarMetaData);
     require('../mocks');
     require('../opensubtitles-mocks');
-    require('../../src/app');
+    server = require('../../src/app').server;
+    stoppable(server, 0);
   });
 
   afterAll(async() => {
+    server.stop();
     await mongoose.connection.dropDatabase();
   });
 
@@ -116,6 +130,33 @@ describe('Media Metadata endpoints', () => {
       expect(error.message).toEqual('Response code 503 (Service Unavailable)');
       const doc = await FailedLookupsModel.findOne({ osdbHash: 'h4245d9379d31e33' });
       expect(doc).toEqual(null);
+    });
+
+    it('should not throw an exception when Open Subtitles passes bad data', async() => {
+      await FailedLookupsModel.deleteMany({});
+      let error;
+      try {
+        await got(`${appUrl}/api/media/a04cfbeafc4af7eb/884419440`);
+      } catch (e) {
+        error = e;
+      }
+      expect(error.message).toEqual('Response code 404 (Not Found)');
+      const doc = await FailedLookupsModel.findOne({ osdbHash: 'a04cfbeafc4af7eb' });
+      expect(doc).toHaveProperty('_id');
+      expect(doc).toHaveProperty('osdbHash');
+    });
+
+    it('episodelookup should make an EpisodeProcessing document to process series later', async() => {
+      await FailedLookupsModel.deleteMany({});
+      await EpisodeProcessing.deleteMany({});
+      await got(`${appUrl}/api/media/${prisonBreakEpisodeMetadata.osdbHash}/1234`);
+      const doc = await MediaMetadata.findOne({ osdbHash: prisonBreakEpisodeMetadata.osdbHash });
+      expect(doc).toHaveProperty('_id');
+      expect(doc).toHaveProperty('episodeNumber', prisonBreakEpisodeMetadata.episodeNumber);
+      expect(doc).toHaveProperty('title', prisonBreakEpisodeMetadata.title);
+
+      const doc2 = await EpisodeProcessing.findOne({ seriesimdbid: prisonBreakEpisodeMetadata.seriesIMDbID });
+      expect(doc2).toBeTruthy();
     });
   });
 

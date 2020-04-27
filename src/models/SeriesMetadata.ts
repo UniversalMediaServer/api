@@ -1,7 +1,6 @@
 import * as mongoose from 'mongoose';
 import { Schema, Document, Model  } from 'mongoose';
 
-const DOCUMENT_EXPIRY_IN_SECONDS = 2592000; // 30 days
 const TEXT_SCORE_MINIMUM = 1;
 
 type ratingSource = 'Metacritic' | 'Rotten Tomatoes' | 'Metacritic';
@@ -41,7 +40,6 @@ const SeriesMetadataSchema: Schema = new Schema({
   country: { type: String },
   createdAt: {
     type: Date,
-    expires: DOCUMENT_EXPIRY_IN_SECONDS,
     default: Date.now,
   },
   directors: { type: Array },

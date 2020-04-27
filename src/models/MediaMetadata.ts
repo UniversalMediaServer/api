@@ -2,8 +2,6 @@ import * as mongoose from 'mongoose';
 import { Schema, Document } from 'mongoose';
 import { ValidationError } from '../helpers/customErrors';
 
-const DOCUMENT_EXPIRY_IN_SECONDS = 2592000; // 30 days
-
 type ratingSource = 'Metacritic' | 'Rotten Tomatoes' | 'Metacritic';
 
 export interface MediaMetadataInterface extends Document {
@@ -51,7 +49,6 @@ const MediaMetadataSchema: Schema = new Schema({
   country: { type: String },
   createdAt: {
     type: Date,
-    expires: DOCUMENT_EXPIRY_IN_SECONDS,
     default: Date.now,
     select: false,
   },

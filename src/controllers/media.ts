@@ -46,7 +46,6 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
       const allEpisodes = await tvSeriesInfo.episodes();
       const currentEpisode = _.find(allEpisodes, { season: parsedFilename.season, episode: parsedFilename.episode });
       imdbId = currentEpisode.imdbid;
-      await EpisodeProcessing.create({ seriesimdbid: tvSeriesInfo.imdbid });
     } else {
       const searchResults = await imdbAPI.search(searchRequest);
       // TODO Choose the most appropriate result instead of just the first
@@ -66,6 +65,8 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
   } else if (imdbData.type === 'series') {
     metadata = mapper.parseIMDBAPISeriesResponse(imdbData);
   } else if (imdbData.type === 'episode') {
+    // @ts-ignore
+    await EpisodeProcessing.create({ seriesimdbid: imdbData.seriesid });
     metadata = mapper.parseIMDBAPIEpisodeResponse(imdbData);
   } else {
     throw new Error('Received a type we did not expect');
