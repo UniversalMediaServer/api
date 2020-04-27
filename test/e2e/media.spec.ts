@@ -107,17 +107,40 @@ describe('Media Metadata endpoints', () => {
     
     it('should create a failed lookup document when Open Subtitles cannot find metadata', async() => {
       await FailedLookupsModel.deleteMany({});
-      const response: any = await got(`${appUrl}/api/media/f4245d9379d31e30/1234`);
-      expect(response.body).toBe('Metadata not found on OpenSubtitles');
+      let error;
+      try {
+        await got(`${appUrl}/api/media/f4245d9379d31e30/1234`);
+      } catch (e) {
+        error = e;
+      }
+      expect(error.message).toEqual('Response code 404 (Not Found)');
       const doc = await FailedLookupsModel.findOne({ osdbHash: 'f4245d9379d31e30' });
       expect(doc).toHaveProperty('_id');
       expect(doc).toHaveProperty('osdbHash');
     });
 
+    it('should NOT create a failed lookup document when Open Subtitles is offline', async() => {
+      await FailedLookupsModel.deleteMany({});
+      let error;
+      try {
+        await got(`${appUrl}/api/media/h4245d9379d31e33/12223334`);
+      } catch (e) {
+        error = e;
+      }
+      expect(error.message).toEqual('Response code 503 (Service Unavailable)');
+      const doc = await FailedLookupsModel.findOne({ osdbHash: 'h4245d9379d31e33' });
+      expect(doc).toEqual(null);
+    });
+
     it('should not throw an exception when Open Subtitles passes bad data', async() => {
       await FailedLookupsModel.deleteMany({});
-      const response: any = await got(`${appUrl}/api/media/a04cfbeafc4af7eb/884419440`);
-      expect(response.body).toBe('Metadata not found on OpenSubtitles');
+      let error;
+      try {
+        await got(`${appUrl}/api/media/a04cfbeafc4af7eb/884419440`);
+      } catch (e) {
+        error = e;
+      }
+      expect(error.message).toEqual('Response code 404 (Not Found)');
       const doc = await FailedLookupsModel.findOne({ osdbHash: 'a04cfbeafc4af7eb' });
       expect(doc).toHaveProperty('_id');
       expect(doc).toHaveProperty('osdbHash');
@@ -216,6 +239,19 @@ describe('Media Metadata endpoints', () => {
       const response: any = await got.post(`${appUrl}/api/media/imdbid`, { responseType: 'json', headers: { 'content-type': 'application/json' }, body });
       expect(response.body.title).toEqual('Proof of Concept');
       expect(response.body.type).toEqual('episode');
+    });
+
+    it('should NOT create a failed lookup document when IMDB api is down', async() => {
+      await FailedLookupsModel.deleteMany({});
+      const body = JSON.stringify({ imdbid: 'mocked-outage-id' });
+      let error;
+      try {
+        await got.post(`${appUrl}/api/media/imdbid`, { responseType: 'json', headers: { 'content-type': 'application/json' }, body });
+      } catch (e) {
+        error = e;
+      }
+      expect(error.message).toEqual('Response code 503 (Service Unavailable)');
+      expect(await FailedLookupsModel.countDocuments({})).toEqual(0);
     });
   });
 });

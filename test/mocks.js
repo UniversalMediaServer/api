@@ -112,5 +112,11 @@ nock('https://www.omdbapi.com:443', {"encodedQueryParams":true})
 nock('https://www.omdbapi.com:443', {"encodedQueryParams":true})
   .persist()
   .get('/')
+  .query({"i":"mocked-outage-id","plot":"full","r":"json"})
+  .reply(503);
+
+nock('https://www.omdbapi.com:443', {"encodedQueryParams":true})
+  .persist()
+  .get('/')
   .query({"i":"tt0678478","plot":"full","r":"json"})
   .reply(200, {"Title":"Cute Poison","Year":"2005","Rated":"TV-14","Released":"12 Sep 2005","Season":"1","Episode":"4","Runtime":"44 min","Genre":"Action, Crime, Drama, Mystery, Thriller","Director":"Matt Earl Beesley","Writer":"Paul Scheuring (created by), Matt Olmstead","Actors":"Dominic Purcell, Wentworth Miller, Robin Tunney, Peter Stormare","Plot":"Michael gets more of the tools and people he needs, but someone very high up has taken notice and started wondering what he's up to.","Language":"English, Spanish","Country":"N/A","Awards":"N/A","Poster":"https://m.media-amazon.com/images/M/MV5BMzY1MzYwNDczN15BMl5BanBnXkFtZTgwMTk2NDg0MjE@._V1_SX300.jpg","Ratings":[{"Source":"Internet Movie Database","Value":"8.7/10"}],"Metascore":"N/A","imdbRating":"8.7","imdbVotes":"3307","imdbID":"tt0678478","seriesID":"tt0455275","Type":"episode","Response":"True"});
