@@ -34,6 +34,7 @@ app.use(async(ctx, next) => {
     if (process.env.NODE_ENV !== 'production') {
       ctx.body.stack = err.stack;
     }
+    console.error(err);
   }
 });
 
