@@ -3,14 +3,14 @@ import { Context } from 'koa';
 import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
 
-import FailedLookups from '../models/FailedLookups';
+import { IMDbIDNotFoundError, MediaNotFoundError, ValidationError } from '../helpers/customErrors';
 import EpisodeProcessing from '../models/EpisodeProcessing';
+import FailedLookups from '../models/FailedLookups';
 import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import osAPI from '../services/opensubtitles';
 import imdbAPI from '../services/imdb-api';
 import { mapper } from '../utils/data-mapper';
-import { IMDbIDNotFoundError, MediaNotFoundError, ValidationError } from '../helpers/customErrors';
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
 
