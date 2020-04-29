@@ -26,6 +26,9 @@ app.use(async(ctx, next) => {
     if (err instanceof MediaNotFoundError || err instanceof IMDbIDNotFoundError) {
       ctx.status = 404;
     }
+    if (err instanceof ValidationError) {
+      ctx.status = 422;
+    }
     if (err instanceof ExternalAPIError) {
       ctx.status = 503;
     }

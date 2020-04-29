@@ -190,6 +190,7 @@ describe('Media Metadata endpoints', () => {
         await got.post(`${appUrl}/api/media/title`, { responseType: 'json', headers: { 'content-type': 'application/json' }, body });
       } catch (err) {
         expect(err).toBeInstanceOf(Error);
+        expect(err.message).toEqual('Response code 422 (Unprocessable Entity)');
       }
     });
   });
