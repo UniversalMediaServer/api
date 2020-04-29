@@ -27,7 +27,6 @@ export class IMDbIDNotFoundError extends MediaNotFoundError {
   constructor() {
     super();
     Error.captureStackTrace(this, IMDbIDNotFoundError);
-    this.message = 'IMDb ID not found.';
     this.name = 'IMDbIDNotFoundError';
   }
 }
