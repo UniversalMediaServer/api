@@ -1,8 +1,8 @@
-import * as imdb from 'imdb-api';
+import * as imdb from '@universalmediaserver/node-imdb-api';
 import * as _ from 'lodash';
 import { ExternalAPIError } from '../helpers/customErrors';
 
-const originalModule = new imdb.Client({ apiKey: process.env.IMDB_API_KEY });
+const originalModule = new imdb.Client({ apiKey: process.env.IMDB_API_KEY, usePrivateServer: process.env.NODE_ENV === 'production' });
 const imdbAPI = _.cloneDeep(originalModule);
 
 imdbAPI.get = async function(params): Promise<any> {

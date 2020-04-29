@@ -1,4 +1,4 @@
-import { SearchRequest } from 'imdb-api';
+import { SearchRequest } from '@universalmediaserver/node-imdb-api';
 import { Context } from 'koa';
 import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
