@@ -7,7 +7,7 @@ const debug = Debug('universalmediaserver-api:server');
 
 import indexRouter from './routes/index';
 import mediaRouter  from './routes/media';
-import { ExternalAPIError, MediaNotFoundError } from './helpers/customErrors';
+import { ExternalAPIError, MediaNotFoundError, IMDbIDNotFoundError } from './helpers/customErrors';
 
 const app = new Koa();
 
@@ -23,7 +23,7 @@ app.use(async(ctx, next) => {
   try {
     await next();
   } catch (err) {
-    if (err instanceof MediaNotFoundError) {
+    if (err instanceof MediaNotFoundError || err instanceof IMDbIDNotFoundError) {
       ctx.status = 404;
     }
     if (err instanceof ExternalAPIError) {
