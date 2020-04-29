@@ -10,7 +10,7 @@ import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadat
 import osAPI from '../services/opensubtitles';
 import imdbAPI from '../services/imdb-api';
 import { mapper } from '../utils/data-mapper';
-import { MediaNotFoundError } from '../helpers/customErrors';
+import { MediaNotFoundError, ValidationError } from '../helpers/customErrors';
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
 
@@ -140,7 +140,7 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
   const { title, language = 'eng' } = ctx.request.body;
 
   if (!title) {
-    throw new Error('title is required');
+    throw new ValidationError('title is required');
   }
 
   // If we already have a result, return it
@@ -237,7 +237,7 @@ export const getSeriesByTitle = async(ctx: Context): Promise<SeriesMetadataInter
   let { title: dirOrFilename } = ctx.request.body;
 
   if (!dirOrFilename) {
-    throw new Error('title is required');
+    throw new ValidationError('title is required');
   }
 
   let dbMeta: SeriesMetadataInterface = await SeriesMetadata.findSimilarSeries(dirOrFilename);
