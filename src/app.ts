@@ -7,7 +7,7 @@ const debug = Debug('universalmediaserver-api:server');
 
 import indexRouter from './routes/index';
 import mediaRouter  from './routes/media';
-import { ExternalAPIError, MediaNotFoundError, IMDbIDNotFoundError } from './helpers/customErrors';
+import { ExternalAPIError, IMDbIDNotFoundError, MediaNotFoundError, ValidationError } from './helpers/customErrors';
 
 const app = new Koa();
 
