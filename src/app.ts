@@ -7,7 +7,7 @@ const debug = Debug('universalmediaserver-api:server');
 
 import indexRouter from './routes/index';
 import mediaRouter  from './routes/media';
-import { ExternalAPIError, MediaNotFoundError } from './helpers/customErrors';
+import { ExternalAPIError, MediaNotFoundError, ValidationError } from './helpers/customErrors';
 
 const app = new Koa();
 
@@ -25,6 +25,9 @@ app.use(async(ctx, next) => {
   } catch (err) {
     if (err instanceof MediaNotFoundError) {
       ctx.status = 404;
+    }
+    if (err instanceof ValidationError) {
+      ctx.status = 422;
     }
     if (err instanceof ExternalAPIError) {
       ctx.status = 503;
