@@ -24,6 +24,7 @@ imdbAPI.search = async function(params): Promise<any> {
       throw new ExternalAPIError('IMDB API is offline');
     }
     console.error(err);
+    throw err;
   }
 };
 
