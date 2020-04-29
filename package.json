@@ -116,6 +116,7 @@
     }
   },
   "dependencies": {
+    "@universalmediaserver/node-imdb-api": "4.1.0",
     "debug": "^4.1.1",
     "episode-parser": "^1.5.0",
     "imdb-api": "https://github.com/js-kyle/node-imdb-api/#fixup_szns_compiled",

@@ -869,6 +869,16 @@
     semver "^6.3.0"
     tsutils "^3.17.1"
 
+"@universalmediaserver/node-imdb-api@4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@universalmediaserver/node-imdb-api/-/node-imdb-api-4.1.0.tgz#1f12828b0c8a1a2a1b79f22f97de061722690500"
+  integrity sha512-aP98JYA4I1G44SMxbHklJILLTZZL832h88N86dbd86Xe7CdM7XAYQ+gDMur4TJTqMnH0YpkZNHUrjM886NgD5A==
+  dependencies:
+    "@types/request" "^2.48.2"
+    "@types/request-promise-native" "^1.0.16"
+    request "^2.88.0"
+    request-promise-native "^1.0.7"
+
 abab@^2.0.0:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/abab/-/abab-2.0.3.tgz#623e2075e02eb2d3f2475e49f99c91846467907a"
