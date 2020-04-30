@@ -22,3 +22,11 @@ export class MediaNotFoundError extends Error {
     this.name = 'MediaNotFoundError';
   }
 }
+
+export class IMDbIDNotFoundError extends MediaNotFoundError {
+  constructor() {
+    super();
+    Error.captureStackTrace(this, IMDbIDNotFoundError);
+    this.name = 'IMDbIDNotFoundError';
+  }
+}

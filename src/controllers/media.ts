@@ -3,14 +3,14 @@ import { Context } from 'koa';
 import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
 
-import FailedLookups from '../models/FailedLookups';
+import { IMDbIDNotFoundError, MediaNotFoundError, ValidationError } from '../helpers/customErrors';
 import EpisodeProcessing from '../models/EpisodeProcessing';
+import FailedLookups from '../models/FailedLookups';
 import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import osAPI from '../services/opensubtitles';
 import imdbAPI from '../services/imdb-api';
 import { mapper } from '../utils/data-mapper';
-import { MediaNotFoundError, ValidationError } from '../helpers/customErrors';
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
 
@@ -45,11 +45,19 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
       // @ts-ignore
       const allEpisodes = await tvSeriesInfo.episodes();
       const currentEpisode = _.find(allEpisodes, { season: parsedFilename.season, episode: parsedFilename.episode });
+      if (!currentEpisode) {
+        throw new IMDbIDNotFoundError();
+      }
+
       imdbId = currentEpisode.imdbid;
     } else {
       const searchResults = await imdbAPI.search(searchRequest);
       // TODO Choose the most appropriate result instead of just the first
       const searchResult: any = _.first(searchResults.results);
+      if (!searchResult) {
+        throw new IMDbIDNotFoundError();
+      }
+
       imdbId = searchResult.imdbid;
     }
   }
