@@ -99,7 +99,7 @@ const MediaMetadataSchema: Schema = new Schema({
 });
 
 MediaMetadataSchema.pre<MediaMetadataInterface>('save', function(next) {
-  if (this.title && this.title.startsWith('Episode #')) {
+  if (this.title?.startsWith('Episode #')) {
     this.title = undefined;
   }
   next();
