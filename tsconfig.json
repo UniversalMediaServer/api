@@ -4,6 +4,9 @@
     "module": "commonjs",
     "moduleResolution": "node",
   },
+  "files": [
+    "./src/interfaces.d.ts"
+  ],
   "include": [
     "./**/*"
   ]
