@@ -161,7 +161,7 @@ describe('Media Metadata endpoints', () => {
   });
 
   describe('get by title', () => {
-    it('should search by title and store it', async() => {
+    it('should search by series title and store it', async() => {
       const body = JSON.stringify({ title: 'Homeland S02E05' });
       const response = await got.post(`${appUrl}/api/media/title`, { responseType: 'json', headers: { 'content-type': 'application/json' }, body });
       expect(response.body).toHaveProperty('_id');
@@ -182,6 +182,20 @@ describe('Media Metadata endpoints', () => {
       expect(series).toHaveProperty('totalSeasons', 8);
       expect(series).toHaveProperty('title', 'Homeland');
       expect(series).toHaveProperty('startYear', '2011');
+    });
+
+    it('should search by movie title and year and store it', async() => {
+      const body = JSON.stringify({ title: 'The Grinch', year: '2018' });
+      const response = await got.post(`${appUrl}/api/media/title`, { responseType: 'json', headers: { 'content-type': 'application/json' }, body });
+      expect(response.body).toHaveProperty('_id');
+
+      const movie = await MediaMetadataModel.findOne({ searchMatches: { $in: ['The Grinch'] } });
+      expect(movie).toHaveProperty('_id');
+      expect(movie).toHaveProperty('imdbID', 'tt2709692');
+      expect(movie).toHaveProperty('title', 'The Grinch');
+      expect(movie).toHaveProperty('type', 'movie');
+      expect(movie).toHaveProperty('year', '2018');
+      expect(movie.searchMatches).toBeUndefined();
     });
 
     it('should require title in body', async() => {

@@ -39,20 +39,40 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
    */
   if (!imdbId) {
     const parsedFilename = episodeParser(searchRequest.name);
-    const isTVEpisode = parsedFilename && parsedFilename.show && parsedFilename.season && parsedFilename.episode;
+    const isTVEpisode = Boolean(parsedFilename && parsedFilename.show && parsedFilename.season && parsedFilename.episode);
     if (isTVEpisode) {
-      const tvSeriesInfo = await imdbAPI.get({ name: parsedFilename.show });
-      // @ts-ignore
-      const allEpisodes = await tvSeriesInfo.episodes();
-      const currentEpisode = _.find(allEpisodes, { season: parsedFilename.season, episode: parsedFilename.episode });
-      if (!currentEpisode) {
-        throw new IMDbIDNotFoundError();
-      }
+      searchRequest.name = parsedFilename.show;
+      searchRequest.reqtype = 'series';
+      const tvSeriesInfo = await imdbAPI.get(searchRequest);
 
-      imdbId = currentEpisode.imdbid;
-    } else {
+      /**
+       * If tvSeriesInfo.episodes is not a function, we have received a movie result
+       * instead of the TV series result we expected, so we let this pass through to
+       * the next block to do another query with the full info, because our query used
+       * what we thought was the show name, which may be inaccurate for movies with
+       * common names - in those cases, a year is needed to differentiate.
+       *
+       * @see https://github.com/tregusti/episode-parser/issues/18
+       */
+      // @ts-ignore
+      if (_.isFunction(tvSeriesInfo.episodes)) {
+        // @ts-ignore
+        const allEpisodes = await tvSeriesInfo.episodes();
+        const currentEpisode = _.find(allEpisodes, { season: parsedFilename.season, episode: parsedFilename.episode });
+        if (!currentEpisode) {
+          throw new IMDbIDNotFoundError();
+        }
+
+        imdbId = currentEpisode.imdbid;
+      }
+    }
+
+    if (!imdbId) {
+      searchRequest.reqtype = 'movie';
       const searchResults = await imdbAPI.search(searchRequest);
-      // TODO Choose the most appropriate result instead of just the first
+      /**
+       * @todo Choose the most appropriate result instead of just the first
+       */
       const searchResult: any = _.first(searchResults.results);
       if (!searchResult) {
         throw new IMDbIDNotFoundError();
@@ -146,6 +166,7 @@ export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface
 
 export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInterface | string> => {
   const { title, language = 'eng' } = ctx.request.body;
+  const year = ctx.request.body.year ? Number(ctx.request.body.year) : null;
 
   if (!title) {
     throw new ValidationError('title is required');
@@ -163,6 +184,9 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
   }
 
   const searchRequest: SearchRequest = { name: title };
+  if (year) {
+    searchRequest.year = year;
+  }
   const imdbData: MediaMetadataInterface = await getFromIMDbAPI(null, searchRequest);
 
   if (!imdbData) {

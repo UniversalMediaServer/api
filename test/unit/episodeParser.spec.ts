@@ -1,8 +1,8 @@
-// this party tests the third party module is doing what we expect in our context.
+// ensures the third party module is doing what we expect in our context.
 import * as episodeParser from 'episode-parser';
 
 describe('TV Series parsing', () => {
-  it('should parse common episode and season from filenames', (done) => {
+  it('should parse common episode and season from filenames', () => {
     let title = 'Dora.The.Explorer.S03E19.The.Super.Silly.Fiesta.480p.AMZN.WEBRip.DD2.0.x264-AR.avi';
     let result = episodeParser(title);
     expect(result.season).toEqual(3);
@@ -26,7 +26,5 @@ describe('TV Series parsing', () => {
     expect(result.season).toEqual(5);
     expect(result.episode).toEqual(5);
     expect(result.show).toEqual('Prison Break');
-
-    done();
   });
 });
