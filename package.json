@@ -119,7 +119,7 @@
     "@universalmediaserver/node-imdb-api": "4.1.0",
     "debug": "^4.1.1",
     "episode-parser": "^1.5.0",
-    "koa": "^2.11.0",
+    "koa": "^2.12.0",
     "koa-bodyparser": "^4.3.0",
     "koa-helmet": "^5.2.0",
     "koa-router": "^8.0.8",
