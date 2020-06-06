@@ -44,7 +44,6 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
       searchRequest.name = parsedFilename.show;
       searchRequest.reqtype = 'series';
       const tvSeriesInfo = await imdbAPI.get(searchRequest);
-
       /**
        * If tvSeriesInfo.episodes is not a function, we have received a movie result
        * instead of the TV series result we expected, so we let this pass through to
@@ -55,7 +54,7 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
        * @see https://github.com/tregusti/episode-parser/issues/18
        */
       // @ts-ignore
-      if (_.isFunction(tvSeriesInfo.episodes)) {
+      if (tvSeriesInfo && _.isFunction(tvSeriesInfo.episodes)) {
         // @ts-ignore
         const allEpisodes = await tvSeriesInfo.episodes();
         const currentEpisode = _.find(allEpisodes, { season: parsedFilename.season, episode: parsedFilename.episode });
