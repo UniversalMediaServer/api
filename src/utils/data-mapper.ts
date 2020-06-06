@@ -156,21 +156,29 @@ const imdbMovieMap = {
   },
 };
 
+const removeNotApplicable = (obj): any => {
+  return _.pickBy(obj, v => v !== 'N/A');
+};
+
 class UmsDataMapper {
   parseOpenSubtitlesResponse(openSubtitlesData): MediaMetadataInterface {
-    return objectMapper(openSubtitlesData, openSubtitlesMap);
+    const mappedData = objectMapper(openSubtitlesData, openSubtitlesMap);
+    return removeNotApplicable(mappedData);
   }
 
   parseIMDBAPIEpisodeResponse(imdbData): MediaMetadataInterface {
-    return objectMapper(imdbData, imdbEpisodeMap);
+    const mappedData = objectMapper(imdbData, imdbEpisodeMap);
+    return removeNotApplicable(mappedData);
   }
 
   parseIMDBAPISeriesResponse(imdbData): SeriesMetadataInterface {
-    return objectMapper(imdbData, imdbSeriesMap);
+    const mappedData = objectMapper(imdbData, imdbSeriesMap);
+    return removeNotApplicable(mappedData);
   }
 
   parseIMDBAPIMovieResponse(imdbData): MediaMetadataInterface {
-    return objectMapper(imdbData, imdbMovieMap);
+    const mappedData = objectMapper(imdbData, imdbMovieMap);
+    return removeNotApplicable(mappedData);
   }
 }
 
