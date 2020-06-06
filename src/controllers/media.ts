@@ -129,7 +129,6 @@ export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface
   const { osdbhash: osdbHash, filebytesize } = ctx.params;
   const validateMovieByYear = Boolean(ctx.query?.year);
   const validateEpisodeBySeasonAndEpisode = Boolean(ctx.query?.season && ctx.query?.episodeNumber);
-  const validateOpenSubtitlesAPIResponse = Boolean(validateMovieByYear || validateEpisodeBySeasonAndEpisode);
 
   let dbMeta: MediaMetadataInterface = await MediaMetadata.findOne({ osdbHash }, null, { lean: true }).exec();
 
@@ -154,7 +153,7 @@ export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface
   }
 
   // validate that OpenSubtitles has found correct metadata by Osdb hash
-  if (validateOpenSubtitlesAPIResponse) {
+  if (validateMovieByYear || validateEpisodeBySeasonAndEpisode) {
     let passedValidation = false;
     if (validateMovieByYear) {
       if (ctx.query.year.toString() === openSubtitlesResponse.metadata.year) {
