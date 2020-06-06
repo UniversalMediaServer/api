@@ -114,7 +114,6 @@ describe('Data mapper', () => {
     it('should parse to expected flat structure', () => {
       const parsed = mapper.parseIMDBAPIEpisodeResponse(imdbApiEpisode);
       expect(parsed.actors).toEqual(['Claire Danes', 'Damian Lewis', 'Rupert Friend', 'Morena Baccarin']);
-      expect(parsed.awards).toEqual('N/A');
       expect(parsed.country).toEqual('USA');
       expect(parsed.directors).toEqual(['Jeffrey Reiner']);
       expect(parsed.episodeNumber).toEqual(9);
@@ -132,6 +131,11 @@ describe('Data mapper', () => {
       expect(parsed.type).toEqual('episode');
       expect(parsed.votes).toEqual('2211');
       expect(typeof parsed.year).toBe('string');  
+    });
+
+    it('should remove N/A values', () => {
+      const parsed = mapper.parseIMDBAPIEpisodeResponse(imdbApiEpisode);
+      expect(parsed.awards).not.toBe('N/A');
     });
   });
 });
