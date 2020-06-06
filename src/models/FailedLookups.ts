@@ -7,6 +7,7 @@ export interface FailedLookupsInterface extends Document {
   osdbHash?: string;
   title?: string;
   type?: string;
+  failedValidation?: boolean;
 
   // Added automatically:
   createdAt: string;
@@ -37,6 +38,10 @@ const FailedLookupsSchema: Schema = new Schema({
   imdbId: {
     index: true,
     type: String,
+  },
+  failedValidation: {
+    default: false,
+    type: Boolean,
   },
   type: { type: String, index: true },
   createdAt: {

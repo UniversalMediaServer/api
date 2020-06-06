@@ -119,6 +119,100 @@ describe('Media Metadata endpoints', () => {
       expect(doc).toHaveProperty('osdbHash');
     });
 
+    it('should create a failed lookup document when client validation by year fails', async() => {
+      await FailedLookupsModel.deleteMany({});
+      await MediaMetadataModel.deleteMany({});
+      let error;
+      try {
+        await got(`${appUrl}/api/media/${theSimpsonsMetaData.osdbHash}/1234?year=9999`);
+      } catch (e) {
+        error = e;
+      }
+      expect(error.message).toEqual('Response code 404 (Not Found)');
+      const doc = await FailedLookupsModel.findOne({ osdbHash: theSimpsonsMetaData.osdbHash });
+      expect(doc).toHaveProperty('_id');
+      expect(doc).toHaveProperty('osdbHash');
+      expect(doc.failedValidation).toBe(true);
+    });
+
+    it('should create a failed lookup document when client validation for season fails', async() => {
+      await FailedLookupsModel.deleteMany({});
+      await MediaMetadataModel.deleteMany({});
+      let error;
+      try {
+        await got(`${appUrl}/api/media/${prisonBreakEpisodeMetadata.osdbHash}/1234?season=999&episodeNumber=4`);
+      } catch (e) {
+        error = e;
+      }
+      expect(error.message).toEqual('Response code 404 (Not Found)');
+      const doc = await FailedLookupsModel.findOne({ osdbHash: prisonBreakEpisodeMetadata.osdbHash });
+      expect(doc).toHaveProperty('_id');
+      expect(doc).toHaveProperty('osdbHash');
+      expect(doc.failedValidation).toBe(true);
+    });
+
+    it('should create a failed lookup document when client validation for episodeNumber fails', async() => {
+      await FailedLookupsModel.deleteMany({});
+      await MediaMetadataModel.deleteMany({});
+      let error;
+      try {
+        await got(`${appUrl}/api/media/${prisonBreakEpisodeMetadata.osdbHash}/1234?season=1&episodeNumber=999`);
+      } catch (e) {
+        error = e;
+      }
+      expect(error.message).toEqual('Response code 404 (Not Found)');
+      const doc = await FailedLookupsModel.findOne({ osdbHash: prisonBreakEpisodeMetadata.osdbHash });
+      expect(doc).toHaveProperty('_id');
+      expect(doc).toHaveProperty('osdbHash');
+      expect(doc.failedValidation).toBe(true);
+    });
+
+    it('should create a failed lookup document when client validation for season AND episodeNumber fails', async() => {
+      await FailedLookupsModel.deleteMany({});
+      await MediaMetadataModel.deleteMany({});
+      let error;
+      try {
+        await got(`${appUrl}/api/media/${prisonBreakEpisodeMetadata.osdbHash}/1234?season=999&episodeNumber=999`, { responseType: 'json' });
+      } catch (e) {
+        error = e;
+      }
+      expect(error.message).toEqual('Response code 404 (Not Found)');
+      const doc = await FailedLookupsModel.findOne({ osdbHash: prisonBreakEpisodeMetadata.osdbHash });
+      expect(doc).toHaveProperty('_id');
+      expect(doc).toHaveProperty('osdbHash');
+      expect(doc.failedValidation).toBe(true);
+    });
+
+    it('should return an episode response when validation passes', async() => {
+      await FailedLookupsModel.deleteMany({});
+      await MediaMetadataModel.deleteMany({});
+      let error;
+      let response;
+      try {
+        response = await got(`${appUrl}/api/media/${prisonBreakEpisodeMetadata.osdbHash}/1234?season=1&episodeNumber=4`, { responseType: 'json' });
+      } catch (e) {
+        error = e;
+      }
+      expect(error).toBeUndefined();
+      expect(response.body).toHaveProperty('_id');
+      expect(response.body).toHaveProperty('osdbHash', prisonBreakEpisodeMetadata.osdbHash);
+    });
+
+    it('should return a movie response when validation passes', async() => {
+      await FailedLookupsModel.deleteMany({});
+      await MediaMetadataModel.deleteMany({});
+      let error;
+      let response;
+      try {
+        response = await got(`${appUrl}/api/media/${theSimpsonsMetaData.osdbHash}/1234?year=2007`, { responseType: 'json' });
+      } catch (e) {
+        error = e;
+      }
+      expect(error).toBeUndefined();
+      expect(response.body).toHaveProperty('_id');
+      expect(response.body).toHaveProperty('osdbHash', theSimpsonsMetaData.osdbHash);
+    });
+
     it('should NOT create a failed lookup document when Open Subtitles is offline', async() => {
       await FailedLookupsModel.deleteMany({});
       let error;
