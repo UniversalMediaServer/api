@@ -207,6 +207,21 @@ describe('Media Metadata endpoints', () => {
         expect(err.message).toEqual('Response code 422 (Unprocessable Entity)');
       }
     });
+
+    it('should return best match for movie titles which return many search results from OMDb', async() => {
+      const body = JSON.stringify({ 'title': 'The Matrix Reloaded', 'year': '2003' });
+      const response: any = await got.post(`${appUrl}/api/media/title`, { responseType: 'json', headers: { 'content-type': 'application/json' }, body });
+      expect(response.body.title).toBe('The Matrix Reloaded');
+      /*
+        The external API returns 5 movies for this title search, so the above test asserts we select the correct one, which is decided by
+        using Jaro-Winkler string distance estimations vs the title that the client passed to us. This test determines the above to be the correct result, provided
+        the following titles: 
+        - The Matrix Reloaded
+        - Decoded: The Making of 'The Matrix Reloaded
+        - The Matrix Reloaded: Pre-Load
+        - The Matrix Reloaded: Get Me an Exit
+      */
+    });
   });
   describe('get series by directory or filename', () => {
     it('should return series metadata', async() => {
