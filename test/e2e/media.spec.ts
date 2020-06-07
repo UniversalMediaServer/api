@@ -40,11 +40,15 @@ describe('Media Metadata endpoints', () => {
     const mongoUrl = await mongod.getConnectionString();
     process.env.MONGO_URL = mongoUrl;
     await mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true });
-    await MediaMetadataModel.create(interstellarMetaData);
     require('../mocks');
     require('../opensubtitles-mocks');
     server = require('../../src/app').server;
     stoppable(server, 0);
+  });
+
+  beforeEach(async() => {
+    await FailedLookupsModel.deleteMany({});
+    await MediaMetadataModel.deleteMany({});
   });
 
   afterAll(async() => {
@@ -54,6 +58,7 @@ describe('Media Metadata endpoints', () => {
 
   describe('get by osdb hash', () => {
     it('should return a valid response for existing media record with osdb hash', async() => {
+      await MediaMetadataModel.create(interstellarMetaData);
       const res: any = await got(`${appUrl}/api/media/${interstellarMetaData.osdbHash}/1234`, { responseType: 'json' });
       expect(res.statusCode).toBe(200);
       expect(res.body).toHaveProperty('_id');
@@ -106,7 +111,6 @@ describe('Media Metadata endpoints', () => {
     });
     
     it('should create a failed lookup document when Open Subtitles cannot find metadata', async() => {
-      await FailedLookupsModel.deleteMany({});
       let error;
       try {
         await got(`${appUrl}/api/media/f4245d9379d31e30/1234`);
@@ -120,8 +124,6 @@ describe('Media Metadata endpoints', () => {
     });
 
     it('should create a failed lookup document when client validation by year fails', async() => {
-      await FailedLookupsModel.deleteMany({});
-      await MediaMetadataModel.deleteMany({});
       let error;
       try {
         await got(`${appUrl}/api/media/${theSimpsonsMetaData.osdbHash}/1234?year=9999`);
@@ -136,8 +138,6 @@ describe('Media Metadata endpoints', () => {
     });
 
     it('should create a failed lookup document when client validation for season fails', async() => {
-      await FailedLookupsModel.deleteMany({});
-      await MediaMetadataModel.deleteMany({});
       let error;
       try {
         await got(`${appUrl}/api/media/${prisonBreakEpisodeMetadata.osdbHash}/1234?season=999&episodeNumber=4`);
@@ -152,8 +152,6 @@ describe('Media Metadata endpoints', () => {
     });
 
     it('should create a failed lookup document when client validation for episodeNumber fails', async() => {
-      await FailedLookupsModel.deleteMany({});
-      await MediaMetadataModel.deleteMany({});
       let error;
       try {
         await got(`${appUrl}/api/media/${prisonBreakEpisodeMetadata.osdbHash}/1234?season=1&episodeNumber=999`);
@@ -168,8 +166,6 @@ describe('Media Metadata endpoints', () => {
     });
 
     it('should create a failed lookup document when client validation for season AND episodeNumber fails', async() => {
-      await FailedLookupsModel.deleteMany({});
-      await MediaMetadataModel.deleteMany({});
       let error;
       try {
         await got(`${appUrl}/api/media/${prisonBreakEpisodeMetadata.osdbHash}/1234?season=999&episodeNumber=999`, { responseType: 'json' });
@@ -183,9 +179,7 @@ describe('Media Metadata endpoints', () => {
       expect(doc.failedValidation).toBe(true);
     });
 
-    it('should return an episode response when validation passes', async() => {
-      await FailedLookupsModel.deleteMany({});
-      await MediaMetadataModel.deleteMany({});
+    it('should return an episode response when validation is supplied and passes', async() => {
       let error;
       let response;
       try {
@@ -198,9 +192,7 @@ describe('Media Metadata endpoints', () => {
       expect(response.body).toHaveProperty('osdbHash', prisonBreakEpisodeMetadata.osdbHash);
     });
 
-    it('should return a movie response when validation passes', async() => {
-      await FailedLookupsModel.deleteMany({});
-      await MediaMetadataModel.deleteMany({});
+    it('should return a movie response when validation is supplied and passes', async() => {
       let error;
       let response;
       try {
@@ -227,7 +219,6 @@ describe('Media Metadata endpoints', () => {
     });
 
     it('should not throw an exception when Open Subtitles passes bad data', async() => {
-      await FailedLookupsModel.deleteMany({});
       let error;
       try {
         await got(`${appUrl}/api/media/a04cfbeafc4af7eb/884419440`);
@@ -241,8 +232,6 @@ describe('Media Metadata endpoints', () => {
     });
 
     it('episodelookup should make an EpisodeProcessing document to process series later', async() => {
-      await FailedLookupsModel.deleteMany({});
-      await EpisodeProcessing.deleteMany({});
       await got(`${appUrl}/api/media/${prisonBreakEpisodeMetadata.osdbHash}/1234`);
       const doc = await MediaMetadata.findOne({ osdbHash: prisonBreakEpisodeMetadata.osdbHash });
       expect(doc).toHaveProperty('_id');
@@ -351,7 +340,6 @@ describe('Media Metadata endpoints', () => {
     });
 
     it('should NOT create a failed lookup document when IMDB api is down', async() => {
-      await FailedLookupsModel.deleteMany({});
       const body = JSON.stringify({ imdbid: 'mocked-outage-id' });
       let error;
       try {
