@@ -5,7 +5,7 @@ const TEXT_SCORE_MINIMUM = 1;
 
 type ratingSource = 'Metacritic' | 'Rotten Tomatoes' | 'Metacritic';
 
-export interface SeriesMetadataInterface extends Document {
+export interface SeriesMetadataInterface {
   actors: Array<string>;
   awards?: string;
   country?: string;
@@ -30,7 +30,9 @@ export interface SeriesMetadataInterface extends Document {
   updatedAt: string;
 }
 
-export interface SeriesMetadataModel extends Model<SeriesMetadataInterface> {
+export interface SeriesMetadataInterfaceDocument extends Document, SeriesMetadataInterface {}
+
+export interface SeriesMetadataModel extends Model<SeriesMetadataInterfaceDocument> {
   findSimilarSeries(dirOrFilename: string): Promise<SeriesMetadataInterface>; 
 }
 
@@ -82,5 +84,5 @@ SeriesMetadataSchema.virtual('imdburl').get(function() {
 // this allows us to use MongoDB Full text search https://docs.mongodb.com/manual/reference/operator/query/text/#op._S_text
 SeriesMetadataSchema.index({ 'title': 'text' });
 
-const SeriesMetadata = mongoose.model<SeriesMetadataInterface, SeriesMetadataModel>('SeriesMetadata', SeriesMetadataSchema);
+const SeriesMetadata = mongoose.model<SeriesMetadataInterfaceDocument, SeriesMetadataModel>('SeriesMetadata', SeriesMetadataSchema);
 export default SeriesMetadata;
