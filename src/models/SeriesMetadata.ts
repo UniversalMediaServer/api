@@ -26,6 +26,7 @@ export interface SeriesMetadataInterface {
   year: string;
 
   // Added automatically:
+  _id: any; // eslint-disable-line @typescript-eslint/no-explicit-any
   createdAt: string;
   updatedAt: string;
 }
