@@ -129,6 +129,9 @@ const setSeriesMetadataByIMDbID = async(imdbId: string): Promise<SeriesMetadataI
 
 export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface | string> => {
   const { osdbhash: osdbHash, filebytesize } = ctx.params;
+  const validateMovieByYear = Boolean(ctx.query?.year);
+  const validateEpisodeBySeasonAndEpisode = Boolean(ctx.query?.season && ctx.query?.episodeNumber);
+
   let dbMeta: MediaMetadataInterface = await MediaMetadata.findOne({ osdbHash }, null, { lean: true }).exec();
 
   if (dbMeta) {
@@ -145,11 +148,31 @@ export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface
   };
 
   const openSubtitlesResponse = await osAPI.identify(osQuery);
-
   // Fail early if OpenSubtitles reports that it did not recognize the hash
   if (!openSubtitlesResponse.metadata) {
     await FailedLookups.updateOne({ osdbHash }, {}, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
+  }
+
+  // validate that OpenSubtitles has found correct metadata by Osdb hash
+  if (validateMovieByYear || validateEpisodeBySeasonAndEpisode) {
+    let passedValidation = false;
+    if (validateMovieByYear) {
+      if (ctx.query.year.toString() === openSubtitlesResponse.metadata.year) {
+        passedValidation = true;
+      }
+    }
+
+    if (validateEpisodeBySeasonAndEpisode) {
+      if (ctx.query.season.toString() === openSubtitlesResponse.metadata.season && ctx.query.episodeNumber.toString() === openSubtitlesResponse.metadata.episode) {
+        passedValidation = true;
+      }
+    }
+
+    if (!passedValidation) {
+      await FailedLookups.updateOne({ osdbHash }, { failedValidation: true }, { upsert: true, setDefaultsOnInsert: true }).exec();
+      throw new MediaNotFoundError();
+    }
   }
 
   const parsedOpenSubtitlesResponse = mapper.parseOpenSubtitlesResponse(openSubtitlesResponse);
