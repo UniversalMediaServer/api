@@ -2,6 +2,7 @@ import { SearchRequest } from '@universalmediaserver/node-imdb-api';
 import { Context } from 'koa';
 import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
+import * as natural from 'natural';
 
 import { IMDbIDNotFoundError, MediaNotFoundError, ValidationError } from '../helpers/customErrors';
 import EpisodeProcessing from '../models/EpisodeProcessing';
@@ -69,10 +70,11 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
     if (!imdbId) {
       searchRequest.reqtype = 'movie';
       const searchResults = await imdbAPI.search(searchRequest);
-      /**
-       * @todo Choose the most appropriate result instead of just the first
-       */
-      const searchResult: any = _.first(searchResults.results);
+      // find the best search results utilising the Jaro-Winkler distance metric
+      const searchResultStringDistance = searchResults.results.map(result => natural.JaroWinklerDistance(searchRequest.name, result.title));
+      const bestSearchResultKey = _.indexOf(searchResultStringDistance, _.max(searchResultStringDistance));
+
+      const searchResult: any = searchResults.results[bestSearchResultKey];
       if (!searchResult) {
         throw new IMDbIDNotFoundError();
       }
@@ -127,6 +129,9 @@ const setSeriesMetadataByIMDbID = async(imdbId: string): Promise<SeriesMetadataI
 
 export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface | string> => {
   const { osdbhash: osdbHash, filebytesize } = ctx.params;
+  const validateMovieByYear = Boolean(ctx.query?.year);
+  const validateEpisodeBySeasonAndEpisode = Boolean(ctx.query?.season && ctx.query?.episodeNumber);
+
   let dbMeta: MediaMetadataInterface = await MediaMetadata.findOne({ osdbHash }, null, { lean: true }).exec();
 
   if (dbMeta) {
@@ -143,11 +148,31 @@ export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface
   };
 
   const openSubtitlesResponse = await osAPI.identify(osQuery);
-
   // Fail early if OpenSubtitles reports that it did not recognize the hash
   if (!openSubtitlesResponse.metadata) {
     await FailedLookups.updateOne({ osdbHash }, {}, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
+  }
+
+  // validate that OpenSubtitles has found correct metadata by Osdb hash
+  if (validateMovieByYear || validateEpisodeBySeasonAndEpisode) {
+    let passedValidation = false;
+    if (validateMovieByYear) {
+      if (ctx.query.year.toString() === openSubtitlesResponse.metadata.year) {
+        passedValidation = true;
+      }
+    }
+
+    if (validateEpisodeBySeasonAndEpisode) {
+      if (ctx.query.season.toString() === openSubtitlesResponse.metadata.season && ctx.query.episodeNumber.toString() === openSubtitlesResponse.metadata.episode) {
+        passedValidation = true;
+      }
+    }
+
+    if (!passedValidation) {
+      await FailedLookups.updateOne({ osdbHash }, { failedValidation: true }, { upsert: true, setDefaultsOnInsert: true }).exec();
+      throw new MediaNotFoundError();
+    }
   }
 
   const parsedOpenSubtitlesResponse = mapper.parseOpenSubtitlesResponse(openSubtitlesResponse);
