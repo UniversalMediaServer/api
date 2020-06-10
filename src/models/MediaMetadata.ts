@@ -4,7 +4,7 @@ import { ValidationError } from '../helpers/customErrors';
 
 type ratingSource = 'Metacritic' | 'Rotten Tomatoes' | 'Metacritic';
 
-export interface MediaMetadataInterface extends Document {
+export interface MediaMetadataInterface {
   actors: Array<string>;
   awards?: string;
   boxoffice?: string;
@@ -34,9 +34,12 @@ export interface MediaMetadataInterface extends Document {
   year: string;
 
   // Added automatically:
+  _id: any; // eslint-disable-line @typescript-eslint/no-explicit-any
   createdAt: string;
   updatedAt: string;
 }
+
+export interface MediaMetadataInterfaceDocument extends Document, MediaMetadataInterface {}
 
 const isTypeEpisode = function(context?: MediaMetadataInterface): boolean {
   return context ? context.type === 'episode' : this.type === 'episode';
@@ -98,7 +101,7 @@ const MediaMetadataSchema: Schema = new Schema({
   versionKey: false,
 });
 
-MediaMetadataSchema.pre<MediaMetadataInterface>('save', function(next) {
+MediaMetadataSchema.pre<MediaMetadataInterfaceDocument>('save', function(next) {
   if (this.title && this.title.startsWith('Episode #')) {
     this.title = undefined;
   }
@@ -109,5 +112,5 @@ MediaMetadataSchema.virtual('imdburl').get(function() {
   return `https://www.imdb.com/title/${this.imdbID}`;
 });
 
-const MediaMetadata = mongoose.model<MediaMetadataInterface>('MediaMetadata', MediaMetadataSchema);
+const MediaMetadata = mongoose.model<MediaMetadataInterfaceDocument>('MediaMetadata', MediaMetadataSchema);
 export default MediaMetadata;
