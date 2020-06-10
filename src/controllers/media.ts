@@ -189,8 +189,8 @@ export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface
 };
 
 export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInterface | string> => {
-  const { title, language = 'eng' } = ctx.request.body;
-  const year = ctx.request.body.year ? Number(ctx.request.body.year) : null;
+  const { title, language = 'eng' } = ctx.query;
+  const year = ctx.query.year ? Number(ctx.query.year) : null;
 
   if (!title) {
     throw new ValidationError('title is required');
@@ -290,7 +290,7 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
 };
 
 export const getSeriesByTitle = async(ctx: Context): Promise<SeriesMetadataInterface | string> => {
-  let { title: dirOrFilename } = ctx.request.body;
+  let { title: dirOrFilename } = ctx.query;
 
   if (!dirOrFilename) {
     throw new ValidationError('title is required');
@@ -320,7 +320,7 @@ export const getSeriesByTitle = async(ctx: Context): Promise<SeriesMetadataInter
 };
 
 export const getByImdbID = async(ctx: Context): Promise<any> => {
-  const { imdbid } = ctx.request.body;
+  const { imdbid } = ctx.query;
 
   const [mediaMetadata, seriesMetadata] = await Promise.all([MediaMetadata.findOne({ imdbID: imdbid }, null, { lean: true }).exec(), SeriesMetadata.findOne({ imdbID: imdbid }, null, { lean: true }).exec()]);
 
