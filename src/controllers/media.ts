@@ -239,6 +239,10 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
 
   try {
     imdbData.searchMatches = [title];
+    /**
+     * The below section is untidy due to the following possible bug https://github.com/Automattic/mongoose/issues/9118
+     * Once clarity on the feature, or if a bugfix is released we could refactor the below
+     */
     let newlyCreatedResult = await MediaMetadata.create(imdbData);
     newlyCreatedResult = newlyCreatedResult.toObject();
     delete newlyCreatedResult.searchMatches;
