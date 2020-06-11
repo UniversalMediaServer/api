@@ -239,8 +239,8 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
 
   try {
     imdbData.searchMatches = [title];
-    const newlyCreatedResult = await MediaMetadata.create(imdbData);
-    newlyCreatedResult.toObject();
+    let newlyCreatedResult = await MediaMetadata.create(imdbData);
+    newlyCreatedResult = newlyCreatedResult.toObject();
     delete newlyCreatedResult.searchMatches;
     return ctx.body = newlyCreatedResult;
   } catch (e) {
