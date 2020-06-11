@@ -249,6 +249,7 @@ describe('Media Metadata endpoints', () => {
     it('should search by series title and store it', async() => {
       const response = await got(`${appUrl}/api/media/title?title=Homeland S02E05`, { responseType: 'json' });
       expect(response.body).toHaveProperty('_id');
+      expect(response.body).not.toHaveProperty('searchMatches');
 
       const episode = await MediaMetadataModel.findOne({ searchMatches: { $in: ['Homeland S02E05'] } });
       expect(episode).toHaveProperty('_id');

@@ -157,7 +157,12 @@ const imdbMovieMap = {
 };
 
 const removeNotApplicable = (obj): any => {
-  return _.pickBy(obj, v => v !== 'N/A');
+  return _.pickBy(obj, (v) => {
+    if (typeof v === 'object') {
+      return _.pull(v, 'N/A');
+    }
+    return v !== 'N/A';
+  });
 };
 
 class UmsDataMapper {
