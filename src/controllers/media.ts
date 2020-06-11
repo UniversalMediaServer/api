@@ -240,6 +240,7 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
   try {
     imdbData.searchMatches = [title];
     const newlyCreatedResult = await MediaMetadata.create(imdbData);
+    delete newlyCreatedResult.searchMatches;
     return ctx.body = newlyCreatedResult;
   } catch (e) {
     await FailedLookups.updateOne({ title }, {}, { upsert: true, setDefaultsOnInsert: true }).exec();
