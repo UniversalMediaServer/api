@@ -53,7 +53,7 @@ const imdbApiEpisode = {
   episode: 9,
   runtime: '57 min',
   genres: 'Crime, Drama, Mystery, Thriller',
-  director: 'Jeffrey Reiner N/A',
+  director: 'Jeffrey Reiner, N/A',
   writer: 'Howard Gordon (developed for american television by), Alex Gansa (developed for american television by), Gideon Raff (based on the original Israeli series "Prisoners of War" by), Barbara Hall',
   actors: 'Claire Danes, Damian Lewis, Rupert Friend, Morena Baccarin',
   plot: 'Saul has found and rescued Brody and is now trying to help him recover from addiction. A task that proved to be a little challenging, so Saul turns to Carrie for help. She only agrees to help after she hears about Saul\'s new plan.',
