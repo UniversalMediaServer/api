@@ -755,10 +755,10 @@
     "@types/bson" "*"
     "@types/node" "*"
 
-"@types/mongoose@^5.7.24":
-  version "5.7.24"
-  resolved "https://registry.yarnpkg.com/@types/mongoose/-/mongoose-5.7.24.tgz#592249435a2e9fee02c9e9650afeac4807d4ef06"
-  integrity sha512-clU58TF46ehydILMdeikm9Vi4vFCJRCOd6B5gzhu9SET88oHTU+K+bJHmxIfIBm3QhSOXbAsY22tUU7/EUvexw==
+"@types/mongoose@^5.7.27":
+  version "5.7.27"
+  resolved "https://registry.yarnpkg.com/@types/mongoose/-/mongoose-5.7.27.tgz#8cb259fa463c466aba305937a31967727ad804d1"
+  integrity sha512-6+QFJg4jUM91dJYsJk32FuREOJ7ghgzxj4c+BV3+aK7a9fFGbghQRteB14P94fGXhJN63b2mBqf7luBHvCRFtg==
   dependencies:
     "@types/mongodb" "*"
     "@types/node" "*"
