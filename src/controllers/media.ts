@@ -1,4 +1,4 @@
-import { SearchRequest } from '@universalmediaserver/node-imdb-api';
+import { SearchRequest, TVShow } from '@universalmediaserver/node-imdb-api';
 import { Context } from 'koa';
 import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
@@ -45,18 +45,8 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
       searchRequest.name = parsedFilename.show;
       searchRequest.reqtype = 'series';
       const tvSeriesInfo = await imdbAPI.get(searchRequest);
-      /**
-       * If tvSeriesInfo.episodes is not a function, we have received a movie result
-       * instead of the TV series result we expected, so we let this pass through to
-       * the next block to do another query with the full info, because our query used
-       * what we thought was the show name, which may be inaccurate for movies with
-       * common names - in those cases, a year is needed to differentiate.
-       *
-       * @see https://github.com/tregusti/episode-parser/issues/18
-       */
-      // @ts-ignore
-      if (tvSeriesInfo && _.isFunction(tvSeriesInfo.episodes)) {
-        // @ts-ignore
+
+      if (tvSeriesInfo && tvSeriesInfo instanceof TVShow) {
         const allEpisodes = await tvSeriesInfo.episodes();
         const currentEpisode = _.find(allEpisodes, { season: parsedFilename.season, episode: parsedFilename.episode });
         if (!currentEpisode) {
