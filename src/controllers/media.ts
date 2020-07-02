@@ -67,6 +67,7 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
       }
     }
 
+    
     if (!imdbId) {
       searchRequest.reqtype = 'movie';
       const searchResults = await imdbAPI.search(searchRequest);
