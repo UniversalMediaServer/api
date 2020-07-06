@@ -133,7 +133,7 @@
     "ts-node": "^8.10.2"
   },
   "devDependencies": {
-    "@types/jest": "^26.0.0",
+    "@types/jest": "^26.0.3",
     "@types/lodash": "^4.14.156",
     "@types/mongoose": "^5.7.27",
     "@types/node": "^14.0.13",
