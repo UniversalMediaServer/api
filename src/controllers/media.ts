@@ -304,7 +304,11 @@ export const getSeriesByTitle = async(ctx: Context): Promise<SeriesMetadataInter
 
   const parsed = episodeParser(dirOrFilename);
   dirOrFilename = parsed && parsed.show ? parsed.show : dirOrFilename;
-  const tvSeriesInfo = await imdbAPI.get({ name: dirOrFilename, type: 'series' });
+  const searchRequest: SearchRequest = {
+    name: dirOrFilename,
+    reqtype: 'series',
+  };
+  const tvSeriesInfo = await imdbAPI.get(searchRequest);
 
   if (!tvSeriesInfo) {
     await FailedLookups.updateOne({ title: dirOrFilename, type: 'series' }, {}, { upsert: true, setDefaultsOnInsert: true }).exec();
