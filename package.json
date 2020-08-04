@@ -142,7 +142,7 @@
     "eslint": "^6.8.0",
     "got": "^11.5.1",
     "jest": "^25.5.4",
-    "mongodb-memory-server": "^6.6.2",
+    "mongodb-memory-server": "^6.6.3",
     "nock": "^13.0.3",
     "nodemon": "^2.0.4",
     "ts-jest": "^25.5.1",
