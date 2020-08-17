@@ -124,7 +124,7 @@
     "koa-helmet": "^5.2.0",
     "koa-router": "^9.4.0",
     "lodash": "^4.17.20",
-    "mongoose": "^5.9.28",
+    "mongoose": "^5.10.0",
     "natural": "^2.1.5",
     "object-mapper": "^6.2.0",
     "opensubtitles-api": "^5.1.2",
