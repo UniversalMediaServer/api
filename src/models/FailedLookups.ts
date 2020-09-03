@@ -15,6 +15,19 @@ export interface FailedLookupsInterface extends Document {
 }
 
 const FailedLookupsSchema: Schema = new Schema({
+  createdAt: {
+    default: Date.now,
+    expires: DOCUMENT_EXPIRY_IN_SECONDS,
+    type: Date,
+  },
+  failedValidation: {
+    default: false,
+    type: Boolean,
+  },
+  imdbId: {
+    index: true,
+    type: String,
+  },
   osdbHash: {
     index: true,
     required: function(): boolean {
@@ -35,19 +48,10 @@ const FailedLookupsSchema: Schema = new Schema({
     },
     type: String,
   },
-  imdbId: {
+  type: { type: String, index: true },
+  year: {
     index: true,
     type: String,
-  },
-  failedValidation: {
-    default: false,
-    type: Boolean,
-  },
-  type: { type: String, index: true },
-  createdAt: {
-    default: Date.now,
-    expires: DOCUMENT_EXPIRY_IN_SECONDS,
-    type: Date,
   },
 }, {
   collection: 'failed_lookups',

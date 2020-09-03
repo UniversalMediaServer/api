@@ -193,7 +193,11 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
   }
 
   // If we already failed to get a result, return early
-  if (await FailedLookups.findOne({ title }, '_id', { lean: true }).exec()) {
+  const failedLookupQuery: any = { title };
+  if (year) {
+    failedLookupQuery.year = year;
+  }
+  if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
     throw new MediaNotFoundError();
   }
 
@@ -204,7 +208,7 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
   const imdbData: MediaMetadataInterface = await getFromIMDbAPI(null, searchRequest);
 
   if (!imdbData) {
-    await FailedLookups.updateOne({ title }, {}, { upsert: true, setDefaultsOnInsert: true }).exec();
+    await FailedLookups.updateOne(failedLookupQuery, {}, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
 
@@ -238,7 +242,7 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
     delete newlyCreatedResult.searchMatches;
     return ctx.body = newlyCreatedResult;
   } catch (e) {
-    await FailedLookups.updateOne({ title }, {}, { upsert: true, setDefaultsOnInsert: true }).exec();
+    await FailedLookups.updateOne(failedLookupQuery, {}, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
 
@@ -287,18 +291,23 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
 
 export const getSeriesByTitle = async(ctx: Context): Promise<SeriesMetadataInterface | string> => {
   let { title: dirOrFilename } = ctx.query;
-
+  const year = ctx.query.year ? Number(ctx.query.year) : null;
   if (!dirOrFilename) {
     throw new ValidationError('title is required');
   }
 
-  let dbMeta: SeriesMetadataInterface = await SeriesMetadata.findSimilarSeries(dirOrFilename);
+  let dbMeta: SeriesMetadataInterface = await SeriesMetadata.findSimilarSeries(dirOrFilename, year);
 
   if (dbMeta) {
     return ctx.body = dbMeta;
   }
 
-  if (await FailedLookups.findOne({ title: dirOrFilename, type: 'series' }, '_id', { lean: true  }).exec()) {
+  const failedLookupQuery: any = { title: dirOrFilename, type: 'series' };
+  if (year) {
+    failedLookupQuery.year = year;
+  }
+
+  if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
     throw new MediaNotFoundError();
   }
 
@@ -308,10 +317,13 @@ export const getSeriesByTitle = async(ctx: Context): Promise<SeriesMetadataInter
     name: dirOrFilename,
     reqtype: 'series',
   };
+  if (year) {
+    searchRequest.year = year;
+  }
   const tvSeriesInfo = await imdbAPI.get(searchRequest);
 
   if (!tvSeriesInfo) {
-    await FailedLookups.updateOne({ title: dirOrFilename, type: 'series' }, {}, { upsert: true, setDefaultsOnInsert: true }).exec();
+    await FailedLookups.updateOne(failedLookupQuery, {}, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
   const metadata = mapper.parseIMDBAPISeriesResponse(tvSeriesInfo);

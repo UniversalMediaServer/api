@@ -67,8 +67,12 @@ const SeriesMetadataSchema: Schema = new Schema({
   versionKey: false,
 });
 
-SeriesMetadataSchema.statics.findSimilarSeries = async function(dirOrFilename): Promise<SeriesMetadataInterface | null> {
-  const bestGuess = await this.find({ $text: { $search: dirOrFilename, $caseSensitive: false } }, { score: { $meta: 'textScore' } })
+SeriesMetadataSchema.statics.findSimilarSeries = async function(dirOrFilename, year: string): Promise<SeriesMetadataInterface | null> {
+  const bestGuessQuery: any = { $text: { $search: dirOrFilename, $caseSensitive: false } };
+  if (year) {
+    bestGuessQuery.year = year;
+  }
+  const bestGuess = await this.find(bestGuessQuery, { score: { $meta: 'textScore' } })
     .sort({ score: { $meta: 'textScore' } })
     .limit(1)
     .lean();
