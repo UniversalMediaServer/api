@@ -6,7 +6,7 @@ import * as natural from 'natural';
 
 import { IMDbIDNotFoundError, MediaNotFoundError, ValidationError } from '../helpers/customErrors';
 import EpisodeProcessing from '../models/EpisodeProcessing';
-import FailedLookups from '../models/FailedLookups';
+import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
 import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import osAPI from '../services/opensubtitles';
@@ -291,7 +291,7 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
 
 export const getSeriesByTitle = async(ctx: Context): Promise<SeriesMetadataInterface | string> => {
   let { title: dirOrFilename } = ctx.query;
-  const year = ctx.query.year ? Number(ctx.query.year) : null;
+  const year = ctx.query.year;
   if (!dirOrFilename) {
     throw new ValidationError('title is required');
   }
@@ -302,7 +302,7 @@ export const getSeriesByTitle = async(ctx: Context): Promise<SeriesMetadataInter
     return ctx.body = dbMeta;
   }
 
-  const failedLookupQuery: any = { title: dirOrFilename, type: 'series' };
+  const failedLookupQuery: FailedLookupsInterface = { title: dirOrFilename, type: 'series' };
   if (year) {
     failedLookupQuery.year = year;
   }

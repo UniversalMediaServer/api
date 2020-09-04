@@ -34,7 +34,7 @@ export interface SeriesMetadataInterface {
 export interface SeriesMetadataInterfaceDocument extends Document, SeriesMetadataInterface {}
 
 export interface SeriesMetadataModel extends Model<SeriesMetadataInterfaceDocument> {
-  findSimilarSeries(dirOrFilename: string): Promise<SeriesMetadataInterface>; 
+  findSimilarSeries(dirOrFilename: string, year: string): Promise<SeriesMetadataInterface>; 
 }
 
 const SeriesMetadataSchema: Schema = new Schema({
@@ -67,7 +67,7 @@ const SeriesMetadataSchema: Schema = new Schema({
   versionKey: false,
 });
 
-SeriesMetadataSchema.statics.findSimilarSeries = async function(dirOrFilename, year: string): Promise<SeriesMetadataInterface | null> {
+SeriesMetadataSchema.statics.findSimilarSeries = async function(dirOrFilename: string, year: string): Promise<SeriesMetadataInterface | null> {
   const bestGuessQuery: any = { $text: { $search: dirOrFilename, $caseSensitive: false } };
   if (year) {
     bestGuessQuery.year = year;

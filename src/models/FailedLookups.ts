@@ -3,31 +3,21 @@ import { Document, Schema } from 'mongoose';
 
 const DOCUMENT_EXPIRY_IN_SECONDS = 2592000; // 30 days
 
-export interface FailedLookupsInterface extends Document {
-  osdbHash?: string;
-  title?: string;
-  type?: string;
+export interface FailedLookupsInterface {
   failedValidation?: boolean;
+  osdbHash?: string;
+  title: string;
+  type?: string;
+  year?: string;
 
   // Added automatically:
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
+export interface FailedLookupsInterfaceDocument extends Document, FailedLookupsInterface {}
+
 const FailedLookupsSchema: Schema = new Schema({
-  createdAt: {
-    default: Date.now,
-    expires: DOCUMENT_EXPIRY_IN_SECONDS,
-    type: Date,
-  },
-  failedValidation: {
-    default: false,
-    type: Boolean,
-  },
-  imdbId: {
-    index: true,
-    type: String,
-  },
   osdbHash: {
     index: true,
     required: function(): boolean {
@@ -48,15 +38,28 @@ const FailedLookupsSchema: Schema = new Schema({
     },
     type: String,
   },
-  type: { type: String, index: true },
+  imdbId: {
+    index: true,
+    type: String,
+  },
   year: {
     index: true,
     type: String,
+  },
+  failedValidation: {
+    default: false,
+    type: Boolean,
+  },
+  type: { type: String, index: true },
+  createdAt: {
+    default: Date.now,
+    expires: DOCUMENT_EXPIRY_IN_SECONDS,
+    type: Date,
   },
 }, {
   collection: 'failed_lookups',
   timestamps: true,
 });
 
-const FailedLookups = mongoose.model<FailedLookupsInterface>('FailedLookups', FailedLookupsSchema);
+const FailedLookups = mongoose.model<FailedLookupsInterfaceDocument>('FailedLookups', FailedLookupsSchema);
 export default FailedLookups;
