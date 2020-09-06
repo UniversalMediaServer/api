@@ -34,7 +34,7 @@ export interface SeriesMetadataInterface {
 export interface SeriesMetadataInterfaceDocument extends Document, SeriesMetadataInterface {}
 
 export interface SeriesMetadataModel extends Model<SeriesMetadataInterfaceDocument> {
-  findSimilarSeries(dirOrFilename: string, year: string): Promise<SeriesMetadataInterface>; 
+  findSimilarSeries(dirOrFilename: string, year?: string): Promise<SeriesMetadataInterface>; 
 }
 
 const SeriesMetadataSchema: Schema = new Schema({
