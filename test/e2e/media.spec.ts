@@ -308,7 +308,7 @@ describe('Media Metadata endpoints', () => {
   describe('get series by directory or filename', () => {
     it('should return series metadata', async() => {
       // this request populates the series metadata
-      let response: any = await got(`${appUrl}/api/media/seriestitle?title='Homeland S02E05`, { responseType: 'json' });
+      let response: any = await got(`${appUrl}/api/media/seriestitle?title=Homeland S02E05`, { responseType: 'json' });
       const newDocumentId = response.body._id;
       const doc = await SeriesMetadataModel.findOne();
       expect(doc).toHaveProperty('totalSeasons', 8);
@@ -322,6 +322,28 @@ describe('Media Metadata endpoints', () => {
       response = await got(`${appUrl}/api/media/seriestitle?title=HoMelAnD   `, { responseType: 'json' });
       expect(response.body._id).toEqual(newDocumentId);
       response = await got(`${appUrl}/api/media/seriestitle?title=Homeland series 1`, { responseType: 'json' });
+      expect(response.body._id).toEqual(newDocumentId);
+    });
+
+    it('should return series with correct year', async() => {
+      // this request populates the series metadata
+      let response: any = await got(`${appUrl}/api/media/seriestitle?title=Ben 10&year=2016`, { responseType: 'json' });
+      let newDocumentId = response.body._id;
+      expect(response.body).toHaveProperty('title', 'Ben 10');
+      expect(response.body).toHaveProperty('startYear', '2016');
+
+      // and cached
+      response = await got(`${appUrl}/api/media/seriestitle?title=Ben 10&year=2016`, { responseType: 'json' });
+      expect(response.body._id).toEqual(newDocumentId);
+
+      // now a different year
+      response = await got(`${appUrl}/api/media/seriestitle?title=Ben 10&year=2005`, { responseType: 'json' });
+      newDocumentId = response.body._id;
+      expect(response.body).toHaveProperty('title', 'Ben 10');
+      expect(response.body).toHaveProperty('startYear', '2005');
+
+      // and cached
+      response = await got(`${appUrl}/api/media/seriestitle?title=Ben 10&year=2005`, { responseType: 'json' });
       expect(response.body._id).toEqual(newDocumentId);
     });
   });

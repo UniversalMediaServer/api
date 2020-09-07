@@ -3,16 +3,19 @@ import { Document, Schema } from 'mongoose';
 
 const DOCUMENT_EXPIRY_IN_SECONDS = 2592000; // 30 days
 
-export interface FailedLookupsInterface extends Document {
-  osdbHash?: string;
-  title?: string;
-  type?: string;
+export interface FailedLookupsInterface {
   failedValidation?: boolean;
+  osdbHash?: string;
+  title: string;
+  type?: string;
+  year?: string;
 
   // Added automatically:
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
+
+export interface FailedLookupsInterfaceDocument extends Document, FailedLookupsInterface {}
 
 const FailedLookupsSchema: Schema = new Schema({
   osdbHash: {
@@ -39,6 +42,10 @@ const FailedLookupsSchema: Schema = new Schema({
     index: true,
     type: String,
   },
+  year: {
+    index: true,
+    type: String,
+  },
   failedValidation: {
     default: false,
     type: Boolean,
@@ -54,5 +61,5 @@ const FailedLookupsSchema: Schema = new Schema({
   timestamps: true,
 });
 
-const FailedLookups = mongoose.model<FailedLookupsInterface>('FailedLookups', FailedLookupsSchema);
+const FailedLookups = mongoose.model<FailedLookupsInterfaceDocument>('FailedLookups', FailedLookupsSchema);
 export default FailedLookups;
