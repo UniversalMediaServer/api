@@ -34,7 +34,7 @@ export interface SeriesMetadataInterface {
 export interface SeriesMetadataInterfaceDocument extends Document, SeriesMetadataInterface {}
 
 export interface SeriesMetadataModel extends Model<SeriesMetadataInterfaceDocument> {
-  findSimilarSeries(dirOrFilename: string, year?: string): Promise<SeriesMetadataInterface>; 
+  findSimilarSeries(dirOrFilename: string, startYear?: string): Promise<SeriesMetadataInterface>; 
 }
 
 const SeriesMetadataSchema: Schema = new Schema({
@@ -67,10 +67,10 @@ const SeriesMetadataSchema: Schema = new Schema({
   versionKey: false,
 });
 
-SeriesMetadataSchema.statics.findSimilarSeries = async function(dirOrFilename: string, year: string): Promise<SeriesMetadataInterface | null> {
+SeriesMetadataSchema.statics.findSimilarSeries = async function(dirOrFilename: string, startYear: string): Promise<SeriesMetadataInterface | null> {
   const bestGuessQuery: any = { $text: { $search: dirOrFilename, $caseSensitive: false } };
-  if (year) {
-    bestGuessQuery.year = year;
+  if (startYear) {
+    bestGuessQuery.startYear = startYear;
   }
   const bestGuess = await this.find(bestGuessQuery, { score: { $meta: 'textScore' } })
     .sort({ score: { $meta: 'textScore' } })
