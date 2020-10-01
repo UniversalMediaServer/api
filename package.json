@@ -4,7 +4,7 @@
   "private": true,
   "engines": {
     "node": "14",
-    "yarn": "1.22.4"
+    "yarn": "^1.22.4"
   },
   "scripts": {
     "dev": "DEBUG=*universalmediaserver-api:server nodemon",
