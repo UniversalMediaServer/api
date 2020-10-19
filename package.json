@@ -144,7 +144,7 @@
     "jest": "^25.5.4",
     "mongodb-memory-server": "^6.9.2",
     "nock": "^13.0.4",
-    "nodemon": "^2.0.4",
+    "nodemon": "^2.0.6",
     "ts-jest": "^25.5.1",
     "typescript": "^3.9.7"
   }
