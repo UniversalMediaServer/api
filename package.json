@@ -122,7 +122,7 @@
     "koa": "^2.13.0",
     "koa-bodyparser": "^4.3.0",
     "koa-helmet": "^6.0.0",
-    "koa-router": "^9.4.0",
+    "koa-router": "^10.0.0",
     "lodash": "^4.17.20",
     "mongoose": "^5.10.13",
     "natural": "^2.1.5",
