@@ -334,7 +334,10 @@ export const getSeriesByTitle = async(ctx: Context): Promise<SeriesMetadataInter
 export const getByImdbID = async(ctx: Context): Promise<any> => {
   const { imdbid } = ctx.query;
 
-  const [mediaMetadata, seriesMetadata] = await Promise.all([MediaMetadata.findOne({ imdbID: imdbid }, null, { lean: true }).exec(), SeriesMetadata.findOne({ imdbID: imdbid }, null, { lean: true }).exec()]);
+  const [mediaMetadata, seriesMetadata] = await Promise.all([
+    MediaMetadata.findOne({ imdbID: imdbid }, null, { lean: true }).exec(),
+    SeriesMetadata.findOne({ imdbID: imdbid }, null, { lean: true }).exec(),
+  ]);
 
   if (mediaMetadata) {
     return ctx.body = mediaMetadata;

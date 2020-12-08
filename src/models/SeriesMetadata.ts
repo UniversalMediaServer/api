@@ -67,15 +67,29 @@ const SeriesMetadataSchema: Schema = new Schema({
   versionKey: false,
 });
 
-SeriesMetadataSchema.statics.findSimilarSeries = async function(dirOrFilename: string, startYear: string): Promise<SeriesMetadataInterface | null> {
-  const bestGuessQuery: any = { $text: { $search: dirOrFilename, $caseSensitive: false } };
+/**
+ * Finds a similar or exact match.
+ *
+ * @param title The series title.
+ * @param [startYear] The year the series started. If provided, only exact
+ *                    matches are returned. If not provided, the oldest year
+ *                    match will be returned.
+ */
+SeriesMetadataSchema.statics.findSimilarSeries = async function(title: string, startYear?: string): Promise<SeriesMetadataInterface | null> {
+  const bestGuessQuery: any = { $text: { $search: title, $caseSensitive: false } };
+  const sortBy: any = { score: { $meta: 'textScore' } };
+
   if (startYear) {
     bestGuessQuery.startYear = startYear;
+  } else {
+    sortBy.startYear = 1;
   }
+
   const bestGuess = await this.find(bestGuessQuery, { score: { $meta: 'textScore' } })
-    .sort({ score: { $meta: 'textScore' } })
+    .sort(sortBy)
     .limit(1)
     .lean();
+
   if (bestGuess[0] && (bestGuess[0].score < TEXT_SCORE_MINIMUM)) {
     return null;
   }

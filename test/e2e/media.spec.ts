@@ -345,6 +345,10 @@ describe('Media Metadata endpoints', () => {
       // and cached
       response = await got(`${appUrl}/api/media/seriestitle?title=Ben 10&year=2005`, { responseType: 'json' });
       expect(response.body._id).toEqual(newDocumentId);
+
+      // with no year, we should receive the earliest year
+      response = await got(`${appUrl}/api/media/seriestitle?title=Ben 10`, { responseType: 'json' });
+      expect(response.body._id).toEqual(newDocumentId);
     });
   });
 
