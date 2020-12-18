@@ -109,7 +109,7 @@ const setSeriesMetadataByIMDbID = async(imdbId: string): Promise<SeriesMetadataI
     return existingSeries;
   }
 
-  const imdbData: MediaMetadataInterface = await getFromIMDbAPI(imdbId);
+  const imdbData: SeriesMetadataInterface = await getFromIMDbAPI(imdbId);
   if (!imdbData) {
     return null;
   }
@@ -179,7 +179,7 @@ export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface
 };
 
 export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInterface | string> => {
-  const { title, language = 'eng' } = ctx.query;
+  const { title } = ctx.query;
   const year = ctx.query.year ? Number(ctx.query.year) : null;
 
   if (!title) {
@@ -238,6 +238,7 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
      * Once clarity on the feature, or if a bugfix is released we could refactor the below
      */
     let newlyCreatedResult = await MediaMetadata.create(imdbData);
+    // @ts-ignore
     newlyCreatedResult = newlyCreatedResult.toObject();
     delete newlyCreatedResult.searchMatches;
     return ctx.body = newlyCreatedResult;
@@ -247,46 +248,10 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
   }
 
   /**
-   * OpenSubtitles-api doesn't return complete enough data from
-   * its SearchSubtitles function so this section of the code is
-   * intentionally unreachable until we can figure out how to search
+   * @todo OpenSubtitles-api doesn't return complete enough data from
+   * its SearchSubtitles function, but we can possibly figure out how to search
    * OpenSubtitles for that fallback data.
    */
-  try {
-    const newlyCreatedResult = await MediaMetadata.create(imdbData);
-    return ctx.body = newlyCreatedResult;
-  } catch (e) {
-    if (e.name === 'ValidationError') {
-      // continue for validation errors
-    } else {
-      throw e;
-    }
-  }
-
-  const { token } = await osAPI.login();
-  const { data } = await osAPI.api.SearchSubtitles(token, [{ query: title, sublanguageid: language }]);
-
-  if (!data) {
-    await FailedLookups.updateOne({ title, language }, {}, { upsert: true, setDefaultsOnInsert: true });
-    throw new MediaNotFoundError();
-  }
-
-  const newMetadata = {
-    episodeNumber: data[0].SeriesEpisode,
-    imdbID: 'tt' + data[0].IDMovieImdb, // OpenSubtitles returns the "tt" for hash searches but not query searches
-    seasonNumber: data[0].SeriesSeason,
-    title: data[0].MovieName,
-    type: data[0].MovieKind,
-    year: data[0].MovieYear,
-  };
-
-  try {
-    const newlyCreatedResult = await MediaMetadata.create(newMetadata);
-    return ctx.body = newlyCreatedResult;
-  } catch (e) {
-    await FailedLookups.updateOne({ title, language }, {}, { upsert: true, setDefaultsOnInsert: true });
-    throw new MediaNotFoundError();
-  }
 };
 
 export const getSeriesByTitle = async(ctx: Context): Promise<SeriesMetadataInterface | string> => {

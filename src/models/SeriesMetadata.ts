@@ -20,7 +20,7 @@ export interface SeriesMetadataInterface {
   startYear?: string;
   endYear?: string;
   title: string;
-  type: 'series';
+  type: string;
   totalSeasons?: number;
   votes?: string;
   year: string;
