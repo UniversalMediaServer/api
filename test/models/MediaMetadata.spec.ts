@@ -3,7 +3,8 @@ import * as _ from 'lodash';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import MediaMetadataModel from '../../src/models/MediaMetadata';
 
-const mediaMetaData = {
+const interstellarMetaData = {
+  actors: ['Matthew McConaughey', 'Anne Hathaway', 'Jessica Chastain'],
   directors: ['Christopher Nolan'],
   episodeNumber: '3',
   genres: ['Adventure', 'Drama', 'Sci-Fi'],
@@ -34,7 +35,7 @@ describe('Media Metadata Model', () => {
   });
 
   it('should create Media Metadata record successfully', async() => {
-    const savedMedia = await MediaMetadataModel.create(mediaMetaData);
+    const savedMedia = await MediaMetadataModel.create(interstellarMetaData);
     expect(savedMedia._id).toBeDefined();
     expect(savedMedia.title).toBe('Interstellar');
     expect(savedMedia.osdbHash).toBe('8e245d9679d31e12');
@@ -42,7 +43,7 @@ describe('Media Metadata Model', () => {
   });
 
   it('should require title in a movie', async() => {
-    const doc = _.cloneDeep(mediaMetaData);
+    const doc = _.cloneDeep(interstellarMetaData);
     delete doc.title;
     doc.type = 'movie';
     let err: Error;
@@ -55,14 +56,14 @@ describe('Media Metadata Model', () => {
   });
 
   it('should allow empty title in an episode', async() => {
-    const doc = _.cloneDeep(mediaMetaData);
+    const doc = _.cloneDeep(interstellarMetaData);
     delete doc.title;
     const response = await MediaMetadataModel.create(doc);
     expect(response.year).toBe('2014');
   });
 
   it('should require episodeNumber for episodes but not for movies', async() => {
-    const doc = _.cloneDeep(mediaMetaData);
+    const doc = _.cloneDeep(interstellarMetaData);
     delete doc.seasonNumber;
     let err: Error;
     try {
@@ -83,7 +84,7 @@ describe('Media Metadata Model', () => {
   });
 
   it('should validate for a valid osdb hash', async() => {
-    const doc = _.cloneDeep(mediaMetaData);
+    const doc = _.cloneDeep(interstellarMetaData);
     doc.osdbHash = 'a3e8hm1';
     let err: Error;
     try {
@@ -95,21 +96,21 @@ describe('Media Metadata Model', () => {
   });
 
   it('should not store dummy episode titles', async() => {
-    const doc = _.cloneDeep(mediaMetaData);
+    const doc = _.cloneDeep(interstellarMetaData);
     doc.title = 'Episode #51';
     const record = await MediaMetadataModel.create(doc);
     expect(record.title).toBeUndefined();
   });
 
   it('should store real episode titles', async() => {
-    const doc = _.cloneDeep(mediaMetaData);
+    const doc = _.cloneDeep(interstellarMetaData);
     const record = await MediaMetadataModel.create(doc);
     expect(record).toHaveProperty('title', 'Interstellar');
   });
 
   describe('Virtuals', () => {
     it('should return imdburl', async() => {
-      const doc = Object.assign({}, mediaMetaData);
+      const doc = Object.assign({}, interstellarMetaData);
       const record = await MediaMetadataModel.create(doc);
       expect(record).toHaveProperty('imdburl', 'https://www.imdb.com/title/tt0816692');
     });
@@ -117,24 +118,24 @@ describe('Media Metadata Model', () => {
 
   describe('Indexes', () => {
     it('should use index when find by osdbHash', async() => {
-      await MediaMetadataModel.create(mediaMetaData);
-      const response = await MediaMetadataModel.findOne({ osdbHash: mediaMetaData.osdbHash }, null, { explain: 1 }).exec();
+      await MediaMetadataModel.create(interstellarMetaData);
+      const response = await MediaMetadataModel.findOne({ osdbHash: interstellarMetaData.osdbHash }, null, { explain: 1 }).exec();
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'inputStage', 'stage'])).toEqual('IXSCAN');
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'stage'])).toEqual('FETCH');
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'stage'])).toEqual('PROJECTION');
     });
 
     it('should use index when find by title', async() => {
-      await MediaMetadataModel.create(mediaMetaData);
-      const response = await MediaMetadataModel.findOne({ title: mediaMetaData.title }, null, { explain: 1 }).exec();
+      await MediaMetadataModel.create(interstellarMetaData);
+      const response = await MediaMetadataModel.findOne({ title: interstellarMetaData.title }, null, { explain: 1 }).exec();
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'inputStage', 'stage'])).toEqual('IXSCAN');
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'stage'])).toEqual('FETCH');
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'stage'])).toEqual('PROJECTION');
     });
 
     it('should use index when find by searchMatches', async() => {
-      await MediaMetadataModel.create(mediaMetaData);
-      const response = await MediaMetadataModel.findOne({ searchMatches: { $in: [mediaMetaData.searchMatches[0]] } }, null, { explain: 1 }).exec();
+      await MediaMetadataModel.create(interstellarMetaData);
+      const response = await MediaMetadataModel.findOne({ searchMatches: { $in: [interstellarMetaData.searchMatches[0]] } }, null, { explain: 1 }).exec();
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'inputStage', 'stage'])).toEqual('IXSCAN');
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'stage'])).toEqual('FETCH');
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'stage'])).toEqual('PROJECTION');
