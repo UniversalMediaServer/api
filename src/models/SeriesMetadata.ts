@@ -24,11 +24,6 @@ export interface SeriesMetadataInterface {
   totalSeasons?: number;
   votes?: string;
   year: string;
-
-  // Added automatically:
-  _id: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface SeriesMetadataInterfaceDocument extends Document, SeriesMetadataInterface {}
