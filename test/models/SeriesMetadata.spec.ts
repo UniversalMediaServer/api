@@ -3,6 +3,8 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import SeriesMetadataModel from '../../src/models/SeriesMetadata';
 
 const seriesMetaData = {
+  'actors': ['Dominic Purcell', 'Wentworth Miller', 'Amaury Nolasco'],
+  'directors': ['Bobby Roth'],
   'genres': [
     'Action',
     'Crime',
@@ -10,15 +12,17 @@ const seriesMetaData = {
     'Mystery',
     'Thriller',
   ],
+  'imdbID': 'tt0455275',
   'ratings': [
     {
       'Source': 'Internet Movie Database',
       'Value': '8.3/10',
     },
   ],
-  'imdbID': 'tt0455275',
   'title': 'Prison Break',
   'totalSeasons': 5,
+  'type': 'series',
+  'year': '2005',
 };
 
 const mongod = new MongoMemoryServer();

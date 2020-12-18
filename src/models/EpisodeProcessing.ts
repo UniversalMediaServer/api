@@ -3,10 +3,6 @@ import { Document, Schema } from 'mongoose';
 
 export interface EpisodeProcessingInterface extends Document {
   seriesimdbid: string;
-
-  // Added automatically:
-  createdAt: string;
-  updatedAt: string;
 }
 
 const opts = {
