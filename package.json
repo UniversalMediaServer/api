@@ -124,7 +124,7 @@
     "koa-helmet": "^6.0.0",
     "koa-router": "^10.0.0",
     "lodash": "^4.17.20",
-    "mongoose": "^5.10.18",
+    "mongoose": "^5.11.8",
     "natural": "^2.1.5",
     "object-mapper": "^6.2.0",
     "opensubtitles-api": "^5.1.2",
@@ -135,7 +135,6 @@
   "devDependencies": {
     "@types/jest": "^26.0.19",
     "@types/lodash": "^4.14.165",
-    "@types/mongoose": "^5.10.3",
     "@types/node": "^14.14.13",
     "@typescript-eslint/eslint-plugin": "^2.34.0",
     "@typescript-eslint/parser": "^2.34.0",

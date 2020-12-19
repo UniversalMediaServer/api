@@ -3,8 +3,6 @@ import { Schema, Document, Model  } from 'mongoose';
 
 const TEXT_SCORE_MINIMUM = 1;
 
-type ratingSource = 'Metacritic' | 'Rotten Tomatoes' | 'Metacritic';
-
 export interface SeriesMetadataInterface {
   actors: Array<string>;
   awards?: string;
@@ -16,25 +14,20 @@ export interface SeriesMetadataInterface {
   poster?: string;
   rated?: string; // e.g 'PG-13'
   rating?: number; // e.g. 6.7
-  ratings?: Array<{Source: ratingSource; Value: string}>;
+  ratings?: Array<{Source: string; Value: string}>;
   startYear?: string;
   endYear?: string;
   title: string;
-  type: 'series';
+  type: string;
   totalSeasons?: number;
   votes?: string;
   year: string;
-
-  // Added automatically:
-  _id: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface SeriesMetadataInterfaceDocument extends Document, SeriesMetadataInterface {}
 
 export interface SeriesMetadataModel extends Model<SeriesMetadataInterfaceDocument> {
-  findSimilarSeries(dirOrFilename: string, startYear?: string): Promise<SeriesMetadataInterface>; 
+  findSimilarSeries(dirOrFilename: string, startYear?: string): Promise<SeriesMetadataInterfaceDocument>; 
 }
 
 const SeriesMetadataSchema: Schema = new Schema({
@@ -54,7 +47,7 @@ const SeriesMetadataSchema: Schema = new Schema({
   poster: { type: String },
   rated: { type: String },
   rating: { type: Number },
-  ratings: { type: Array, required: true },
+  ratings: { type: [new mongoose.Schema({ 'Source': String, 'Value': String })], required: true },
   startYear: { type: String },
   title: { type: String, required: true },
   totalSeasons: { type: Number },
@@ -75,7 +68,7 @@ const SeriesMetadataSchema: Schema = new Schema({
  *                    matches are returned. If not provided, the oldest year
  *                    match will be returned.
  */
-SeriesMetadataSchema.statics.findSimilarSeries = async function(title: string, startYear?: string): Promise<SeriesMetadataInterface | null> {
+SeriesMetadataSchema.statics.findSimilarSeries = async function(title: string, startYear?: string): Promise<SeriesMetadataInterfaceDocument | null> {
   const bestGuessQuery: any = { $text: { $search: title, $caseSensitive: false } };
   const sortBy: any = { score: { $meta: 'textScore' } };
 

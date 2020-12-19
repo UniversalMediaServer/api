@@ -6,7 +6,7 @@ const DOCUMENT_EXPIRY_IN_SECONDS = 2592000; // 30 days
 export interface FailedLookupsInterface {
   failedValidation?: boolean;
   osdbHash?: string;
-  title: string;
+  title?: string;
   type?: string;
   year?: string;
 

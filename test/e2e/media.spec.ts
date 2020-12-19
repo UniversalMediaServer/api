@@ -12,6 +12,7 @@ import MediaMetadata from '../../src/models/MediaMetadata';
 const mongod = new MongoMemoryServer();
 
 const interstellarMetaData = {
+  actors: ['Matthew McConaughey', 'Anne Hathaway', 'Jessica Chastain'],
   directors: ['Christopher Nolan'],
   genres: ['Adventure', 'Drama', 'Sci-Fi'],
   imdbID: 'tt0816692',

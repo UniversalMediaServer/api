@@ -32,11 +32,6 @@ export interface MediaMetadataInterface {
   type: string;
   votes?: string;
   year: string;
-
-  // Added automatically:
-  _id: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface MediaMetadataInterfaceDocument extends Document, MediaMetadataInterface {}
