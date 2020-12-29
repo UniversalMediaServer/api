@@ -106,6 +106,7 @@ describe('Media Metadata endpoints', () => {
       expect(doc).toHaveProperty('title', 'The Simpsons Movie');
       expect(doc).toHaveProperty('imdbID', 'tt0462538');
       expect(doc).toHaveProperty('type', 'movie');
+      expect(doc).toHaveProperty('plot');
       expect(doc).toHaveProperty('goofs');
       expect(doc).toHaveProperty('trivia');
       expect(doc).toHaveProperty('tagline');
@@ -190,6 +191,7 @@ describe('Media Metadata endpoints', () => {
       }
       expect(error).toBeUndefined();
       expect(response.body).toHaveProperty('_id');
+      expect(response.body).toHaveProperty('plot');
       expect(response.body).toHaveProperty('osdbHash', prisonBreakEpisodeMetadata.osdbHash);
     });
 
@@ -267,6 +269,7 @@ describe('Media Metadata endpoints', () => {
       expect(series).toHaveProperty('imdbID', 'tt1796960');
       expect(series).toHaveProperty('totalSeasons', 8);
       expect(series).toHaveProperty('title', 'Homeland');
+      expect(series).toHaveProperty('plot');
       expect(series).toHaveProperty('startYear', '2011');
     });
 
@@ -280,6 +283,7 @@ describe('Media Metadata endpoints', () => {
       expect(movie).toHaveProperty('title', 'The Grinch');
       expect(movie).toHaveProperty('type', 'movie');
       expect(movie).toHaveProperty('year', '2018');
+      expect(movie).toHaveProperty('plot');
       expect(movie.searchMatches).toBeUndefined();
     });
 
