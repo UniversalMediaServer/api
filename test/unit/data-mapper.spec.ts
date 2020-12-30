@@ -118,6 +118,7 @@ describe('Data mapper', () => {
       expect(parsed.directors).toEqual(['Jeffrey Reiner']);
       expect(parsed.episodeNumber).toEqual(9);
       expect(parsed.genres).toEqual(['Crime', 'Drama', 'Mystery', 'Thriller']);
+      expect(parsed.plot).toEqual(imdbApiEpisode.plot);
       expect(parsed.imdbID).toEqual(imdbApiEpisode.imdbid);
       expect(parsed.poster).toEqual('https://m.media-amazon.com/images/M/MV5BMTc0NDc2Nzg0MV5BMl5BanBnXkFtZTgwMzA2MzM2MDE@._V1_SX300.jpg');
       expect(parsed.rated).toEqual('TV-MA');

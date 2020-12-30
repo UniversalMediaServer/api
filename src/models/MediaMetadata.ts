@@ -16,6 +16,7 @@ export interface MediaMetadataInterface {
   imdbID: string;
   metascore?: string;
   osdbHash?: string;
+  plot?: string;
   production?: string;
   poster?: string;
   rated?: string; // e.g 'PG-13'
@@ -71,6 +72,7 @@ const MediaMetadataSchema: Schema = new Schema({
     },
   },
   metascore: { type: String },
+  plot: { type: String },
   production: { type: String },
   poster: { type: String },
   rated: { type: String },
