@@ -9,6 +9,7 @@ export interface FailedLookupsInterface {
   title?: string;
   type?: string;
   year?: string;
+  count?: number;
 
   // Added automatically:
   createdAt?: string;
@@ -18,6 +19,10 @@ export interface FailedLookupsInterface {
 export interface FailedLookupsInterfaceDocument extends Document, FailedLookupsInterface {}
 
 const FailedLookupsSchema: Schema = new Schema({
+  count: {
+    default: 1,
+    type: Number,
+  },
   osdbHash: {
     index: true,
     required: function(): boolean {
