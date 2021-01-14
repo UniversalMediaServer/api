@@ -9,7 +9,7 @@ export interface FailedLookupsInterface {
   title?: string;
   type?: string;
   year?: string;
-  count?: number
+  count?: number;
 
   // Added automatically:
   createdAt?: string;
