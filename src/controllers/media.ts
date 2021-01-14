@@ -1,4 +1,4 @@
-import { SearchRequest, TVShow } from '@universalmediaserver/node-imdb-api';
+import { Episode, SearchRequest, TVShow } from 'imdb-api';
 import { Context } from 'koa';
 import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
@@ -83,8 +83,7 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
     metadata = mapper.parseIMDBAPIMovieResponse(imdbData);
   } else if (imdbData.type === 'series') {
     metadata = mapper.parseIMDBAPISeriesResponse(imdbData);
-  } else if (imdbData.type === 'episode') {
-    // @ts-ignore
+  } else if (imdbData.type === 'episode' && imdbData instanceof Episode) {
     await EpisodeProcessing.create({ seriesimdbid: imdbData.seriesid });
     metadata = mapper.parseIMDBAPIEpisodeResponse(imdbData);
   } else {
