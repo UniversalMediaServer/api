@@ -83,8 +83,8 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
     metadata = mapper.parseIMDBAPIMovieResponse(imdbData);
   } else if (imdbData.type === 'series') {
     metadata = mapper.parseIMDBAPISeriesResponse(imdbData);
-  } else if (imdbData.type === 'episode' && imdbData instanceof Episode) {
-    await EpisodeProcessing.create({ seriesimdbid: imdbData.seriesid });
+  } else if (imdbData.type === 'episode') {
+    await EpisodeProcessing.create({ seriesimdbid: (imdbData as Episode).seriesid });
     metadata = mapper.parseIMDBAPIEpisodeResponse(imdbData);
   } else {
     throw new Error('Received a type we did not expect');
