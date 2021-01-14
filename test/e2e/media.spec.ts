@@ -112,7 +112,7 @@ describe('Media Metadata endpoints', () => {
       expect(doc).toHaveProperty('tagline');
     });
     
-    it('should create a failed lookup document when Open Subtitles cannot find metadata', async() => {
+    it('should create a failed lookup document when Open Subtitles cannot find metadata and increment count field', async() => {
       let error;
       try {
         await got(`${appUrl}/api/media/osdbhash/f4245d9379d31e30/1234`);
@@ -120,9 +120,16 @@ describe('Media Metadata endpoints', () => {
         error = e;
       }
       expect(error.message).toEqual('Response code 404 (Not Found)');
-      const doc = await FailedLookupsModel.findOne({ osdbHash: 'f4245d9379d31e30' });
+      let doc = await FailedLookupsModel.findOne({ osdbHash: 'f4245d9379d31e30' });
       expect(doc).toHaveProperty('_id');
       expect(doc).toHaveProperty('osdbHash');
+      expect(doc.count).toBe(1);
+
+      try {
+        await got(`${appUrl}/api/media/osdbhash/f4245d9379d31e30/1234`);
+      } catch (e) { }
+      doc = await FailedLookupsModel.findOne({ osdbHash: 'f4245d9379d31e30' });
+      expect(doc.count).toBe(2);
     });
 
     it('should create a failed lookup document when client validation by year fails', async() => {

@@ -128,6 +128,7 @@ export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface
     return ctx.body = dbMeta;
   }
   if (await FailedLookups.findOne({ osdbHash }, '_id', { lean: true }).exec()) {
+    await FailedLookups.updateOne({ osdbHash }, { $inc: { count: 1 } }).exec();
     throw new MediaNotFoundError();
   }
 
@@ -140,7 +141,7 @@ export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface
   const openSubtitlesResponse = await osAPI.identify(osQuery);
   // Fail early if OpenSubtitles reports that it did not recognize the hash
   if (!openSubtitlesResponse.metadata) {
-    await FailedLookups.updateOne({ osdbHash }, {}, { upsert: true, setDefaultsOnInsert: true }).exec();
+    await FailedLookups.updateOne({ osdbHash }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
 
@@ -160,7 +161,7 @@ export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface
     }
 
     if (!passedValidation) {
-      await FailedLookups.updateOne({ osdbHash }, { failedValidation: true }, { upsert: true, setDefaultsOnInsert: true }).exec();
+      await FailedLookups.updateOne({ osdbHash }, { $inc: { count: 1 }, failedValidation: true }, { upsert: true, setDefaultsOnInsert: true }).exec();
       throw new MediaNotFoundError();
     }
   }
@@ -173,7 +174,7 @@ export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface
     dbMeta = await MediaMetadata.create(combinedResponse);
     return ctx.body = dbMeta;
   } catch (e) {
-    await FailedLookups.updateOne({ osdbHash }, {}, { upsert: true, setDefaultsOnInsert: true }).exec();
+    await FailedLookups.updateOne({ osdbHash }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
 };
@@ -198,6 +199,7 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
     failedLookupQuery.year = year;
   }
   if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
     throw new MediaNotFoundError();
   }
 
@@ -208,7 +210,7 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
   const imdbData: MediaMetadataInterface = await getFromIMDbAPI(null, searchRequest);
 
   if (!imdbData) {
-    await FailedLookups.updateOne(failedLookupQuery, {}, { upsert: true, setDefaultsOnInsert: true }).exec();
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
 
@@ -243,7 +245,7 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
     delete newlyCreatedResult.searchMatches;
     return ctx.body = newlyCreatedResult;
   } catch (e) {
-    await FailedLookups.updateOne(failedLookupQuery, {}, { upsert: true, setDefaultsOnInsert: true }).exec();
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
 
@@ -273,6 +275,7 @@ export const getSeriesByTitle = async(ctx: Context): Promise<SeriesMetadataInter
   }
 
   if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
     throw new MediaNotFoundError();
   }
 
@@ -288,7 +291,7 @@ export const getSeriesByTitle = async(ctx: Context): Promise<SeriesMetadataInter
   const tvSeriesInfo = await imdbAPI.get(searchRequest);
 
   if (!tvSeriesInfo) {
-    await FailedLookups.updateOne(failedLookupQuery, {}, { upsert: true, setDefaultsOnInsert: true }).exec();
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
   const metadata = mapper.parseIMDBAPISeriesResponse(tvSeriesInfo);
@@ -313,6 +316,7 @@ export const getByImdbID = async(ctx: Context): Promise<any> => {
   }
 
   if (await FailedLookups.findOne({ imdbID: imdbid }, null, { lean: true }).exec()) {
+    await FailedLookups.updateOne({ imdbID: imdbid }, { $inc: { count: 1 } }).exec();
     throw new MediaNotFoundError();
   }
   const imdbData: MediaMetadataInterface = await getFromIMDbAPI(imdbid);
@@ -326,7 +330,7 @@ export const getByImdbID = async(ctx: Context): Promise<any> => {
     }
     return ctx.body = dbMeta;
   } catch (e) {
-    await FailedLookups.updateOne({ imdbId: imdbid }, {}, { upsert: true, setDefaultsOnInsert: true }).exec();
+    await FailedLookups.updateOne({ imdbId: imdbid }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
 };
