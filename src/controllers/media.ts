@@ -64,7 +64,7 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
       const searchResultStringDistance = searchResults.results.map(result => natural.JaroWinklerDistance(searchRequest.name, result.title));
       const bestSearchResultKey = _.indexOf(searchResultStringDistance, _.max(searchResultStringDistance));
 
-      const searchResult: any = searchResults.results[bestSearchResultKey];
+      const searchResult = searchResults.results[bestSearchResultKey];
       if (!searchResult) {
         throw new IMDbIDNotFoundError();
       }
