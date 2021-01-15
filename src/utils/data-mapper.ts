@@ -103,7 +103,20 @@ const imdbSeriesMap = {
   'poster': 'poster',
   'rated': 'rated',
   'rating': 'rating',
-  'ratings': 'ratings',
+  'ratings': {
+    key: 'ratings?',
+    transform: val => {
+      if (_.isEmpty(val)) {
+        return null;
+      }
+
+      const transformedValue = [];
+      for (const rating of val) {
+        transformedValue.push({ Source: rating.source, Value: rating.value });
+      }
+      return transformedValue;
+    },
+  },
   'start_year': {
     key: 'startYear',
     transform: val => val ? val.toString() : undefined,
@@ -143,7 +156,20 @@ const imdbMovieMap = {
   'poster': 'poster',
   'rated': 'rated',
   'rating': 'rating',
-  'ratings': 'ratings',
+  'ratings': {
+    key: 'ratings?',
+    transform: val => {
+      if (_.isEmpty(val)) {
+        return null;
+      }
+
+      const transformedValue = [];
+      for (const rating of val) {
+        transformedValue.push({ Source: rating.source, Value: rating.value });
+      }
+      return transformedValue;
+    },
+  },
   'released': 'released',
   'runtime': 'runtime',
   'title': 'title',
