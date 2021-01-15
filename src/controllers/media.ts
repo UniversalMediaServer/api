@@ -1,4 +1,4 @@
-import { SearchRequest, TVShow } from '@universalmediaserver/node-imdb-api';
+import { Episode, SearchRequest, TVShow } from 'imdb-api';
 import { Context } from 'koa';
 import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
@@ -84,8 +84,7 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
   } else if (imdbData.type === 'series') {
     metadata = mapper.parseIMDBAPISeriesResponse(imdbData);
   } else if (imdbData.type === 'episode') {
-    // @ts-ignore
-    await EpisodeProcessing.create({ seriesimdbid: imdbData.seriesid });
+    await EpisodeProcessing.create({ seriesimdbid: (imdbData as Episode).seriesid });
     metadata = mapper.parseIMDBAPIEpisodeResponse(imdbData);
   } else {
     throw new Error('Received a type we did not expect');

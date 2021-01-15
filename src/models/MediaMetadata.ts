@@ -1,8 +1,7 @@
+import { OmdbRating } from 'imdb-api/lib/interfaces';
 import * as mongoose from 'mongoose';
 import { Schema, Document } from 'mongoose';
 import { ValidationError } from '../helpers/customErrors';
-
-type ratingSource = 'Metacritic' | 'Rotten Tomatoes' | 'Metacritic';
 
 export interface MediaMetadataInterface {
   actors: Array<string>;
@@ -21,7 +20,7 @@ export interface MediaMetadataInterface {
   poster?: string;
   rated?: string; // e.g 'PG-13'
   rating?: number; // e.g. 6.7
-  ratings?: Array<{Source: ratingSource; Value: string}>; // e.g. {"Source": "Metacritic", "Value": "67/100"}
+  ratings?: Array<OmdbRating>; // e.g. {"Source": "Metacritic", "Value": "67/100"}
   released?: Date;
   runtime?: string;
   searchMatches?: Array<string>;
