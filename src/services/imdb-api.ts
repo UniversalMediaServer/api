@@ -11,7 +11,7 @@ const imdbAPI = _.cloneDeep(originalModule);
 
 imdbAPI.get = async function(params): Promise<any> {
   try {
-    return originalModule.get(params);
+    return await originalModule.get(params);
   } catch (err) {
     if (_.get(err, 'response.status') === 503) {
       throw new ExternalAPIError('IMDb API is offline');
@@ -21,7 +21,7 @@ imdbAPI.get = async function(params): Promise<any> {
 
 imdbAPI.search = async function(params): Promise<any> {
   try {
-    return originalModule.search(params);
+    return await originalModule.search(params);
   } catch (err) {
     if (_.get(err, 'response.status') === 503) {
       throw new ExternalAPIError('IMDb API is offline');
