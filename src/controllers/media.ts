@@ -118,6 +118,11 @@ const setSeriesMetadataByIMDbID = async(imdbId: string): Promise<SeriesMetadataI
 
 export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface | string> => {
   const { osdbhash: osdbHash, filebytesize } = ctx.params;
+
+  if (!osdbHash) {
+    throw new ValidationError('osdbhash is required');
+  }
+
   const validateMovieByYear = Boolean(ctx.query?.year);
   const validateEpisodeBySeasonAndEpisode = Boolean(ctx.query?.season && ctx.query?.episodeNumber);
 
@@ -300,6 +305,10 @@ export const getSeriesByTitle = async(ctx: Context): Promise<SeriesMetadataInter
 
 export const getByImdbID = async(ctx: Context): Promise<any> => {
   const { imdbid } = ctx.query;
+
+  if (!imdbid) {
+    throw new ValidationError('osdbhash is required');
+  }
 
   const [mediaMetadata, seriesMetadata] = await Promise.all([
     MediaMetadata.findOne({ imdbID: imdbid }, null, { lean: true }).exec(),
