@@ -11,23 +11,21 @@ const imdbAPI = _.cloneDeep(originalModule);
 
 imdbAPI.get = async function(params): Promise<any> {
   try {
-    return await originalModule.get(params);
+    return originalModule.get(params);
   } catch (err) {
     if (_.get(err, 'response.status') === 503) {
-      throw new ExternalAPIError('IMDB API is offline');
+      throw new ExternalAPIError('IMDb API is offline');
     }
-    console.error(err);
   }
 };
 
 imdbAPI.search = async function(params): Promise<any> {
   try {
-    return await originalModule.search(params);
+    return originalModule.search(params);
   } catch (err) {
     if (_.get(err, 'response.status') === 503) {
-      throw new ExternalAPIError('IMDB API is offline');
+      throw new ExternalAPIError('IMDb API is offline');
     }
-    console.error(err);
     throw err;
   }
 };
