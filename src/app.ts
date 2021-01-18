@@ -37,7 +37,14 @@ app.use(async(ctx, next) => {
     if (process.env.NODE_ENV !== 'production') {
       ctx.body.stack = err.stack;
     }
-    if (process.env.NODE_ENV !== 'test') {
+    if (
+      process.env.NODE_ENV !== 'test' &&
+      (
+        err instanceof MediaNotFoundError ||
+        err instanceof IMDbIDNotFoundError ||
+        err instanceof ExternalAPIError
+      )
+    ) {
       console.error(err);
     }
   }
