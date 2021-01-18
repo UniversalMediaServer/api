@@ -12,7 +12,6 @@ osAPI.identify = async function(osQuery): Promise<OpensubtitlesIdentifyResponse>
     if (err.message === 'API seems offline') {
       throw new ExternalAPIError('Opensubtitles API is offline');
     }
-    console.error(err);
     throw err;
   }
 };

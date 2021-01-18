@@ -14,9 +14,8 @@ imdbAPI.get = async function(params): Promise<any> {
     return await originalModule.get(params);
   } catch (err) {
     if (_.get(err, 'response.status') === 503) {
-      throw new ExternalAPIError('IMDB API is offline');
+      throw new ExternalAPIError('IMDb API is offline');
     }
-    console.error(err);
   }
 };
 
@@ -25,9 +24,8 @@ imdbAPI.search = async function(params): Promise<any> {
     return await originalModule.search(params);
   } catch (err) {
     if (_.get(err, 'response.status') === 503) {
-      throw new ExternalAPIError('IMDB API is offline');
+      throw new ExternalAPIError('IMDb API is offline');
     }
-    console.error(err);
     throw err;
   }
 };
