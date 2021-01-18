@@ -307,7 +307,7 @@ export const getByImdbID = async(ctx: Context): Promise<any> => {
   const { imdbid } = ctx.query;
 
   if (!imdbid) {
-    throw new ValidationError('osdbhash is required');
+    throw new ValidationError('imdbid is required');
   }
 
   const [mediaMetadata, seriesMetadata] = await Promise.all([
