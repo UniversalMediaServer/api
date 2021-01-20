@@ -7,6 +7,7 @@ import connect from '../models/connection';
 import { setSeriesMetadataByIMDbID } from '../controllers/media';
 import { TVShow } from 'imdb-api';
 import FailedLookups from '../models/FailedLookups';
+import SeriesMetadata from '../models/SeriesMetadata';
 
 const db: string = process.env.MONGO_URL;
 const NUM_SERIES_TO_PROCESS = 1000;
@@ -23,7 +24,10 @@ export const processEpisodes = async(): Promise<void> => {
 
   const allImdbIds = _.map(_.values(seriesIdsToProcess), 'seriesimdbid');
   for (const seriesId of allImdbIds) {
-    await setSeriesMetadataByIMDbID(seriesId);
+    const seriesMetadata = await setSeriesMetadataByIMDbID(seriesId);
+    if (_.get(seriesMetadata, 'isEpisodesCrawled')) {
+      continue;
+    }
 
     // This extra lookup gives access to the episodes function
     const tvSeriesInfo = await imdbAPI.get({ id: seriesId }) as TVShow;
@@ -55,6 +59,7 @@ export const processEpisodes = async(): Promise<void> => {
     }
     await MediaMetadata.insertMany(metadataDocuments);
     await EpisodeProcessing.deleteOne({ seriesimdbid: seriesId });
+    await SeriesMetadata.updateOne({ imdbID: seriesId }, { isEpisodesCrawled: true }).exec();
   }
 };
 
