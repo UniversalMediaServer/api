@@ -255,7 +255,7 @@ describe('Media Metadata endpoints', () => {
     });
   });
 
-  describe('get by title', () => {
+  describe('get by title v1', () => {
     it('should search by series title and store it', async() => {
       const response = await got(`${appUrl}/api/media/title?title=Homeland S02E05`, { responseType: 'json' });
       expect(response.body).toHaveProperty('_id');
@@ -317,6 +317,70 @@ describe('Media Metadata endpoints', () => {
       */
     });
   });
+
+  describe('get by title v2', () => {
+    it('should search by series title, season and episode numbers, and store it', async() => {
+      const response = await got(`${appUrl}/api/media/v2/title?title=Homeland&seasonNumber=2&episodeNumber=5`, { responseType: 'json' });
+      expect(response.body).toHaveProperty('_id');
+      expect(response.body).not.toHaveProperty('searchMatches');
+
+      const episode = await MediaMetadataModel.findOne({ searchMatches: { $in: ['Homeland'] } });
+      expect(episode).toHaveProperty('_id');
+      expect(episode).toHaveProperty('episodeNumber', '5');
+      expect(episode).toHaveProperty('imdbID', 'tt2325080');
+      expect(episode).toHaveProperty('seasonNumber', '2');
+      expect(episode).toHaveProperty('seriesIMDbID', 'tt1796960');
+      expect(episode).toHaveProperty('title', 'Q&A');
+      expect(episode).toHaveProperty('type', 'episode');
+      expect(episode).toHaveProperty('year', '2012');
+      expect(episode.searchMatches).toBeUndefined();
+
+      const series = await SeriesMetadataModel.findOne();
+      expect(series).toHaveProperty('imdbID', 'tt1796960');
+      expect(series).toHaveProperty('totalSeasons', 8);
+      expect(series).toHaveProperty('title', 'Homeland');
+      expect(series).toHaveProperty('plot');
+      expect(series).toHaveProperty('startYear', '2011');
+    });
+
+    it('should search by movie title and year and store it', async() => {
+      const response = await got(`${appUrl}/api/media/v2/title?title=The Grinch&year=2018`, { responseType: 'json' });
+      expect(response.body).toHaveProperty('_id');
+
+      const movie = await MediaMetadataModel.findOne({ searchMatches: { $in: ['The Grinch'] } });
+      expect(movie).toHaveProperty('_id');
+      expect(movie).toHaveProperty('imdbID', 'tt2709692');
+      expect(movie).toHaveProperty('title', 'The Grinch');
+      expect(movie).toHaveProperty('type', 'movie');
+      expect(movie).toHaveProperty('year', '2018');
+      expect(movie).toHaveProperty('plot');
+      expect(movie.searchMatches).toBeUndefined();
+    });
+
+    it('should require title as query param', async() => {
+      try {
+        await got(`${appUrl}/api/media/v2/title`, { responseType: 'json' });
+      } catch (err) {
+        expect(err).toBeInstanceOf(Error);
+        expect(err.message).toEqual('Response code 422 (Unprocessable Entity)');
+      }
+    });
+
+    it('should return best match for movie titles which return many search results from OMDb', async() => {
+      const response: any = await got(`${appUrl}/api/media/v2/title?title=The Matrix Reloaded&year=2003`, { responseType: 'json' });
+      expect(response.body.title).toBe('The Matrix Reloaded');
+      /*
+        The external API returns 5 movies for this title search, so the above test asserts we select the correct one, which is decided by
+        using Jaro-Winkler string distance estimations vs the title that the client passed to us. This test determines the above to be the correct result, provided
+        the following titles: 
+        - The Matrix Reloaded
+        - Decoded: The Making of 'The Matrix Reloaded
+        - The Matrix Reloaded: Pre-Load
+        - The Matrix Reloaded: Get Me an Exit
+      */
+    });
+  });
+
   describe('get series by directory or filename', () => {
     it('should return series metadata', async() => {
       // this request populates the series metadata
