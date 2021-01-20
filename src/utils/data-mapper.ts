@@ -60,7 +60,20 @@ const imdbEpisodeMap = {
   'poster': 'poster',
   'rated': 'rated',
   'rating': 'rating',
-  'ratings': 'ratings',
+  'ratings': {
+    key: 'ratings?',
+    transform: val => {
+      if (_.isEmpty(val)) {
+        return null;
+      }
+
+      const transformedValue = [];
+      for (const rating of val) {
+        transformedValue.push({ Source: rating.source || rating.Source, Value: rating.value || rating.Value });
+      }
+      return transformedValue;
+    },
+  },
   'released': 'released',
   'runtime': 'runtime',
   'season': 'seasonNumber',
