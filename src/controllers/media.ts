@@ -21,11 +21,8 @@ export const FAILED_LOOKUP_SKIP_DAYS = 30;
  *
  * IMDb does not return goofs, osdbHash, tagline, trivia
  *
- * We use ts-ignore to be able to use episode data instead of just movie.
- * @see https://github.com/worr/node-imdb-api/issues/72
- *
- * @param imdbId the IMDb ID
- * @param searchRequest a query to perform in order to get the imdbId
+ * @param [imdbId] the IMDb ID
+ * @param [searchRequest] a query to perform in order to get the imdbId
  */
 const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Promise<MediaMetadataInterface> => {
   if (!imdbId && !searchRequest) {
@@ -94,13 +91,96 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
 };
 
 /**
+ * Attempts a query to the IMDb API and standardizes the response
+ * before returning.
+ *
+ * IMDb does not return goofs, osdbHash, tagline, trivia
+ *
+ * @param [imdbId] the IMDb ID
+ * @param [searchRequest] a query to perform in order to get the imdbId
+ * @param [seasonNumber] the season number if this is an episode
+ * @param [episodeNumber] the episode number if this is an episode
+ */
+const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, seasonNumber?: number, episodeNumber?: number): Promise<MediaMetadataInterface> => {
+  if (!imdbId && !searchRequest) {
+    throw new Error('Either imdbId or searchRequest must be specified');
+  }
+
+  /**
+   * We need the IMDb ID for the imdbAPI get request below so here we get it.
+   * Along the way, if the result is an episode, we also instruct our episode
+   * processor to asynchronously add the other episodes for that series to the
+   * queue.
+   */
+  if (!imdbId) {
+    // If the client specified an episode number, this is an episode
+    if (episodeNumber) {
+      searchRequest.reqtype = 'series';
+      const tvSeriesInfo = await imdbAPI.get(searchRequest);
+
+      if (tvSeriesInfo && tvSeriesInfo instanceof TVShow) {
+        const allEpisodes = await tvSeriesInfo.episodes();
+        const currentEpisode = _.find(allEpisodes, { season: seasonNumber, episode: episodeNumber });
+        if (!currentEpisode) {
+          throw new IMDbIDNotFoundError();
+        }
+
+        imdbId = currentEpisode.imdbid;
+      }
+    } else {
+      searchRequest.reqtype = 'movie';
+      const searchResults = await imdbAPI.search(searchRequest);
+      // find the best search results utilising the Jaro-Winkler distance metric
+      const searchResultStringDistance = searchResults.results.map(result => natural.JaroWinklerDistance(searchRequest.name, result.title));
+      const bestSearchResultKey = _.indexOf(searchResultStringDistance, _.max(searchResultStringDistance));
+
+      const searchResult: any = searchResults.results[bestSearchResultKey];
+      if (!searchResult) {
+        throw new IMDbIDNotFoundError();
+      }
+
+      imdbId = searchResult.imdbid;
+    }
+  }
+
+  const imdbData = await imdbAPI.get({ id: imdbId });
+  if (!imdbData) {
+    return null;
+  }
+
+  let metadata;
+  if (imdbData.type === 'movie') {
+    metadata = mapper.parseIMDBAPIMovieResponse(imdbData);
+  } else if (imdbData.type === 'series') {
+    metadata = mapper.parseIMDBAPISeriesResponse(imdbData);
+  } else if (episodeNumber) {
+    if (imdbData.type === 'episode') {
+      await EpisodeProcessing.create({ seriesimdbid: (imdbData as Episode).seriesid });
+      metadata = mapper.parseIMDBAPIEpisodeResponse(imdbData);
+    } else {
+      throw new Error('Received type ' + imdbData.type + ' but expected episode');
+    }
+  } else {
+    throw new Error('Received a type we did not expect');
+  }
+
+  return metadata;
+};
+
+/**
  * Sets and returns series metadata by IMDb ID.
  *
- * @param imdbId 
+ * @param imdbId the IMDb ID of the series.
  */
-const setSeriesMetadataByIMDbID = async(imdbId: string): Promise<SeriesMetadataInterface> => {
+export const setSeriesMetadataByIMDbID = async(imdbId: string): Promise<SeriesMetadataInterface> => {
   if (!imdbId) {
     throw new Error('IMDb ID not supplied');
+  }
+
+  // Shouldn't really happen since we got this IMDb ID from their API
+  if (await FailedLookups.findOne({ imdbid: imdbId }, '_id', { lean: true }).exec()) {
+    await FailedLookups.updateOne({ imdbid: imdbId }, { $inc: { count: 1 } }).exec();
+    return null;
   }
 
   const existingSeries: SeriesMetadataInterface = await SeriesMetadata.findOne({ imdbID: imdbId }, null, { lean: true }).exec();
@@ -110,6 +190,7 @@ const setSeriesMetadataByIMDbID = async(imdbId: string): Promise<SeriesMetadataI
 
   const imdbData: SeriesMetadataInterface = await getFromIMDbAPI(imdbId);
   if (!imdbData) {
+    await FailedLookups.updateOne({ imdbid: imdbId }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     return null;
   }
 
@@ -212,6 +293,91 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
     searchRequest.year = year;
   }
   const imdbData: MediaMetadataInterface = await getFromIMDbAPI(null, searchRequest);
+
+  if (!imdbData) {
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+    throw new MediaNotFoundError();
+  }
+
+  /**
+   * If we already have a result based on IMDb ID, return it after adding
+   * this new searchMatch to the array.
+   */
+  const existingResultFromIMDbID: MediaMetadataInterface = await MediaMetadata.findOne({ imdbID: imdbData.seriesIMDbID }, null, { lean: true }).exec();
+  if (existingResultFromIMDbID) {
+    const updatedResult = await MediaMetadata.findOneAndUpdate(
+      { imdbID: imdbData.seriesIMDbID },
+      { $push: { searchMatches: title } },
+      { new: true, lean: true },
+    ).exec();
+    // @ts-ignore
+    return ctx.body = updatedResult;
+  }
+
+  if (imdbData.type === 'episode') {
+    await setSeriesMetadataByIMDbID(imdbData.seriesIMDbID);
+  }
+
+  try {
+    imdbData.searchMatches = [title];
+    /**
+     * The below section is untidy due to the following possible bug https://github.com/Automattic/mongoose/issues/9118
+     * Once clarity on the feature, or if a bugfix is released we could refactor the below
+     */
+    let newlyCreatedResult = await MediaMetadata.create(imdbData);
+    // @ts-ignore
+    newlyCreatedResult = newlyCreatedResult.toObject();
+    delete newlyCreatedResult.searchMatches;
+    return ctx.body = newlyCreatedResult;
+  } catch (e) {
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+    throw new MediaNotFoundError();
+  }
+};
+
+/**
+ * Looks up a video by its title, and optionally its year, season and episode number.
+ * If it is an episode, it also sets the series data.
+ *
+ * @param ctx Koa request object
+ */
+export const getBySanitizedTitleV2 = async(ctx: Context): Promise<MediaMetadataInterface | string> => {
+  const { title } = ctx.query;
+  const episodeNumber = ctx.query.episodeNumber ? Number(ctx.query.episodeNumber) : null;
+  const seasonNumber = ctx.query.seasonNumber ? Number(ctx.query.seasonNumber) : null;
+  const year = ctx.query.year ? Number(ctx.query.year) : null;
+
+  if (!title) {
+    throw new ValidationError('title is required');
+  }
+
+  // If we already have a result, return it
+  const existingResultFromSearchMatch: MediaMetadataInterface = await MediaMetadata.findOne({ searchMatches: { $in: [title] } }, null, { lean: true }).exec();
+  if (existingResultFromSearchMatch) {
+    return ctx.body = existingResultFromSearchMatch;
+  }
+
+  // If we already failed to get a result, return early
+  const failedLookupQuery: any = { title };
+  if (year) {
+    failedLookupQuery.year = year;
+  }
+  if (episodeNumber) {
+    failedLookupQuery.episodeNumber = episodeNumber;
+  }
+  if (seasonNumber) {
+    failedLookupQuery.seasonNumber = seasonNumber;
+  }
+  if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
+    throw new MediaNotFoundError();
+  }
+
+  const searchRequest: SearchRequest = { name: title };
+  if (year) {
+    searchRequest.year = year;
+  }
+  const imdbData: MediaMetadataInterface = await getFromIMDbAPIV2(null, searchRequest, seasonNumber, episodeNumber);
 
   if (!imdbData) {
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();

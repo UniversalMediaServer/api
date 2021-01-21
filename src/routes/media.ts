@@ -11,6 +11,10 @@ router.get('/title', async(ctx) => {
   await MediaController.getBySanitizedTitle(ctx);
 });
 
+router.get('/v2/title', async(ctx) => {
+  await MediaController.getBySanitizedTitleV2(ctx);
+});
+
 router.get('/seriestitle', async(ctx) => {
   await MediaController.getSeriesByTitle(ctx);
 });
