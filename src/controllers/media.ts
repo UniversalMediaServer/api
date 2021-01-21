@@ -21,8 +21,8 @@ export const FAILED_LOOKUP_SKIP_DAYS = 30;
  *
  * IMDb does not return goofs, osdbHash, tagline, trivia
  *
- * @param imdbId the IMDb ID
- * @param searchRequest a query to perform in order to get the imdbId
+ * @param [imdbId] the IMDb ID
+ * @param [searchRequest] a query to perform in order to get the imdbId
  */
 const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Promise<MediaMetadataInterface> => {
   if (!imdbId && !searchRequest) {
@@ -96,12 +96,14 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
  *
  * IMDb does not return goofs, osdbHash, tagline, trivia
  *
- * @param imdbId the IMDb ID
- * @param searchRequest a query to perform in order to get the imdbId
+ * @param [imdbId] the IMDb ID
+ * @param [searchRequest] a query to perform in order to get the imdbId
+ * @param [seasonNumber] the season number if this is an episode
+ * @param [episodeNumber] the episode number if this is an episode
  */
-const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, seasonNumber?, episodeNumber?): Promise<MediaMetadataInterface> => {
+const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, seasonNumber?: number, episodeNumber?: number): Promise<MediaMetadataInterface> => {
   if (!imdbId && !searchRequest) {
-    throw new Error('All parameters were falsy');
+    throw new Error('Either imdbId or searchRequest must be specified');
   }
 
   /**
@@ -337,7 +339,7 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
  * Looks up a video by its title, and optionally its year, season and episode number.
  * If it is an episode, it also sets the series data.
  *
- * @param ctx 
+ * @param ctx Koa request object
  */
 export const getBySanitizedTitleV2 = async(ctx: Context): Promise<MediaMetadataInterface | string> => {
   const { title } = ctx.query;
