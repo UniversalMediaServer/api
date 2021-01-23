@@ -14,6 +14,7 @@ import imdbAPI from '../services/imdb-api';
 import { mapper } from '../utils/data-mapper';
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
+const MONGODB_DUPLICATE_KEY_ERROR_CODE = 11000;
 
 /**
  * Attempts a query to the IMDb API and standardizes the response
@@ -106,6 +107,8 @@ const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, s
     throw new Error('Either imdbId or searchRequest must be specified');
   }
 
+  const isExpectingTVEpisode = Boolean(episodeNumber);
+
   /**
    * We need the IMDb ID for the imdbAPI get request below so here we get it.
    * Along the way, if the result is an episode, we also instruct our episode
@@ -114,7 +117,7 @@ const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, s
    */
   if (!imdbId) {
     // If the client specified an episode number, this is an episode
-    if (episodeNumber) {
+    if (isExpectingTVEpisode) {
       searchRequest.reqtype = 'series';
       const tvSeriesInfo = await imdbAPI.get(searchRequest);
 
@@ -149,19 +152,25 @@ const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, s
   }
 
   let metadata;
-  if (imdbData.type === 'movie') {
-    metadata = mapper.parseIMDBAPIMovieResponse(imdbData);
-  } else if (imdbData.type === 'series') {
-    metadata = mapper.parseIMDBAPISeriesResponse(imdbData);
-  } else if (episodeNumber) {
+  if (isExpectingTVEpisode) {
     if (imdbData.type === 'episode') {
-      await EpisodeProcessing.create({ seriesimdbid: (imdbData as Episode).seriesid });
+      try {
+        await EpisodeProcessing.create({ seriesimdbid: (imdbData as Episode).seriesid });
+      } catch (e) {
+        if (e.code !== MONGODB_DUPLICATE_KEY_ERROR_CODE) {
+          throw e;
+        }
+      }
       metadata = mapper.parseIMDBAPIEpisodeResponse(imdbData);
     } else {
-      throw new Error('Received type ' + imdbData.type + ' but expected episode');
+      throw new Error('Received type ' + imdbData.type + ' but expected episode for ' + imdbId + ' ' + searchRequest + ' ' + seasonNumber + ' ' + episodeNumber);
     }
+  } else if (imdbData.type === 'movie') {
+    metadata = mapper.parseIMDBAPIMovieResponse(imdbData);
+  } else if (imdbData.type === 'series') {
+    throw new Error('Received a TV series when we wanted a movie');
   } else {
-    throw new Error('Received a type we did not expect');
+    throw new Error('Received a type we did not expect: ' + imdbData.type);
   }
 
   return metadata;
