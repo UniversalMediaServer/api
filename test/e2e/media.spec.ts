@@ -29,7 +29,7 @@ const theSimpsonsMetaData = {
 const prisonBreakEpisodeMetadata = {
   osdbHash: 'aad16027e51ff49f',
   seriesIMDbID: 'tt0455275',
-  episodeNumber: '4',
+  episode: '4',
   title: 'Cute Poison',
 };
 
@@ -149,7 +149,7 @@ describe('Media Metadata endpoints', () => {
     it('should create a failed lookup document when client validation for season fails', async() => {
       let error;
       try {
-        await got(`${appUrl}/api/media/osdbhash/${prisonBreakEpisodeMetadata.osdbHash}/1234?season=999&episodeNumber=4`);
+        await got(`${appUrl}/api/media/osdbhash/${prisonBreakEpisodeMetadata.osdbHash}/1234?season=999&episode=4`);
       } catch (e) {
         error = e;
       }
@@ -160,10 +160,10 @@ describe('Media Metadata endpoints', () => {
       expect(doc.failedValidation).toBe(true);
     });
 
-    it('should create a failed lookup document when client validation for episodeNumber fails', async() => {
+    it('should create a failed lookup document when client validation for episode fails', async() => {
       let error;
       try {
-        await got(`${appUrl}/api/media/osdbhash/${prisonBreakEpisodeMetadata.osdbHash}/1234?season=1&episodeNumber=999`);
+        await got(`${appUrl}/api/media/osdbhash/${prisonBreakEpisodeMetadata.osdbHash}/1234?season=1&episode=999`);
       } catch (e) {
         error = e;
       }
@@ -174,10 +174,10 @@ describe('Media Metadata endpoints', () => {
       expect(doc.failedValidation).toBe(true);
     });
 
-    it('should create a failed lookup document when client validation for season AND episodeNumber fails', async() => {
+    it('should create a failed lookup document when client validation for season AND episode fails', async() => {
       let error;
       try {
-        await got(`${appUrl}/api/media/osdbhash/${prisonBreakEpisodeMetadata.osdbHash}/1234?season=999&episodeNumber=999`, { responseType: 'json' });
+        await got(`${appUrl}/api/media/osdbhash/${prisonBreakEpisodeMetadata.osdbHash}/1234?season=999&episode=999`, { responseType: 'json' });
       } catch (e) {
         error = e;
       }
@@ -192,7 +192,7 @@ describe('Media Metadata endpoints', () => {
       let error;
       let response;
       try {
-        response = await got(`${appUrl}/api/media/osdbhash/${prisonBreakEpisodeMetadata.osdbHash}/1234?season=1&episodeNumber=4`, { responseType: 'json' });
+        response = await got(`${appUrl}/api/media/osdbhash/${prisonBreakEpisodeMetadata.osdbHash}/1234?season=1&episode=4`, { responseType: 'json' });
       } catch (e) {
         error = e;
       }
@@ -247,7 +247,7 @@ describe('Media Metadata endpoints', () => {
       await got(`${appUrl}/api/media/osdbhash/${prisonBreakEpisodeMetadata.osdbHash}/1234`);
       const doc = await MediaMetadata.findOne({ osdbHash: prisonBreakEpisodeMetadata.osdbHash });
       expect(doc).toHaveProperty('_id');
-      expect(doc).toHaveProperty('episodeNumber', prisonBreakEpisodeMetadata.episodeNumber);
+      expect(doc).toHaveProperty('episode', prisonBreakEpisodeMetadata.episode);
       expect(doc).toHaveProperty('title', prisonBreakEpisodeMetadata.title);
 
       const doc2 = await EpisodeProcessing.findOne({ seriesimdbid: prisonBreakEpisodeMetadata.seriesIMDbID });
@@ -263,9 +263,9 @@ describe('Media Metadata endpoints', () => {
 
       const episode = await MediaMetadataModel.findOne({ searchMatches: { $in: ['Homeland S02E05'] } });
       expect(episode).toHaveProperty('_id');
-      expect(episode).toHaveProperty('episodeNumber', '5');
+      expect(episode).toHaveProperty('episode', '5');
       expect(episode).toHaveProperty('imdbID', 'tt2325080');
-      expect(episode).toHaveProperty('seasonNumber', '2');
+      expect(episode).toHaveProperty('season', '2');
       expect(episode).toHaveProperty('seriesIMDbID', 'tt1796960');
       expect(episode).toHaveProperty('title', 'Q&A');
       expect(episode).toHaveProperty('type', 'episode');
@@ -320,15 +320,15 @@ describe('Media Metadata endpoints', () => {
 
   describe('get by title v2', () => {
     it('should search by series title, season and episode numbers, and store it', async() => {
-      const response = await got(`${appUrl}/api/media/v2/title?title=Homeland&seasonNumber=2&episodeNumber=5`, { responseType: 'json' });
+      const response = await got(`${appUrl}/api/media/v2/title?title=Homeland&season=2&episode=5`, { responseType: 'json' });
       expect(response.body).toHaveProperty('_id');
       expect(response.body).not.toHaveProperty('searchMatches');
 
       const episode = await MediaMetadataModel.findOne({ searchMatches: { $in: ['Homeland'] } });
       expect(episode).toHaveProperty('_id');
-      expect(episode).toHaveProperty('episodeNumber', '5');
+      expect(episode).toHaveProperty('episode', '5');
       expect(episode).toHaveProperty('imdbID', 'tt2325080');
-      expect(episode).toHaveProperty('seasonNumber', '2');
+      expect(episode).toHaveProperty('season', '2');
       expect(episode).toHaveProperty('seriesIMDbID', 'tt1796960');
       expect(episode).toHaveProperty('title', 'Q&A');
       expect(episode).toHaveProperty('type', 'episode');

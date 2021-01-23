@@ -105,15 +105,15 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
  *
  * @param [imdbId] the IMDb ID
  * @param [searchRequest] a query to perform in order to get the imdbId
- * @param [seasonNumber] the season number if this is an episode
- * @param [episodeNumber] the episode number if this is an episode
+ * @param [season] the season number if this is an episode
+ * @param [episode] the episode number if this is an episode
  */
-const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, seasonNumber?: number, episodeNumber?: number): Promise<MediaMetadataInterface> => {
+const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, season?: number, episode?: number): Promise<MediaMetadataInterface> => {
   if (!imdbId && !searchRequest) {
     throw new Error('Either imdbId or searchRequest must be specified');
   }
 
-  const isExpectingTVEpisode = Boolean(episodeNumber);
+  const isExpectingTVEpisode = Boolean(episode);
 
   /**
    * We need the IMDb ID for the imdbAPI get request below so here we get it.
@@ -129,7 +129,7 @@ const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, s
 
       if (tvSeriesInfo && tvSeriesInfo instanceof TVShow) {
         const allEpisodes = await tvSeriesInfo.episodes();
-        const currentEpisode = _.find(allEpisodes, { season: seasonNumber, episode: episodeNumber });
+        const currentEpisode = _.find(allEpisodes, { season, episode });
         if (!currentEpisode) {
           throw new IMDbIDNotFoundError();
         }
@@ -169,7 +169,7 @@ const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, s
       }
       metadata = mapper.parseIMDBAPIEpisodeResponse(imdbData);
     } else {
-      throw new Error('Received type ' + imdbData.type + ' but expected episode for ' + imdbId + ' ' + searchRequest + ' ' + seasonNumber + ' ' + episodeNumber);
+      throw new Error('Received type ' + imdbData.type + ' but expected episode for ' + imdbId + ' ' + searchRequest + ' ' + season + ' ' + episode);
     }
   } else if (imdbData.type === 'movie') {
     metadata = mapper.parseIMDBAPIMovieResponse(imdbData);
@@ -220,7 +220,7 @@ export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface
   }
 
   const validateMovieByYear = Boolean(ctx.query?.year);
-  const validateEpisodeBySeasonAndEpisode = Boolean(ctx.query?.season && ctx.query?.episodeNumber);
+  const validateEpisodeBySeasonAndEpisode = Boolean(ctx.query?.season && ctx.query?.episode);
 
   let dbMeta: MediaMetadataInterface = await MediaMetadata.findOne({ osdbHash }, null, { lean: true }).exec();
 
@@ -255,7 +255,7 @@ export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface
     }
 
     if (validateEpisodeBySeasonAndEpisode) {
-      if (ctx.query.season.toString() === openSubtitlesResponse.metadata.season && ctx.query.episodeNumber.toString() === openSubtitlesResponse.metadata.episode) {
+      if (ctx.query.season.toString() === openSubtitlesResponse.metadata.season && ctx.query.episode.toString() === openSubtitlesResponse.metadata.episode) {
         passedValidation = true;
       }
     }
@@ -358,8 +358,8 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
  */
 export const getBySanitizedTitleV2 = async(ctx: Context): Promise<MediaMetadataInterface | string> => {
   const { title } = ctx.query;
-  const episodeNumber = ctx.query.episodeNumber ? Number(ctx.query.episodeNumber) : null;
-  const seasonNumber = ctx.query.seasonNumber ? Number(ctx.query.seasonNumber) : null;
+  const episode = ctx.query.episode ? Number(ctx.query.episode) : null;
+  const season = ctx.query.season ? Number(ctx.query.season) : null;
   const year = ctx.query.year ? Number(ctx.query.year) : null;
 
   if (!title) {
@@ -371,11 +371,11 @@ export const getBySanitizedTitleV2 = async(ctx: Context): Promise<MediaMetadataI
   if (year) {
     existingResultQuery.year = year;
   }
-  if (episodeNumber) {
-    existingResultQuery.episodeNumber = episodeNumber;
+  if (episode) {
+    existingResultQuery.episode = episode;
   }
-  if (seasonNumber) {
-    existingResultQuery.seasonNumber = seasonNumber;
+  if (season) {
+    existingResultQuery.season = season;
   }
   const existingResultFromSearchMatch: MediaMetadataInterface = await MediaMetadata.findOne(existingResultQuery, null, { lean: true }).exec();
   if (existingResultFromSearchMatch) {
@@ -387,11 +387,11 @@ export const getBySanitizedTitleV2 = async(ctx: Context): Promise<MediaMetadataI
   if (year) {
     failedLookupQuery.year = year;
   }
-  if (episodeNumber) {
-    failedLookupQuery.episodeNumber = episodeNumber;
+  if (episode) {
+    failedLookupQuery.episode = episode;
   }
-  if (seasonNumber) {
-    failedLookupQuery.seasonNumber = seasonNumber;
+  if (season) {
+    failedLookupQuery.season = season;
   }
   if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
@@ -402,7 +402,7 @@ export const getBySanitizedTitleV2 = async(ctx: Context): Promise<MediaMetadataI
   if (year) {
     searchRequest.year = year;
   }
-  const imdbData: MediaMetadataInterface = await getFromIMDbAPIV2(null, searchRequest, seasonNumber, episodeNumber);
+  const imdbData: MediaMetadataInterface = await getFromIMDbAPIV2(null, searchRequest, season, episode);
 
   if (!imdbData) {
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
