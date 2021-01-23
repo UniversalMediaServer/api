@@ -352,7 +352,17 @@ export const getBySanitizedTitleV2 = async(ctx: Context): Promise<MediaMetadataI
   }
 
   // If we already have a result, return it
-  const existingResultFromSearchMatch: MediaMetadataInterface = await MediaMetadata.findOne({ searchMatches: { $in: [title] } }, null, { lean: true }).exec();
+  const existingResultQuery: any = { searchMatches: { $in: [title] } };
+  if (year) {
+    existingResultQuery.year = year;
+  }
+  if (episodeNumber) {
+    existingResultQuery.episodeNumber = episodeNumber;
+  }
+  if (seasonNumber) {
+    existingResultQuery.seasonNumber = seasonNumber;
+  }
+  const existingResultFromSearchMatch: MediaMetadataInterface = await MediaMetadata.findOne(existingResultQuery, null, { lean: true }).exec();
   if (existingResultFromSearchMatch) {
     return ctx.body = existingResultFromSearchMatch;
   }
