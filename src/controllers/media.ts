@@ -82,11 +82,15 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
   } else if (imdbData.type === 'series') {
     metadata = mapper.parseIMDBAPISeriesResponse(imdbData);
   } else if (imdbData.type === 'episode') {
-    try {
-      await EpisodeProcessing.create({ seriesimdbid: (imdbData as Episode).seriesid });
-    } catch (e) {
-      if (e.code !== MONGODB_DUPLICATE_KEY_ERROR_CODE) {
-        throw e;
+    const tvSeriesId = (imdbData as Episode).seriesid;
+    const existingSeries: SeriesMetadataInterface = await SeriesMetadata.findOne({ imdbID: tvSeriesId }, null, { lean: true }).exec();
+    if (!existingSeries) {
+      try {
+        await EpisodeProcessing.create({ seriesimdbid: tvSeriesId });
+      } catch (e) {
+        if (e.code !== MONGODB_DUPLICATE_KEY_ERROR_CODE) {
+          throw e;
+        }
       }
     }
     metadata = mapper.parseIMDBAPIEpisodeResponse(imdbData);
@@ -160,11 +164,15 @@ const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, s
   let metadata;
   if (isExpectingTVEpisode) {
     if (imdbData.type === 'episode') {
-      try {
-        await EpisodeProcessing.create({ seriesimdbid: (imdbData as Episode).seriesid });
-      } catch (e) {
-        if (e.code !== MONGODB_DUPLICATE_KEY_ERROR_CODE) {
-          throw e;
+      const tvSeriesId = (imdbData as Episode).seriesid;
+      const existingSeries: SeriesMetadataInterface = await SeriesMetadata.findOne({ imdbID: tvSeriesId }, null, { lean: true }).exec();
+      if (!existingSeries) {
+        try {
+          await EpisodeProcessing.create({ seriesimdbid: tvSeriesId });
+        } catch (e) {
+          if (e.code !== MONGODB_DUPLICATE_KEY_ERROR_CODE) {
+            throw e;
+          }
         }
       }
       metadata = mapper.parseIMDBAPIEpisodeResponse(imdbData);
