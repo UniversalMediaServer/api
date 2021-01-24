@@ -10,7 +10,7 @@ const mongod = new MongoMemoryServer();
 
 describe('Episode processing cron job', () => {
   beforeAll(async() => {
-    const mongoUrl = await mongod.getConnectionString();
+    const mongoUrl = await mongod.getUri();
     process.env.MONGO_URL = mongoUrl;
     await mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true });
     await EpisodeProcessing.create({ seriesimdbid: 'tt3581932' });
