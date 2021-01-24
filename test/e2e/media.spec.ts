@@ -25,7 +25,6 @@ const theSimpsonsMetaData = {
   osdbHash: '8e245d9679d31e12',
   title: 'The Simpsons Movie',
 };
-
 const prisonBreakEpisodeMetadata = {
   osdbHash: 'aad16027e51ff49f',
   seriesIMDbID: 'tt0455275',
@@ -38,7 +37,7 @@ let server;
 
 describe('Media Metadata endpoints', () => {
   beforeAll(async() => {
-    const mongoUrl = await mongod.getConnectionString();
+    const mongoUrl = await mongod.getUri();
     process.env.MONGO_URL = mongoUrl;
     await mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true });
     require('../mocks');
