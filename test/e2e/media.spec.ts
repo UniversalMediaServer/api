@@ -13,16 +13,16 @@ const mongod = new MongoMemoryServer();
 
 const aloneEpisodeMetaData = {
   episode: '1',
-  genres: ['Documentary', 'Reality-TV'],
   imdbID: 'tt4847892',
   season: '1',
-  title: 'Alone',
+  title: 'And So It Begins',
   type: 'episode',
   year: '2015',
 };
 const aloneMovieMetaData = {
   genres: ['Drama', 'Thriller'],
   imdbID: 'tt7711170',
+  searchMatches: ['Alone'],
   title: 'Alone',
   type: 'movie',
   year: '2020',
@@ -373,14 +373,29 @@ describe('Media Metadata endpoints', () => {
       expect(movie.searchMatches).toBeUndefined();
     });
 
-    it('should not return a movie result when looking for an episode', async() => {
+    it(`
+      should not return a movie result when looking for an episode
+      should not return an episode when looking for a movie
+    `, async() => {
       await MediaMetadataModel.create(aloneMovieMetaData);
 
-      const response = await got(`${appUrl}/api/media/v2/title?title=Alone&season=1&episode=1`, { responseType: 'json' });
+      let response = await got(`${appUrl}/api/media/v2/title?title=Alone&season=1&episode=1`, { responseType: 'json' });
       expect(response.body).toHaveProperty('_id');
 
       const episode = await MediaMetadataModel.findOne({ searchMatches: { $in: ['Alone'] }, season: '1', episode: '1' });
-      expect(episode).toHaveProperty('imdbID', 'tt4847892');
+      expect(episode).toHaveProperty('episode', aloneEpisodeMetaData.episode);
+      expect(episode).toHaveProperty('imdbID', aloneEpisodeMetaData.imdbID);
+      expect(episode).toHaveProperty('season', aloneEpisodeMetaData.season);
+      expect(episode).toHaveProperty('title', aloneEpisodeMetaData.title);
+      expect(episode).toHaveProperty('type', aloneEpisodeMetaData.type);
+      expect(episode).toHaveProperty('year', aloneEpisodeMetaData.year);
+
+      response = await got(`${appUrl}/api/media/v2/title?title=Alone&year=2020`, { responseType: 'json' });
+      expect(response.body).toHaveProperty('genres', aloneMovieMetaData.genres);
+      expect(response.body).toHaveProperty('imdbID', aloneMovieMetaData.imdbID);
+      expect(response.body).toHaveProperty('title', aloneMovieMetaData.title);
+      expect(response.body).toHaveProperty('type', aloneMovieMetaData.type);
+      expect(response.body).toHaveProperty('year', aloneMovieMetaData.year);
     });
 
     it('should require title as query param', async() => {
