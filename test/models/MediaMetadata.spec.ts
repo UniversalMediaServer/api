@@ -6,12 +6,12 @@ import MediaMetadataModel from '../../src/models/MediaMetadata';
 const interstellarMetaData = {
   actors: ['Matthew McConaughey', 'Anne Hathaway', 'Jessica Chastain'],
   directors: ['Christopher Nolan'],
-  episodeNumber: '3',
+  episode: '3',
   genres: ['Adventure', 'Drama', 'Sci-Fi'],
   imdbID: 'tt0816692',
   osdbHash: '8e245d9679d31e12',
   searchMatches: ['Interstellar (2014)'],
-  seasonNumber: '2',
+  season: '2',
   title: 'Interstellar',
   type: 'episode',
   year: '2014',
@@ -62,16 +62,16 @@ describe('Media Metadata Model', () => {
     expect(response.year).toBe('2014');
   });
 
-  it('should require episodeNumber for episodes but not for movies', async() => {
+  it('should require episode for episodes but not for movies', async() => {
     const doc = _.cloneDeep(interstellarMetaData);
-    delete doc.seasonNumber;
+    delete doc.season;
     let err: Error;
     try {
       await MediaMetadataModel.create(doc);
     } catch (e) {
       err = e;
     }
-    expect(err.message).toBe('MediaMetadata validation failed: seasonNumber: Path `seasonNumber` is required.');
+    expect(err.message).toBe('MediaMetadata validation failed: season: Path `season` is required.');
 
     let err2: Error;
     doc.type = 'movie';

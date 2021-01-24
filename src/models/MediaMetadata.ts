@@ -9,7 +9,7 @@ export interface MediaMetadataInterface {
   boxoffice?: string;
   country?: string;
   directors: Array<string>;
-  episodeNumber?: string;
+  episode?: string;
   genres: Array<string>;
   goofs?: string;
   imdbID: string;
@@ -24,7 +24,7 @@ export interface MediaMetadataInterface {
   released?: Date;
   runtime?: string;
   searchMatches?: Array<string>;
-  seasonNumber?: string;
+  season?: string;
   seriesIMDbID?: string;
   tagline?: string;
   title: string;
@@ -51,7 +51,7 @@ const MediaMetadataSchema: Schema = new Schema({
     select: false,
   },
   directors: { type: Array, required: true },
-  episodeNumber: {
+  episode: {
     required: isTypeEpisode,
     type: String,
   },
@@ -80,7 +80,7 @@ const MediaMetadataSchema: Schema = new Schema({
   released: { type: Date },
   runtime: { type: String },
   searchMatches: { type: Array, index: true, select: false },
-  seasonNumber: {
+  season: {
     required: isTypeEpisode,
     type: String,
   },

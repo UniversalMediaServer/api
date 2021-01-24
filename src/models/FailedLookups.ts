@@ -4,10 +4,10 @@ import { Document, Schema } from 'mongoose';
 const DOCUMENT_EXPIRY_IN_SECONDS = 2592000; // 30 days
 
 export interface FailedLookupsInterface {
-  episodeNumber?: number;
+  episode?: number;
   failedValidation?: boolean;
   osdbHash?: string;
-  seasonNumber?: number;
+  season?: number;
   title?: string;
   type?: string;
   year?: string;
@@ -25,7 +25,7 @@ const FailedLookupsSchema: Schema = new Schema({
     default: 1,
     type: Number,
   },
-  episodeNumber: { type: Number },
+  episode: { type: Number },
   osdbHash: {
     index: true,
     required: function(): boolean {
@@ -39,7 +39,7 @@ const FailedLookupsSchema: Schema = new Schema({
       msg: 'Invalid osdb hash length.',
     },
   },
-  seasonNumber: { type: Number },
+  season: { type: Number },
   title: {
     index: true,
     required: function(): boolean {
