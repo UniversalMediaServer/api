@@ -193,27 +193,27 @@ const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, s
 /**
  * Sets and returns series metadata by IMDb ID.
  *
- * @param imdbId the IMDb ID of the series.
+ * @param imdbID the IMDb ID of the series.
  */
-export const setSeriesMetadataByIMDbID = async(imdbId: string): Promise<SeriesMetadataInterface> => {
-  if (!imdbId) {
+export const setSeriesMetadataByIMDbID = async(imdbID: string): Promise<SeriesMetadataInterface> => {
+  if (!imdbID) {
     throw new Error('IMDb ID not supplied');
   }
 
   // Shouldn't really happen since we got this IMDb ID from their API
-  if (await FailedLookups.findOne({ imdbid: imdbId }, '_id', { lean: true }).exec()) {
-    await FailedLookups.updateOne({ imdbid: imdbId }, { $inc: { count: 1 } }).exec();
+  if (await FailedLookups.findOne({ imdbID }, '_id', { lean: true }).exec()) {
+    await FailedLookups.updateOne({ imdbID }, { $inc: { count: 1 } }).exec();
     return null;
   }
 
-  const existingSeries: SeriesMetadataInterface = await SeriesMetadata.findOne({ imdbID: imdbId }, null, { lean: true }).exec();
+  const existingSeries: SeriesMetadataInterface = await SeriesMetadata.findOne({ imdbID }, null, { lean: true }).exec();
   if (existingSeries) {
     return existingSeries;
   }
 
-  const imdbData: SeriesMetadataInterface = await getFromIMDbAPI(imdbId);
+  const imdbData: SeriesMetadataInterface = await getFromIMDbAPI(imdbID);
   if (!imdbData) {
-    await FailedLookups.updateOne({ imdbid: imdbId }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+    await FailedLookups.updateOne({ imdbID }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     return null;
   }
 
@@ -537,7 +537,7 @@ export const getByImdbID = async(ctx: Context): Promise<any> => {
     }
     return ctx.body = dbMeta;
   } catch (e) {
-    await FailedLookups.updateOne({ imdbId: imdbid }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+    await FailedLookups.updateOne({ imdbID: imdbid }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
 };

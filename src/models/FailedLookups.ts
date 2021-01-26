@@ -6,6 +6,7 @@ const DOCUMENT_EXPIRY_IN_SECONDS = 2592000; // 30 days
 export interface FailedLookupsInterface {
   episode?: number;
   failedValidation?: boolean;
+  imdbID?: string;
   osdbHash?: string;
   season?: number;
   title?: string;
@@ -26,6 +27,10 @@ const FailedLookupsSchema: Schema = new Schema({
     type: Number,
   },
   episode: { type: Number },
+  imdbID: {
+    index: true,
+    type: String,
+  },
   osdbHash: {
     index: true,
     required: function(): boolean {
@@ -45,10 +50,6 @@ const FailedLookupsSchema: Schema = new Schema({
     required: function(): boolean {
       return !this.osdbHash;
     },
-    type: String,
-  },
-  imdbId: {
-    index: true,
     type: String,
   },
   year: {
