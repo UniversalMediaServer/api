@@ -43,7 +43,7 @@ export const processEpisodes = async(): Promise<void> => {
         }
 
         // If we already failed to get a result, continue
-        if (await FailedLookups.findOne({ imdbid: episode.imdbid }, '_id', { lean: true }).exec()) {
+        if (await FailedLookups.findOne({ imdbID: episode.imdbid }, '_id', { lean: true }).exec()) {
           continue;
         }
 
