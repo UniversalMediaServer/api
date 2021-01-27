@@ -223,18 +223,20 @@ export const setSeriesMetadataByIMDbID = async(imdbID: string): Promise<SeriesMe
 export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface | string> => {
   const { osdbhash: osdbHash, filebytesize } = ctx.params;
 
-  if (!osdbHash) {
-    throw new ValidationError('osdbhash is required');
+  if (!osdbHash || !filebytesize) {
+    throw new ValidationError('osdbhash and filebytesize are required');
   }
 
   const validateMovieByYear = Boolean(ctx.query?.year);
   const validateEpisodeBySeasonAndEpisode = Boolean(ctx.query?.season && ctx.query?.episode);
 
+  // If we already have a result, return it
   let dbMeta: MediaMetadataInterface = await MediaMetadata.findOne({ osdbHash }, null, { lean: true }).exec();
-
   if (dbMeta) {
     return ctx.body = dbMeta;
   }
+
+  // If we already failed to get a result, return early
   if (await FailedLookups.findOne({ osdbHash }, '_id', { lean: true }).exec()) {
     await FailedLookups.updateOne({ osdbHash }, { $inc: { count: 1 } }).exec();
     throw new MediaNotFoundError();
