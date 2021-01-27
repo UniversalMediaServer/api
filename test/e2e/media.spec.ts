@@ -126,81 +126,83 @@ describe('Media Metadata endpoints', () => {
       expect(doc).toHaveProperty('trivia');
       expect(doc).toHaveProperty('tagline');
     });
-    
-    it('should create a failed lookup document when Open Subtitles cannot find metadata and increment count field', async() => {
-      let error;
-      try {
-        await got(`${appUrl}/api/media/osdbhash/f4245d9379d31e30/1234`);
-      } catch (e) {
-        error = e;
-      }
-      expect(error.message).toEqual('Response code 404 (Not Found)');
-      let doc = await FailedLookupsModel.findOne({ osdbHash: 'f4245d9379d31e30' });
-      expect(doc).toHaveProperty('_id');
-      expect(doc).toHaveProperty('osdbHash');
-      expect(doc.count).toBe(1);
 
-      try {
-        await got(`${appUrl}/api/media/osdbhash/f4245d9379d31e30/1234`);
-      } catch (e) { }
-      doc = await FailedLookupsModel.findOne({ osdbHash: 'f4245d9379d31e30' });
-      expect(doc.count).toBe(2);
-    });
+    describe('should create a failed lookup document', () => {
+      it('when Open Subtitles cannot find metadata and increment count field', async() => {
+        let error;
+        try {
+          await got(`${appUrl}/api/media/osdbhash/f4245d9379d31e30/1234`);
+        } catch (e) {
+          error = e;
+        }
+        expect(error.message).toEqual('Response code 404 (Not Found)');
+        let doc = await FailedLookupsModel.findOne({ osdbHash: 'f4245d9379d31e30' });
+        expect(doc).toHaveProperty('_id');
+        expect(doc).toHaveProperty('osdbHash');
+        expect(doc.count).toBe(1);
 
-    it('should create a failed lookup document when client validation by year fails', async() => {
-      let error;
-      try {
-        await got(`${appUrl}/api/media/osdbhash/${theSimpsonsMetaData.osdbHash}/1234?year=9999`);
-      } catch (e) {
-        error = e;
-      }
-      expect(error.message).toEqual('Response code 404 (Not Found)');
-      const doc = await FailedLookupsModel.findOne({ osdbHash: theSimpsonsMetaData.osdbHash });
-      expect(doc).toHaveProperty('_id');
-      expect(doc).toHaveProperty('osdbHash');
-      expect(doc.failedValidation).toBe(true);
-    });
+        try {
+          await got(`${appUrl}/api/media/osdbhash/f4245d9379d31e30/1234`);
+        } catch (e) { }
+        doc = await FailedLookupsModel.findOne({ osdbHash: 'f4245d9379d31e30' });
+        expect(doc.count).toBe(2);
+      });
 
-    it('should create a failed lookup document when client validation for season fails', async() => {
-      let error;
-      try {
-        await got(`${appUrl}/api/media/osdbhash/${prisonBreakEpisodeMetadata.osdbHash}/1234?season=999&episode=4`);
-      } catch (e) {
-        error = e;
-      }
-      expect(error.message).toEqual('Response code 404 (Not Found)');
-      const doc = await FailedLookupsModel.findOne({ osdbHash: prisonBreakEpisodeMetadata.osdbHash });
-      expect(doc).toHaveProperty('_id');
-      expect(doc).toHaveProperty('osdbHash');
-      expect(doc.failedValidation).toBe(true);
-    });
+      it('when client validation by year fails', async() => {
+        let error;
+        try {
+          await got(`${appUrl}/api/media/osdbhash/${theSimpsonsMetaData.osdbHash}/1234?year=9999`);
+        } catch (e) {
+          error = e;
+        }
+        expect(error.message).toEqual('Response code 404 (Not Found)');
+        const doc = await FailedLookupsModel.findOne({ osdbHash: theSimpsonsMetaData.osdbHash });
+        expect(doc).toHaveProperty('_id');
+        expect(doc).toHaveProperty('osdbHash');
+        expect(doc.failedValidation).toBe(true);
+      });
 
-    it('should create a failed lookup document when client validation for episode fails', async() => {
-      let error;
-      try {
-        await got(`${appUrl}/api/media/osdbhash/${prisonBreakEpisodeMetadata.osdbHash}/1234?season=1&episode=999`);
-      } catch (e) {
-        error = e;
-      }
-      expect(error.message).toEqual('Response code 404 (Not Found)');
-      const doc = await FailedLookupsModel.findOne({ osdbHash: prisonBreakEpisodeMetadata.osdbHash });
-      expect(doc).toHaveProperty('_id');
-      expect(doc).toHaveProperty('osdbHash');
-      expect(doc.failedValidation).toBe(true);
-    });
+      it('when client validation for season fails', async() => {
+        let error;
+        try {
+          await got(`${appUrl}/api/media/osdbhash/${prisonBreakEpisodeMetadata.osdbHash}/1234?season=999&episode=4`);
+        } catch (e) {
+          error = e;
+        }
+        expect(error.message).toEqual('Response code 404 (Not Found)');
+        const doc = await FailedLookupsModel.findOne({ osdbHash: prisonBreakEpisodeMetadata.osdbHash });
+        expect(doc).toHaveProperty('_id');
+        expect(doc).toHaveProperty('osdbHash');
+        expect(doc.failedValidation).toBe(true);
+      });
 
-    it('should create a failed lookup document when client validation for season AND episode fails', async() => {
-      let error;
-      try {
-        await got(`${appUrl}/api/media/osdbhash/${prisonBreakEpisodeMetadata.osdbHash}/1234?season=999&episode=999`, { responseType: 'json' });
-      } catch (e) {
-        error = e;
-      }
-      expect(error.message).toEqual('Response code 404 (Not Found)');
-      const doc = await FailedLookupsModel.findOne({ osdbHash: prisonBreakEpisodeMetadata.osdbHash });
-      expect(doc).toHaveProperty('_id');
-      expect(doc).toHaveProperty('osdbHash');
-      expect(doc.failedValidation).toBe(true);
+      it('when client validation for episode fails', async() => {
+        let error;
+        try {
+          await got(`${appUrl}/api/media/osdbhash/${prisonBreakEpisodeMetadata.osdbHash}/1234?season=1&episode=999`);
+        } catch (e) {
+          error = e;
+        }
+        expect(error.message).toEqual('Response code 404 (Not Found)');
+        const doc = await FailedLookupsModel.findOne({ osdbHash: prisonBreakEpisodeMetadata.osdbHash });
+        expect(doc).toHaveProperty('_id');
+        expect(doc).toHaveProperty('osdbHash');
+        expect(doc.failedValidation).toBe(true);
+      });
+
+      it('when client validation for season AND episode fails', async() => {
+        let error;
+        try {
+          await got(`${appUrl}/api/media/osdbhash/${prisonBreakEpisodeMetadata.osdbHash}/1234?season=999&episode=999`, { responseType: 'json' });
+        } catch (e) {
+          error = e;
+        }
+        expect(error.message).toEqual('Response code 404 (Not Found)');
+        const doc = await FailedLookupsModel.findOne({ osdbHash: prisonBreakEpisodeMetadata.osdbHash });
+        expect(doc).toHaveProperty('_id');
+        expect(doc).toHaveProperty('osdbHash');
+        expect(doc.failedValidation).toBe(true);
+      });
     });
 
     it('should return an episode response when validation is supplied and passes', async() => {
@@ -230,17 +232,55 @@ describe('Media Metadata endpoints', () => {
       expect(response.body).toHaveProperty('osdbHash', theSimpsonsMetaData.osdbHash);
     });
 
-    it('should NOT create a failed lookup document when Open Subtitles is offline', async() => {
-      await FailedLookupsModel.deleteMany({});
-      let error;
-      try {
-        await got(`${appUrl}/api/media/osdbhash/h4245d9379d31e33/12223334`);
-      } catch (e) {
-        error = e;
-      }
-      expect(error.message).toEqual('Response code 503 (Service Unavailable)');
-      const doc = await FailedLookupsModel.findOne({ osdbHash: 'h4245d9379d31e33' });
-      expect(doc).toEqual(null);
+    describe('should NOT create a failed lookup document', () => {
+      it('when Open Subtitles is offline', async() => {
+        await FailedLookupsModel.deleteMany({});
+        let error;
+        try {
+          await got(`${appUrl}/api/media/osdbhash/h4245d9379d31e33/12223334`);
+        } catch (e) {
+          error = e;
+        }
+        expect(error.message).toEqual('Response code 503 (Service Unavailable)');
+        const doc = await FailedLookupsModel.findOne({ osdbHash: 'h4245d9379d31e33' });
+        expect(doc).toEqual(null);
+      });
+
+      it('when we did not receive a filebytesize', async() => {
+        let error;
+        try {
+          await got(`${appUrl}/api/media/osdbhash/f4245d9379d31e30/`);
+        } catch (e) {
+          error = e;
+        }
+        expect(error.message).toEqual('Response code 404 (Not Found)');
+        let doc = await FailedLookupsModel.findOne({ osdbHash: 'f4245d9379d31e30' });
+        expect(doc).toBeFalsy();
+      });
+
+      it('when we did not receive a hash', async() => {
+        let error;
+        try {
+          await got(`${appUrl}/api/media/osdbhash//1234`);
+        } catch (e) {
+          error = e;
+        }
+        expect(error.message).toEqual('Response code 404 (Not Found)');
+        let doc = await FailedLookupsModel.findOne({ osdbHash: 'f4245d9379d31e30' });
+        expect(doc).toBeFalsy();
+      });
+
+      it('when we did not receive a valid hash', async() => {
+        let error;
+        try {
+          await got(`${appUrl}/api/media/osdbhash/notTheRightAmountOfCharacters/1234`);
+        } catch (e) {
+          error = e;
+        }
+        expect(error.message).toEqual('Response code 404 (Not Found)');
+        let doc = await FailedLookupsModel.findOne({ osdbHash: 'f4245d9379d31e30' });
+        expect(doc).toBeFalsy();
+      });
     });
 
     it('should not throw an exception when Open Subtitles passes bad data', async() => {
