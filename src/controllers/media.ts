@@ -117,16 +117,11 @@ const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, s
     throw new Error('Either imdbId or searchRequest must be specified');
   }
 
+  // If the client specified an episode number, this is an episode
   const isExpectingTVEpisode = Boolean(episode);
 
-  /**
-   * We need the IMDb ID for the imdbAPI get request below so here we get it.
-   * Along the way, if the result is an episode, we also instruct our episode
-   * processor to asynchronously add the other episodes for that series to the
-   * queue.
-   */
+  // We need the IMDb ID for the imdbAPI get request below so here we get it.
   if (!imdbId) {
-    // If the client specified an episode number, this is an episode
     if (isExpectingTVEpisode) {
       searchRequest.reqtype = 'series';
       const tvSeriesInfo = await imdbAPI.get(searchRequest);
@@ -156,6 +151,7 @@ const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, s
     }
   }
 
+  // Return early if we already have a result for that IMDb ID
   const imdbData = await imdbAPI.get({ id: imdbId });
   if (!imdbData) {
     return null;
@@ -165,6 +161,11 @@ const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, s
   if (isExpectingTVEpisode) {
     if (imdbData.type === 'episode') {
       const tvSeriesId = (imdbData as Episode).seriesid;
+
+      /**
+       * If we have not already processed this series, add it to the processing
+       * queue. Duplicate errors mean it's already in the queue, so just ignore them.
+       */
       const existingSeries: SeriesMetadataInterface = await SeriesMetadata.findOne({ imdbID: tvSeriesId }, null, { lean: true }).exec();
       if (!existingSeries) {
         try {
