@@ -166,7 +166,7 @@ const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, s
        * If we have not already processed this series, add it to the processing
        * queue. Duplicate errors mean it's already in the queue, so just ignore them.
        */
-      const existingSeries: SeriesMetadataInterface = await SeriesMetadata.findOne({ imdbID: tvSeriesId }, null, { lean: true }).exec();
+      const existingSeries: SeriesMetadataInterface = await SeriesMetadata.findOne({ imdbID: tvSeriesId, isEpisodesCrawled: true }, null, { lean: true }).exec();
       if (!existingSeries) {
         try {
           await EpisodeProcessing.create({ seriesimdbid: tvSeriesId });
