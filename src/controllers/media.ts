@@ -123,6 +123,15 @@ const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, s
   // We need the IMDb ID for the imdbAPI get request below so here we get it.
   if (!imdbId) {
     if (isExpectingTVEpisode) {
+      /**
+       * This is a really roundabout way to get info for one episode;
+       * it requires that we lookup the series, then lookup each season
+       * (one request per season), just to get the imdb of the episode
+       * we want. There is a feature request on the module repo but we should
+       * consider doing it ourselves if that gets stale.
+       *
+       * @see https://github.com/worr/node-imdb-api/issues/89
+       */
       searchRequest.reqtype = 'series';
       const tvSeriesInfo = await imdbAPI.get(searchRequest);
 
@@ -414,7 +423,6 @@ export const getBySanitizedTitleV2 = async(ctx: Context): Promise<MediaMetadataI
     searchRequest.year = year;
   }
   const imdbData: MediaMetadataInterface = await getFromIMDbAPIV2(null, searchRequest, season, episode);
-
   if (!imdbData) {
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
