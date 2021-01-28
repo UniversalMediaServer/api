@@ -9,6 +9,7 @@ import * as stoppable from 'stoppable';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import EpisodeProcessing from '../../src/models/EpisodeProcessing';
 import MediaMetadata from '../../src/models/MediaMetadata';
+
 const mongod = new MongoMemoryServer();
 
 const interstellarMetaData = {
@@ -20,6 +21,7 @@ const interstellarMetaData = {
   title: 'Interstellar',
   type: 'movie',
   year: '2014',
+  searchMatches: [ 'Interstellar' ]
 };
 const theSimpsonsMetaData = {
   osdbHash: '8e245d9679d31e12',
@@ -458,4 +460,54 @@ describe('Media Metadata endpoints', () => {
       expect(await FailedLookupsModel.countDocuments({})).toEqual(0);
     });
   });
+
+  describe.only('get by all', () => {
+    describe('Movies', async() => {
+      it('should return an existing result by imdbId - movie', async() => {
+        await MediaMetadataModel.create(interstellarMetaData);
+        const response: any = await got(`${appUrl}/api/media/getall?imdbID=tt0816692`, { responseType: 'json' });
+        expect(response.body.title).toEqual('Interstellar');
+        expect(response.body.type).toEqual('movie');
+      });
+  
+      it('should return an existing result by title - movie', async() => {
+        await MediaMetadataModel.create(interstellarMetaData);
+        const response: any = await got(`${appUrl}/api/media/getall?title=Interstellar`, { responseType: 'json' });
+        expect(response.body.title).toEqual('Interstellar');
+        expect(response.body.type).toEqual('movie');
+      });
+
+      it('should return an existing result by osdbHash - movie', async() => {
+        await MediaMetadataModel.create(interstellarMetaData);
+        const response: any = await got(`${appUrl}/api/media/getall?osdbHash=f4245d9379d31e33`, { responseType: 'json' });
+        expect(response.body.title).toEqual('Interstellar');
+        expect(response.body.type).toEqual('movie');
+      });
+    });
+
+    describe('Episodes', async() => {
+      it('should return an existing result by imdbId - movie', async() => {
+        await MediaMetadataModel.create(interstellarMetaData);
+        const response: any = await got(`${appUrl}/api/media/getall?imdbID=tt0816692`, { responseType: 'json' });
+        expect(response.body.title).toEqual('Interstellar');
+        expect(response.body.type).toEqual('movie');
+      });
+  
+      it('should return an existing result by title - movie', async() => {
+        await MediaMetadataModel.create(interstellarMetaData);
+        const response: any = await got(`${appUrl}/api/media/getall?title=Interstellar`, { responseType: 'json' });
+        expect(response.body.title).toEqual('Interstellar');
+        expect(response.body.type).toEqual('movie');
+      });
+
+      it('should return an existing result by osdbHash - movie', async() => {
+        await MediaMetadataModel.create(interstellarMetaData);
+        const response: any = await got(`${appUrl}/api/media/getall?osdbHash=f4245d9379d31e33`, { responseType: 'json' });
+        expect(response.body.title).toEqual('Interstellar');
+        expect(response.body.type).toEqual('movie');
+      });
+    });
+
+  });
+
 });

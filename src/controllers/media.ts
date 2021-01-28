@@ -508,3 +508,45 @@ export const getByImdbID = async(ctx: Context): Promise<any> => {
     throw new MediaNotFoundError();
   }
 };
+
+export const getAll = async(ctx: Context): Promise<any> => {
+  var { title, episodeNumber, seasonNumber, year, osdbHash, imdbID  } = ctx.query;
+  [episodeNumber, seasonNumber, year] = [episodeNumber, seasonNumber, year].map((v: string) => v ? Number(v) : null);
+
+  // if () {
+  //   throw new ValidationError('imdbid is required');
+  // }
+
+  let query = [];
+  let failedQuery = [];
+
+  if (osdbHash) {
+    query.push({ osdbHash });
+    failedQuery.push({ osdbHash });
+  }
+
+  if (imdbID) {
+    query.push({ imdbID });
+    failedQuery.push({ imdbId: imdbID });
+  }
+
+  if (title) {
+    query.push({ searchMatches: { $in: [title] } });
+    failedQuery.push({ title });
+  }
+
+  const existingResult: MediaMetadataInterface = await MediaMetadata.findOne({ $or: query }, null, { lean: true }).exec();
+
+  if (existingResult) {
+    return ctx.body = existingResult;
+  }
+  const existingFailedResult: FailedLookupsInterface = await FailedLookups.findOne({ $or: query }, null, { lean: true }).exec();
+  if (existingFailedResult) {
+    await FailedLookups.updateOne({ $or: query }, { $inc: { count: 1 } }).exec();
+    throw new MediaNotFoundError();
+  }
+
+  // do the lookup
+
+  return ctx.body = existingResult;
+};

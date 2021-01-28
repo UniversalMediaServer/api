@@ -23,4 +23,8 @@ router.get('/imdbid', async(ctx) => {
   await MediaController.getByImdbID(ctx);
 });
 
+router.get('/getall', async(ctx) => {
+  await MediaController.getAll(ctx);
+});
+
 export default router;
