@@ -183,7 +183,7 @@ const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, s
   } else if (imdbData.type === 'movie') {
     metadata = mapper.parseIMDBAPIMovieResponse(imdbData);
   } else if (imdbData.type === 'series') {
-    throw new Error('Received a TV series when we wanted a movie');
+    metadata = mapper.parseIMDBAPISeriesResponse(imdbData);
   } else {
     throw new Error('Received a type we did not expect: ' + imdbData.type);
   }
@@ -212,7 +212,7 @@ export const setSeriesMetadataByIMDbID = async(imdbID: string): Promise<SeriesMe
     return existingSeries;
   }
 
-  const imdbData: SeriesMetadataInterface = await getFromIMDbAPI(imdbID);
+  const imdbData: SeriesMetadataInterface = await getFromIMDbAPIV2(imdbID);
   if (!imdbData) {
     await FailedLookups.updateOne({ imdbID }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     return null;
@@ -470,7 +470,6 @@ export const getSeriesByTitle = async(ctx: Context): Promise<SeriesMetadataInter
   }
 
   let dbMeta: SeriesMetadataInterface = await SeriesMetadata.findSimilarSeries(dirOrFilename, year);
-
   if (dbMeta) {
     return ctx.body = dbMeta;
   }
