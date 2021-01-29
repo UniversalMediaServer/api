@@ -561,7 +561,7 @@ export const getAll = async(ctx: Context): Promise<any> => {
   [episodeNumber, seasonNumber, year] = [episodeNumber, seasonNumber, year].map((v: string) => v ? Number(v) : null);
 
   // if () {
-  //   throw new ValidationError('imdbid is required');
+  //   TODO: Work out what should be required params, might vary in different scenarios
   // }
 
   let query = [];
@@ -593,7 +593,7 @@ export const getAll = async(ctx: Context): Promise<any> => {
     throw new MediaNotFoundError();
   }
 
-  // do the lookup
+  // TODO: Look up source APIs
 
   return ctx.body = existingResult;
 };
