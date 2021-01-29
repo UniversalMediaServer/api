@@ -4,7 +4,7 @@ import imdbAPI from '../services/imdb-api';
 import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
 import { mapper } from '../utils/data-mapper';
 import connect from '../models/connection';
-import { setSeriesMetadataByIMDbID } from '../controllers/media';
+import { setSeriesMetadataByIMDbID } from '../services/imdb-api-helper';
 import { TVShow } from 'imdb-api';
 import FailedLookups from '../models/FailedLookups';
 import SeriesMetadata from '../models/SeriesMetadata';
