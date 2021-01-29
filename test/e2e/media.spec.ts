@@ -615,7 +615,7 @@ describe('Media Metadata endpoints', () => {
     });
 
     describe('Valdiation', () => {
-      const params = [ ];
+      const params = [ 'title' ];
       test.each(params)('Validation', (param,) => {
         // expect errors
       });
