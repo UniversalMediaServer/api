@@ -557,7 +557,8 @@ export const getByImdbID = async(ctx: Context): Promise<any> => {
 };
 
 export const getAll = async(ctx: Context): Promise<any> => {
-  let { title, episodeNumber, seasonNumber, year, osdbHash, imdbID  } = ctx.query;
+  const { title, osdbHash, imdbID } = ctx.query;
+  let { episodeNumber, seasonNumber, year } = ctx.query;
   [episodeNumber, seasonNumber, year] = [episodeNumber, seasonNumber, year].map(param => param ? Number(param) : null);
 
   // if () {

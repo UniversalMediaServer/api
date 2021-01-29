@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import { Document, Schema } from 'mongoose';
+import { Schema } from 'mongoose';
 
 const DOCUMENT_EXPIRY_IN_SECONDS = 2592000; // 30 days
 
