@@ -311,7 +311,7 @@ describe('Media Metadata endpoints', () => {
   });
 
   describe('get by title v1', () => {
-    it('should search by series title and store it', async() => {
+    it('should search by series title and store it, and not return searchMatches', async() => {
       const response = await got(`${appUrl}/api/media/title?title=Homeland S02E05`, { responseType: 'json' });
       expect(response.body).toHaveProperty('_id');
       expect(response.body).not.toHaveProperty('searchMatches');
@@ -374,7 +374,7 @@ describe('Media Metadata endpoints', () => {
   });
 
   describe('get by title v2', () => {
-    it('should search by series title, season and episode numbers, and store it', async() => {
+    it('should search by series title, season and episode numbers, and store it, and not return searchMatches', async() => {
       const response = await got(`${appUrl}/api/media/v2/title?title=Homeland&season=2&episode=5`, { responseType: 'json' });
       expect(response.body).toHaveProperty('_id');
       expect(response.body).not.toHaveProperty('searchMatches');

@@ -117,17 +117,21 @@ const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, s
     throw new Error('Either imdbId or searchRequest must be specified');
   }
 
+  // If the client specified an episode number, this is an episode
   const isExpectingTVEpisode = Boolean(episode);
 
-  /**
-   * We need the IMDb ID for the imdbAPI get request below so here we get it.
-   * Along the way, if the result is an episode, we also instruct our episode
-   * processor to asynchronously add the other episodes for that series to the
-   * queue.
-   */
+  // We need the IMDb ID for the imdbAPI get request below so here we get it.
   if (!imdbId) {
-    // If the client specified an episode number, this is an episode
     if (isExpectingTVEpisode) {
+      /**
+       * This is a really roundabout way to get info for one episode;
+       * it requires that we lookup the series, then lookup each season
+       * (one request per season), just to get the imdb of the episode
+       * we want. There is a feature request on the module repo but we should
+       * consider doing it ourselves if that gets stale.
+       *
+       * @see https://github.com/worr/node-imdb-api/issues/89
+       */
       searchRequest.reqtype = 'series';
       const tvSeriesInfo = await imdbAPI.get(searchRequest);
 
@@ -156,6 +160,7 @@ const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, s
     }
   }
 
+  // Return early if we already have a result for that IMDb ID
   const imdbData = await imdbAPI.get({ id: imdbId });
   if (!imdbData) {
     return null;
@@ -165,7 +170,12 @@ const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, s
   if (isExpectingTVEpisode) {
     if (imdbData.type === 'episode') {
       const tvSeriesId = (imdbData as Episode).seriesid;
-      const existingSeries: SeriesMetadataInterface = await SeriesMetadata.findOne({ imdbID: tvSeriesId }, null, { lean: true }).exec();
+
+      /**
+       * If we have not already processed this series, add it to the processing
+       * queue. Duplicate errors mean it's already in the queue, so just ignore them.
+       */
+      const existingSeries: SeriesMetadataInterface = await SeriesMetadata.findOne({ imdbID: tvSeriesId, isEpisodesCrawled: true }, null, { lean: true }).exec();
       if (!existingSeries) {
         try {
           await EpisodeProcessing.create({ seriesimdbid: tvSeriesId });
@@ -182,7 +192,7 @@ const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, s
   } else if (imdbData.type === 'movie') {
     metadata = mapper.parseIMDBAPIMovieResponse(imdbData);
   } else if (imdbData.type === 'series') {
-    throw new Error('Received a TV series when we wanted a movie');
+    metadata = mapper.parseIMDBAPISeriesResponse(imdbData);
   } else {
     throw new Error('Received a type we did not expect: ' + imdbData.type);
   }
@@ -211,7 +221,7 @@ export const setSeriesMetadataByIMDbID = async(imdbID: string): Promise<SeriesMe
     return existingSeries;
   }
 
-  const imdbData: SeriesMetadataInterface = await getFromIMDbAPI(imdbID);
+  const imdbData: SeriesMetadataInterface = await getFromIMDbAPIV2(imdbID);
   if (!imdbData) {
     await FailedLookups.updateOne({ imdbID }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     return null;
@@ -328,10 +338,11 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
    * If we already have a result based on IMDb ID, return it after adding
    * this new searchMatch to the array.
    */
-  const existingResultFromIMDbID: MediaMetadataInterface = await MediaMetadata.findOne({ imdbID: imdbData.seriesIMDbID }, null, { lean: true }).exec();
+  const existingIMDbIDResultQuery = { imdbID: imdbData.imdbID };
+  const existingResultFromIMDbID: MediaMetadataInterface = await MediaMetadata.findOne(existingIMDbIDResultQuery, null, { lean: true }).exec();
   if (existingResultFromIMDbID) {
     const updatedResult = await MediaMetadata.findOneAndUpdate(
-      { imdbID: imdbData.seriesIMDbID },
+      existingIMDbIDResultQuery,
       { $push: { searchMatches: title } },
       { new: true, lean: true },
     ).exec();
@@ -355,6 +366,7 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
     delete newlyCreatedResult.searchMatches;
     return ctx.body = newlyCreatedResult;
   } catch (e) {
+    console.error(e);
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
@@ -413,7 +425,6 @@ export const getBySanitizedTitleV2 = async(ctx: Context): Promise<MediaMetadataI
     searchRequest.year = year;
   }
   const imdbData: MediaMetadataInterface = await getFromIMDbAPIV2(null, searchRequest, season, episode);
-
   if (!imdbData) {
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
@@ -423,10 +434,11 @@ export const getBySanitizedTitleV2 = async(ctx: Context): Promise<MediaMetadataI
    * If we already have a result based on IMDb ID, return it after adding
    * this new searchMatch to the array.
    */
-  const existingResultFromIMDbID: MediaMetadataInterface = await MediaMetadata.findOne({ imdbID: imdbData.seriesIMDbID }, null, { lean: true }).exec();
+  const existingIMDbIDResultQuery = { imdbID: imdbData.imdbID };
+  const existingResultFromIMDbID: MediaMetadataInterface = await MediaMetadata.findOne(existingIMDbIDResultQuery, null, { lean: true }).exec();
   if (existingResultFromIMDbID) {
     const updatedResult = await MediaMetadata.findOneAndUpdate(
-      { imdbID: imdbData.seriesIMDbID },
+      existingIMDbIDResultQuery,
       { $push: { searchMatches: title } },
       { new: true, lean: true },
     ).exec();
@@ -450,6 +462,7 @@ export const getBySanitizedTitleV2 = async(ctx: Context): Promise<MediaMetadataI
     delete newlyCreatedResult.searchMatches;
     return ctx.body = newlyCreatedResult;
   } catch (e) {
+    console.error(e);
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
@@ -469,7 +482,6 @@ export const getSeriesByTitle = async(ctx: Context): Promise<SeriesMetadataInter
   }
 
   let dbMeta: SeriesMetadataInterface = await SeriesMetadata.findSimilarSeries(dirOrFilename, year);
-
   if (dbMeta) {
     return ctx.body = dbMeta;
   }

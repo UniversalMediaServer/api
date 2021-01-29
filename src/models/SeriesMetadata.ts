@@ -43,7 +43,7 @@ const SeriesMetadataSchema: Schema = new Schema({
   endYear: { type: String },
   genres: { type: Array, required: true },
   imdbID: { type: String, required: true, index: true, unique: true },
-  isEpisodesCrawled: { type: Boolean, default: false },
+  isEpisodesCrawled: { type: Boolean, default: false, index: true },
   metascore: { type: String },
   plot: { type: String },
   poster: { type: String },
