@@ -338,10 +338,11 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
    * If we already have a result based on IMDb ID, return it after adding
    * this new searchMatch to the array.
    */
-  const existingResultFromIMDbID: MediaMetadataInterface = await MediaMetadata.findOne({ imdbID: imdbData.seriesIMDbID }, null, { lean: true }).exec();
+  const existingIMDbIDResultQuery = { imdbID: imdbData.imdbID };
+  const existingResultFromIMDbID: MediaMetadataInterface = await MediaMetadata.findOne(existingIMDbIDResultQuery, null, { lean: true }).exec();
   if (existingResultFromIMDbID) {
     const updatedResult = await MediaMetadata.findOneAndUpdate(
-      { imdbID: imdbData.seriesIMDbID },
+      existingIMDbIDResultQuery,
       { $push: { searchMatches: title } },
       { new: true, lean: true },
     ).exec();
@@ -365,6 +366,7 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
     delete newlyCreatedResult.searchMatches;
     return ctx.body = newlyCreatedResult;
   } catch (e) {
+    console.error(e);
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
@@ -432,10 +434,11 @@ export const getBySanitizedTitleV2 = async(ctx: Context): Promise<MediaMetadataI
    * If we already have a result based on IMDb ID, return it after adding
    * this new searchMatch to the array.
    */
-  const existingResultFromIMDbID: MediaMetadataInterface = await MediaMetadata.findOne({ imdbID: imdbData.seriesIMDbID }, null, { lean: true }).exec();
+  const existingIMDbIDResultQuery = { imdbID: imdbData.imdbID };
+  const existingResultFromIMDbID: MediaMetadataInterface = await MediaMetadata.findOne(existingIMDbIDResultQuery, null, { lean: true }).exec();
   if (existingResultFromIMDbID) {
     const updatedResult = await MediaMetadata.findOneAndUpdate(
-      { imdbID: imdbData.seriesIMDbID },
+      existingIMDbIDResultQuery,
       { $push: { searchMatches: title } },
       { new: true, lean: true },
     ).exec();
@@ -459,6 +462,7 @@ export const getBySanitizedTitleV2 = async(ctx: Context): Promise<MediaMetadataI
     delete newlyCreatedResult.searchMatches;
     return ctx.body = newlyCreatedResult;
   } catch (e) {
+    console.error(e);
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
