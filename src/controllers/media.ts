@@ -557,15 +557,15 @@ export const getByImdbID = async(ctx: Context): Promise<any> => {
 };
 
 export const getAll = async(ctx: Context): Promise<any> => {
-  var { title, episodeNumber, seasonNumber, year, osdbHash, imdbID  } = ctx.query;
-  [episodeNumber, seasonNumber, year] = [episodeNumber, seasonNumber, year].map((v: string) => v ? Number(v) : null);
+  let { title, episodeNumber, seasonNumber, year, osdbHash, imdbID  } = ctx.query;
+  [episodeNumber, seasonNumber, year] = [episodeNumber, seasonNumber, year].map(param => param ? Number(param) : null);
 
   // if () {
   //   TODO: Work out what should be required params, might vary in different scenarios
   // }
 
-  let query = [];
-  let failedQuery = [];
+  const query = [];
+  const failedQuery = [];
 
   if (osdbHash) {
     query.push({ osdbHash });
