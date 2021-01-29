@@ -116,7 +116,7 @@ describe('Data mapper', () => {
       expect(parsed.actors).toEqual(['Claire Danes', 'Damian Lewis', 'Rupert Friend', 'Morena Baccarin']);
       expect(parsed.country).toEqual('USA');
       expect(parsed.directors).toEqual(['Jeffrey Reiner']);
-      expect(parsed.episodeNumber).toEqual(9);
+      expect(parsed.episode).toEqual(9);
       expect(parsed.genres).toEqual(['Crime', 'Drama', 'Mystery', 'Thriller']);
       expect(parsed.plot).toEqual(imdbApiEpisode.plot);
       expect(parsed.imdbID).toEqual(imdbApiEpisode.imdbid);
@@ -126,7 +126,7 @@ describe('Data mapper', () => {
       expect(parsed.ratings).toEqual([{ Source: 'Internet Movie Database', Value: '8.6/10' }]);
       expect(parsed.released).toEqual('2013-11-23T11:00:00.000Z');
       expect(parsed.runtime).toEqual('57 min');
-      expect(parsed.seasonNumber).toEqual(imdbApiEpisode.season);
+      expect(parsed.season).toEqual(imdbApiEpisode.season);
       expect(parsed.seriesIMDbID).toEqual(imdbApiEpisode.seriesid);
       expect(parsed.title).toEqual(imdbApiEpisode.title);
       expect(parsed.type).toEqual('episode');

@@ -10,7 +10,7 @@ const mongod = new MongoMemoryServer();
 
 describe('Episode processing cron job', () => {
   beforeAll(async() => {
-    const mongoUrl = await mongod.getConnectionString();
+    const mongoUrl = await mongod.getUri();
     process.env.MONGO_URL = mongoUrl;
     await mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true });
     await EpisodeProcessing.create({ seriesimdbid: 'tt3581932' });
@@ -33,9 +33,9 @@ describe('Episode processing cron job', () => {
     expect(series.length).toEqual(1);
     expect(episodes.length).toEqual(3);
 
-    const episodeOne = _.find(episodes, { episodeNumber: '1' });
-    const episodeTwo = _.find(episodes, { episodeNumber: '2' });
-    const episodeThree = _.find(episodes, { episodeNumber: '3' });
+    const episodeOne = _.find(episodes, { episode: '1' });
+    const episodeTwo = _.find(episodes, { episode: '2' });
+    const episodeThree = _.find(episodes, { episode: '3' });
 
     expect(episodeOne.imdbID).toEqual('tt3591512');
     expect(episodeTwo.imdbID).toEqual('tt3595914');

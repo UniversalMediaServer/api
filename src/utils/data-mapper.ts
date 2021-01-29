@@ -48,7 +48,7 @@ const imdbEpisodeMap = {
     key: 'directors?',
     transform: val => _.isEmpty(val) ? null : val.split(', '),
   },
-  'episode': 'episodeNumber',
+  'episode': 'episode',
   'imdbid': 'imdbID',
   'genres': {
     key: 'genres?',
@@ -76,7 +76,7 @@ const imdbEpisodeMap = {
   },
   'released': 'released',
   'runtime': 'runtime',
-  'season': 'seasonNumber',
+  'season': 'season',
   'seriesid': 'seriesIMDbID',
   'title': 'title',
   'type': {

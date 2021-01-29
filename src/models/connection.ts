@@ -7,7 +7,13 @@ export default (db: string): void => {
   }
 
   const connect = async(): Promise<Mongoose> => {
-    return await mongoose.connect(db, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true });
+    return await mongoose.connect(db, {
+      useCreateIndex: true,
+      // https://mongoosejs.com/docs/deprecations.html#findandmodify
+      useFindAndModify: false,
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
   };
   connect().catch(error => console.error(error));
 

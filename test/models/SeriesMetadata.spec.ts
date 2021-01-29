@@ -31,7 +31,7 @@ let document;
 
 describe('Series Metadata Model', () => {
   beforeAll(async() => {
-    const mongoUrl = await mongod.getConnectionString();
+    const mongoUrl = await mongod.getUri();
     process.env.MONGO_URL = mongoUrl;
     await mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true });
   });
