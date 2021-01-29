@@ -542,7 +542,7 @@ describe('Media Metadata endpoints', () => {
   });
 
   describe('get by all', () => {
-    describe('Movies', async() => {
+    describe('Movies', () => {
       it('should return an existing result by imdbId - movie', async() => {
         await MediaMetadataModel.create(interstellarMetaData);
         const response: any = await got(`${appUrl}/api/media/getall?imdbID=tt0816692`, { responseType: 'json' });
@@ -577,7 +577,7 @@ describe('Media Metadata endpoints', () => {
       });
     });
 
-    describe('Episodes', async() => {
+    describe('Episodes', () => {
       it('should return an existing result by imdbId - episode', async() => {
 
       });
