@@ -541,7 +541,7 @@ describe('Media Metadata endpoints', () => {
     });
   });
 
-  describe.only('get by all', () => {
+  describe('get by all', () => {
     describe('Movies', async() => {
       it('should return an existing result by imdbId - movie', async() => {
         await MediaMetadataModel.create(interstellarMetaData);
@@ -563,28 +563,61 @@ describe('Media Metadata endpoints', () => {
         expect(response.body.title).toEqual('Interstellar');
         expect(response.body.type).toEqual('movie');
       });
+
+      it('should return a movie by imdbid, from source APIs then store', () => {
+        
+      });
+
+      it('should return a movie by title, from source APIs then store', () => {
+        
+      });
+
+      it('should return a movie by osdbHash, from source APIs then store', () => {
+        
+      });
     });
 
     describe('Episodes', async() => {
-      it('should return an existing result by imdbId - movie', async() => {
-        await MediaMetadataModel.create(interstellarMetaData);
-        const response: any = await got(`${appUrl}/api/media/getall?imdbID=tt0816692`, { responseType: 'json' });
-        expect(response.body.title).toEqual('Interstellar');
-        expect(response.body.type).toEqual('movie');
+      it('should return an existing result by imdbId - episode', async() => {
+
       });
   
-      it('should return an existing result by title - movie', async() => {
-        await MediaMetadataModel.create(interstellarMetaData);
-        const response: any = await got(`${appUrl}/api/media/getall?title=Interstellar`, { responseType: 'json' });
-        expect(response.body.title).toEqual('Interstellar');
-        expect(response.body.type).toEqual('movie');
+      it('should return an existing result by title - episode', async() => {
+
       });
 
-      it('should return an existing result by osdbHash - movie', async() => {
-        await MediaMetadataModel.create(interstellarMetaData);
-        const response: any = await got(`${appUrl}/api/media/getall?osdbHash=f4245d9379d31e33`, { responseType: 'json' });
-        expect(response.body.title).toEqual('Interstellar');
-        expect(response.body.type).toEqual('movie');
+      it('should return an existing result by osdbHash - episode', async() => {
+
+      });
+
+      it('should return an episode by imdbid, from source APIs then store', () => {
+        
+      });
+
+      it('should return an episode by title, from source APIs then store', () => {
+        
+      });
+
+      it('should return an episode by osdbHash, from source APIs then store', () => {
+        
+      });
+
+    });
+
+    describe('Failures', () => {
+      it('should find a failed lookup - movie', () => {
+        
+      });
+
+      it('should find a failed lookup - episode', () => {
+        
+      });
+    });
+
+    describe('Valdiation', () => {
+      const params = [ ];
+      test.each(params)('Validation', (param,) => {
+        // expect errors
       });
     });
 
