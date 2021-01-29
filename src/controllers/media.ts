@@ -6,7 +6,7 @@ import * as natural from 'natural';
 
 import { IMDbIDNotFoundError, MediaNotFoundError, ValidationError } from '../helpers/customErrors';
 import EpisodeProcessing from '../models/EpisodeProcessing';
-import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
+import FailedLookups, { FailedLookupsInterfaceDocument } from '../models/FailedLookups';
 import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import osAPI from '../services/opensubtitles';
@@ -587,9 +587,9 @@ export const getAll = async(ctx: Context): Promise<any> => {
   if (existingResult) {
     return ctx.body = existingResult;
   }
-  const existingFailedResult: FailedLookupsInterface = await FailedLookups.findOne({ $or: query }, null, { lean: true }).exec();
+  const existingFailedResult: FailedLookupsInterfaceDocument = await FailedLookups.findOne({ $or: failedQuery }, null, { lean: true }).exec();
   if (existingFailedResult) {
-    await FailedLookups.updateOne({ $or: query }, { $inc: { count: 1 } }).exec();
+    await FailedLookups.updateOne({ _id: existingFailedResult._id }, { $inc: { count: 1 } }).exec();
     throw new MediaNotFoundError();
   }
 

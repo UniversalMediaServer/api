@@ -19,7 +19,7 @@ export interface FailedLookupsInterface {
   updatedAt?: string;
 }
 
-export interface FailedLookupsInterfaceDocument extends Document, FailedLookupsInterface {}
+export interface FailedLookupsInterfaceDocument extends mongoose.Document, FailedLookupsInterface {}
 
 const FailedLookupsSchema: Schema = new Schema({
   count: {
