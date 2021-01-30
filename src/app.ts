@@ -65,7 +65,9 @@ app.use(async(ctx: Context, next) => {
 });
 
 app.use(bodyParser());
+console.log(1);
 app.use(mediaRouter.routes());
+console.log(2);
 app.use(indexRouter.routes());
 
 export const server = app.listen(PORT);
