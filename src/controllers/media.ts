@@ -3,7 +3,7 @@ import { Context } from 'koa';
 import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
 import { MediaNotFoundError, ValidationError } from '../helpers/customErrors';
-import FailedLookups, { FailedLookupsInterfaceDocument, FailedLookupsInterface } from '../models/FailedLookups';
+import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
 import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import osAPI from '../services/opensubtitles';
@@ -366,8 +366,8 @@ export const getAll = async(ctx: Context): Promise<MediaMetadataInterface | stri
   }
 
   if (title) {
-    let titleQuery: any = { searchMatches: { $in: [title] } };
-    let titleFailedQuery: any = { title };
+    const titleQuery: any = { searchMatches: { $in: [title] } };
+    const titleFailedQuery: any = { title };
     if (year) {
       titleQuery.year = year;
       titleFailedQuery.year = year;
@@ -384,7 +384,7 @@ export const getAll = async(ctx: Context): Promise<MediaMetadataInterface | stri
     failedQuery.push(titleFailedQuery);
   }
   // find an existing metadata record, or previous failure record
-  const [ existingResult, existingFailedResult ] = await Promise.all([
+  const [existingResult, existingFailedResult] = await Promise.all([
     MediaMetadata.findOne({ $or: query }, null, { lean: true }).exec(),
     FailedLookups.findOne({ $or: failedQuery }, null, { lean: true }).exec(),
   ]);
@@ -404,11 +404,11 @@ export const getAll = async(ctx: Context): Promise<MediaMetadataInterface | stri
   let openSubtitlesMetadata;
 
   if (osdbHash && filebytesize) {
-    const osQuery = { moviehash : osdbHash, moviebytesize: filebytesize };
+    const osQuery = { moviehash: osdbHash, moviebytesize: filebytesize };
     const validation = {
       year: year ? year : null,
       season: season ? season : null,
-      episode: episode ? episode : null
+      episode: episode ? episode : null,
     };
     openSubtitlesMetadata = await externalAPIHelper.getFromOpenSubtitles(osQuery, validation);
   }
@@ -421,8 +421,7 @@ export const getAll = async(ctx: Context): Promise<MediaMetadataInterface | stri
   // Start omdb lookups
   const omdbSearchRequest: SearchRequest = {};
   const imdbIdToSearch = imdbID ? imdbID
-                       : openSubtitlesMetadata.result.imdbID ? openSubtitlesMetadata.result.imdbID
-                       : null;
+    : openSubtitlesMetadata.result.imdbID ? openSubtitlesMetadata.result.imdbID : null;
   if (title) {
     omdbSearchRequest.name = title;
   }

@@ -18,13 +18,13 @@ const MONGODB_DUPLICATE_KEY_ERROR_CODE = 11000;
 export interface OpenSubtitlesQuery {
   moviehash: string;
   moviebytesize: number;
-};
+}
 
 export interface OpenSubtitlesValidation {
   year: string;
   season: string;
   episode: string;
-};
+}
 
 /**
  * Attempts a query to the IMDb API and standardizes the response
@@ -248,7 +248,7 @@ export const getFromOpenSubtitles = async(osQuery: OpenSubtitlesQuery, validatio
   const validateMovieByYear = Boolean(validationData.year);
   const validateEpisodeBySeasonAndEpisode = Boolean(validationData.season && validationData.episode);
 
-  const openSubtitlesResponse = await osAPI.identify({...osQuery, extend: true});
+  const openSubtitlesResponse = await osAPI.identify({ ...osQuery, extend: true });
   if (!openSubtitlesResponse.metadata) {
     return { result: null };
   }
