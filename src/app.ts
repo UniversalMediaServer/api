@@ -57,12 +57,12 @@ app.use(async(ctx: Context, next) => {
   await next();
 });
 
-app.use(async(ctx: Context, next) => {
-  if (bypassMongo) {
-    await mongoose.connection.dropDatabase();
-  }
-  await next();
-});
+// app.use(async(ctx: Context, next) => {
+//   if (bypassMongo) {
+//     await mongoose.connection.dropDatabase();
+//   }
+//   await next();
+// });
 
 app.use(bodyParser());
 app.use(mediaRouter.routes());
