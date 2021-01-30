@@ -559,7 +559,7 @@ describe('Media Metadata endpoints', () => {
 
       it('should return an existing result by osdbHash - movie', async() => {
         await MediaMetadataModel.create(interstellarMetaData);
-        const response: any = await got(`${appUrl}/api/media/getall?osdbHash=f4245d9379d31e33`, { responseType: 'json' });
+        const response: any = await got(`${appUrl}/api/media/getall?osdbHash=f4245d9379d31e33&filebytesize=12909756`, { responseType: 'json' });
         expect(response.body.title).toEqual('Interstellar');
         expect(response.body.type).toEqual('movie');
       });
@@ -615,8 +615,8 @@ describe('Media Metadata endpoints', () => {
     });
 
     describe('Valdiation', () => {
-      const params = [ 'title' ];
-      test.each(params)('Validation', (param,) => {
+      const params = ['title'];
+      test.each(params)('Validation', () => {
         // expect errors
       });
     });
