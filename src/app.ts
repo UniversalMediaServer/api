@@ -2,6 +2,7 @@ import * as Koa from 'koa';
 import { Context } from 'koa';
 import * as bodyParser from 'koa-bodyparser';
 import * as helmet from 'koa-helmet';
+import * as mongoose from 'mongoose';
 import * as Debug from 'debug';
 const debug = Debug('universalmediaserver-api:server');
 
@@ -15,6 +16,7 @@ import connect from './models/connection';
 
 const db: string = process.env.MONGO_URL;
 const PORT: string = process.env.PORT || '3000';
+const bypassMongo: boolean = Boolean(process.env.BYPASS_MONGO) || false;
 connect(db);
 
 app.use(helmet());
@@ -52,6 +54,13 @@ app.use(async(ctx, next) => {
 
 app.use(async(ctx: Context, next) => {
   debug(`${ctx.method} ${ctx.url}`);
+  await next();
+});
+
+app.use(async(ctx: Context, next) => {
+  if (bypassMongo) {
+    await mongoose.connection.dropDatabase();
+  }
   await next();
 });
 

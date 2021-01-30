@@ -8,7 +8,7 @@ import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import osAPI from '../services/opensubtitles';
 import imdbAPI from '../services/imdb-api';
-import * as imdbAPIHelper from '../services/imdb-api-helper';
+import * as externalAPIHelper from '../services/external-api-helper';
 import { mapper } from '../utils/data-mapper';
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
@@ -70,7 +70,7 @@ export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface
   }
 
   const parsedOpenSubtitlesResponse = mapper.parseOpenSubtitlesResponse(openSubtitlesResponse);
-  const parsedIMDbResponse: MediaMetadataInterface = await imdbAPIHelper.getFromIMDbAPI(parsedOpenSubtitlesResponse.imdbID);
+  const parsedIMDbResponse: MediaMetadataInterface = await externalAPIHelper.getFromIMDbAPI(parsedOpenSubtitlesResponse.imdbID);
   const combinedResponse = _.merge(parsedOpenSubtitlesResponse, parsedIMDbResponse);
 
   try {
@@ -110,7 +110,7 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
   if (year) {
     searchRequest.year = year;
   }
-  const imdbData: MediaMetadataInterface = await imdbAPIHelper.getFromIMDbAPI(null, searchRequest);
+  const imdbData: MediaMetadataInterface = await externalAPIHelper.getFromIMDbAPI(null, searchRequest);
 
   if (!imdbData) {
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
@@ -134,7 +134,7 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
   }
 
   if (imdbData.type === 'episode') {
-    await imdbAPIHelper.setSeriesMetadataByIMDbID(imdbData.seriesIMDbID);
+    await externalAPIHelper.setSeriesMetadataByIMDbID(imdbData.seriesIMDbID);
   }
 
   try {
@@ -207,7 +207,7 @@ export const getBySanitizedTitleV2 = async(ctx: Context): Promise<MediaMetadataI
   if (year) {
     searchRequest.year = year;
   }
-  const imdbData: MediaMetadataInterface = await imdbAPIHelper.getFromIMDbAPIV2(null, searchRequest, season, episode);
+  const imdbData: MediaMetadataInterface = await externalAPIHelper.getFromIMDbAPIV2(null, searchRequest, season, episode);
   if (!imdbData) {
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
@@ -230,7 +230,7 @@ export const getBySanitizedTitleV2 = async(ctx: Context): Promise<MediaMetadataI
   }
 
   if (imdbData.type === 'episode') {
-    await imdbAPIHelper.setSeriesMetadataByIMDbID(imdbData.seriesIMDbID);
+    await externalAPIHelper.setSeriesMetadataByIMDbID(imdbData.seriesIMDbID);
   }
 
   try {
@@ -323,7 +323,7 @@ export const getByImdbID = async(ctx: Context): Promise<any> => {
     await FailedLookups.updateOne({ imdbID: imdbid }, { $inc: { count: 1 } }).exec();
     throw new MediaNotFoundError();
   }
-  const imdbData: MediaMetadataInterface = await imdbAPIHelper.getFromIMDbAPI(imdbid);
+  const imdbData: MediaMetadataInterface = await externalAPIHelper.getFromIMDbAPI(imdbid);
 
   try {
     let dbMeta;
@@ -339,14 +339,18 @@ export const getByImdbID = async(ctx: Context): Promise<any> => {
   }
 };
 
-export const getAll = async(ctx: Context): Promise<any> => {
+export const getAll = async(ctx: Context): Promise<MediaMetadataInterface | string> => {
   const { title, osdbHash, imdbID } = ctx.query;
-  let { episodeNumber, seasonNumber, year } = ctx.query;
-  [episodeNumber, seasonNumber, year] = [episodeNumber, seasonNumber, year].map(param => param ? Number(param) : null);
+  let { episode, season, year, filebytesize } = ctx.query;
+  [episode, season, year, filebytesize] = [episode, season, year, filebytesize].map(param => param ? Number(param) : null);
 
-  // if () {
-  //   TODO: Work out what should be required params, might vary in different scenarios
-  // }
+  if (!title && !osdbHash && !imdbID) {
+    throw new ValidationError('title, osdbHash or imdbId is a required parameter');
+  }
+
+  if (osdbHash && !filebytesize) {
+    throw new ValidationError('filebytesize is required when passing osdbHash');
+  }
 
   const query = [];
   const failedQuery = [];
@@ -362,22 +366,80 @@ export const getAll = async(ctx: Context): Promise<any> => {
   }
 
   if (title) {
-    query.push({ searchMatches: { $in: [title] } });
-    failedQuery.push({ title });
+    let titleQuery: any = { searchMatches: { $in: [title] } };
+    let titleFailedQuery: any = { title };
+    if (year) {
+      titleQuery.year = year;
+      titleFailedQuery.year = year;
+    }
+    if (episode) {
+      titleQuery.episode = episode;
+      titleFailedQuery.episode = episode;
+    }
+    if (season) {
+      titleQuery.season = season;
+      titleFailedQuery.season = season;
+    }
+    query.push(titleQuery);
+    failedQuery.push(titleFailedQuery);
   }
-
-  const existingResult: MediaMetadataInterface = await MediaMetadata.findOne({ $or: query }, null, { lean: true }).exec();
-
+  // find an existing metadata record, or previous failure record
+  const [ existingResult, existingFailedResult ] = await Promise.all([
+    MediaMetadata.findOne({ $or: query }, null, { lean: true }).exec(),
+    FailedLookups.findOne({ $or: failedQuery }, null, { lean: true }).exec(),
+  ]);
+  // we have an existing metadata record, so return it
   if (existingResult) {
     return ctx.body = existingResult;
   }
-  const existingFailedResult: FailedLookupsInterfaceDocument = await FailedLookups.findOne({ $or: failedQuery }, null, { lean: true }).exec();
+  // we have an existing failure record, so increment it, and throw not found error
   if (existingFailedResult) {
     await FailedLookups.updateOne({ _id: existingFailedResult._id }, { $inc: { count: 1 } }).exec();
     throw new MediaNotFoundError();
   }
 
-  // TODO: Look up source APIs
+  // the database does not have a record of this file, so begin search for metadata on external apis.
 
-  return ctx.body = existingResult;
+  // Start OpenSubtitles lookups
+  let openSubtitlesMetadata;
+
+  if (osdbHash && filebytesize) {
+    const osQuery = { moviehash : osdbHash, moviebytesize: filebytesize };
+    const validation = {
+      year: year ? year : null,
+      season: season ? season : null,
+      episode: episode ? episode : null
+    };
+    openSubtitlesMetadata = await externalAPIHelper.getFromOpenSubtitles(osQuery, validation);
+  }
+
+  // End OpenSubtitles lookups
+
+  /* if the client has passed an imdbId, we'll use that as the primary source, otherwise, the one
+  returned by OpenSubtitles */
+
+  // Start omdb lookups
+  const omdbSearchRequest: SearchRequest = {};
+  const imdbIdToSearch = imdbID ? imdbID
+                       : openSubtitlesMetadata.result.imdbID ? openSubtitlesMetadata.result.imdbID
+                       : null;
+  if (title) {
+    omdbSearchRequest.name = title;
+  }
+
+  if (year) {
+    omdbSearchRequest.year = year;
+  }
+  const imdbData: MediaMetadataInterface = await externalAPIHelper.getFromIMDbAPIV2(imdbIdToSearch, omdbSearchRequest, season, episode);
+  // End omdb lookups
+
+  const combinedResponse = _.merge(openSubtitlesMetadata, imdbData);
+
+  try {
+    const dbMeta = await MediaMetadata.create(combinedResponse);
+    return ctx.body = dbMeta;
+  } catch (e) {
+    await FailedLookups.updateOne({ osdbHash, imdbID, title, season, episode }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+    throw new MediaNotFoundError();
+  }
 };
