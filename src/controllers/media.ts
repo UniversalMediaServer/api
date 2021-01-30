@@ -420,7 +420,7 @@ export const getAll = async(ctx: Context): Promise<MediaMetadataInterface | stri
   returned by OpenSubtitles */
 
   // Start omdb lookups
-  const omdbSearchRequest: SearchRequest = {};
+  const omdbSearchRequest: any = {};
   const imdbIdToSearch = imdbID ? imdbID
     : openSubtitlesMetadata.result.imdbID ? openSubtitlesMetadata.result.imdbID : null;
   if (title) {
