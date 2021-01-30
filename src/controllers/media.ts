@@ -9,7 +9,6 @@ import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadat
 import osAPI from '../services/opensubtitles';
 import imdbAPI from '../services/imdb-api';
 import * as externalAPIHelper from '../services/external-api-helper';
-console.log(externalAPIHelper);
 import { mapper } from '../utils/data-mapper';
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;

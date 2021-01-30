@@ -1,4 +1,3 @@
-console.log(10);
 import * as Koa from 'koa';
 import { Context } from 'koa';
 import * as bodyParser from 'koa-bodyparser';
@@ -6,11 +5,10 @@ import * as helmet from 'koa-helmet';
 import * as mongoose from 'mongoose';
 import * as Debug from 'debug';
 const debug = Debug('universalmediaserver-api:server');
-console.log(11);
 import indexRouter from './routes/index';
 import mediaRouter  from './routes/media';
 import { ExternalAPIError, IMDbIDNotFoundError, MediaNotFoundError, ValidationError } from './helpers/customErrors';
-console.log(12);
+
 const app = new Koa();
 
 import connect from './models/connection';
@@ -18,9 +16,8 @@ import connect from './models/connection';
 const db: string = process.env.MONGO_URL;
 const PORT: string = process.env.PORT || '3000';
 const bypassMongo: boolean = Boolean(process.env.BYPASS_MONGO) || false;
-console.log(13);
 connect(db);
-console.log(14);
+
 app.use(helmet());
 // error handler
 app.use(async(ctx, next) => {
@@ -67,9 +64,8 @@ app.use(async(ctx: Context, next) => {
 });
 
 app.use(bodyParser());
-console.log(1);
+
 app.use(mediaRouter.routes());
-console.log(2);
 app.use(indexRouter.routes());
 
 export const server = app.listen(PORT);
