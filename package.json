@@ -128,7 +128,7 @@
     "natural": "^2.4.5",
     "object-mapper": "^6.2.0",
     "opensubtitles-api": "^5.1.2",
-    "pm2": "^4.5.1",
+    "pm2": "^4.5.4",
     "stoppable": "^1.1.0",
     "ts-node": "^9.1.1"
   },
