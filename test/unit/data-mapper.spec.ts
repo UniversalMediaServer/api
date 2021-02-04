@@ -73,6 +73,17 @@ const imdbApiEpisode = {
   imdburl: 'https://www.imdb.com/title/tt2916312',
 };
 
+const imdbApiSeriesWithNaN = {
+  'actors': 'Dominic Purcell, Wentworth Miller, Amaury Nolasco',
+  'directors': 'Bobby Roth',
+  'genres': 'Action, Crime, Drama, Mystery, Thriller',
+  'imdbID': 'tt0455275',
+  'title': 'Prison Break',
+  'totalSeasons': 'NaN',
+  'type': 'series',
+  'year': '2005',
+};
+
 describe('Data mapper', () => {
   describe('OpenSubtitles responses', () => {
     it('should parse to expected flat structure', () => {
@@ -111,32 +122,42 @@ describe('Data mapper', () => {
   });
 
   describe('imdbAPI responses', () => {
-    it('should parse to expected flat structure', () => {
-      const parsed = mapper.parseIMDBAPIEpisodeResponse(imdbApiEpisode);
-      expect(parsed.actors).toEqual(['Claire Danes', 'Damian Lewis', 'Rupert Friend', 'Morena Baccarin']);
-      expect(parsed.country).toEqual('USA');
-      expect(parsed.directors).toEqual(['Jeffrey Reiner']);
-      expect(parsed.episode).toEqual(9);
-      expect(parsed.genres).toEqual(['Crime', 'Drama', 'Mystery', 'Thriller']);
-      expect(parsed.plot).toEqual(imdbApiEpisode.plot);
-      expect(parsed.imdbID).toEqual(imdbApiEpisode.imdbid);
-      expect(parsed.poster).toEqual('https://m.media-amazon.com/images/M/MV5BMTc0NDc2Nzg0MV5BMl5BanBnXkFtZTgwMzA2MzM2MDE@._V1_SX300.jpg');
-      expect(parsed.rated).toEqual('TV-MA');
-      expect(parsed.rating).toEqual(8.6);
-      expect(parsed.ratings).toEqual([{ Source: 'Internet Movie Database', Value: '8.6/10' }]);
-      expect(parsed.released).toEqual('2013-11-23T11:00:00.000Z');
-      expect(parsed.runtime).toEqual('57 min');
-      expect(parsed.season).toEqual(imdbApiEpisode.season);
-      expect(parsed.seriesIMDbID).toEqual(imdbApiEpisode.seriesid);
-      expect(parsed.title).toEqual(imdbApiEpisode.title);
-      expect(parsed.type).toEqual('episode');
-      expect(parsed.votes).toEqual('2211');
-      expect(typeof parsed.year).toBe('string');  
+    describe('episodes', () => {
+      it('should parse to expected flat structure', () => {
+        const parsed = mapper.parseIMDBAPIEpisodeResponse(imdbApiEpisode);
+        expect(parsed.actors).toEqual(['Claire Danes', 'Damian Lewis', 'Rupert Friend', 'Morena Baccarin']);
+        expect(parsed.country).toEqual('USA');
+        expect(parsed.directors).toEqual(['Jeffrey Reiner']);
+        expect(parsed.episode).toEqual(9);
+        expect(parsed.genres).toEqual(['Crime', 'Drama', 'Mystery', 'Thriller']);
+        expect(parsed.plot).toEqual(imdbApiEpisode.plot);
+        expect(parsed.imdbID).toEqual(imdbApiEpisode.imdbid);
+        expect(parsed.poster).toEqual('https://m.media-amazon.com/images/M/MV5BMTc0NDc2Nzg0MV5BMl5BanBnXkFtZTgwMzA2MzM2MDE@._V1_SX300.jpg');
+        expect(parsed.rated).toEqual('TV-MA');
+        expect(parsed.rating).toEqual(8.6);
+        expect(parsed.ratings).toEqual([{ Source: 'Internet Movie Database', Value: '8.6/10' }]);
+        expect(parsed.released).toEqual('2013-11-23T11:00:00.000Z');
+        expect(parsed.runtime).toEqual('57 min');
+        expect(parsed.season).toEqual(imdbApiEpisode.season);
+        expect(parsed.seriesIMDbID).toEqual(imdbApiEpisode.seriesid);
+        expect(parsed.title).toEqual(imdbApiEpisode.title);
+        expect(parsed.type).toEqual('episode');
+        expect(parsed.votes).toEqual('2211');
+        expect(typeof parsed.year).toBe('string');  
+      });
+
+      it('should remove N/A values', () => {
+        const parsed = mapper.parseIMDBAPIEpisodeResponse(imdbApiEpisode);
+        expect(parsed.awards).not.toBe('N/A');
+      });
     });
 
-    it('should remove N/A values', () => {
-      const parsed = mapper.parseIMDBAPIEpisodeResponse(imdbApiEpisode);
-      expect(parsed.awards).not.toBe('N/A');
+    describe('series', () => {
+      it('should remove NaN values', () => {
+        const parsed = mapper.parseIMDBAPISeriesResponse(imdbApiSeriesWithNaN);
+        expect(parsed.title).toBe('Prison Break');
+        expect(parsed.totalSeasons).toBeUndefined();
+      });
     });
   });
 });
