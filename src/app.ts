@@ -1,5 +1,4 @@
 import * as Koa from 'koa';
-import { Context } from 'koa';
 import * as bodyParser from 'koa-bodyparser';
 import * as helmet from 'koa-helmet';
 import * as Debug from 'debug';
@@ -50,7 +49,7 @@ app.use(async(ctx, next) => {
   }
 });
 
-app.use(async(ctx: Context, next) => {
+app.use(async(ctx, next) => {
   debug(`${ctx.method} ${ctx.url}`);
   await next();
 });
