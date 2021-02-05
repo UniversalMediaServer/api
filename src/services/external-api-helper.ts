@@ -161,7 +161,7 @@ export const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
       } catch (e) {
         return null;
       }
-      console.log(searchResults)
+
       // find the best search results utilising the Jaro-Winkler distance metric
       const searchResultStringDistance = searchResults.results.map(result => natural.JaroWinklerDistance(searchRequest.name, result.title));
       const bestSearchResultKey = _.indexOf(searchResultStringDistance, _.max(searchResultStringDistance));

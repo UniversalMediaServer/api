@@ -25,7 +25,6 @@ const EPISODE = {
   'episode': '2',
 };
 
-
 describe('get by all', () => {
   beforeAll(async() => {
     const mongoUrl = await mongod.getUri();
