@@ -144,26 +144,31 @@ export const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
        */
       searchRequest.reqtype = 'series';
       const tvSeriesInfo = await imdbAPI.get(searchRequest);
-
       if (tvSeriesInfo && tvSeriesInfo instanceof TVShow) {
         const allEpisodes = await tvSeriesInfo.episodes();
         const currentEpisode = _.find(allEpisodes, { season, episode });
         if (!currentEpisode) {
-          throw new IMDbIDNotFoundError();
+          return null;
         }
 
         imdbId = currentEpisode.imdbid;
       }
     } else {
       searchRequest.reqtype = 'movie';
-      const searchResults = await imdbAPI.search(searchRequest);
+      let searchResults;
+      try {
+        searchResults = await imdbAPI.search(searchRequest);
+      } catch (e) {
+        return null;
+      }
+      console.log(searchResults)
       // find the best search results utilising the Jaro-Winkler distance metric
       const searchResultStringDistance = searchResults.results.map(result => natural.JaroWinklerDistance(searchRequest.name, result.title));
       const bestSearchResultKey = _.indexOf(searchResultStringDistance, _.max(searchResultStringDistance));
 
       const searchResult: any = searchResults.results[bestSearchResultKey];
       if (!searchResult) {
-        throw new IMDbIDNotFoundError();
+        return null;
       }
 
       imdbId = searchResult.imdbid;

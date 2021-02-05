@@ -368,6 +368,7 @@ export const getAll = async(ctx: Context): Promise<MediaMetadataInterface | stri
   if (title) {
     const titleQuery: any = { searchMatches: { $in: [title] } };
     const titleFailedQuery: any = { title };
+
     if (year) {
       titleQuery.year = year;
       titleFailedQuery.year = year;
@@ -383,11 +384,13 @@ export const getAll = async(ctx: Context): Promise<MediaMetadataInterface | stri
     query.push(titleQuery);
     failedQuery.push(titleFailedQuery);
   }
+
   // find an existing metadata record, or previous failure record
   const [existingResult, existingFailedResult] = await Promise.all([
     MediaMetadata.findOne({ $or: query }, null, { lean: true }).exec(),
     FailedLookups.findOne({ $or: failedQuery }, null, { lean: true }).exec(),
   ]);
+
   // we have an existing metadata record, so return it
   if (existingResult) {
     return ctx.body = existingResult;
@@ -399,7 +402,6 @@ export const getAll = async(ctx: Context): Promise<MediaMetadataInterface | stri
   }
 
   // the database does not have a record of this file, so begin search for metadata on external apis.
-  console.log('**')
   // Start OpenSubtitles lookups
   let openSubtitlesMetadata;
 
@@ -429,13 +431,21 @@ export const getAll = async(ctx: Context): Promise<MediaMetadataInterface | stri
   if (year) {
     omdbSearchRequest.year = year;
   }
-  console.log(omdbSearchRequest);
-  const imdbData: MediaMetadataInterface = await externalAPIHelper.getFromIMDbAPIV2(imdbIdToSearch, omdbSearchRequest, season, episode);
-  // End omdb lookups
 
+  const imdbData: MediaMetadataInterface = await externalAPIHelper.getFromIMDbAPIV2(imdbIdToSearch, omdbSearchRequest, season, episode);
+
+  // End omdb lookups
   const combinedResponse = _.merge(openSubtitlesMetadata, imdbData);
-  console.log(combinedResponse);
+
+  if (!combinedResponse || _.isEmpty(combinedResponse)) {
+    await FailedLookups.updateOne({ osdbHash, imdbID, title, season, episode }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+    throw new MediaNotFoundError();
+  }
+
   try {
+    if (title) {
+      combinedResponse.searchMatches = [title];
+    }
     const dbMeta = await MediaMetadata.create(combinedResponse);
     return ctx.body = dbMeta;
   } catch (e) {
