@@ -590,12 +590,22 @@ describe('Media Metadata endpoints', () => {
 
       });
 
-      it('should return an episode by imdbid, from source APIs then store', () => {
-        
+      it('should return an episode by imdbid, from source APIs then store', async() => {
+        const response: any = await got(`${appUrl}/api/media/getall?imdbID=tt3591512`, { responseType: 'json' });
+        expect(response.body.imdbID).toEqual('tt3591512');
+        expect(response.body.episode).toEqual('1');
+        expect(response.body.season).toEqual('1');
+        expect(response.body.type).toEqual('episode');
       });
 
-      it('should return an episode by title, from source APIs then store', () => {
-        
+      it.only('should return an episode by title, from source APIs then store', async() => {
+        //Proof of Concept
+        const response: any = await got(`${appUrl}/api/media/getall?title=Proof of Concept&season=1&episode=7`, { responseType: 'json' });
+        console.log(response.body);
+        // expect(response.body.imdbID).toEqual('tt3591512');
+        // expect(response.body.episode).toEqual('1');
+        // expect(response.body.season).toEqual('1');
+        // expect(response.body.type).toEqual('episode');
       });
 
       it('should return an episode by osdbHash, from source APIs then store', () => {

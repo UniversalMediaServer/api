@@ -177,7 +177,7 @@ export const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
   }
 
   let metadata;
-  if (isExpectingTVEpisode) {
+  if (isExpectingTVEpisode || (!isExpectingTVEpisode && imdbData.type === 'episode')) {
     if (imdbData.type === 'episode') {
       const tvSeriesId = (imdbData as Episode).seriesid;
 
@@ -206,7 +206,6 @@ export const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
   } else {
     throw new Error('Received a type we did not expect: ' + imdbData.type);
   }
-
   return metadata;
 };
 

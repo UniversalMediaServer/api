@@ -399,7 +399,7 @@ export const getAll = async(ctx: Context): Promise<MediaMetadataInterface | stri
   }
 
   // the database does not have a record of this file, so begin search for metadata on external apis.
-
+  console.log('**')
   // Start OpenSubtitles lookups
   let openSubtitlesMetadata;
 
@@ -421,7 +421,7 @@ export const getAll = async(ctx: Context): Promise<MediaMetadataInterface | stri
   // Start omdb lookups
   const omdbSearchRequest: any = {};
   const imdbIdToSearch = imdbID ? imdbID
-    : openSubtitlesMetadata.result.imdbID ? openSubtitlesMetadata.result.imdbID : null;
+    : openSubtitlesMetadata?.result.imdbID ? openSubtitlesMetadata.result.imdbID : null;
   if (title) {
     omdbSearchRequest.name = title;
   }
@@ -429,11 +429,12 @@ export const getAll = async(ctx: Context): Promise<MediaMetadataInterface | stri
   if (year) {
     omdbSearchRequest.year = year;
   }
+  console.log(omdbSearchRequest);
   const imdbData: MediaMetadataInterface = await externalAPIHelper.getFromIMDbAPIV2(imdbIdToSearch, omdbSearchRequest, season, episode);
   // End omdb lookups
 
   const combinedResponse = _.merge(openSubtitlesMetadata, imdbData);
-
+  console.log(combinedResponse);
   try {
     const dbMeta = await MediaMetadata.create(combinedResponse);
     return ctx.body = dbMeta;
