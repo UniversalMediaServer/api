@@ -433,7 +433,9 @@ export const getAll = async(ctx: Context): Promise<MediaMetadataInterface | stri
   }
 
   const imdbData: MediaMetadataInterface = await externalAPIHelper.getFromIMDbAPIV2(imdbIdToSearch, omdbSearchRequest, season, episode);
-
+  if (imdbData.type === 'episode') {
+    await externalAPIHelper.setSeriesMetadataByIMDbID(imdbData.seriesIMDbID);
+  }
   // End omdb lookups
   const combinedResponse = _.merge(openSubtitlesMetadata, imdbData);
 

@@ -162,9 +162,24 @@ describe('get by all', () => {
   });
 
   describe('Valdiation', () => {
-    const params = ['title'];
-    test.each(params)('Validation', () => {
-      // expect errors
+    it('should require title, osdbHash or imdbID param', async() => {
+      let error;
+      try {
+        await got(`${appUrl}/api/media/getall`, { responseType: 'json' });
+      } catch (e) {
+        error = e;
+      }
+      expect(error.message).toEqual('Response code 422 (Unprocessable Entity)');
+    });
+
+    it('should require filebytesize if attempting osbdHash search', async() => {
+      let error;
+      try {
+        await got(`${appUrl}/api/media/getall?=fsd`, { responseType: 'json' });
+      } catch (e) {
+        error = e;
+      }
+      expect(error.message).toEqual('Response code 422 (Unprocessable Entity)');
     });
   });
 });
