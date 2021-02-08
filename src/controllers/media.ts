@@ -413,6 +413,10 @@ export const getAll = async(ctx: Context): Promise<MediaMetadataInterface | stri
       episode: episode ? episode : null,
     };
     openSubtitlesMetadata = await externalAPIHelper.getFromOpenSubtitles(osQuery, validation);
+    if (!openSubtitlesMetadata.result) {
+      await FailedLookups.updateOne({ osdbHash, imdbID, title, season, episode }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+      throw new MediaNotFoundError();
+    }
   }
 
   // End OpenSubtitles lookups
@@ -423,7 +427,7 @@ export const getAll = async(ctx: Context): Promise<MediaMetadataInterface | stri
   // Start omdb lookups
   const omdbSearchRequest: any = {};
   const imdbIdToSearch = imdbID ? imdbID
-    : openSubtitlesMetadata?.result.imdbID ? openSubtitlesMetadata.result.imdbID : null;
+    : openSubtitlesMetadata?.result?.imdbID ? openSubtitlesMetadata.result.imdbID : null;
   if (title) {
     omdbSearchRequest.name = title;
   }
@@ -433,12 +437,13 @@ export const getAll = async(ctx: Context): Promise<MediaMetadataInterface | stri
   }
 
   const imdbData: MediaMetadataInterface = await externalAPIHelper.getFromIMDbAPIV2(imdbIdToSearch, omdbSearchRequest, season, episode);
-  if (imdbData.type === 'episode') {
+
+  if (imdbData?.type === 'episode') {
     await externalAPIHelper.setSeriesMetadataByIMDbID(imdbData.seriesIMDbID);
   }
+
   // End omdb lookups
   const combinedResponse = _.merge(openSubtitlesMetadata, imdbData);
-
   if (!combinedResponse || _.isEmpty(combinedResponse)) {
     await FailedLookups.updateOne({ osdbHash, imdbID, title, season, episode }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
@@ -447,6 +452,10 @@ export const getAll = async(ctx: Context): Promise<MediaMetadataInterface | stri
   try {
     if (title) {
       combinedResponse.searchMatches = [title];
+    }
+
+    if (osdbHash) {
+      combinedResponse.osdbHash = osdbHash;
     }
     const dbMeta = await MediaMetadata.create(combinedResponse);
     return ctx.body = dbMeta;
