@@ -1,7 +1,7 @@
 
 
 import { Context } from 'koa';
-import { Episode, SearchRequest, TVShow } from 'imdb-api';
+import { SearchRequest } from 'imdb-api';
 import { ParameterizedContext } from 'koa';
 import Router = require('koa-router');
 import * as _ from 'lodash';
@@ -301,11 +301,7 @@ export const getSeriesByTitle = async(ctx: ParameterizedContext<any, Router.IRou
   return ctx.body = dbMeta;
 };
 
-<<<<<<< HEAD
-export const getByImdbID = async(ctx: Context): Promise<MediaMetadataInterface> => {
-=======
 export const getByImdbID = async(ctx: ParameterizedContext<any, Router.IRouterParamContext<any, {}>>): Promise<any> => {
->>>>>>> master
   const { imdbid } = ctx.query;
 
   if (!imdbid) {
@@ -345,7 +341,7 @@ export const getByImdbID = async(ctx: ParameterizedContext<any, Router.IRouterPa
   }
 };
 
-export const getVideo = async(ctx: Context): Promise<MediaMetadataInterface | string> => {
+export const getVideo = async(ctx: ParameterizedContext<any, Router.IRouterParamContext<any, {}>>): Promise<any> => {
   const { title, osdbHash, imdbID } = ctx.query;
   let { episode, season, year, filebytesize } = ctx.query;
   [episode, season, year, filebytesize] = [episode, season, year, filebytesize].map(param => param ? Number(param) : null);
