@@ -1,5 +1,9 @@
-import { SearchRequest } from 'imdb-api';
+
+
 import { Context } from 'koa';
+import { Episode, SearchRequest, TVShow } from 'imdb-api';
+import { ParameterizedContext } from 'koa';
+import Router = require('koa-router');
 import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
 import { MediaNotFoundError, ValidationError } from '../helpers/customErrors';
@@ -13,7 +17,7 @@ import { mapper } from '../utils/data-mapper';
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
 
-export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface | string> => {
+export const getByOsdbHash = async(ctx: ParameterizedContext<any, Router.IRouterParamContext<any, {}>>): Promise<MediaMetadataInterface | string> => {
   const { osdbhash: osdbHash, filebytesize } = ctx.params;
 
   if (!osdbHash || !filebytesize) {
@@ -82,7 +86,7 @@ export const getByOsdbHash = async(ctx: Context): Promise<MediaMetadataInterface
   }
 };
 
-export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInterface | string> => {
+export const getBySanitizedTitle = async(ctx: ParameterizedContext<any, Router.IRouterParamContext<any, {}>>): Promise<MediaMetadataInterface | string> => {
   const { title } = ctx.query;
   const year = ctx.query.year ? Number(ctx.query.year) : null;
 
@@ -158,10 +162,8 @@ export const getBySanitizedTitle = async(ctx: Context): Promise<MediaMetadataInt
 /**
  * Looks up a video by its title, and optionally its year, season and episode number.
  * If it is an episode, it also sets the series data.
- *
- * @param ctx Koa request object
  */
-export const getBySanitizedTitleV2 = async(ctx: Context): Promise<MediaMetadataInterface | string> => {
+export const getBySanitizedTitleV2 = async(ctx: ParameterizedContext<any, Router.IRouterParamContext<any, {}>>): Promise<MediaMetadataInterface | string> => {
   const { title } = ctx.query;
   const episode = ctx.query.episode ? Number(ctx.query.episode) : null;
   const season = ctx.query.season ? Number(ctx.query.season) : null;
@@ -257,7 +259,7 @@ export const getBySanitizedTitleV2 = async(ctx: Context): Promise<MediaMetadataI
    */
 };
 
-export const getSeriesByTitle = async(ctx: Context): Promise<SeriesMetadataInterface | string> => {
+export const getSeriesByTitle = async(ctx: ParameterizedContext<any, Router.IRouterParamContext<any, {}>>): Promise<SeriesMetadataInterface | string> => {
   let { title: dirOrFilename } = ctx.query;
   const year = ctx.query.year;
   if (!dirOrFilename) {
@@ -299,7 +301,11 @@ export const getSeriesByTitle = async(ctx: Context): Promise<SeriesMetadataInter
   return ctx.body = dbMeta;
 };
 
+<<<<<<< HEAD
 export const getByImdbID = async(ctx: Context): Promise<MediaMetadataInterface> => {
+=======
+export const getByImdbID = async(ctx: ParameterizedContext<any, Router.IRouterParamContext<any, {}>>): Promise<any> => {
+>>>>>>> master
   const { imdbid } = ctx.query;
 
   if (!imdbid) {

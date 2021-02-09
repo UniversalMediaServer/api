@@ -202,7 +202,7 @@ const removeNotApplicable = (obj): any => {
     if (typeof v === 'object') {
       return _.pull(v, 'N/A');
     }
-    return v !== 'N/A';
+    return v !== 'N/A' && v !== 'NaN' && v !== undefined && v !== null;
   });
 };
 
