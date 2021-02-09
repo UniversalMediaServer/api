@@ -9,7 +9,6 @@ import * as stoppable from 'stoppable';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import EpisodeProcessing from '../../src/models/EpisodeProcessing';
 import MediaMetadata from '../../src/models/MediaMetadata';
-
 const mongod = new MongoMemoryServer();
 
 const aloneEpisodeMetaData = {
@@ -37,7 +36,6 @@ const interstellarMetaData = {
   title: 'Interstellar',
   type: 'movie',
   year: '2014',
-  searchMatches: ['Interstellar'],
 };
 const theSimpsonsMetaData = {
   osdbHash: '8e245d9679d31e12',

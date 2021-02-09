@@ -24,7 +24,7 @@ router.get('/imdbid', async(ctx) => {
 });
 
 router.get('/video', async(ctx) => {
-  await MediaController.getAll(ctx);
+  await MediaController.getVideo(ctx);
 });
 
 export default router;

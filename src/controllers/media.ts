@@ -299,7 +299,7 @@ export const getSeriesByTitle = async(ctx: Context): Promise<SeriesMetadataInter
   return ctx.body = dbMeta;
 };
 
-export const getByImdbID = async(ctx: Context): Promise<any> => {
+export const getByImdbID = async(ctx: Context): Promise<MediaMetadataInterface> => {
   const { imdbid } = ctx.query;
 
   if (!imdbid) {
@@ -339,7 +339,7 @@ export const getByImdbID = async(ctx: Context): Promise<any> => {
   }
 };
 
-export const getAll = async(ctx: Context): Promise<MediaMetadataInterface | string> => {
+export const getVideo = async(ctx: Context): Promise<MediaMetadataInterface | string> => {
   const { title, osdbHash, imdbID } = ctx.query;
   let { episode, season, year, filebytesize } = ctx.query;
   [episode, season, year, filebytesize] = [episode, season, year, filebytesize].map(param => param ? Number(param) : null);
@@ -402,6 +402,7 @@ export const getAll = async(ctx: Context): Promise<MediaMetadataInterface | stri
   }
 
   // the database does not have a record of this file, so begin search for metadata on external apis.
+
   // Start OpenSubtitles lookups
   let openSubtitlesMetadata;
 
@@ -413,7 +414,7 @@ export const getAll = async(ctx: Context): Promise<MediaMetadataInterface | stri
       episode: episode ? episode : null,
     };
     openSubtitlesMetadata = await externalAPIHelper.getFromOpenSubtitles(osQuery, validation);
-    if (!openSubtitlesMetadata.result) {
+    if (!openSubtitlesMetadata) {
       await FailedLookups.updateOne({ osdbHash, imdbID, title, season, episode }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
       throw new MediaNotFoundError();
     }
@@ -425,9 +426,10 @@ export const getAll = async(ctx: Context): Promise<MediaMetadataInterface | stri
   returned by OpenSubtitles */
 
   // Start omdb lookups
-  const omdbSearchRequest: any = {};
+  const omdbSearchRequest = {} as SearchRequest;
   const imdbIdToSearch = imdbID ? imdbID
     : openSubtitlesMetadata?.result?.imdbID ? openSubtitlesMetadata.result.imdbID : null;
+
   if (title) {
     omdbSearchRequest.name = title;
   }

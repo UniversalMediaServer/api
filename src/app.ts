@@ -64,7 +64,6 @@ app.use(async(ctx: Context, next) => {
 });
 
 app.use(bodyParser());
-
 app.use(mediaRouter.routes());
 app.use(indexRouter.routes());
 

@@ -4,7 +4,7 @@ import * as episodeParser from 'episode-parser';
 import * as natural from 'natural';
 import osAPI from '../services/opensubtitles';
 
-import { IMDbIDNotFoundError } from '../helpers/customErrors';
+import { IMDbIDNotFoundError, MediaNotFoundError } from '../helpers/customErrors';
 import EpisodeProcessing from '../models/EpisodeProcessing';
 import FailedLookups from '../models/FailedLookups';
 import { MediaMetadataInterface } from '../models/MediaMetadata';
@@ -122,7 +122,7 @@ export const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchReque
  * @param [season] the season number if this is an episode
  * @param [episode] the episode number if this is an episode
  */
-export const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, season?: number, episode?: number): Promise<MediaMetadataInterface> => {
+export const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, season?: number, episode?: number): Promise<MediaMetadataInterface | null> => {
   if (!imdbId && !searchRequest) {
     throw new Error('Either imdbId or searchRequest must be specified');
   }
@@ -219,7 +219,7 @@ export const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
  *
  * @param imdbID the IMDb ID of the series.
  */
-export const setSeriesMetadataByIMDbID = async(imdbID: string): Promise<SeriesMetadataInterface> => {
+export const setSeriesMetadataByIMDbID = async(imdbID: string): Promise<SeriesMetadataInterface | null> => {
   if (!imdbID) {
     throw new Error('IMDb ID not supplied');
   }
@@ -248,15 +248,16 @@ export const setSeriesMetadataByIMDbID = async(imdbID: string): Promise<SeriesMe
  * Gets metadata from Open Subtitles and validates the response if provided validation data
  * 
  */
-export const getFromOpenSubtitles = async(osQuery: OpenSubtitlesQuery, validationData: OpenSubtitlesValidation) => {
+export const getFromOpenSubtitles = async(osQuery: OpenSubtitlesQuery, validationData: OpenSubtitlesValidation): Promise<MediaMetadataInterface> => {
   const validateMovieByYear = Boolean(validationData.year);
   const validateEpisodeBySeasonAndEpisode = Boolean(validationData.season && validationData.episode);
+  let passedValidation = true;
 
   const openSubtitlesResponse = await osAPI.identify({ ...osQuery, extend: true });
   if (!openSubtitlesResponse.metadata) {
-    return { result: null };
+    return null;
   }
-  let passedValidation = true;
+  
   if (validateMovieByYear || validateEpisodeBySeasonAndEpisode) {
     passedValidation = false;
     if (validateMovieByYear) {
@@ -271,5 +272,9 @@ export const getFromOpenSubtitles = async(osQuery: OpenSubtitlesQuery, validatio
       }
     }
   }
-  return { result: mapper.parseOpenSubtitlesResponse(openSubtitlesResponse), passedValidation };
+  if (!passedValidation) {
+    await FailedLookups.updateOne({ osdbHash: osQuery.moviehash }, { $inc: { count: 1 }, failedValidation: true }, { upsert: true, setDefaultsOnInsert: true }).exec();
+    throw new MediaNotFoundError();
+  }
+  return mapper.parseOpenSubtitlesResponse(openSubtitlesResponse);
 };
