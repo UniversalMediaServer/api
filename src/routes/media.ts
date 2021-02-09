@@ -23,7 +23,7 @@ router.get('/imdbid', async(ctx) => {
   await MediaController.getByImdbID(ctx);
 });
 
-router.get('/getall', async(ctx) => {
+router.get('/video', async(ctx) => {
   await MediaController.getAll(ctx);
 });
 
