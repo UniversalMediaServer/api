@@ -3,7 +3,7 @@ import { Schema, Document, Model  } from 'mongoose';
 
 const TEXT_SCORE_MINIMUM = 1;
 
-export interface SeriesMetadataInterface {
+export interface SeriesMetadataInterface extends Document {
   actors: Array<string>;
   awards?: string;
   country?: string;
@@ -25,10 +25,8 @@ export interface SeriesMetadataInterface {
   year: string;
 }
 
-export interface SeriesMetadataInterfaceDocument extends Document, SeriesMetadataInterface {}
-
-export interface SeriesMetadataModel extends Model<SeriesMetadataInterfaceDocument> {
-  findSimilarSeries(dirOrFilename: string, startYear?: string): Promise<SeriesMetadataInterfaceDocument>; 
+export interface SeriesMetadataModel extends Model<SeriesMetadataInterface> {
+  findSimilarSeries(dirOrFilename: string, startYear?: string): Promise<any>; 
 }
 
 const SeriesMetadataSchema: Schema = new Schema({
@@ -70,7 +68,7 @@ const SeriesMetadataSchema: Schema = new Schema({
  *                    matches are returned. If not provided, the oldest year
  *                    match will be returned.
  */
-SeriesMetadataSchema.statics.findSimilarSeries = async function(title: string, startYear?: string): Promise<SeriesMetadataInterfaceDocument | null> {
+SeriesMetadataSchema.statics.findSimilarSeries = async function(title: string, startYear?: string) {
   const bestGuessQuery: any = { $text: { $search: title, $caseSensitive: false } };
   const sortBy: any = { score: { $meta: 'textScore' } };
 
@@ -80,7 +78,7 @@ SeriesMetadataSchema.statics.findSimilarSeries = async function(title: string, s
     sortBy.startYear = 1;
   }
 
-  const bestGuess = await this.find(bestGuessQuery, { score: { $meta: 'textScore' } })
+  const bestGuess: any = await this.find(bestGuessQuery, { score: { $meta: 'textScore' } })
     .sort(sortBy)
     .limit(1)
     .lean();
@@ -98,5 +96,5 @@ SeriesMetadataSchema.virtual('imdburl').get(function() {
 // this allows us to use MongoDB Full text search https://docs.mongodb.com/manual/reference/operator/query/text/#op._S_text
 SeriesMetadataSchema.index({ 'title': 'text' });
 
-const SeriesMetadata = mongoose.model<SeriesMetadataInterfaceDocument, SeriesMetadataModel>('SeriesMetadata', SeriesMetadataSchema);
+const SeriesMetadata = mongoose.model<SeriesMetadataInterface, SeriesMetadataModel>('SeriesMetadata', SeriesMetadataSchema);
 export default SeriesMetadata;

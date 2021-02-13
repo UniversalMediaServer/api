@@ -1,6 +1,3 @@
-
-
-import { Context } from 'koa';
 import { SearchRequest } from 'imdb-api';
 import { ParameterizedContext } from 'koa';
 import Router = require('koa-router');
