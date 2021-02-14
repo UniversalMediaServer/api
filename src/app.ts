@@ -2,6 +2,7 @@ import * as Koa from 'koa';
 import * as bodyParser from 'koa-bodyparser';
 import * as helmet from 'koa-helmet';
 import * as mongoose from 'mongoose';
+import { ParameterizedContext } from 'koa';
 import * as Debug from 'debug';
 const debug = Debug('universalmediaserver-api:server');
 import indexRouter from './routes/index';
@@ -55,7 +56,7 @@ app.use(async(ctx, next) => {
   await next();
 });
 
-app.use(async(ctx: Context, next) => {
+app.use(async(ctx: ParameterizedContext, next) => {
   if (bypassMongo) {
     await mongoose.connection.dropDatabase();
   }

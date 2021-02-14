@@ -235,7 +235,7 @@ export const setSeriesMetadataByIMDbID = async(imdbID: string): Promise<SeriesMe
     return existingSeries;
   }
 
-  const imdbData: SeriesMetadataInterface = await getFromIMDbAPIV2(imdbID);
+  const imdbData = await getFromIMDbAPIV2(imdbID);
   if (!imdbData) {
     await FailedLookups.updateOne({ imdbID }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     return null;
