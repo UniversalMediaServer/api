@@ -54,7 +54,7 @@ describe('get by all', () => {
   });
 
   describe('Movies', () => {
-    it('should return a movie by imdbid, from source APIs then store', async() => {
+    it.only('should return a movie by imdbid, from source APIs then store', async() => {
       const spy = jest.spyOn(apihelper, 'getFromIMDbAPIV2');
       let response: any = await got(`${appUrl}/api/media/video?imdbID=${MOVIE_INTERSTELLAR.imdbId}`, { responseType: 'json' });
       expect(response.body.title).toEqual('Interstellar');
