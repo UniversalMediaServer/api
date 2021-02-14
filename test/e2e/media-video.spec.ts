@@ -118,7 +118,7 @@ describe('get by all', () => {
       expect(response.body.seriesIMDbID).toEqual('tt0411008');
     });
 
-    it('should return an episode by osdbHash, from source APIs then store', async() => {
+    it.skip('should return an episode by osdbHash, from source APIs then store', async() => {
       const spy = jest.spyOn(apihelper, 'getFromIMDbAPIV2');
       let response: any = await got(`${appUrl}/api/media/video?osdbHash=${EPISODE_PRISONBREAK.osdbHash}&filebytesize=${EPISODE_PRISONBREAK.filebytesize}`, { responseType: 'json' });
       expect(response.body.title).toEqual('Behind the Eyes');

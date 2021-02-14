@@ -389,7 +389,7 @@ export const getVideo = async(ctx: ParameterizedContext<any, Router.IRouterParam
     MediaMetadata.findOne({ $or: query }, null, { lean: true }).exec(),
     FailedLookups.findOne({ $or: failedQuery }, null, { lean: true }).exec(),
   ]);
-  console.log(existingResult);
+
   // we have an existing metadata record, so return it
   if (existingResult) {
     return ctx.body = existingResult;
