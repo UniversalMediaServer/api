@@ -25,6 +25,19 @@ export interface SeriesMetadataInterface extends Document {
   year: string;
 }
 
+interface BestGuessQuery {
+  $text: {
+    $search: string;
+    $caseSensitive: boolean;
+  };
+  startYear: string;
+}
+
+interface SortByFilter {
+  score: { $meta: string };
+  startYear: number;
+}
+
 export interface SeriesMetadataModel extends Model<SeriesMetadataInterface> {
   findSimilarSeries(dirOrFilename: string, startYear?: string): Promise<any>; 
 }
@@ -68,9 +81,9 @@ const SeriesMetadataSchema: Schema = new Schema({
  *                    matches are returned. If not provided, the oldest year
  *                    match will be returned.
  */
-SeriesMetadataSchema.statics.findSimilarSeries = async function(title: string, startYear?: string) {
-  const bestGuessQuery: any = { $text: { $search: title, $caseSensitive: false } };
-  const sortBy: any = { score: { $meta: 'textScore' } };
+SeriesMetadataSchema.statics.findSimilarSeries = async function(title: string, startYear?: string): Promise<SeriesMetadataInterface | null> {
+  const bestGuessQuery = { $text: { $search: title, $caseSensitive: false } } as BestGuessQuery;
+  const sortBy = { score: { $meta: 'textScore' } } as SortByFilter;
 
   if (startYear) {
     bestGuessQuery.startYear = startYear;
@@ -78,7 +91,7 @@ SeriesMetadataSchema.statics.findSimilarSeries = async function(title: string, s
     sortBy.startYear = 1;
   }
 
-  const bestGuess: any = await this.find(bestGuessQuery, { score: { $meta: 'textScore' } })
+  const bestGuess = await this.find(bestGuessQuery, { score: { $meta: 'textScore' } })
     .sort(sortBy)
     .limit(1)
     .lean();

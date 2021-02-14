@@ -129,7 +129,6 @@ describe('get by all', () => {
       spy.mockReset();
 
       // subsequent calls should return MongoDB result rather than calling external apis
-      console.log(1111)
       response = await got(`${appUrl}/api/media/video?osdbHash=${EPISODE_PRISONBREAK.osdbHash}&filebytesize=${EPISODE_PRISONBREAK.filebytesize}`, { responseType: 'json' });
       expect(spy).toHaveBeenCalledTimes(0);
       expect(response.body.title).toEqual('Behind the Eyes');
