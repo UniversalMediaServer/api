@@ -7,6 +7,9 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    env:
+      IMDB_API_KEY: ${{ secrets.IMDB_API_KEY }}
+
     strategy:
       matrix:
         node-version: [14]
@@ -24,5 +27,4 @@ jobs:
     - run: yarn install
     - run: node_modules/.bin/eslint src/**/*.ts
     - run: yarn test
-    env:
-      IMDB_API_KEY: ${{ secrets.IMDB_API_KEY }}
+
