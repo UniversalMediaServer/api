@@ -413,8 +413,8 @@ export const getVideo = async(ctx: ParameterizedContext<any, Router.IRouterParam
       episode: episode ? episode : null,
     };
     openSubtitlesMetadata = await externalAPIHelper.getFromOpenSubtitles(osQuery, validation);
-    if (!openSubtitlesMetadata) {
-      await FailedLookups.updateOne({ osdbHash, imdbID, title, season, episode }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+    if (!openSubtitlesMetadata && !imdbID) {
+      await FailedLookups.updateOne({ osdbHash, title, season, episode }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
       throw new MediaNotFoundError();
     }
   }
@@ -436,8 +436,10 @@ export const getVideo = async(ctx: ParameterizedContext<any, Router.IRouterParam
   if (year) {
     omdbSearchRequest.year = year;
   }
-
-  const imdbData: MediaMetadataInterface = await externalAPIHelper.getFromIMDbAPIV2(imdbIdToSearch, omdbSearchRequest, season, episode);
+  let imdbData: MediaMetadataInterface;
+  if (imdbIdToSearch) {
+    imdbData = await externalAPIHelper.getFromIMDbAPIV2(imdbIdToSearch, omdbSearchRequest, season, episode);
+  }
 
   if (imdbData?.type === 'episode') {
     await externalAPIHelper.setSeriesMetadataByIMDbID(imdbData.seriesIMDbID);
