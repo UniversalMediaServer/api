@@ -138,7 +138,7 @@ describe('get by all', () => {
       expect(response.body.seriesIMDbID).toEqual('tt0455275');
     });
 
-    it.only('should return an episode by osdbHash, but return existing metadata if found by imdbid', async() => {
+    it('should return an episode by osdbHash, but return existing metadata if found by imdbid', async() => {
       const spy = jest.spyOn(apihelper, 'getFromIMDbAPIV2');
       const MongoSpy = jest.spyOn(MediaMetadata, 'findOne');
       await mongoose.connection.db.collection('media_metadata').insert({ imdbdID: 'tt0455275', title: 'Behind the Eyes' });
