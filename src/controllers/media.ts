@@ -436,10 +436,8 @@ export const getVideo = async(ctx: ParameterizedContext<any, Router.IRouterParam
   if (year) {
     omdbSearchRequest.year = year;
   }
-  let imdbData: MediaMetadataInterface;
-  if (imdbIdToSearch) {
-    imdbData = await externalAPIHelper.getFromIMDbAPIV2(imdbIdToSearch, omdbSearchRequest, season, episode);
-  }
+
+  const imdbData: MediaMetadataInterface = await externalAPIHelper.getFromIMDbAPIV2(imdbIdToSearch, omdbSearchRequest, season, episode);
 
   if (imdbData?.type === 'episode') {
     await externalAPIHelper.setSeriesMetadataByIMDbID(imdbData.seriesIMDbID);
