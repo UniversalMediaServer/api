@@ -6,6 +6,7 @@ import got from 'got';
 import * as stoppable from 'stoppable';
 
 import { MongoMemoryServer } from 'mongodb-memory-server';
+import MediaMetadata from '../../src/models/MediaMetadata';
 
 const mongod = new MongoMemoryServer();
 
@@ -29,6 +30,7 @@ const EPISODE_PRISONBREAK = {
   'filebytesize': '271224190',
   'season': '5',
   'episode': '9',
+  'imdbId': 'tt0455275',
 };
 // returns null from Open Subtitles
 const EPISODE_MANDALORIAN = {
@@ -118,7 +120,7 @@ describe('get by all', () => {
       expect(response.body.seriesIMDbID).toEqual('tt0411008');
     });
 
-    it.skip('should return an episode by osdbHash, from source APIs then store', async() => {
+    it('should return an episode by osdbHash, from source APIs then store', async() => {
       const spy = jest.spyOn(apihelper, 'getFromIMDbAPIV2');
       let response: any = await got(`${appUrl}/api/media/video?osdbHash=${EPISODE_PRISONBREAK.osdbHash}&filebytesize=${EPISODE_PRISONBREAK.filebytesize}`, { responseType: 'json' });
       expect(response.body.title).toEqual('Behind the Eyes');
@@ -134,6 +136,16 @@ describe('get by all', () => {
       expect(response.body.title).toEqual('Behind the Eyes');
       expect(response.body.type).toEqual('episode');
       expect(response.body.seriesIMDbID).toEqual('tt0455275');
+    });
+
+    it.only('should return an episode by osdbHash, but return existing metadata if found by imdbid', async() => {
+      const spy = jest.spyOn(apihelper, 'getFromIMDbAPIV2');
+      const MongoSpy = jest.spyOn(MediaMetadata, 'findOne');
+      await mongoose.connection.db.collection('media_metadata').insert({ imdbdID: 'tt0455275', title: 'Behind the Eyes' });
+      const response: any = await got(`${appUrl}/api/media/video?osdbHash=${EPISODE_PRISONBREAK.osdbHash}&filebytesize=${EPISODE_PRISONBREAK.filebytesize}`, { responseType: 'json' });
+      expect(response.body.title).toEqual('Behind the Eyes');
+      expect(MongoSpy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(0);
     });
   });
 

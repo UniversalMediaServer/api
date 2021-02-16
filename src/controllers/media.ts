@@ -418,13 +418,22 @@ export const getVideo = async(ctx: ParameterizedContext<any, Router.IRouterParam
   // End OpenSubtitles lookups
 
   /* if the client has passed an imdbId, we'll use that as the primary source, otherwise, the one
-  returned by OpenSubtitles */
+  returned by OpenSubtitles, if one was found */
 
   // Start omdb lookups
   const omdbSearchRequest = {} as SearchRequest;
   const imdbIdToSearch = imdbID ? imdbID
-    : openSubtitlesMetadata?.result?.imdbID ? openSubtitlesMetadata.result.imdbID : null;
+    : openSubtitlesMetadata?.imdbID ? openSubtitlesMetadata.imdbID : null;
 
+  // if the client did not pass an imdbID, but we found one from Open Subtitles, so see if we have an existing record for the now known media.
+  if (!imdbID && openSubtitlesMetadata?.imdbID) {
+    {
+      const existingResult = await MediaMetadata.findOne({ imdbID }, null, { lean: true }).exec();
+      if (existingResult) {
+        return ctx.body = existingResult;
+      }
+    }
+  }
   if (title) {
     omdbSearchRequest.name = title;
   }

@@ -126,7 +126,6 @@ export const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
   if (!imdbId && !searchRequest) {
     throw new Error('Either imdbId or searchRequest must be specified');
   }
-
   // If the client specified an episode number, this is an episode
   const isExpectingTVEpisode = Boolean(episode);
 
@@ -177,6 +176,7 @@ export const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
 
   // Return early if we already have a result for that IMDb ID
   const imdbData = await imdbAPI.get({ id: imdbId });
+
   if (!imdbData) {
     return null;
   }
@@ -246,7 +246,6 @@ export const setSeriesMetadataByIMDbID = async(imdbID: string): Promise<SeriesMe
 
 /**
  * Gets metadata from Open Subtitles and validates the response if provided validation data
- * 
  */
 export const getFromOpenSubtitles = async(osQuery: OpenSubtitlesQuery, validationData: OpenSubtitlesValidation): Promise<MediaMetadataInterface> => {
   const validateMovieByYear = Boolean(validationData.year);
@@ -254,6 +253,7 @@ export const getFromOpenSubtitles = async(osQuery: OpenSubtitlesQuery, validatio
   let passedValidation = true;
 
   const openSubtitlesResponse = await osAPI.identify({ ...osQuery, extend: true });
+
   if (!openSubtitlesResponse.metadata) {
     return null;
   }
