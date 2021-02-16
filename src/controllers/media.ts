@@ -350,13 +350,16 @@ export const getVideo = async(ctx: ParameterizedContext<any, Router.IRouterParam
   if (osdbHash && !filebytesize) {
     throw new ValidationError('filebytesize is required when passing osdbHash');
   }
-
+  let isOnlyOpenSubsSearch = false;
   const query = [];
   const failedQuery = [];
 
   if (osdbHash) {
     query.push({ osdbHash });
     failedQuery.push({ osdbHash });
+    if (!imdbID && !title) {
+      isOnlyOpenSubsSearch = true;
+    }
   }
 
   if (imdbID) {
@@ -413,6 +416,11 @@ export const getVideo = async(ctx: ParameterizedContext<any, Router.IRouterParam
       episode: episode ? episode : null,
     };
     openSubtitlesMetadata = await externalAPIHelper.getFromOpenSubtitles(osQuery, validation);
+
+    if (isOnlyOpenSubsSearch && !openSubtitlesMetadata) {
+      await FailedLookups.updateOne({ osdbHash }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();	
+      throw new MediaNotFoundError();
+    }
   }
 
   // End OpenSubtitles lookups
