@@ -413,10 +413,6 @@ export const getVideo = async(ctx: ParameterizedContext<any, Router.IRouterParam
       episode: episode ? episode : null,
     };
     openSubtitlesMetadata = await externalAPIHelper.getFromOpenSubtitles(osQuery, validation);
-    if (!openSubtitlesMetadata && !imdbID) {
-      await FailedLookups.updateOne({ osdbHash, title, season, episode }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
-      throw new MediaNotFoundError();
-    }
   }
 
   // End OpenSubtitles lookups
