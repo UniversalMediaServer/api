@@ -195,8 +195,8 @@ describe('get by all', () => {
       expect(error.message).toEqual('Response code 404 (Not Found)');
       expect(spy).toHaveBeenCalledTimes(0);
     });
-    // todo work out how to test this, as open subs is flakey. might need mocked
-    it.skip('opensubtitles queries which fail, should not try byImdb', async() => {
+
+    it('opensubtitles queries which fail, should not try byImdb', async() => {
       const spy = jest.spyOn(apihelper, 'getFromIMDbAPIV2');
       let error;
       try {
