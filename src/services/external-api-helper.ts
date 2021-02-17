@@ -277,7 +277,7 @@ export const getFromOpenSubtitles = async(osQuery: OpenSubtitlesQuery, validatio
     throw new MediaNotFoundError();
   }
   if (openSubtitlesResponse.type === 'episode') {
-    return mapper.parseOpenSubtitlesEpisodeResponse(openSubtitlesResponse)
+    return mapper.parseOpenSubtitlesEpisodeResponse(openSubtitlesResponse);
   }
 
   return mapper.parseOpenSubtitlesResponse(openSubtitlesResponse);
