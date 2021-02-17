@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { MediaMetadataInterface } from '../models/MediaMetadata';
 import { SeriesMetadataInterface } from '../models/SeriesMetadata';
 
-const openSubtitlesMap = {  
+const openSubtitlesMovieMap = {
   'metadata.cast': [
     {
       key: 'actors?',
@@ -34,6 +34,41 @@ const openSubtitlesMap = {
   'type': 'type',
   'metadata.year': 'year',
   'metadata.votes': 'votes',
+};
+
+const openSubtitlesEpisodeMap = {
+  'metadata.cast': [
+    {
+      key: 'actors?',
+      transform: val => _.isEmpty(_.values(val)) ? null : _.values(val),
+    },
+  ],
+  'metadata.genres': [
+    {
+      key: 'genres?',
+      transform: val => _.isEmpty(_.values(val)) ? null : _.values(val),
+    },
+  ],
+
+  'metadata.rating': [
+    {
+      key: 'rating',
+      transform: val => parseFloat(val),
+    },
+  ],
+  'metadata.goofs': 'goofs',
+  'metadata.cover': 'poster',
+  'metadata.imdbid': 'imdbID',
+  'moviehash': 'osdbHash',
+  'metadata.tagline': 'tagline',
+  'metadata.episode_title': 'title',
+  'metadata.trivia': 'trivia',
+  'metadata.duration': 'runtime',
+  'type': 'type',
+  'metadata.year': 'year',
+  'metadata.votes': 'votes',
+  'metadata.season': 'season',
+  'metadata.episode': 'episode',
 };
 
 const imdbEpisodeMap = {
@@ -208,7 +243,12 @@ const removeNotApplicable = (obj): any => {
 
 class UmsDataMapper {
   parseOpenSubtitlesResponse(openSubtitlesData): MediaMetadataInterface {
-    const mappedData = objectMapper(openSubtitlesData, openSubtitlesMap);
+    const mappedData = objectMapper(openSubtitlesData, openSubtitlesMovieMap);
+    return removeNotApplicable(mappedData);
+  }
+
+  parseOpenSubtitlesEpisodeResponse(openSubtitlesData): MediaMetadataInterface {
+    const mappedData = objectMapper(openSubtitlesData, openSubtitlesEpisodeMap);
     return removeNotApplicable(mappedData);
   }
 

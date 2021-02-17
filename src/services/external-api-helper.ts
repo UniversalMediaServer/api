@@ -276,5 +276,9 @@ export const getFromOpenSubtitles = async(osQuery: OpenSubtitlesQuery, validatio
     await FailedLookups.updateOne({ osdbHash: osQuery.moviehash }, { $inc: { count: 1 }, failedValidation: true }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
+  if (openSubtitlesResponse.type === 'episode') {
+    return mapper.parseOpenSubtitlesEpisodeResponse(openSubtitlesResponse)
+  }
+
   return mapper.parseOpenSubtitlesResponse(openSubtitlesResponse);
 };

@@ -188,7 +188,7 @@ describe('get by all', () => {
       expect(response.body.type).toEqual('episode');
       expect(response.body.seriesIMDbID).toEqual('tt0455275');
     });
-
+    // tests that when a result is found by open subtitles, we first check if we already have a document for that id
     it('should return an episode by osdbHash, but return existing metadata if found by imdbid', async() => {
       const spy = jest.spyOn(apihelper, 'getFromIMDbAPIV2');
       const MongoSpy = jest.spyOn(MediaMetadata, 'findOne');
@@ -275,7 +275,7 @@ describe('get by all', () => {
     it('should require filebytesize if attempting osbdHash search', async() => {
       let error;
       try {
-        await got(`${appUrl}/api/media/video?=fsd`, { responseType: 'json' });
+        await got(`${appUrl}/api/media/video?osbdHash=fsd`, { responseType: 'json' });
       } catch (e) {
         error = e;
       }
