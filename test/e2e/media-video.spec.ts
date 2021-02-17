@@ -16,6 +16,8 @@ let server;
 const MOVIE_INTERSTELLAR = {
   'imdbId': 'tt0816692',
   'title': 'Interstellar',
+  'osdbHash': '0f0f4c9f3416e24f',
+  'filebytesize': '2431697820',
 };
 
 const EPISODE_LOST = {
@@ -84,6 +86,55 @@ describe('get by all', () => {
       expect(response.body.title).toEqual('Interstellar');
       expect(response.body.type).toEqual('movie');
       expect(spy).toHaveBeenCalledTimes(0);
+    });
+
+    it('should return a movie by osdbHash, from source APIs then store', async() => {
+      const spy = jest.spyOn(apihelper, 'getFromIMDbAPIV2');
+      let response: any = await got(`${appUrl}/api/media/video?osdbHash=${MOVIE_INTERSTELLAR.osdbHash}&filebytesize=${MOVIE_INTERSTELLAR.filebytesize}`, { responseType: 'json' });
+      expect(response.body.title).toEqual('Interstellar');
+      expect(response.body.type).toEqual('movie');
+      expect(spy).toHaveBeenCalledTimes(1);
+      spy.mockReset();
+
+      // subsequent calls should return MongoDB result rather than calling external apis
+      response = await got(`${appUrl}/api/media/video?osdbHash=${MOVIE_INTERSTELLAR.osdbHash}&filebytesize=${MOVIE_INTERSTELLAR.filebytesize}`, { responseType: 'json' });
+      expect(response.body.title).toEqual('Interstellar');
+      expect(response.body.type).toEqual('movie');
+      expect(spy).toHaveBeenCalledTimes(0);
+    });
+
+    it('should return a movie by title AND imdbId from source APIs then store', async() => {
+      const spy = jest.spyOn(apihelper, 'getFromIMDbAPIV2');
+      let response: any = await got(`${appUrl}/api/media/video?title=${MOVIE_INTERSTELLAR.title}&imdbID=${MOVIE_INTERSTELLAR.imdbId}`, { responseType: 'json' });
+      expect(response.body.title).toEqual('Interstellar');
+      expect(response.body.type).toEqual('movie');
+      expect(spy).toHaveBeenCalledTimes(1);
+      spy.mockReset();
+
+      // subsequent calls should return MongoDB result rather than calling external apis
+      response = await got(`${appUrl}/api/media/video?title=${MOVIE_INTERSTELLAR.title}&imdbID=${MOVIE_INTERSTELLAR.imdbId}`, { responseType: 'json' });
+      expect(response.body.title).toEqual('Interstellar');
+      expect(response.body.type).toEqual('movie');
+      expect(spy).toHaveBeenCalledTimes(0);
+    });
+
+    it('should return a movie by all possible params, from source APIs then store', async() => {
+      const omdbSpy = jest.spyOn(apihelper, 'getFromIMDbAPIV2');
+      const openSubsSpy = jest.spyOn(apihelper, 'getFromOpenSubtitles');
+      let response: any = await got(`${appUrl}/api/media/video?osdbHash=${MOVIE_INTERSTELLAR.osdbHash}&filebytesize=${MOVIE_INTERSTELLAR.filebytesize}&title=${MOVIE_INTERSTELLAR.title}&imdbID=${MOVIE_INTERSTELLAR.imdbId}`, { responseType: 'json' });
+      expect(response.body.title).toEqual('Interstellar');
+      expect(response.body.type).toEqual('movie');
+      expect(omdbSpy).toHaveBeenCalledTimes(1);
+      expect(openSubsSpy).toHaveBeenCalledTimes(1);
+      omdbSpy.mockReset();
+      openSubsSpy.mockReset();
+
+      // subsequent calls should return MongoDB result rather than calling external apis
+      response = await got(`${appUrl}/api/media/video?osdbHash=${MOVIE_INTERSTELLAR.osdbHash}&filebytesize=${MOVIE_INTERSTELLAR.filebytesize}&title=${MOVIE_INTERSTELLAR.title}&imdbID=${MOVIE_INTERSTELLAR.imdbId}`, { responseType: 'json' });
+      expect(response.body.title).toEqual('Interstellar');
+      expect(response.body.type).toEqual('movie');
+      expect(omdbSpy).toHaveBeenCalledTimes(0);
+      expect(openSubsSpy).toHaveBeenCalledTimes(0);
     });
   });
 
@@ -196,7 +247,7 @@ describe('get by all', () => {
       expect(spy).toHaveBeenCalledTimes(0);
     });
 
-    it('opensubtitles queries which fail, should not try byImdb', async() => {
+    it('opensubtitles queries which fail, should not try byImdb if only searching by hash', async() => {
       const spy = jest.spyOn(apihelper, 'getFromIMDbAPIV2');
       let error;
       try {
