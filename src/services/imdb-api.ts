@@ -5,6 +5,9 @@ import { ExternalAPIError } from '../helpers/customErrors';
 let baseURL = 'https://www.omdbapi.com';
 if (process.env.NODE_ENV === 'production') {
   baseURL = 'https://private.omdbapi.com';
+  if (!process.env.IMDB_API_KEY) {
+    throw new Error('IMDB_API_KEY not set');
+  }
 }
 const originalModule = new imdb.Client({ apiKey: process.env.IMDB_API_KEY || 'foo', baseURL });
 const imdbAPI = _.cloneDeep(originalModule);

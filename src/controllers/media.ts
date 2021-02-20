@@ -1,4 +1,4 @@
-import { Episode, SearchRequest, TVShow } from 'imdb-api';
+import { SearchRequest, TVShow } from 'imdb-api';
 import { ParameterizedContext } from 'koa';
 import Router = require('koa-router');
 import * as _ from 'lodash';
@@ -6,7 +6,6 @@ import * as episodeParser from 'episode-parser';
 import * as natural from 'natural';
 
 import { IMDbIDNotFoundError, MediaNotFoundError, ValidationError } from '../helpers/customErrors';
-import EpisodeProcessing from '../models/EpisodeProcessing';
 import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
 import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
@@ -15,7 +14,6 @@ import imdbAPI from '../services/imdb-api';
 import { mapper } from '../utils/data-mapper';
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
-const MONGODB_DUPLICATE_KEY_ERROR_CODE = 11000;
 
 /**
  * Attempts a query to the IMDb API and standardizes the response
@@ -83,17 +81,6 @@ const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Pr
   } else if (imdbData.type === 'series') {
     metadata = mapper.parseIMDBAPISeriesResponse(imdbData);
   } else if (imdbData.type === 'episode') {
-    const tvSeriesId = (imdbData as Episode).seriesid;
-    const existingSeries: SeriesMetadataInterface = await SeriesMetadata.findOne({ imdbID: tvSeriesId }, null, { lean: true }).exec();
-    if (!existingSeries) {
-      try {
-        await EpisodeProcessing.create({ seriesimdbid: tvSeriesId });
-      } catch (e) {
-        if (e.code !== MONGODB_DUPLICATE_KEY_ERROR_CODE) {
-          throw e;
-        }
-      }
-    }
     metadata = mapper.parseIMDBAPIEpisodeResponse(imdbData);
   } else {
     throw new Error('Received a type we did not expect');
@@ -170,22 +157,6 @@ const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, s
   let metadata;
   if (isExpectingTVEpisode) {
     if (imdbData.type === 'episode') {
-      const tvSeriesId = (imdbData as Episode).seriesid;
-
-      /**
-       * If we have not already processed this series, add it to the processing
-       * queue. Duplicate errors mean it's already in the queue, so just ignore them.
-       */
-      const existingSeries: SeriesMetadataInterface = await SeriesMetadata.findOne({ imdbID: tvSeriesId, isEpisodesCrawled: true }, null, { lean: true }).exec();
-      if (!existingSeries) {
-        try {
-          await EpisodeProcessing.create({ seriesimdbid: tvSeriesId });
-        } catch (e) {
-          if (e.code !== MONGODB_DUPLICATE_KEY_ERROR_CODE) {
-            throw e;
-          }
-        }
-      }
       metadata = mapper.parseIMDBAPIEpisodeResponse(imdbData);
     } else {
       throw new Error('Received type ' + imdbData.type + ' but expected episode for ' + imdbId + ' ' + searchRequest + ' ' + season + ' ' + episode);
