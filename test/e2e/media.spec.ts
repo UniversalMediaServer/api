@@ -7,8 +7,6 @@ import got from 'got';
 import * as stoppable from 'stoppable';
 
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import EpisodeProcessing from '../../src/models/EpisodeProcessing';
-import MediaMetadata from '../../src/models/MediaMetadata';
 const mongod = new MongoMemoryServer();
 
 const aloneEpisodeMetaData = {
@@ -294,19 +292,6 @@ describe('Media Metadata endpoints', () => {
       const doc = await FailedLookupsModel.findOne({ osdbHash: 'a04cfbeafc4af7eb' });
       expect(doc).toHaveProperty('_id');
       expect(doc).toHaveProperty('osdbHash');
-    });
-
-    it('episodelookup should make an EpisodeProcessing document to process series later', async() => {
-      await FailedLookupsModel.deleteMany({});
-      await EpisodeProcessing.deleteMany({});
-      await got(`${appUrl}/api/media/osdbhash/${prisonBreakEpisodeMetadata.osdbHash}/1234`);
-      const doc = await MediaMetadata.findOne({ osdbHash: prisonBreakEpisodeMetadata.osdbHash });
-      expect(doc).toHaveProperty('_id');
-      expect(doc).toHaveProperty('episode', prisonBreakEpisodeMetadata.episode);
-      expect(doc).toHaveProperty('title', prisonBreakEpisodeMetadata.title);
-
-      const doc2 = await EpisodeProcessing.findOne({ seriesimdbid: prisonBreakEpisodeMetadata.seriesIMDbID });
-      expect(doc2).toBeTruthy();
     });
   });
 
