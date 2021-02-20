@@ -14,13 +14,5 @@ module.exports = {
       watch: true,
       autorestart: true,
     },
-    {
-      name: 'CRON',
-      script: 'ts-node',
-      args: ' --files ./src/cron/all-episodes.ts',
-      instances: 1,
-      cron_restart: '0,30 * * * *',
-      autorestart: false,
-    },
   ],
 };
