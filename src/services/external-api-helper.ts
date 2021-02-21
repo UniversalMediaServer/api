@@ -1,11 +1,10 @@
-import { Episode, SearchRequest, TVShow } from 'imdb-api';
+import { SearchRequest, TVShow } from 'imdb-api';
 import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
 import * as natural from 'natural';
 import osAPI from '../services/opensubtitles';
 
 import { IMDbIDNotFoundError, MediaNotFoundError } from '../helpers/customErrors';
-import EpisodeProcessing from '../models/EpisodeProcessing';
 import FailedLookups from '../models/FailedLookups';
 import { MediaMetadataInterface } from '../models/MediaMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
@@ -13,7 +12,6 @@ import imdbAPI from './imdb-api';
 import { mapper } from '../utils/data-mapper';
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
-const MONGODB_DUPLICATE_KEY_ERROR_CODE = 11000;
 
 export interface OpenSubtitlesQuery {
   moviehash: string;
