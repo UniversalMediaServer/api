@@ -92,17 +92,6 @@ export const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchReque
   } else if (imdbData.type === 'series') {
     metadata = mapper.parseIMDBAPISeriesResponse(imdbData);
   } else if (imdbData.type === 'episode') {
-    const tvSeriesId = (imdbData as Episode).seriesid;
-    const existingSeries: SeriesMetadataInterface = await SeriesMetadata.findOne({ imdbID: tvSeriesId }, null, { lean: true }).exec();
-    if (!existingSeries) {
-      try {
-        await EpisodeProcessing.create({ seriesimdbid: tvSeriesId });
-      } catch (e) {
-        if (e.code !== MONGODB_DUPLICATE_KEY_ERROR_CODE) {
-          throw e;
-        }
-      }
-    }
     metadata = mapper.parseIMDBAPIEpisodeResponse(imdbData);
   } else {
     throw new Error('Received a type we did not expect');
@@ -184,22 +173,6 @@ export const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
   let metadata;
   if (isExpectingTVEpisode || (!isExpectingTVEpisode && imdbData.type === 'episode')) {
     if (imdbData.type === 'episode') {
-      const tvSeriesId = (imdbData as Episode).seriesid;
-
-      /**
-       * If we have not already processed this series, add it to the processing
-       * queue. Duplicate errors mean it's already in the queue, so just ignore them.
-       */
-      const existingSeries: SeriesMetadataInterface = await SeriesMetadata.findOne({ imdbID: tvSeriesId, isEpisodesCrawled: true }, null, { lean: true }).exec();
-      if (!existingSeries) {
-        try {
-          await EpisodeProcessing.create({ seriesimdbid: tvSeriesId });
-        } catch (e) {
-          if (e.code !== MONGODB_DUPLICATE_KEY_ERROR_CODE) {
-            throw e;
-          }
-        }
-      }
       metadata = mapper.parseIMDBAPIEpisodeResponse(imdbData);
     } else {
       throw new Error('Received type ' + imdbData.type + ' but expected episode for ' + imdbId + ' ' + searchRequest + ' ' + season + ' ' + episode);
