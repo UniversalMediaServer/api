@@ -261,13 +261,13 @@ export const getFromOpenSubtitles = async(osQuery: OpenSubtitlesQuery, validatio
   if (validateMovieByYear || validateEpisodeBySeasonAndEpisode) {
     passedValidation = false;
     if (validateMovieByYear) {
-      if (validationData.year === openSubtitlesResponse.metadata.year) {
+      if (validationData.year.toString() === openSubtitlesResponse.metadata?.year) {
         passedValidation = true;
       }
     }
 
     if (validateEpisodeBySeasonAndEpisode) {
-      if (validationData.season === openSubtitlesResponse.metadata.season && validationData.episode === openSubtitlesResponse.metadata.episode) {
+      if (validationData.season.toString() === openSubtitlesResponse.metadata.season && validationData.episode.toString() === openSubtitlesResponse.metadata.episode) {
         passedValidation = true;
       }
     }

@@ -351,6 +351,7 @@ export const getVideo = async(ctx: ParameterizedContext<any, Router.IRouterParam
     throw new ValidationError('filebytesize is required when passing osdbHash');
   }
   let isOnlyOpenSubsSearch = false;
+
   const query = [];
   const failedQuery = [];
 
@@ -397,6 +398,7 @@ export const getVideo = async(ctx: ParameterizedContext<any, Router.IRouterParam
   if (existingResult) {
     return ctx.body = existingResult;
   }
+
   // we have an existing failure record, so increment it, and throw not found error
   if (existingFailedResult) {
     await FailedLookups.updateOne({ _id: existingFailedResult._id }, { $inc: { count: 1 } }).exec();
@@ -415,6 +417,7 @@ export const getVideo = async(ctx: ParameterizedContext<any, Router.IRouterParam
       season: season ? season : null,
       episode: episode ? episode : null,
     };
+
     openSubtitlesMetadata = await externalAPIHelper.getFromOpenSubtitles(osQuery, validation);
 
     if (isOnlyOpenSubsSearch && !openSubtitlesMetadata) {

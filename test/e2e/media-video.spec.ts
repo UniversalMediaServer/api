@@ -40,6 +40,16 @@ const EPISODE_MANDALORIAN = {
   'filebytesize': '1315319814',
 };
 
+const EPISODE_BAND_OF_BROTHERS = {
+  'osdbHash': 'fbfbfc3341a24205',
+  'filebytesize': '547090397',
+  'imdbID': 'tt1247462',
+  'season': '1',
+  'episode': '6',
+  'title': 'Band of Brothers',
+  'year': '2001',
+};
+
 describe('get by all', () => {
   beforeAll(async() => {
     const mongoUrl = await mongod.getUri();
@@ -197,6 +207,35 @@ describe('get by all', () => {
       expect(response.body.title).toEqual('Behind the Eyes');
       expect(MongoSpy).toHaveBeenCalledTimes(2);
       expect(spy).toHaveBeenCalledTimes(0);
+    });
+    // this also tests opensubtitles valiation
+    it('should return an episode by when passed all possible params, from source APIs then store', async() => {
+      const spy = jest.spyOn(apihelper, 'getFromIMDbAPIV2');
+      const openSubsSpy = jest.spyOn(apihelper, 'getFromOpenSubtitles');
+      const url = `${appUrl}/api/media/video?`+
+        `osdbHash=${EPISODE_BAND_OF_BROTHERS.osdbHash}`+
+        `&filebytesize=${EPISODE_BAND_OF_BROTHERS.filebytesize}`+
+        `&title=${EPISODE_BAND_OF_BROTHERS.title}`+
+        `&season=${EPISODE_BAND_OF_BROTHERS.season}`+
+        `&episode=${EPISODE_BAND_OF_BROTHERS.episode}`+
+        `&year=${EPISODE_BAND_OF_BROTHERS.year}`;
+      let response: any = await got(url, { responseType: 'json' });
+      expect(response.body.title).toEqual('Bastogne');
+      expect(response.body.type).toEqual('episode');
+      expect(response.body.seriesIMDbID).toEqual('tt0185906');
+      // once for episode, once for series
+      expect(spy).toHaveBeenCalledTimes(2);
+      expect(openSubsSpy).toHaveBeenCalledTimes(1);
+      spy.mockReset();
+      openSubsSpy.mockReset();
+
+      // subsequent calls should return MongoDB result rather than calling external apis
+      response = await got(url, { responseType: 'json' });
+      expect(spy).toHaveBeenCalledTimes(0);
+      expect(openSubsSpy).toHaveBeenCalledTimes(0);
+      expect(response.body.title).toEqual('Bastogne');
+      expect(response.body.type).toEqual('episode');
+      expect(response.body.seriesIMDbID).toEqual('tt0185906');
     });
   });
 
