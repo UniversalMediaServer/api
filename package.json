@@ -123,7 +123,7 @@
     "koa-bodyparser": "^4.3.0",
     "koa-helmet": "^6.0.0",
     "koa-router": "^10.0.0",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "mongoose": "^5.11.10",
     "natural": "^3.0.1",
     "object-mapper": "^6.2.0",
