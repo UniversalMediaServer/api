@@ -261,7 +261,7 @@ export const getByOsdbHash = async(ctx: ParameterizedContext<any, Router.IRouter
   const parsedOpenSubtitlesResponse = mapper.parseOpenSubtitlesResponse(openSubtitlesResponse);
   const parsedIMDbResponse: MediaMetadataInterface = await getFromIMDbAPI(parsedOpenSubtitlesResponse.imdbID);
   const combinedResponse = _.merge(parsedOpenSubtitlesResponse, parsedIMDbResponse);
-
+  const test: string = 0;
   try {
     dbMeta = await MediaMetadata.create(combinedResponse);
     return ctx.body = dbMeta;
