@@ -2,7 +2,7 @@ import * as Koa from 'koa';
 import * as bodyParser from 'koa-bodyparser';
 import * as helmet from 'koa-helmet';
 import * as Debug from 'debug';
-import fs = require('fs');
+import * as fs from 'fs';
 import http = require('http');
 import https = require('https');
 const debug = Debug('universalmediaserver-api:server');
