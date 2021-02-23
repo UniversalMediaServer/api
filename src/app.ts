@@ -3,8 +3,8 @@ import * as bodyParser from 'koa-bodyparser';
 import * as helmet from 'koa-helmet';
 import * as Debug from 'debug';
 import * as fs from 'fs';
-import http = require('http');
-import https = require('https');
+import * as http from 'http';
+import * as https from 'https';
 const debug = Debug('universalmediaserver-api:server');
 
 import indexRouter from './routes/index';
