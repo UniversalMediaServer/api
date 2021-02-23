@@ -11,6 +11,7 @@ You can run `nvm use` and `yvm use` from the project root if you have [Node vers
 `MONGO_URL` URL to a running Mongo instance which includes user and password
 `OS_API_USERAGENT` an Open Subtitles User-Agent key. Defaults to a testing key `TemporaryUserAgent`
 `IMDB_API_KEY` an API key from https://www.omdbapi.com/apikey.aspx
+`UMS_API_PRIVATE_KEY_LOCATION` and `UMS_API_PUBLIC_KEY_LOCATION` optional absolute locations of SSL keys for HTTPS
 
 ### Commands
 
