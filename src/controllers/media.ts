@@ -390,15 +390,15 @@ export const getVideo = async(ctx: ParameterizedContext<any, Router.IRouterParam
   }
 
   // find an existing metadata record, or previous failure record
-  const [existingResult, existingFailedResult] = await Promise.all([
-    MediaMetadata.findOne({ $or: query }, null, { lean: true }).exec(),
-    FailedLookups.findOne({ $or: failedQuery }, null, { lean: true }).exec(),
-  ]);
+  
+  const existingResult = await MediaMetadata.findOne({ $or: query }, null, { lean: true }).exec();
 
   // we have an existing metadata record, so return it
   if (existingResult) {
     return ctx.body = existingResult;
   }
+
+  const existingFailedResult = await FailedLookups.findOne({ $or: failedQuery }, null, { lean: true }).exec()
 
   // we have an existing failure record, so increment it, and throw not found error
   if (existingFailedResult) {
