@@ -398,7 +398,7 @@ export const getVideo = async(ctx: ParameterizedContext<any, Router.IRouterParam
     return ctx.body = existingResult;
   }
 
-  const existingFailedResult = await FailedLookups.findOne({ $or: failedQuery }, null, { lean: true }).exec()
+  const existingFailedResult = await FailedLookups.findOne({ $or: failedQuery }, null, { lean: true }).exec();
 
   // we have an existing failure record, so increment it, and throw not found error
   if (existingFailedResult) {
