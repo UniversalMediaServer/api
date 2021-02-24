@@ -147,6 +147,7 @@ export const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
       try {
         searchResults = await imdbAPI.search(searchRequest);
       } catch (e) {
+        console.error(e);
         return null;
       }
 
