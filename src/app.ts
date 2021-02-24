@@ -4,6 +4,9 @@ import * as helmet from 'koa-helmet';
 import * as mongoose from 'mongoose';
 import { ParameterizedContext } from 'koa';
 import * as Debug from 'debug';
+import * as fs from 'fs';
+import * as http from 'http';
+import * as https from 'https';
 const debug = Debug('universalmediaserver-api:server');
 import indexRouter from './routes/index';
 import mediaRouter  from './routes/media';
@@ -67,7 +70,16 @@ app.use(bodyParser());
 app.use(mediaRouter.routes());
 app.use(indexRouter.routes());
 
-export const server = app.listen(PORT);
-console.log(`UMS API is up and running on port ${PORT}`);
+export const server = http.createServer(app.callback()).listen(PORT);
+console.log(`UMS API HTTP server is up and running on port ${PORT}`);
+
+if (process.env.UMS_API_PRIVATE_KEY_LOCATION && process.env.UMS_API_PUBLIC_KEY_LOCATION) {
+  const httpsOptions = {
+    key: fs.readFileSync(process.env.UMS_API_PRIVATE_KEY_LOCATION),
+    cert: fs.readFileSync(process.env.UMS_API_PUBLIC_KEY_LOCATION),
+  };
+  https.createServer(httpsOptions, app.callback()).listen(443);
+  console.log('UMS API HTTPS server is up and running on port 443');
+}
 
 export default app;

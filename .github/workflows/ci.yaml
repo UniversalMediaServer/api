@@ -26,6 +26,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: yarn install
+    - run: yarn run tsc:ci
     - run: node_modules/.bin/eslint src/**/*.ts
     - run: yarn test
 

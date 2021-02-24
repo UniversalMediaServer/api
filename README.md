@@ -12,6 +12,7 @@ You can run `nvm use` and `yvm use` from the project root if you have [Node vers
 `OS_API_USERAGENT` an Open Subtitles User-Agent key. Defaults to a testing key `TemporaryUserAgent`
 `IMDB_API_KEY` an API key from https://www.omdbapi.com/apikey.aspx
 `BYPASS_MONGO` if set to `"true"`, will drop the database on each request, to get fresh data from external APIS. Use with caution.
+`UMS_API_PRIVATE_KEY_LOCATION` and `UMS_API_PUBLIC_KEY_LOCATION` optional absolute locations of SSL keys for HTTPS
 
 ### Commands
 
