@@ -3,6 +3,7 @@ import { ParameterizedContext } from 'koa';
 import Router = require('koa-router');
 import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
+
 import { MediaNotFoundError, ValidationError } from '../helpers/customErrors';
 import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
 import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';

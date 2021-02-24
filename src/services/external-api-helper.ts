@@ -2,6 +2,7 @@ import { SearchRequest, TVShow } from 'imdb-api';
 import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
 import * as natural from 'natural';
+
 import osAPI from '../services/opensubtitles';
 
 import { IMDbIDNotFoundError, MediaNotFoundError } from '../helpers/customErrors';
@@ -130,6 +131,7 @@ export const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
        */
       searchRequest.reqtype = 'series';
       const tvSeriesInfo = await imdbAPI.get(searchRequest);
+
       if (tvSeriesInfo && tvSeriesInfo instanceof TVShow) {
         const allEpisodes = await tvSeriesInfo.episodes();
         const currentEpisode = _.find(allEpisodes, { season, episode });
@@ -182,6 +184,7 @@ export const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
   } else {
     throw new Error('Received a type we did not expect: ' + imdbData.type);
   }
+
   return metadata;
 };
 
