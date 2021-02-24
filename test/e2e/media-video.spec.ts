@@ -300,7 +300,7 @@ describe('get by all', () => {
     });
   });
 
-  describe('Valdiation', () => {
+  describe('Validation', () => {
     it('should require title, osdbHash or imdbID param', async() => {
       let error;
       try {

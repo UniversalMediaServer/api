@@ -171,7 +171,7 @@ export const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
   }
 
   let metadata;
-  if (isExpectingTVEpisode || (!isExpectingTVEpisode && imdbData.type === 'episode')) {
+  if (isExpectingTVEpisode || imdbData.type === 'episode') {
     if (imdbData.type === 'episode') {
       metadata = mapper.parseIMDBAPIEpisodeResponse(imdbData);
     } else {
