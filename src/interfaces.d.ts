@@ -30,3 +30,22 @@ interface OpensubtitlesIdentifyResponse {
   subcount: string;
   type: string;
 }
+
+interface UmsQueryParams {
+  title?: string;
+  year?: string;
+  imdbid?: string;
+  imdbID?: string;
+  filebytesize?: string;
+  episode?: string;
+  season?: string;
+  osdbHash?: string;
+}
+
+interface GetVideoFilter {
+  year?: string;
+  episode?: string;
+  searchMatches?: object;
+  season?: string;
+  title?: string;
+}
