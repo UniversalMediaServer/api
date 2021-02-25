@@ -1,12 +1,13 @@
 import * as Koa from 'koa';
 import * as bodyParser from 'koa-bodyparser';
 import * as helmet from 'koa-helmet';
+import * as mongoose from 'mongoose';
+import { ParameterizedContext } from 'koa';
 import * as Debug from 'debug';
 import * as fs from 'fs';
 import * as http from 'http';
 import * as https from 'https';
 const debug = Debug('universalmediaserver-api:server');
-
 import indexRouter from './routes/index';
 import mediaRouter  from './routes/media';
 import { ExternalAPIError, IMDbIDNotFoundError, MediaNotFoundError, ValidationError } from './helpers/customErrors';
@@ -17,6 +18,7 @@ import connect from './models/connection';
 
 const db: string = process.env.MONGO_URL;
 const PORT: string = process.env.PORT || '3000';
+const bypassMongo: boolean = Boolean(process.env.BYPASS_MONGO) || false;
 connect(db);
 
 app.use(helmet());
@@ -54,6 +56,13 @@ app.use(async(ctx, next) => {
 
 app.use(async(ctx, next) => {
   debug(`${ctx.method} ${ctx.url}`);
+  await next();
+});
+
+app.use(async(ctx: ParameterizedContext, next) => {
+  if (bypassMongo) {
+    await mongoose.connection.dropDatabase();
+  }
   await next();
 });
 

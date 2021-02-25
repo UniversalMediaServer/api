@@ -7,6 +7,10 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    env:
+      IMDB_API_KEY: ${{ secrets.IMDB_API_KEY }}
+      OS_API_USERAGENT: ${{ secrets. OS_API_USERAGENT }}
+
     strategy:
       matrix:
         node-version: [14]
@@ -25,3 +29,4 @@ jobs:
     - run: yarn run tsc:ci
     - run: node_modules/.bin/eslint src/**/*.ts
     - run: yarn test
+
