@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import { Document, Schema } from 'mongoose';
+import { Schema } from 'mongoose';
 
 const DOCUMENT_EXPIRY_IN_SECONDS = 2592000; // 30 days
 
@@ -19,7 +19,7 @@ export interface FailedLookupsInterface {
   updatedAt?: string;
 }
 
-export interface FailedLookupsInterfaceDocument extends Document, FailedLookupsInterface {}
+export interface FailedLookupsInterfaceDocument extends mongoose.Document, FailedLookupsInterface {}
 
 const FailedLookupsSchema: Schema = new Schema({
   count: {

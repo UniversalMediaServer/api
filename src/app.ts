@@ -1,9 +1,13 @@
 import * as Koa from 'koa';
 import * as bodyParser from 'koa-bodyparser';
 import * as helmet from 'koa-helmet';
+import * as mongoose from 'mongoose';
+import { ParameterizedContext } from 'koa';
 import * as Debug from 'debug';
+import * as fs from 'fs';
+import * as http from 'http';
+import * as https from 'https';
 const debug = Debug('universalmediaserver-api:server');
-
 import indexRouter from './routes/index';
 import mediaRouter  from './routes/media';
 import { ExternalAPIError, IMDbIDNotFoundError, MediaNotFoundError, ValidationError } from './helpers/customErrors';
@@ -14,6 +18,7 @@ import connect from './models/connection';
 
 const db: string = process.env.MONGO_URL;
 const PORT: string = process.env.PORT || '3000';
+const bypassMongo: boolean = Boolean(process.env.BYPASS_MONGO) || false;
 connect(db);
 
 app.use(helmet());
@@ -54,11 +59,27 @@ app.use(async(ctx, next) => {
   await next();
 });
 
+app.use(async(ctx: ParameterizedContext, next) => {
+  if (bypassMongo) {
+    await mongoose.connection.dropDatabase();
+  }
+  await next();
+});
+
 app.use(bodyParser());
 app.use(mediaRouter.routes());
 app.use(indexRouter.routes());
 
-export const server = app.listen(PORT);
-console.log(`UMS API is up and running on port ${PORT}`);
+export const server = http.createServer(app.callback()).listen(PORT);
+console.log(`UMS API HTTP server is up and running on port ${PORT}`);
+
+if (process.env.UMS_API_PRIVATE_KEY_LOCATION && process.env.UMS_API_PUBLIC_KEY_LOCATION) {
+  const httpsOptions = {
+    key: fs.readFileSync(process.env.UMS_API_PRIVATE_KEY_LOCATION),
+    cert: fs.readFileSync(process.env.UMS_API_PUBLIC_KEY_LOCATION),
+  };
+  https.createServer(httpsOptions, app.callback()).listen(443);
+  console.log('UMS API HTTPS server is up and running on port 443');
+}
 
 export default app;
