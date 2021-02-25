@@ -3,7 +3,9 @@ import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
 import * as natural from 'natural';
 
-import { IMDbIDNotFoundError } from '../helpers/customErrors';
+import osAPI from '../services/opensubtitles';
+
+import { IMDbIDNotFoundError, MediaNotFoundError } from '../helpers/customErrors';
 import FailedLookups from '../models/FailedLookups';
 import { MediaMetadataInterface } from '../models/MediaMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
@@ -11,6 +13,17 @@ import imdbAPI from './imdb-api';
 import { mapper } from '../utils/data-mapper';
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
+
+export interface OpenSubtitlesQuery {
+  moviehash: string;
+  moviebytesize: number;
+}
+
+export interface OpenSubtitlesValidation {
+  year: string;
+  season: string;
+  episode: string;
+}
 
 /**
  * Attempts a query to the IMDb API and standardizes the response
@@ -97,11 +110,10 @@ export const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchReque
  * @param [season] the season number if this is an episode
  * @param [episode] the episode number if this is an episode
  */
-export const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, season?: number, episode?: number): Promise<MediaMetadataInterface> => {
+export const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, season?: number, episode?: number): Promise<MediaMetadataInterface | null> => {
   if (!imdbId && !searchRequest) {
     throw new Error('Either imdbId or searchRequest must be specified');
   }
-
   // If the client specified an episode number, this is an episode
   const isExpectingTVEpisode = Boolean(episode);
 
@@ -124,21 +136,28 @@ export const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
         const allEpisodes = await tvSeriesInfo.episodes();
         const currentEpisode = _.find(allEpisodes, { season, episode });
         if (!currentEpisode) {
-          throw new IMDbIDNotFoundError();
+          return null;
         }
 
         imdbId = currentEpisode.imdbid;
       }
     } else {
       searchRequest.reqtype = 'movie';
-      const searchResults = await imdbAPI.search(searchRequest);
+      let searchResults;
+      try {
+        searchResults = await imdbAPI.search(searchRequest);
+      } catch (e) {
+        console.error(e);
+        return null;
+      }
+
       // find the best search results utilising the Jaro-Winkler distance metric
       const searchResultStringDistance = searchResults.results.map(result => natural.JaroWinklerDistance(searchRequest.name, result.title));
       const bestSearchResultKey = _.indexOf(searchResultStringDistance, _.max(searchResultStringDistance));
 
       const searchResult: any = searchResults.results[bestSearchResultKey];
       if (!searchResult) {
-        throw new IMDbIDNotFoundError();
+        return null;
       }
 
       imdbId = searchResult.imdbid;
@@ -147,12 +166,13 @@ export const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
 
   // Return early if we already have a result for that IMDb ID
   const imdbData = await imdbAPI.get({ id: imdbId });
+
   if (!imdbData) {
     return null;
   }
 
   let metadata;
-  if (isExpectingTVEpisode) {
+  if (isExpectingTVEpisode || imdbData.type === 'episode') {
     if (imdbData.type === 'episode') {
       metadata = mapper.parseIMDBAPIEpisodeResponse(imdbData);
     } else {
@@ -174,7 +194,7 @@ export const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
  *
  * @param imdbID the IMDb ID of the series.
  */
-export const setSeriesMetadataByIMDbID = async(imdbID: string): Promise<SeriesMetadataInterface> => {
+export const setSeriesMetadataByIMDbID = async(imdbID: string): Promise<SeriesMetadataInterface | null> => {
   if (!imdbID) {
     throw new Error('IMDb ID not supplied');
   }
@@ -190,11 +210,50 @@ export const setSeriesMetadataByIMDbID = async(imdbID: string): Promise<SeriesMe
     return existingSeries;
   }
 
-  const imdbData: SeriesMetadataInterface = await getFromIMDbAPIV2(imdbID);
+  const imdbData = await getFromIMDbAPIV2(imdbID);
   if (!imdbData) {
     await FailedLookups.updateOne({ imdbID }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     return null;
   }
 
   return SeriesMetadata.create(imdbData);
+};
+
+/**
+ * Gets metadata from Open Subtitles and validates the response if provided validation data
+ */
+export const getFromOpenSubtitles = async(osQuery: OpenSubtitlesQuery, validationData: OpenSubtitlesValidation): Promise<MediaMetadataInterface> => {
+  const validateMovieByYear = Boolean(validationData.year);
+  const validateEpisodeBySeasonAndEpisode = Boolean(validationData.season && validationData.episode);
+  let passedValidation = true;
+
+  const openSubtitlesResponse = await osAPI.identify({ ...osQuery, extend: true });
+
+  if (!openSubtitlesResponse.metadata) {
+    return null;
+  }
+  
+  if (validateMovieByYear || validateEpisodeBySeasonAndEpisode) {
+    passedValidation = false;
+    if (validateMovieByYear) {
+      if (validationData.year.toString() === openSubtitlesResponse.metadata?.year) {
+        passedValidation = true;
+      }
+    }
+
+    if (validateEpisodeBySeasonAndEpisode) {
+      if (validationData.season.toString() === openSubtitlesResponse.metadata.season && validationData.episode.toString() === openSubtitlesResponse.metadata.episode) {
+        passedValidation = true;
+      }
+    }
+  }
+  if (!passedValidation) {
+    await FailedLookups.updateOne({ osdbHash: osQuery.moviehash }, { $inc: { count: 1 }, failedValidation: true }, { upsert: true, setDefaultsOnInsert: true }).exec();
+    throw new MediaNotFoundError();
+  }
+  if (openSubtitlesResponse.type === 'episode') {
+    return mapper.parseOpenSubtitlesEpisodeResponse(openSubtitlesResponse);
+  }
+
+  return mapper.parseOpenSubtitlesResponse(openSubtitlesResponse);
 };

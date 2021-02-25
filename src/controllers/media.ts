@@ -338,3 +338,147 @@ export const getByImdbID = async(ctx: ParameterizedContext<any, Router.IRouterPa
     throw new MediaNotFoundError();
   }
 };
+
+export const getVideo = async(ctx: ParameterizedContext<any, Router.IRouterParamContext<any, {}>>): Promise<any> => {
+  const { title, osdbHash, imdbID } = ctx.query;
+  let { episode, season, year, filebytesize } = ctx.query;
+  [episode, season, year, filebytesize] = [episode, season, year, filebytesize].map(param => param ? Number(param) : null);
+
+  if (!title && !osdbHash && !imdbID) {
+    throw new ValidationError('title, osdbHash or imdbId is a required parameter');
+  }
+
+  if (osdbHash && !filebytesize) {
+    throw new ValidationError('filebytesize is required when passing osdbHash');
+  }
+  let isOnlyOpenSubsSearch = false;
+
+  const query = [];
+  const failedQuery = [];
+
+  if (osdbHash) {
+    query.push({ osdbHash });
+    failedQuery.push({ osdbHash });
+    if (!imdbID && !title) {
+      isOnlyOpenSubsSearch = true;
+    }
+  }
+
+  if (imdbID) {
+    query.push({ imdbID });
+    failedQuery.push({ imdbId: imdbID });
+  }
+
+  if (title) {
+    const titleQuery: any = { searchMatches: { $in: [title] } };
+    const titleFailedQuery: any = { title };
+
+    if (year) {
+      titleQuery.year = year;
+      titleFailedQuery.year = year;
+    }
+    if (episode) {
+      titleQuery.episode = episode;
+      titleFailedQuery.episode = episode;
+    }
+    if (season) {
+      titleQuery.season = season;
+      titleFailedQuery.season = season;
+    }
+    query.push(titleQuery);
+    failedQuery.push(titleFailedQuery);
+  }
+
+  // find an existing metadata record, or previous failure record
+  
+  const existingResult = await MediaMetadata.findOne({ $or: query }, null, { lean: true }).exec();
+
+  // we have an existing metadata record, so return it
+  if (existingResult) {
+    return ctx.body = existingResult;
+  }
+
+  const existingFailedResult = await FailedLookups.findOne({ $or: failedQuery }, null, { lean: true }).exec();
+
+  // we have an existing failure record, so increment it, and throw not found error
+  if (existingFailedResult) {
+    await FailedLookups.updateOne({ _id: existingFailedResult._id }, { $inc: { count: 1 } }).exec();
+    throw new MediaNotFoundError();
+  }
+
+  // the database does not have a record of this file, so begin search for metadata on external apis.
+
+  // Start OpenSubtitles lookups
+  let openSubtitlesMetadata;
+
+  if (osdbHash && filebytesize) {
+    const osQuery = { moviehash: osdbHash, moviebytesize: filebytesize };
+    const validation = {
+      year: year ? year : null,
+      season: season ? season : null,
+      episode: episode ? episode : null,
+    };
+
+    openSubtitlesMetadata = await externalAPIHelper.getFromOpenSubtitles(osQuery, validation);
+
+    if (isOnlyOpenSubsSearch && !openSubtitlesMetadata) {
+      await FailedLookups.updateOne({ osdbHash }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();	
+      throw new MediaNotFoundError();
+    }
+  }
+
+  // End OpenSubtitles lookups
+
+  /* if the client has passed an imdbId, we'll use that as the primary source, otherwise, the one
+  returned by OpenSubtitles, if one was found */
+
+  // Start omdb lookups
+  const omdbSearchRequest = {} as SearchRequest;
+  const imdbIdToSearch = imdbID ? imdbID
+    : openSubtitlesMetadata?.imdbID ? openSubtitlesMetadata.imdbID : null;
+
+  // if the client did not pass an imdbID, but we found one from Open Subtitles, so see if we have an existing record for the now known media.
+  if (!imdbID && openSubtitlesMetadata?.imdbID) {
+    {
+      const existingResult = await MediaMetadata.findOne({ imdbID }, null, { lean: true }).exec();
+      if (existingResult) {
+        return ctx.body = existingResult;
+      }
+    }
+  }
+  if (title) {
+    omdbSearchRequest.name = title;
+  }
+
+  if (year) {
+    omdbSearchRequest.year = year;
+  }
+
+  const imdbData: MediaMetadataInterface = await externalAPIHelper.getFromIMDbAPIV2(imdbIdToSearch, omdbSearchRequest, season, episode);
+
+  if (imdbData?.type === 'episode') {
+    await externalAPIHelper.setSeriesMetadataByIMDbID(imdbData.seriesIMDbID);
+  }
+
+  // End omdb lookups
+  const combinedResponse = _.merge(openSubtitlesMetadata, imdbData);
+  if (!combinedResponse || _.isEmpty(combinedResponse)) {
+    await FailedLookups.updateOne({ osdbHash, imdbID, title, season, episode }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+    throw new MediaNotFoundError();
+  }
+
+  try {
+    if (title) {
+      combinedResponse.searchMatches = [title];
+    }
+
+    if (osdbHash) {
+      combinedResponse.osdbHash = osdbHash;
+    }
+    const dbMeta = await MediaMetadata.create(combinedResponse);
+    return ctx.body = dbMeta;
+  } catch (e) {
+    await FailedLookups.updateOne({ osdbHash, imdbID, title, season, episode }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+    throw new MediaNotFoundError();
+  }
+};
