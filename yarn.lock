@@ -957,6 +957,11 @@
   resolved "https://registry.yarnpkg.com/@types/normalize-package-data/-/normalize-package-data-2.4.0.tgz#e486d0d97396d79beedd0a6e33f4534ff6b4973e"
   integrity sha512-f5j5b/Gf71L+dbqxIpQ4Z2WlmI/mPJ0fOkGGmFgtb6sAu97EPczzbS3/tJKxmcYDj55OX6ssqwDAWOHIYDRDGA==
 
+"@types/object-mapper@^6.2.0":
+  version "6.2.0"
+  resolved "https://registry.yarnpkg.com/@types/object-mapper/-/object-mapper-6.2.0.tgz#e5b444779a9443807649020025f30436fa1df60a"
+  integrity sha512-EAi0jqnCRZsZBUrX1Jcg030JAeY6lLUCHc/02QPpmpY/db7p+gGEE5Ckku7WLnB95GDsRk0Ktsjsw5Hlqdw2kw==
+
 "@types/prettier@^2.0.0":
   version "2.1.6"
   resolved "https://registry.yarnpkg.com/@types/prettier/-/prettier-2.1.6.tgz#f4b1efa784e8db479cdb8b14403e2144b1e9ff03"

@@ -1,6 +1,5 @@
 import { SearchRequest } from 'imdb-api';
 import { ParameterizedContext } from 'koa';
-import Router = require('koa-router');
 import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
 
@@ -15,7 +14,7 @@ import { mapper } from '../utils/data-mapper';
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
 
-export const getByOsdbHash = async(ctx: ParameterizedContext<any, Router.IRouterParamContext<any, {}>>): Promise<MediaMetadataInterface | string> => {
+export const getByOsdbHash = async(ctx: ParameterizedContext): Promise<MediaMetadataInterface> => {
   const { osdbhash: osdbHash, filebytesize } = ctx.params;
 
   if (!osdbHash || !filebytesize) {
@@ -84,7 +83,7 @@ export const getByOsdbHash = async(ctx: ParameterizedContext<any, Router.IRouter
   }
 };
 
-export const getBySanitizedTitle = async(ctx: ParameterizedContext<any, Router.IRouterParamContext<any, {}>>): Promise<MediaMetadataInterface | string> => {
+export const getBySanitizedTitle = async(ctx: ParameterizedContext): Promise<MediaMetadataInterface> => {
   const { title }: UmsQueryParams = ctx.query;
   const year = ctx.query.year ? Number(ctx.query.year) : null;
 
@@ -99,9 +98,9 @@ export const getBySanitizedTitle = async(ctx: ParameterizedContext<any, Router.I
   }
 
   // If we already failed to get a result, return early
-  const failedLookupQuery: any = { title };
+  const failedLookupQuery: GetVideoFilter = { title };
   if (year) {
-    failedLookupQuery.year = year;
+    failedLookupQuery.year = year.toString();
   }
   if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
@@ -161,7 +160,7 @@ export const getBySanitizedTitle = async(ctx: ParameterizedContext<any, Router.I
  * Looks up a video by its title, and optionally its year, season and episode number.
  * If it is an episode, it also sets the series data.
  */
-export const getBySanitizedTitleV2 = async(ctx: ParameterizedContext<any, Router.IRouterParamContext<any, {}>>): Promise<MediaMetadataInterface | string> => {
+export const getBySanitizedTitleV2 = async(ctx: ParameterizedContext): Promise<MediaMetadataInterface> => {
   const { title }: UmsQueryParams = ctx.query;
   const episode = ctx.query.episode ? Number(ctx.query.episode) : null;
   const season = ctx.query.season ? Number(ctx.query.season) : null;
@@ -172,15 +171,15 @@ export const getBySanitizedTitleV2 = async(ctx: ParameterizedContext<any, Router
   }
 
   // If we already have a result, return it
-  const existingResultQuery: any = { searchMatches: { $in: [title] } };
+  const existingResultQuery: GetVideoFilter = { searchMatches: { $in: [title] } };
   if (year) {
-    existingResultQuery.year = year;
+    existingResultQuery.year = year.toString();
   }
   if (episode) {
-    existingResultQuery.episode = episode;
+    existingResultQuery.episode = episode.toString();
   }
   if (season) {
-    existingResultQuery.season = season;
+    existingResultQuery.season = season.toString();
   }
   const existingResultFromSearchMatch: MediaMetadataInterface = await MediaMetadata.findOne(existingResultQuery, null, { lean: true }).exec();
   if (existingResultFromSearchMatch) {
@@ -188,15 +187,15 @@ export const getBySanitizedTitleV2 = async(ctx: ParameterizedContext<any, Router
   }
 
   // If we already failed to get a result, return early
-  const failedLookupQuery: any = { title };
+  const failedLookupQuery: GetVideoFilter = { title };
   if (year) {
-    failedLookupQuery.year = year;
+    failedLookupQuery.year = year.toString();
   }
   if (episode) {
-    failedLookupQuery.episode = episode;
+    failedLookupQuery.episode = episode.toString();
   }
   if (season) {
-    failedLookupQuery.season = season;
+    failedLookupQuery.season = season.toString();
   }
   if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
@@ -257,7 +256,7 @@ export const getBySanitizedTitleV2 = async(ctx: ParameterizedContext<any, Router
    */
 };
 
-export const getSeriesByTitle = async(ctx: ParameterizedContext<any, Router.IRouterParamContext<any, {}>>): Promise<SeriesMetadataInterface | string> => {
+export const getSeriesByTitle = async(ctx: ParameterizedContext): Promise<SeriesMetadataInterface> => {
   let { title: dirOrFilename }: UmsQueryParams = ctx.query;
   const { year }: UmsQueryParams = ctx.query;
   if (!dirOrFilename) {
@@ -299,7 +298,7 @@ export const getSeriesByTitle = async(ctx: ParameterizedContext<any, Router.IRou
   return ctx.body = dbMeta;
 };
 
-export const getByImdbID = async(ctx: ParameterizedContext<any, Router.IRouterParamContext<any, {}>>): Promise<any> => {
+export const getByImdbID = async(ctx: ParameterizedContext): Promise<MediaMetadataInterface> => {
   const { imdbid }: UmsQueryParams = ctx.query;
 
   if (!imdbid) {
@@ -339,7 +338,7 @@ export const getByImdbID = async(ctx: ParameterizedContext<any, Router.IRouterPa
   }
 };
 
-export const getVideo = async(ctx: ParameterizedContext<any, Router.IRouterParamContext<any, {}>>): Promise<any> => {
+export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataInterface> => {
   const { title, osdbHash, imdbID }: UmsQueryParams = ctx.query;
   const { episode, season, year, filebytesize }: UmsQueryParams = ctx.query;
   const [episodeNumber, seasonNumber, yearNumber, filebytesizeNumber] = [episode, season, year, filebytesize].map(param => param ? Number(param) : null);

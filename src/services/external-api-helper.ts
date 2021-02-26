@@ -1,4 +1,4 @@
-import { SearchRequest, TVShow } from 'imdb-api';
+import { Movie, SearchRequest, TVShow } from 'imdb-api';
 import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
 import * as natural from 'natural';
@@ -71,7 +71,7 @@ export const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchReque
       const searchResultStringDistance = searchResults.results.map(result => natural.JaroWinklerDistance(searchRequest.name, result.title));
       const bestSearchResultKey = _.indexOf(searchResultStringDistance, _.max(searchResultStringDistance));
 
-      const searchResult: any = searchResults.results[bestSearchResultKey];
+      const searchResult = searchResults.results[bestSearchResultKey] as Movie;
       if (!searchResult) {
         throw new IMDbIDNotFoundError();
       }
@@ -155,7 +155,7 @@ export const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
       const searchResultStringDistance = searchResults.results.map(result => natural.JaroWinklerDistance(searchRequest.name, result.title));
       const bestSearchResultKey = _.indexOf(searchResultStringDistance, _.max(searchResultStringDistance));
 
-      const searchResult: any = searchResults.results[bestSearchResultKey];
+      const searchResult = searchResults.results[bestSearchResultKey] as Movie;
       if (!searchResult) {
         return null;
       }
