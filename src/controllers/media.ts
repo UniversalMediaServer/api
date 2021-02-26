@@ -207,7 +207,14 @@ export const getBySanitizedTitleV2 = async(ctx: ParameterizedContext<any, Router
   if (year) {
     searchRequest.year = year;
   }
-  const imdbData: MediaMetadataInterface = await externalAPIHelper.getFromIMDbAPIV2(null, searchRequest, season, episode);
+  let imdbData: MediaMetadataInterface;
+  try {
+    imdbData = await externalAPIHelper.getFromIMDbAPIV2(null, searchRequest, season, episode);
+  } catch (e) {
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+    throw new MediaNotFoundError();
+  }
+
   if (!imdbData) {
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
@@ -454,7 +461,15 @@ export const getVideo = async(ctx: ParameterizedContext<any, Router.IRouterParam
     omdbSearchRequest.year = yearNumber;
   }
 
-  const imdbData: MediaMetadataInterface = await externalAPIHelper.getFromIMDbAPIV2(imdbIdToSearch, omdbSearchRequest, seasonNumber, episodeNumber);
+  const failedLookupQuery = { episode, imdbID, osdbHash, season, title, year };
+
+  let imdbData: MediaMetadataInterface;
+  try {
+    imdbData = await externalAPIHelper.getFromIMDbAPIV2(imdbIdToSearch, omdbSearchRequest, seasonNumber, episodeNumber);
+  } catch (e) {
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+    throw new MediaNotFoundError();
+  }
 
   if (imdbData?.type === 'episode') {
     await externalAPIHelper.setSeriesMetadataByIMDbID(imdbData.seriesIMDbID);
@@ -463,7 +478,7 @@ export const getVideo = async(ctx: ParameterizedContext<any, Router.IRouterParam
   // End omdb lookups
   const combinedResponse = _.merge(openSubtitlesMetadata, imdbData);
   if (!combinedResponse || _.isEmpty(combinedResponse)) {
-    await FailedLookups.updateOne({ osdbHash, imdbID, title, season, episode }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
 
@@ -478,7 +493,7 @@ export const getVideo = async(ctx: ParameterizedContext<any, Router.IRouterParam
     const dbMeta = await MediaMetadata.create(combinedResponse);
     return ctx.body = dbMeta;
   } catch (e) {
-    await FailedLookups.updateOne({ osdbHash, imdbID, title, season, episode }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
 };

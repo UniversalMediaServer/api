@@ -66,7 +66,13 @@ export const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchReque
 
     if (!imdbId) {
       searchRequest.reqtype = 'movie';
-      const searchResults = await imdbAPI.search(searchRequest);
+      let searchResults;
+      try {
+        searchResults = await imdbAPI.search(searchRequest);
+      } catch (e) {
+        console.error(e);
+        return null;
+      }
       // find the best search results utilising the Jaro-Winkler distance metric
       const searchResultStringDistance = searchResults.results.map(result => natural.JaroWinklerDistance(searchRequest.name, result.title));
       const bestSearchResultKey = _.indexOf(searchResultStringDistance, _.max(searchResultStringDistance));
