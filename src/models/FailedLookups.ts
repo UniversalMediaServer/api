@@ -21,12 +21,12 @@ export interface FailedLookupsInterface {
 
 export interface FailedLookupsInterfaceDocument extends mongoose.Document, FailedLookupsInterface {}
 
-const FailedLookupsSchema: Schema = new Schema({
+const FailedLookupsSchema = new Schema({
   count: {
     default: 1,
     type: Number,
   },
-  episode: { type: String },
+  episode: { index: true, type: String },
   imdbID: {
     index: true,
     type: String,
@@ -44,7 +44,7 @@ const FailedLookupsSchema: Schema = new Schema({
       msg: 'Invalid osdb hash length.',
     },
   },
-  season: { type: String },
+  season: { index: true, type: String },
   title: {
     index: true,
     required: function(): boolean {
