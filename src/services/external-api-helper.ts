@@ -222,7 +222,7 @@ export const setSeriesMetadataByIMDbID = async(imdbID: string): Promise<SeriesMe
 /**
  * Gets metadata from Open Subtitles and validates the response if provided validation data
  */
-export const getFromOpenSubtitles = async(osQuery: OpenSubtitlesQuery, validationData: OpenSubtitlesValidation): Promise<MediaMetadataInterface> => {
+export const getFromOpenSubtitles = async(osQuery: OpenSubtitlesQuery, validationData: OpenSubtitlesValidation): Promise<Partial<MediaMetadataInterface>> => {
   const validateMovieByYear = Boolean(validationData.year);
   const validateEpisodeBySeasonAndEpisode = Boolean(validationData.season && validationData.episode);
   let passedValidation = true;
