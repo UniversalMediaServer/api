@@ -1,9 +1,9 @@
 import * as mongoose from 'mongoose';
-import { Schema, Document, Model  } from 'mongoose';
+import { Schema, Document, model, Model } from 'mongoose';
 
 const TEXT_SCORE_MINIMUM = 1;
 
-export interface SeriesMetadataInterface extends Document {
+export interface SeriesMetadataDocumentInterface extends Document {
   actors: Array<string>;
   awards?: string;
   country?: string;
@@ -33,13 +33,17 @@ interface BestGuessQuery {
   startYear: string;
 }
 
+interface BestGuessResult extends mongoose.Document {
+  score: string;
+}
+
 interface SortByFilter {
   score: { $meta: string };
   startYear: number;
 }
 
-export interface SeriesMetadataModel extends Model<SeriesMetadataInterface> {
-  findSimilarSeries(dirOrFilename: string, startYear?: string): Promise<any>; 
+export interface SeriesMetadataModelInterface extends Model<SeriesMetadataDocumentInterface> {
+  findSimilarSeries: (dirOrFilename: string, startYear?: string) => Promise<SeriesMetadataDocumentInterface | null>; 
 }
 
 const SeriesMetadataSchema: Schema = new Schema({
@@ -81,7 +85,7 @@ const SeriesMetadataSchema: Schema = new Schema({
  *                    matches are returned. If not provided, the oldest year
  *                    match will be returned.
  */
-SeriesMetadataSchema.statics.findSimilarSeries = async function(title: string, startYear?: string): Promise<SeriesMetadataInterface | null> {
+SeriesMetadataSchema.statics.findSimilarSeries = async function(title: string, startYear?: string): Promise<SeriesMetadataDocumentInterface | null> {
   const bestGuessQuery = { $text: { $search: title, $caseSensitive: false } } as BestGuessQuery;
   const sortBy = { score: { $meta: 'textScore' } } as SortByFilter;
 
@@ -94,7 +98,7 @@ SeriesMetadataSchema.statics.findSimilarSeries = async function(title: string, s
   const bestGuess = await this.find(bestGuessQuery, { score: { $meta: 'textScore' } })
     .sort(sortBy)
     .limit(1)
-    .lean();
+    .lean() as BestGuessResult;
 
   if (bestGuess[0] && (bestGuess[0].score < TEXT_SCORE_MINIMUM)) {
     return null;
@@ -109,5 +113,5 @@ SeriesMetadataSchema.virtual('imdburl').get(function() {
 // this allows us to use MongoDB Full text search https://docs.mongodb.com/manual/reference/operator/query/text/#op._S_text
 SeriesMetadataSchema.index({ 'title': 'text' });
 
-const SeriesMetadata = mongoose.model<SeriesMetadataInterface, SeriesMetadataModel>('SeriesMetadata', SeriesMetadataSchema);
+const SeriesMetadata: SeriesMetadataModelInterface = model<SeriesMetadataDocumentInterface, SeriesMetadataModelInterface>('SeriesMetadata', SeriesMetadataSchema);
 export default SeriesMetadata;
