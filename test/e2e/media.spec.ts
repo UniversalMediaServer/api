@@ -147,7 +147,7 @@ describe('Media Metadata endpoints', () => {
         try {
           await got(`${appUrl}/api/media/osdbhash/f4245d9379d31e30/1234`);
         } catch (e) {
-          //
+          // ignore error
         }
         doc = await FailedLookupsModel.findOne({ osdbHash: 'f4245d9379d31e30' });
         expect(doc.count).toBe(2);

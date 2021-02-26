@@ -52,6 +52,7 @@ const MediaMetadataSchema: Schema = new Schema({
   },
   directors: { type: Array, required: true },
   episode: {
+    index: true,
     required: isTypeEpisode,
     type: String,
   },
@@ -81,6 +82,7 @@ const MediaMetadataSchema: Schema = new Schema({
   runtime: { type: String },
   searchMatches: { type: Array, index: true, select: false },
   season: {
+    index: true,
     required: isTypeEpisode,
     type: String,
   },
@@ -90,7 +92,7 @@ const MediaMetadataSchema: Schema = new Schema({
   trivia: { type: String },
   type: { type: String, required: true },
   votes: { type: String },
-  year: { type: String, required: true },
+  year: { index: true, required: true, type: String },
 }, {
   collection: 'media_metadata',
   timestamps: true,
