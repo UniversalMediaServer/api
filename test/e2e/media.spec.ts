@@ -141,7 +141,9 @@ describe('Media Metadata endpoints', () => {
 
         try {
           await got(`${appUrl}/api/media/osdbhash/f4245d9379d31e30/1234`);
-        } catch (e) { }
+        } catch (e) {
+          // ignore error
+        }
         doc = await FailedLookupsModel.findOne({ osdbHash: 'f4245d9379d31e30' });
         expect(doc.count).toBe(2);
       });
@@ -252,7 +254,7 @@ describe('Media Metadata endpoints', () => {
           error = e;
         }
         expect(error.message).toEqual('Response code 404 (Not Found)');
-        let doc = await FailedLookupsModel.findOne({ osdbHash: 'f4245d9379d31e30' });
+        const doc = await FailedLookupsModel.findOne({ osdbHash: 'f4245d9379d31e30' });
         expect(doc).toBeFalsy();
       });
 
@@ -264,7 +266,7 @@ describe('Media Metadata endpoints', () => {
           error = e;
         }
         expect(error.message).toEqual('Response code 404 (Not Found)');
-        let doc = await FailedLookupsModel.findOne({ osdbHash: 'f4245d9379d31e30' });
+        const doc = await FailedLookupsModel.findOne({ osdbHash: 'f4245d9379d31e30' });
         expect(doc).toBeFalsy();
       });
 
@@ -276,7 +278,7 @@ describe('Media Metadata endpoints', () => {
           error = e;
         }
         expect(error.message).toEqual('Response code 404 (Not Found)');
-        let doc = await FailedLookupsModel.findOne({ osdbHash: 'f4245d9379d31e30' });
+        const doc = await FailedLookupsModel.findOne({ osdbHash: 'f4245d9379d31e30' });
         expect(doc).toBeFalsy();
       });
     });
