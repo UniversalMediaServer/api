@@ -11,7 +11,7 @@ const mongod = new MongoMemoryServer();
 
 interface UmsApiGotResponse  {
   statusCode: number;
-  body: MediaMetadataInterfaceDocument | FailedLookupsInterfaceDocument;
+  body: MediaMetadataInterfaceDocument;
 }
 
 const aloneEpisodeMetaData = {
