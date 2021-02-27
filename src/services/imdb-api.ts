@@ -12,7 +12,7 @@ if (process.env.NODE_ENV === 'production') {
 const originalModule = new imdb.Client({ apiKey: process.env.IMDB_API_KEY || 'foo', baseURL });
 const imdbAPI = _.cloneDeep(originalModule);
 
-imdbAPI.get = async function(params): Promise<any> {
+imdbAPI.get = async(params): Promise<imdb.Movie | imdb.Episode | imdb.TVShow> => {
   try {
     return await originalModule.get(params);
   } catch (err) {
@@ -22,7 +22,7 @@ imdbAPI.get = async function(params): Promise<any> {
   }
 };
 
-imdbAPI.search = async function(params): Promise<any> {
+imdbAPI.search = async(params): Promise<imdb.SearchResults> => {
   try {
     return await originalModule.search(params);
   } catch (err) {
