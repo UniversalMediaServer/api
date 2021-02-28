@@ -456,7 +456,7 @@ describe('Media Metadata endpoints', () => {
   describe('get series by directory or filename', () => {
     it('should return series metadata', async() => {
       // this request populates the series metadata
-      let response = await got(`${appUrl}/api/media/seriestitle?title=Homeland S02E05`, { responseType: 'json' }) as UmsApiGotResponse;
+      let response = await got(`${appUrl}/api/media/seriestitle?title=Homeland S02E05&title=Homeland S02E05`, { responseType: 'json' }) as UmsApiGotResponse;
       const newDocumentId = response.body._id;
       const doc = await SeriesMetadataModel.findOne();
       expect(doc).toHaveProperty('totalSeasons', 8);

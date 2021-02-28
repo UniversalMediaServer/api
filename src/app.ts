@@ -3,6 +3,7 @@ import * as bodyParser from 'koa-bodyparser';
 import * as helmet from 'koa-helmet';
 import * as mongoose from 'mongoose';
 import { ParameterizedContext } from 'koa';
+import * as koaQs from 'koa-qs';
 import * as Debug from 'debug';
 import * as fs from 'fs';
 import * as http from 'http';
@@ -13,6 +14,7 @@ import mediaRouter  from './routes/media';
 import { ExternalAPIError, IMDbIDNotFoundError, MediaNotFoundError, ValidationError } from './helpers/customErrors';
 
 const app = new Koa();
+koaQs(app, 'first');
 
 import connect from './models/connection';
 
