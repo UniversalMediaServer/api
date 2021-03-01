@@ -1,4 +1,4 @@
-import FailedLookupsModel from '../../src/models/FailedLookups';
+import FailedLookupsModel, { FailedLookupsInterfaceDocument } from '../../src/models/FailedLookups';
 import * as apihelper from '../../src/services/external-api-helper';
 
 import * as mongoose from 'mongoose';
@@ -6,7 +6,7 @@ import got from 'got';
 import * as stoppable from 'stoppable';
 
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import MediaMetadata from '../../src/models/MediaMetadata';
+import MediaMetadata, { MediaMetadataInterfaceDocument } from '../../src/models/MediaMetadata';
 
 const mongod = new MongoMemoryServer();
 
@@ -50,6 +50,11 @@ const EPISODE_BAND_OF_BROTHERS = {
   'year': '2001',
 };
 
+interface UmsApiGotResponse  {
+  statusCode: number;
+  body: MediaMetadataInterfaceDocument;
+}
+
 describe('get by all', () => {
   beforeAll(async() => {
     const mongoUrl = await mongod.getUri();
@@ -70,7 +75,7 @@ describe('get by all', () => {
   describe('Movies', () => {
     it('should return a movie by imdbid, from source APIs then store', async() => {
       const spy = jest.spyOn(apihelper, 'getFromIMDbAPIV2');
-      let response: any = await got(`${appUrl}/api/media/video?imdbID=${MOVIE_INTERSTELLAR.imdbId}`, { responseType: 'json' });
+      let response = await got(`${appUrl}/api/media/video?imdbID=${MOVIE_INTERSTELLAR.imdbId}`, { responseType: 'json' }) as UmsApiGotResponse;
       expect(response.body.title).toEqual('Interstellar');
       expect(response.body.type).toEqual('movie');
       expect(spy).toHaveBeenCalledTimes(1);
@@ -85,7 +90,7 @@ describe('get by all', () => {
 
     it('should return a movie by title, from source APIs then store', async() => {
       const spy = jest.spyOn(apihelper, 'getFromIMDbAPIV2');
-      let response: any = await got(`${appUrl}/api/media/video?title=${MOVIE_INTERSTELLAR.title}`, { responseType: 'json' });
+      let response = await got(`${appUrl}/api/media/video?title=${MOVIE_INTERSTELLAR.title}`, { responseType: 'json' }) as UmsApiGotResponse;
       expect(response.body.title).toEqual('Interstellar');
       expect(response.body.type).toEqual('movie');
       expect(spy).toHaveBeenCalledTimes(1);
@@ -100,7 +105,7 @@ describe('get by all', () => {
 
     it('should return a movie by osdbHash, from source APIs then store', async() => {
       const spy = jest.spyOn(apihelper, 'getFromIMDbAPIV2');
-      let response: any = await got(`${appUrl}/api/media/video?osdbHash=${MOVIE_INTERSTELLAR.osdbHash}&filebytesize=${MOVIE_INTERSTELLAR.filebytesize}`, { responseType: 'json' });
+      let response = await got(`${appUrl}/api/media/video?osdbHash=${MOVIE_INTERSTELLAR.osdbHash}&filebytesize=${MOVIE_INTERSTELLAR.filebytesize}`, { responseType: 'json' }) as UmsApiGotResponse;
       expect(response.body.title).toEqual('Interstellar');
       expect(response.body.type).toEqual('movie');
       expect(spy).toHaveBeenCalledTimes(1);
@@ -115,7 +120,7 @@ describe('get by all', () => {
 
     it('should return a movie by title AND imdbId from source APIs then store', async() => {
       const spy = jest.spyOn(apihelper, 'getFromIMDbAPIV2');
-      let response: any = await got(`${appUrl}/api/media/video?title=${MOVIE_INTERSTELLAR.title}&imdbID=${MOVIE_INTERSTELLAR.imdbId}`, { responseType: 'json' });
+      let response = await got(`${appUrl}/api/media/video?title=${MOVIE_INTERSTELLAR.title}&imdbID=${MOVIE_INTERSTELLAR.imdbId}`, { responseType: 'json' }) as UmsApiGotResponse;
       expect(response.body.title).toEqual('Interstellar');
       expect(response.body.type).toEqual('movie');
       expect(spy).toHaveBeenCalledTimes(1);
@@ -131,7 +136,7 @@ describe('get by all', () => {
     it('should return a movie by all possible params, from source APIs then store', async() => {
       const omdbSpy = jest.spyOn(apihelper, 'getFromIMDbAPIV2');
       const openSubsSpy = jest.spyOn(apihelper, 'getFromOpenSubtitles');
-      let response: any = await got(`${appUrl}/api/media/video?osdbHash=${MOVIE_INTERSTELLAR.osdbHash}&filebytesize=${MOVIE_INTERSTELLAR.filebytesize}&title=${MOVIE_INTERSTELLAR.title}&imdbID=${MOVIE_INTERSTELLAR.imdbId}`, { responseType: 'json' });
+      let response = await got(`${appUrl}/api/media/video?osdbHash=${MOVIE_INTERSTELLAR.osdbHash}&filebytesize=${MOVIE_INTERSTELLAR.filebytesize}&title=${MOVIE_INTERSTELLAR.title}&imdbID=${MOVIE_INTERSTELLAR.imdbId}`, { responseType: 'json' }) as UmsApiGotResponse;
       expect(response.body.title).toEqual('Interstellar');
       expect(response.body.type).toEqual('movie');
       expect(omdbSpy).toHaveBeenCalledTimes(1);
@@ -151,7 +156,7 @@ describe('get by all', () => {
   describe('Episodes', () => {
     it('should return an episode by imdbid, from source APIs then store', async() => {
       const spy = jest.spyOn(apihelper, 'getFromIMDbAPIV2');
-      let response: any = await got(`${appUrl}/api/media/video?imdbID=${EPISODE_LOST.imdbId}`, { responseType: 'json' });
+      let response = await got(`${appUrl}/api/media/video?imdbID=${EPISODE_LOST.imdbId}`, { responseType: 'json' }) as UmsApiGotResponse;
       expect(response.body.title).toEqual('Confirmed Dead');
       expect(response.body.type).toEqual('episode');
       expect(spy).toHaveBeenCalledTimes(2);
@@ -166,7 +171,7 @@ describe('get by all', () => {
 
     it('should return an episode by title, from source APIs then store', async() => {
       const spy = jest.spyOn(apihelper, 'getFromIMDbAPIV2');
-      let response: any = await got(`${appUrl}/api/media/video?title=${EPISODE_LOST.title}&season=${EPISODE_LOST.season}&episode=${EPISODE_LOST.episode}`, { responseType: 'json' });
+      let response = await got(`${appUrl}/api/media/video?title=${EPISODE_LOST.title}&season=${EPISODE_LOST.season}&episode=${EPISODE_LOST.episode}`, { responseType: 'json' }) as UmsApiGotResponse;
       expect(response.body.title).toEqual('Confirmed Dead');
       expect(response.body.type).toEqual('episode');
       expect(response.body.seriesIMDbID).toEqual('tt0411008');
@@ -183,7 +188,7 @@ describe('get by all', () => {
 
     it('should return an episode by osdbHash, from source APIs then store', async() => {
       const spy = jest.spyOn(apihelper, 'getFromIMDbAPIV2');
-      let response: any = await got(`${appUrl}/api/media/video?osdbHash=${EPISODE_PRISONBREAK.osdbHash}&filebytesize=${EPISODE_PRISONBREAK.filebytesize}`, { responseType: 'json' });
+      let response = await got(`${appUrl}/api/media/video?osdbHash=${EPISODE_PRISONBREAK.osdbHash}&filebytesize=${EPISODE_PRISONBREAK.filebytesize}`, { responseType: 'json' }) as UmsApiGotResponse;
       expect(response.body.title).toEqual('Behind the Eyes');
       expect(response.body.type).toEqual('episode');
       expect(response.body.seriesIMDbID).toEqual('tt0455275');
@@ -203,7 +208,7 @@ describe('get by all', () => {
       const spy = jest.spyOn(apihelper, 'getFromIMDbAPIV2');
       const MongoSpy = jest.spyOn(MediaMetadata, 'findOne');
       await mongoose.connection.db.collection('media_metadata').insert({ imdbdID: 'tt0455275', title: 'Behind the Eyes' });
-      const response: any = await got(`${appUrl}/api/media/video?osdbHash=${EPISODE_PRISONBREAK.osdbHash}&filebytesize=${EPISODE_PRISONBREAK.filebytesize}`, { responseType: 'json' });
+      const response = await got(`${appUrl}/api/media/video?osdbHash=${EPISODE_PRISONBREAK.osdbHash}&filebytesize=${EPISODE_PRISONBREAK.filebytesize}`, { responseType: 'json' }) as UmsApiGotResponse;
       expect(response.body.title).toEqual('Behind the Eyes');
       expect(MongoSpy).toHaveBeenCalledTimes(2);
       expect(spy).toHaveBeenCalledTimes(0);
@@ -219,7 +224,7 @@ describe('get by all', () => {
         `&season=${EPISODE_BAND_OF_BROTHERS.season}`+
         `&episode=${EPISODE_BAND_OF_BROTHERS.episode}`+
         `&year=${EPISODE_BAND_OF_BROTHERS.year}`;
-      let response: any = await got(url, { responseType: 'json' });
+      let response = await got(url, { responseType: 'json' }) as UmsApiGotResponse;
       expect(response.body.title).toEqual('Bastogne');
       expect(response.body.type).toEqual('episode');
       expect(response.body.seriesIMDbID).toEqual('tt0185906');

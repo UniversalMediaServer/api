@@ -38,6 +38,7 @@ describe('Failed Lookups Model', () => {
 
   describe('Indexes', () => {
     it('should use index when find by osdbHash', async() => {
+      await FailedLookupsModel.init();
       await FailedLookupsModel.create({ osdbHash: '8e245d9679d31e12' });
       const response = await FailedLookupsModel.findOne({ osdbHash: '8e245d9679d31e12' }, {}, { explain: 1 }).exec();
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'stage'])).toEqual('IXSCAN');

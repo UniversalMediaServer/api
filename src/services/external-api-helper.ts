@@ -1,4 +1,4 @@
-import { SearchRequest, TVShow } from 'imdb-api';
+import { Movie, SearchRequest, TVShow } from 'imdb-api';
 import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
 import * as natural from 'natural';
@@ -66,12 +66,18 @@ export const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchReque
 
     if (!imdbId) {
       searchRequest.reqtype = 'movie';
-      const searchResults = await imdbAPI.search(searchRequest);
+      let searchResults;
+      try {
+        searchResults = await imdbAPI.search(searchRequest);
+      } catch (e) {
+        console.error(e);
+        return null;
+      }
       // find the best search results utilising the Jaro-Winkler distance metric
       const searchResultStringDistance = searchResults.results.map(result => natural.JaroWinklerDistance(searchRequest.name, result.title));
       const bestSearchResultKey = _.indexOf(searchResultStringDistance, _.max(searchResultStringDistance));
 
-      const searchResult: any = searchResults.results[bestSearchResultKey];
+      const searchResult = searchResults.results[bestSearchResultKey] as Movie;
       if (!searchResult) {
         throw new IMDbIDNotFoundError();
       }
@@ -155,7 +161,7 @@ export const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
       const searchResultStringDistance = searchResults.results.map(result => natural.JaroWinklerDistance(searchRequest.name, result.title));
       const bestSearchResultKey = _.indexOf(searchResultStringDistance, _.max(searchResultStringDistance));
 
-      const searchResult: any = searchResults.results[bestSearchResultKey];
+      const searchResult = searchResults.results[bestSearchResultKey] as Movie;
       if (!searchResult) {
         return null;
       }
@@ -222,12 +228,12 @@ export const setSeriesMetadataByIMDbID = async(imdbID: string): Promise<SeriesMe
 /**
  * Gets metadata from Open Subtitles and validates the response if provided validation data
  */
-export const getFromOpenSubtitles = async(osQuery: OpenSubtitlesQuery, validationData: OpenSubtitlesValidation): Promise<MediaMetadataInterface> => {
+export const getFromOpenSubtitles = async(osQuery: OpenSubtitlesQuery, validationData: OpenSubtitlesValidation): Promise<Partial<MediaMetadataInterface>> => {
   const validateMovieByYear = Boolean(validationData.year);
   const validateEpisodeBySeasonAndEpisode = Boolean(validationData.season && validationData.episode);
   let passedValidation = true;
 
-  const openSubtitlesResponse = await osAPI.identify({ ...osQuery, extend: true });
+  const openSubtitlesResponse = await osAPI.identify({ ...osQuery });
 
   if (!openSubtitlesResponse.metadata) {
     return null;
@@ -236,13 +242,13 @@ export const getFromOpenSubtitles = async(osQuery: OpenSubtitlesQuery, validatio
   if (validateMovieByYear || validateEpisodeBySeasonAndEpisode) {
     passedValidation = false;
     if (validateMovieByYear) {
-      if (validationData.year.toString() === openSubtitlesResponse.metadata?.year) {
+      if (validationData.year === openSubtitlesResponse.metadata?.year) {
         passedValidation = true;
       }
     }
 
     if (validateEpisodeBySeasonAndEpisode) {
-      if (validationData.season.toString() === openSubtitlesResponse.metadata.season && validationData.episode.toString() === openSubtitlesResponse.metadata.episode) {
+      if (validationData.season === openSubtitlesResponse.metadata.season && validationData.episode === openSubtitlesResponse.metadata.episode) {
         passedValidation = true;
       }
     }

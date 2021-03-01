@@ -43,7 +43,7 @@ interface SortByFilter {
 }
 
 export interface SeriesMetadataModelInterface extends Model<SeriesMetadataDocumentInterface> {
-  findSimilarSeries: (dirOrFilename: string, startYear?: string) => Promise<SeriesMetadataDocumentInterface | null>; 
+  findSimilarSeries: (dirOrFilename: string, startYear?: string) => Promise<SeriesMetadataDocumentInterface | null>;
 }
 
 const SeriesMetadataSchema: Schema = new Schema({

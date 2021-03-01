@@ -1,6 +1,5 @@
 import { SearchRequest } from 'imdb-api';
 import { ParameterizedContext } from 'koa';
-import Router = require('koa-router');
 import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
 
@@ -15,7 +14,7 @@ import { mapper } from '../utils/data-mapper';
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
 
-export const getByOsdbHash = async(ctx: ParameterizedContext<any, Router.IRouterParamContext<any, {}>>): Promise<MediaMetadataInterface | string> => {
+export const getByOsdbHash = async(ctx: ParameterizedContext): Promise<MediaMetadataInterface> => {
   const { osdbhash: osdbHash, filebytesize } = ctx.params;
 
   if (!osdbHash || !filebytesize) {
@@ -84,8 +83,8 @@ export const getByOsdbHash = async(ctx: ParameterizedContext<any, Router.IRouter
   }
 };
 
-export const getBySanitizedTitle = async(ctx: ParameterizedContext<any, Router.IRouterParamContext<any, {}>>): Promise<MediaMetadataInterface | string> => {
-  const { title } = ctx.query;
+export const getBySanitizedTitle = async(ctx: ParameterizedContext): Promise<MediaMetadataInterface> => {
+  const { title }: UmsQueryParams = ctx.query;
   const year = ctx.query.year ? Number(ctx.query.year) : null;
 
   if (!title) {
@@ -99,9 +98,9 @@ export const getBySanitizedTitle = async(ctx: ParameterizedContext<any, Router.I
   }
 
   // If we already failed to get a result, return early
-  const failedLookupQuery: any = { title };
+  const failedLookupQuery: GetVideoFilter = { title };
   if (year) {
-    failedLookupQuery.year = year;
+    failedLookupQuery.year = year.toString();
   }
   if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
@@ -161,8 +160,8 @@ export const getBySanitizedTitle = async(ctx: ParameterizedContext<any, Router.I
  * Looks up a video by its title, and optionally its year, season and episode number.
  * If it is an episode, it also sets the series data.
  */
-export const getBySanitizedTitleV2 = async(ctx: ParameterizedContext<any, Router.IRouterParamContext<any, {}>>): Promise<MediaMetadataInterface | string> => {
-  const { title } = ctx.query;
+export const getBySanitizedTitleV2 = async(ctx: ParameterizedContext): Promise<MediaMetadataInterface> => {
+  const { title }: UmsQueryParams = ctx.query;
   const episode = ctx.query.episode ? Number(ctx.query.episode) : null;
   const season = ctx.query.season ? Number(ctx.query.season) : null;
   const year = ctx.query.year ? Number(ctx.query.year) : null;
@@ -172,15 +171,15 @@ export const getBySanitizedTitleV2 = async(ctx: ParameterizedContext<any, Router
   }
 
   // If we already have a result, return it
-  const existingResultQuery: any = { searchMatches: { $in: [title] } };
+  const existingResultQuery: GetVideoFilter = { searchMatches: { $in: [title] } };
   if (year) {
-    existingResultQuery.year = year;
+    existingResultQuery.year = year.toString();
   }
   if (episode) {
-    existingResultQuery.episode = episode;
+    existingResultQuery.episode = episode.toString();
   }
   if (season) {
-    existingResultQuery.season = season;
+    existingResultQuery.season = season.toString();
   }
   const existingResultFromSearchMatch: MediaMetadataInterface = await MediaMetadata.findOne(existingResultQuery, null, { lean: true }).exec();
   if (existingResultFromSearchMatch) {
@@ -188,15 +187,15 @@ export const getBySanitizedTitleV2 = async(ctx: ParameterizedContext<any, Router
   }
 
   // If we already failed to get a result, return early
-  const failedLookupQuery: any = { title };
+  const failedLookupQuery: GetVideoFilter = { title };
   if (year) {
-    failedLookupQuery.year = year;
+    failedLookupQuery.year = year.toString();
   }
   if (episode) {
-    failedLookupQuery.episode = episode;
+    failedLookupQuery.episode = episode.toString();
   }
   if (season) {
-    failedLookupQuery.season = season;
+    failedLookupQuery.season = season.toString();
   }
   if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
@@ -207,7 +206,14 @@ export const getBySanitizedTitleV2 = async(ctx: ParameterizedContext<any, Router
   if (year) {
     searchRequest.year = year;
   }
-  const imdbData: MediaMetadataInterface = await externalAPIHelper.getFromIMDbAPIV2(null, searchRequest, season, episode);
+  let imdbData: MediaMetadataInterface;
+  try {
+    imdbData = await externalAPIHelper.getFromIMDbAPIV2(null, searchRequest, season, episode);
+  } catch (e) {
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+    throw new MediaNotFoundError();
+  }
+
   if (!imdbData) {
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
@@ -257,9 +263,9 @@ export const getBySanitizedTitleV2 = async(ctx: ParameterizedContext<any, Router
    */
 };
 
-export const getSeriesByTitle = async(ctx: ParameterizedContext<any, Router.IRouterParamContext<any, {}>>): Promise<SeriesMetadataInterface | string> => {
-  let { title: dirOrFilename } = ctx.query;
-  const year = ctx.query.year;
+export const getSeriesByTitle = async(ctx: ParameterizedContext): Promise<SeriesMetadataInterface> => {
+  let { title: dirOrFilename }: UmsQueryParams = ctx.query;
+  const { year }: UmsQueryParams = ctx.query;
   if (!dirOrFilename) {
     throw new ValidationError('title is required');
   }
@@ -286,7 +292,7 @@ export const getSeriesByTitle = async(ctx: ParameterizedContext<any, Router.IRou
     reqtype: 'series',
   };
   if (year) {
-    searchRequest.year = year;
+    searchRequest.year = Number(year);
   }
   const tvSeriesInfo = await imdbAPI.get(searchRequest);
 
@@ -299,8 +305,8 @@ export const getSeriesByTitle = async(ctx: ParameterizedContext<any, Router.IRou
   return ctx.body = dbMeta;
 };
 
-export const getByImdbID = async(ctx: ParameterizedContext<any, Router.IRouterParamContext<any, {}>>): Promise<any> => {
-  const { imdbid } = ctx.query;
+export const getByImdbID = async(ctx: ParameterizedContext): Promise<MediaMetadataInterface> => {
+  const { imdbid }: UmsQueryParams = ctx.query;
 
   if (!imdbid) {
     throw new ValidationError('imdbid is required');
@@ -339,10 +345,10 @@ export const getByImdbID = async(ctx: ParameterizedContext<any, Router.IRouterPa
   }
 };
 
-export const getVideo = async(ctx: ParameterizedContext<any, Router.IRouterParamContext<any, {}>>): Promise<any> => {
-  const { title, osdbHash, imdbID } = ctx.query;
-  let { episode, season, year, filebytesize } = ctx.query;
-  [episode, season, year, filebytesize] = [episode, season, year, filebytesize].map(param => param ? Number(param) : null);
+export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataInterface> => {
+  const { title, osdbHash, imdbID }: UmsQueryParams = ctx.query;
+  const { episode, season, year, filebytesize }: UmsQueryParams = ctx.query;
+  const [episodeNumber, seasonNumber, yearNumber, filebytesizeNumber] = [episode, season, year, filebytesize].map(param => param ? Number(param) : null);
 
   if (!title && !osdbHash && !imdbID) {
     throw new ValidationError('title, osdbHash or imdbId is a required parameter');
@@ -370,14 +376,14 @@ export const getVideo = async(ctx: ParameterizedContext<any, Router.IRouterParam
   }
 
   if (title) {
-    const titleQuery: any = { searchMatches: { $in: [title] } };
-    const titleFailedQuery: any = { title };
+    const titleQuery: GetVideoFilter = { searchMatches: { $in: [title] } };
+    const titleFailedQuery: GetVideoFilter = { title };
 
     if (year) {
       titleQuery.year = year;
       titleFailedQuery.year = year;
     }
-    if (episode) {
+    if (episodeNumber) {
       titleQuery.episode = episode;
       titleFailedQuery.episode = episode;
     }
@@ -412,7 +418,7 @@ export const getVideo = async(ctx: ParameterizedContext<any, Router.IRouterParam
   let openSubtitlesMetadata;
 
   if (osdbHash && filebytesize) {
-    const osQuery = { moviehash: osdbHash, moviebytesize: filebytesize };
+    const osQuery = { moviehash: osdbHash, moviebytesize: filebytesizeNumber };
     const validation = {
       year: year ? year : null,
       season: season ? season : null,
@@ -451,10 +457,18 @@ export const getVideo = async(ctx: ParameterizedContext<any, Router.IRouterParam
   }
 
   if (year) {
-    omdbSearchRequest.year = year;
+    omdbSearchRequest.year = yearNumber;
   }
 
-  const imdbData: MediaMetadataInterface = await externalAPIHelper.getFromIMDbAPIV2(imdbIdToSearch, omdbSearchRequest, season, episode);
+  const failedLookupQuery = { episode, imdbID, osdbHash, season, title, year };
+
+  let imdbData: MediaMetadataInterface;
+  try {
+    imdbData = await externalAPIHelper.getFromIMDbAPIV2(imdbIdToSearch, omdbSearchRequest, seasonNumber, episodeNumber);
+  } catch (e) {
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+    throw new MediaNotFoundError();
+  }
 
   if (imdbData?.type === 'episode') {
     await externalAPIHelper.setSeriesMetadataByIMDbID(imdbData.seriesIMDbID);
@@ -463,7 +477,7 @@ export const getVideo = async(ctx: ParameterizedContext<any, Router.IRouterParam
   // End omdb lookups
   const combinedResponse = _.merge(openSubtitlesMetadata, imdbData);
   if (!combinedResponse || _.isEmpty(combinedResponse)) {
-    await FailedLookups.updateOne({ osdbHash, imdbID, title, season, episode }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
 
@@ -478,7 +492,7 @@ export const getVideo = async(ctx: ParameterizedContext<any, Router.IRouterParam
     const dbMeta = await MediaMetadata.create(combinedResponse);
     return ctx.body = dbMeta;
   } catch (e) {
-    await FailedLookups.updateOne({ osdbHash, imdbID, title, season, episode }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
 };
