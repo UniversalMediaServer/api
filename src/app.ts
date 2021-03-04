@@ -10,6 +10,7 @@ import * as https from 'https';
 const debug = Debug('universalmediaserver-api:server');
 import indexRouter from './routes/index';
 import mediaRouter  from './routes/media';
+import { logger } from './utils/logger';
 import { ExternalAPIError, IMDbIDNotFoundError, MediaNotFoundError, ValidationError } from './helpers/customErrors';
 
 const app = new Koa();
@@ -19,6 +20,7 @@ import connect from './models/connection';
 const db: string = process.env.MONGO_URL;
 const PORT: string = process.env.PORT || '3000';
 const bypassMongo: boolean = Boolean(process.env.BYPASS_MONGO) || false;
+
 connect(db);
 
 app.use(helmet());
@@ -27,6 +29,7 @@ app.use(async(ctx, next) => {
   try {
     await next();
   } catch (err) {
+    ctx.app.emit('error', err, ctx);
     if (err instanceof MediaNotFoundError || err instanceof IMDbIDNotFoundError) {
       ctx.status = 404;
     }
@@ -52,6 +55,10 @@ app.use(async(ctx, next) => {
       console.error(err);
     }
   }
+});
+
+app.on('error', (err, ctx) => {
+  logger.log({ 'url': `${ctx.request.method} ${ctx.request.url}`, 'statusCode': `${ctx.response.status}`, 'level': 'error', 'message': err.message, 'error': err.stack });
 });
 
 app.use(async(ctx, next) => {
