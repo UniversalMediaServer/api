@@ -120,6 +120,7 @@
   "dependencies": {
     "debug": "^4.3.1",
     "episode-parser": "^2.0.0",
+    "escape-string-regexp": "^4.0.0",
     "imdb-api": "^4.4.1",
     "koa": "^2.13.1",
     "koa-bodyparser": "^4.3.0",
@@ -131,7 +132,7 @@
     "natural": "^4.0.0",
     "object-mapper": "^6.2.0",
     "opensubtitles-api": "^5.1.2",
-    "pm2": "^4.5.4",
+    "pm2": "^4.5.5",
     "stoppable": "^1.1.0",
     "ts-node": "^9.1.1"
   },
@@ -147,13 +148,13 @@
     "@types/object-mapper": "^6.2.0",
     "@typescript-eslint/eslint-plugin": "^2.34.0",
     "@typescript-eslint/parser": "^2.34.0",
-    "eslint": "^7.20.0",
-    "got": "^11.8.1",
+    "eslint": "^7.21.0",
+    "got": "^11.8.2",
     "jest": "^26.6.3",
     "mongodb-memory-server": "^6.9.3",
-    "nock": "^13.0.7",
+    "nock": "^13.0.9",
     "nodemon": "^2.0.7",
-    "ts-jest": "^26.5.1",
-    "typescript": "^4.1.5"
+    "ts-jest": "^26.5.2",
+    "typescript": "^4.2.2"
   }
 }
