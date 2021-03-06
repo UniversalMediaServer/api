@@ -2,7 +2,6 @@ import * as mongoose from 'mongoose';
 import { Schema, Document, Model  } from 'mongoose';
 import * as _ from 'lodash';
 import * as escapeStringRegexp from 'escape-string-regexp';
-import { threadId } from 'worker_threads';
 
 const TEXT_SCORE_MINIMUM = 1;
 
