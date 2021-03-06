@@ -91,15 +91,21 @@ SeriesMetadataSchema.statics.findSimilarSeries = async function(title: string, s
     sortBy.startYear = 1;
   }
 
-  const bestGuess = await this.find(bestGuessQuery, { score: { $meta: 'textScore' } })
+  const bestGuesses = await this.find(bestGuessQuery, { score: { $meta: 'textScore' } })
     .sort(sortBy)
-    .limit(1)
+    .limit(5)
     .lean();
 
-  if (bestGuess[0] && (bestGuess[0].score < TEXT_SCORE_MINIMUM)) {
+  // returns the first document for an exact title match, which is already ordered by the text search score
+  const hasExactMatch = _.find(bestGuesses, (doc) => doc.title.toLowerCase() === title.toLowerCase());
+  if (hasExactMatch) {
+    return hasExactMatch;
+  }
+
+  if (bestGuesses[0] && (bestGuesses[0].score < TEXT_SCORE_MINIMUM)) {
     return null;
   }
-  return bestGuess[0] || null;
+  return bestGuesses[0] || null;
 };
 
 SeriesMetadataSchema.virtual('imdburl').get(function() {
