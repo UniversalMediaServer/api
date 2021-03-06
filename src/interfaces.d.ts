@@ -49,3 +49,8 @@ interface GetVideoFilter {
   season?: string;
   title?: string;
 }
+
+interface ExactSearchQuery {
+  title: RegExp;
+  startYear?: string;
+}

@@ -1,5 +1,7 @@
 import * as mongoose from 'mongoose';
 import { Schema, Document, Model  } from 'mongoose';
+import * as _ from 'lodash';
+import * as escapeStringRegexp from 'escape-string-regexp';
 
 const TEXT_SCORE_MINIMUM = 1;
 
@@ -83,23 +85,39 @@ const SeriesMetadataSchema: Schema = new Schema({
  */
 SeriesMetadataSchema.statics.findSimilarSeries = async function(title: string, startYear?: string): Promise<SeriesMetadataInterface | null> {
   const bestGuessQuery = { $text: { $search: title, $caseSensitive: false } } as BestGuessQuery;
+  const escapedTitle = new RegExp(`^${escapeStringRegexp(title)}$`);
+  const exactSearchQuery = { title: escapedTitle } as ExactSearchQuery;
   const sortBy = { score: { $meta: 'textScore' } } as SortByFilter;
 
   if (startYear) {
     bestGuessQuery.startYear = startYear;
+    exactSearchQuery.startYear = startYear;
   } else {
     sortBy.startYear = 1;
   }
 
-  const bestGuess = await this.find(bestGuessQuery, { score: { $meta: 'textScore' } })
+  
+  const seriesMetadata = await this.find(exactSearchQuery).sort({ startYear: 1 });
+
+  if (seriesMetadata[0]) {
+    return seriesMetadata[0];
+  }
+
+  const bestGuesses = await this.find(bestGuessQuery, { score: { $meta: 'textScore' } })
     .sort(sortBy)
-    .limit(1)
+    .limit(5)
     .lean();
 
-  if (bestGuess[0] && (bestGuess[0].score < TEXT_SCORE_MINIMUM)) {
+  // returns the first document for an exact title match, which is already ordered by the text search score
+  const hasExactMatch = _.find(bestGuesses, (doc) => doc.title.toLowerCase() === title.toLowerCase());
+  if (hasExactMatch) {
+    return hasExactMatch;
+  }
+
+  if (bestGuesses[0] && (bestGuesses[0].score < TEXT_SCORE_MINIMUM)) {
     return null;
   }
-  return bestGuess[0] || null;
+  return bestGuesses[0] || null;
 };
 
 SeriesMetadataSchema.virtual('imdburl').get(function() {
