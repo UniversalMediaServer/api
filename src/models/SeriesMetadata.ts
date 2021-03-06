@@ -1,11 +1,11 @@
 import * as mongoose from 'mongoose';
-import { Schema, Document, model, Model } from 'mongoose';
+import { Schema, Document, Model } from 'mongoose';
 import * as _ from 'lodash';
 import * as escapeStringRegexp from 'escape-string-regexp';
 
 const TEXT_SCORE_MINIMUM = 1;
 
-export interface SeriesMetadataDocumentInterface extends Document {
+export interface SeriesMetadataInterface extends Document {
   actors: Array<string>;
   awards?: string;
   country?: string;
@@ -44,8 +44,8 @@ interface SortByFilter {
   startYear: number;
 }
 
-export interface SeriesMetadataModelInterface extends Model<SeriesMetadataDocumentInterface> {
-  findSimilarSeries: (dirOrFilename: string, startYear?: string) => Promise<SeriesMetadataDocumentInterface | null>;
+export interface SeriesMetadataModel extends Model<SeriesMetadataInterface> {
+  findSimilarSeries(dirOrFilename: string, startYear?: string): Promise<SeriesMetadataInterface>;
 }
 
 const SeriesMetadataSchema: Schema = new Schema({
@@ -87,7 +87,7 @@ const SeriesMetadataSchema: Schema = new Schema({
  *                    matches are returned. If not provided, the oldest year
  *                    match will be returned.
  */
-SeriesMetadataSchema.statics.findSimilarSeries = async function(title: string, startYear?: string): Promise<SeriesMetadataDocumentInterface | null> {
+SeriesMetadataSchema.statics.findSimilarSeries = async function(title: string, startYear?: string): Promise<SeriesMetadataInterface | null> {
   const bestGuessQuery = { $text: { $search: title, $caseSensitive: false } } as BestGuessQuery;
   const escapedTitle = new RegExp(`^${escapeStringRegexp(title)}$`);
   const exactSearchQuery = { title: escapedTitle } as ExactSearchQuery;
@@ -131,5 +131,5 @@ SeriesMetadataSchema.virtual('imdburl').get(function() {
 // this allows us to use MongoDB Full text search https://docs.mongodb.com/manual/reference/operator/query/text/#op._S_text
 SeriesMetadataSchema.index({ 'title': 'text' });
 
-const SeriesMetadata: SeriesMetadataModelInterface = model<SeriesMetadataDocumentInterface, SeriesMetadataModelInterface>('SeriesMetadata', SeriesMetadataSchema);
+const SeriesMetadata = mongoose.model<SeriesMetadataInterface, SeriesMetadataModel>('SeriesMetadata', SeriesMetadataSchema);
 export default SeriesMetadata;
