@@ -120,6 +120,7 @@
   "dependencies": {
     "debug": "^4.3.1",
     "episode-parser": "^2.0.0",
+    "escape-string-regexp": "^4.0.0",
     "imdb-api": "^4.4.1",
     "koa": "^2.13.1",
     "koa-bodyparser": "^4.3.0",

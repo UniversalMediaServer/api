@@ -1,6 +1,8 @@
 import * as mongoose from 'mongoose';
 import { Schema, Document, Model  } from 'mongoose';
 import * as _ from 'lodash';
+import * as escapeStringRegexp from 'escape-string-regexp';
+import { threadId } from 'worker_threads';
 
 const TEXT_SCORE_MINIMUM = 1;
 
@@ -90,6 +92,13 @@ SeriesMetadataSchema.statics.findSimilarSeries = async function(title: string, s
     bestGuessQuery.startYear = startYear;
   } else {
     sortBy.startYear = 1;
+  }
+
+  const escapedTitle = new RegExp(`^${escapeStringRegexp(title)}$`);
+  const seriesMetadata = await this.findOne({ title: escapedTitle }).lean();
+
+  if (seriesMetadata) {
+    return seriesMetadata;
   }
 
   const bestGuesses = await this.find(bestGuessQuery, { score: { $meta: 'textScore' } })
