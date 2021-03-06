@@ -85,19 +85,22 @@ const SeriesMetadataSchema: Schema = new Schema({
  */
 SeriesMetadataSchema.statics.findSimilarSeries = async function(title: string, startYear?: string): Promise<SeriesMetadataInterface | null> {
   const bestGuessQuery = { $text: { $search: title, $caseSensitive: false } } as BestGuessQuery;
+  const escapedTitle = new RegExp(`^${escapeStringRegexp(title)}$`);
+  const exactSearchQuery = { title: escapedTitle } as ExactSearchQuery;
   const sortBy = { score: { $meta: 'textScore' } } as SortByFilter;
 
   if (startYear) {
     bestGuessQuery.startYear = startYear;
+    exactSearchQuery.startYear = startYear;
   } else {
     sortBy.startYear = 1;
   }
 
-  const escapedTitle = new RegExp(`^${escapeStringRegexp(title)}$`);
-  const seriesMetadata = await this.findOne({ title: escapedTitle }).lean();
+  
+  const seriesMetadata = await this.find(exactSearchQuery).sort({ startYear: 1 });
 
-  if (seriesMetadata) {
-    return seriesMetadata;
+  if (seriesMetadata[0]) {
+    return seriesMetadata[0];
   }
 
   const bestGuesses = await this.find(bestGuessQuery, { score: { $meta: 'textScore' } })
