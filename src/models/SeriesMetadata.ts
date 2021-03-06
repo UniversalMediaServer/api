@@ -1,5 +1,6 @@
 import * as mongoose from 'mongoose';
 import { Schema, Document, Model  } from 'mongoose';
+import * as _ from 'lodash';
 
 const TEXT_SCORE_MINIMUM = 1;
 
