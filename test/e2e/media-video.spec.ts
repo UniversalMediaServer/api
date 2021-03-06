@@ -1,4 +1,4 @@
-import FailedLookupsModel, { FailedLookupsInterfaceDocument } from '../../src/models/FailedLookups';
+import FailedLookupsModel from '../../src/models/FailedLookups';
 import * as apihelper from '../../src/services/external-api-helper';
 
 import * as mongoose from 'mongoose';

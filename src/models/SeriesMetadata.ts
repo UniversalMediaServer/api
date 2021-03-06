@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import { Schema, Document, Model  } from 'mongoose';
+import { Schema, Document, Model } from 'mongoose';
 import * as _ from 'lodash';
 import * as escapeStringRegexp from 'escape-string-regexp';
 
@@ -35,13 +35,17 @@ interface BestGuessQuery {
   startYear: string;
 }
 
+interface BestGuessResult extends mongoose.Document {
+  score: string;
+}
+
 interface SortByFilter {
   score: { $meta: string };
   startYear: number;
 }
 
 export interface SeriesMetadataModel extends Model<SeriesMetadataInterface> {
-  findSimilarSeries(dirOrFilename: string, startYear?: string): Promise<SeriesMetadataInterface>; 
+  findSimilarSeries(dirOrFilename: string, startYear?: string): Promise<SeriesMetadataInterface>;
 }
 
 const SeriesMetadataSchema: Schema = new Schema({
@@ -106,7 +110,7 @@ SeriesMetadataSchema.statics.findSimilarSeries = async function(title: string, s
   const bestGuesses = await this.find(bestGuessQuery, { score: { $meta: 'textScore' } })
     .sort(sortBy)
     .limit(5)
-    .lean();
+    .lean() as BestGuessResult;
 
   // returns the first document for an exact title match, which is already ordered by the text search score
   const hasExactMatch = _.find(bestGuesses, (doc) => doc.title.toLowerCase() === title.toLowerCase());
