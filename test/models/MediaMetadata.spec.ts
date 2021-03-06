@@ -119,7 +119,7 @@ describe('Media Metadata Model', () => {
   describe('Indexes', () => {
     it('should use index when find by osdbHash', async() => {
       await MediaMetadataModel.create(interstellarMetaData);
-      const response = await MediaMetadataModel.findOne({ osdbHash: interstellarMetaData.osdbHash }, null, { explain: 1 }).exec();
+      const response = await MediaMetadataModel.findOne({ osdbHash: interstellarMetaData.osdbHash }, null, { explain: true }).exec();
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'inputStage', 'stage'])).toEqual('IXSCAN');
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'stage'])).toEqual('FETCH');
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'stage'])).toEqual('PROJECTION');
@@ -127,7 +127,7 @@ describe('Media Metadata Model', () => {
 
     it('should use index when find by title', async() => {
       await MediaMetadataModel.create(interstellarMetaData);
-      const response = await MediaMetadataModel.findOne({ title: interstellarMetaData.title }, null, { explain: 1 }).exec();
+      const response = await MediaMetadataModel.findOne({ title: interstellarMetaData.title }, null, { explain: true }).exec();
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'inputStage', 'stage'])).toEqual('IXSCAN');
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'stage'])).toEqual('FETCH');
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'stage'])).toEqual('PROJECTION');
@@ -135,7 +135,7 @@ describe('Media Metadata Model', () => {
 
     it('should use index when find by searchMatches', async() => {
       await MediaMetadataModel.create(interstellarMetaData);
-      const response = await MediaMetadataModel.findOne({ searchMatches: { $in: [interstellarMetaData.searchMatches[0]] } }, null, { explain: 1 }).exec();
+      const response = await MediaMetadataModel.findOne({ searchMatches: { $in: [interstellarMetaData.searchMatches[0]] } }, null, { explain: true }).exec();
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'inputStage', 'stage'])).toEqual('IXSCAN');
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'stage'])).toEqual('FETCH');
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'stage'])).toEqual('PROJECTION');

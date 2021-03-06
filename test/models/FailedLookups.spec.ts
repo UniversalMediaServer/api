@@ -40,13 +40,13 @@ describe('Failed Lookups Model', () => {
     it('should use index when find by osdbHash', async() => {
       await FailedLookupsModel.init();
       await FailedLookupsModel.create({ osdbHash: '8e245d9679d31e12' });
-      const response = await FailedLookupsModel.findOne({ osdbHash: '8e245d9679d31e12' }, {}, { explain: 1 }).exec();
+      const response = await FailedLookupsModel.findOne({ osdbHash: '8e245d9679d31e12' }, {}, { explain: true }).exec();
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'stage'])).toEqual('IXSCAN');
     });
 
     it('should use index when find by title', async() => {
       await FailedLookupsModel.create({ title: 'Jackass 2' });
-      const response = await FailedLookupsModel.findOne({ title: 'Jackass 2' }, {}, { explain: 1 }).exec();
+      const response = await FailedLookupsModel.findOne({ title: 'Jackass 2' }, {}, { explain: true }).exec();
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'stage'])).toEqual('IXSCAN');
     });
   });

@@ -1,6 +1,6 @@
 import MediaMetadataModel, {  MediaMetadataInterfaceDocument } from '../../src/models/MediaMetadata';
 import SeriesMetadataModel from '../../src/models/SeriesMetadata';
-import FailedLookupsModel, { FailedLookupsInterfaceDocument } from '../../src/models/FailedLookups';
+import FailedLookupsModel from '../../src/models/FailedLookups';
 
 import * as mongoose from 'mongoose';
 import got from 'got';
