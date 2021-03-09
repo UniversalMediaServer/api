@@ -155,6 +155,6 @@
     "nock": "^13.0.9",
     "nodemon": "^2.0.7",
     "ts-jest": "^26.5.2",
-    "typescript": "^4.2.2"
+    "typescript": "^4.2.3"
   }
 }
