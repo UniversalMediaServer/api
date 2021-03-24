@@ -265,15 +265,25 @@ export const getBySanitizedTitleV2 = async(ctx: ParameterizedContext): Promise<M
 
 export const getSeriesByTitle = async(ctx: ParameterizedContext): Promise<SeriesMetadataInterface> => {
   let { title: dirOrFilename }: UmsQueryParams = ctx.query;
-  const { year }: UmsQueryParams = ctx.query;
+  const { year, imdbID }: UmsQueryParams = ctx.query;
   if (!dirOrFilename) {
     throw new ValidationError('title is required');
   }
-
-  let dbMeta: SeriesMetadataInterface = await SeriesMetadata.findSimilarSeries(dirOrFilename, year);
-  if (dbMeta) {
-    return ctx.body = dbMeta;
+  let dbMeta: SeriesMetadataInterface;
+  // if we have an imdbID, try to find results based on that, which is more accurate than a title search
+  if (imdbID) {
+    const existingResultByimdbID = await SeriesMetadata.findOne({ imdbID }, null, { lean: true }).exec();
+    if (existingResultByimdbID) {
+      return ctx.body = existingResultByimdbID;
+    }
   }
+  if (!imdbID) {
+    dbMeta = await SeriesMetadata.findSimilarSeries(dirOrFilename, year);
+    if (dbMeta) {
+      return ctx.body = dbMeta;
+    }
+  }
+
 
   const failedLookupQuery: FailedLookupsInterface = { title: dirOrFilename, type: 'series' };
   if (year) {
@@ -284,23 +294,29 @@ export const getSeriesByTitle = async(ctx: ParameterizedContext): Promise<Series
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
     throw new MediaNotFoundError();
   }
+  let metadata;
 
-  const parsed = episodeParser(dirOrFilename);
-  dirOrFilename = parsed && parsed.show ? parsed.show : dirOrFilename;
-  const searchRequest: SearchRequest = {
-    name: dirOrFilename,
-    reqtype: 'series',
-  };
-  if (year) {
-    searchRequest.year = Number(year);
+  if (!imdbID) {
+    const parsed = episodeParser(dirOrFilename);
+    dirOrFilename = parsed && parsed.show ? parsed.show : dirOrFilename;
+    const searchRequest: SearchRequest = {
+      name: dirOrFilename,
+      reqtype: 'series',
+    };
+    if (year) {
+      searchRequest.year = Number(year);
+    }
+    const tvSeriesInfo = await imdbAPI.get(searchRequest);
+  
+    if (!tvSeriesInfo) {
+      await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+      throw new MediaNotFoundError();
+    }
+    metadata = mapper.parseIMDBAPISeriesResponse(tvSeriesInfo);
+  } else {
+    metadata = await externalAPIHelper.getFromIMDbAPIV2(imdbID);
   }
-  const tvSeriesInfo = await imdbAPI.get(searchRequest);
 
-  if (!tvSeriesInfo) {
-    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
-    throw new MediaNotFoundError();
-  }
-  const metadata = mapper.parseIMDBAPISeriesResponse(tvSeriesInfo);
   dbMeta = await SeriesMetadata.create(metadata);
   return ctx.body = dbMeta;
 };

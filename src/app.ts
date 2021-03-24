@@ -61,6 +61,10 @@ app.use(async(ctx, next) => {
   await next();
 });
 
+app.use(async(ctx, next) => {
+  await next();
+});
+
 app.use(async(ctx: ParameterizedContext, next) => {
   if (bypassMongo) {
     await mongoose.connection.dropDatabase();
