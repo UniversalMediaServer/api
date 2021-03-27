@@ -70,7 +70,13 @@ const SeriesMetadataSchema: Schema = new Schema({
   startYear: { type: String },
   title: { type: String, required: true },
   totalSeasons: { type: Number },
-  type: { type: String, default: 'series', required: true },
+  type: {
+    type: String,
+    validate: {
+      validator: (t: string): boolean =>  t === 'series',
+      required: [true, 'Series Metadata must have a type, of "series".']
+    },
+  },
   votes: { type: String },
   year: { type: String },
 }, {
