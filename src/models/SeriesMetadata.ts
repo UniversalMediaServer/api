@@ -74,7 +74,7 @@ const SeriesMetadataSchema: Schema = new Schema({
     type: String,
     validate: {
       validator: (t: string): boolean =>  t === 'series',
-      required: [true, 'Series Metadata must have a type, of "series".']
+      required: [true, 'Series Metadata must have a type, of "series".'],
     },
   },
   votes: { type: String },
