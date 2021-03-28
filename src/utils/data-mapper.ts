@@ -255,9 +255,6 @@ class UmsDataMapper {
   }
 
   parseIMDBAPISeriesResponse(imdbData): Partial<SeriesMetadataInterface> {
-    if (imdbData.type !== 'series') {
-      throw new Error('Expected series type');
-    }
     const mappedData = objectMapper.merge(imdbData, imdbSeriesMap);
     return removeNotApplicable(mappedData);
   }
