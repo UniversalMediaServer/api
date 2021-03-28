@@ -170,10 +170,7 @@ const imdbSeriesMap = {
     transform: val => val ? val.toString() : undefined,
   },
   'totalseasons': 'totalSeasons',
-  'type': {
-    key: 'type',
-    transform: val => 'series',
-  },
+  'type': 'type',
   'votes': 'votes',
   'year': {
     key: 'year',
@@ -258,6 +255,9 @@ class UmsDataMapper {
   }
 
   parseIMDBAPISeriesResponse(imdbData): Partial<SeriesMetadataInterface> {
+    if (imdbData.type !== 'series') {
+      throw new Error('Expected series type');
+    }
     const mappedData = objectMapper.merge(imdbData, imdbSeriesMap);
     return removeNotApplicable(mappedData);
   }
