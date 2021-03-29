@@ -3062,10 +3062,9 @@ ignore@^4.0.6:
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-4.0.6.tgz#750e3db5862087b4737ebac8207ffd1ef27b25fc"
   integrity sha512-cyFDKrqc/YdcWFniJhzI42+AzS+gNwmUzOSFcRCQYwySuBBBy/KjuxWLZ/FHEH6Moq1NizMOBWyTcv8O4OZIMg==
 
-imdb-api@^4.4.1:
+"imdb-api@https://github.com/UniversalMediaServer/node-imdb-api#3517efef2e1b9b802086d32837aa2639cea6ea87":
   version "4.4.1"
-  resolved "https://registry.yarnpkg.com/imdb-api/-/imdb-api-4.4.1.tgz#dc64d88817a6e28754e3b479e19e26f595ee19fc"
-  integrity sha512-bd2beJWHLDlB7iGsCNcGfQR0ioDCgUdOo42vDP/laTdEHrkzp7Dnj4ysXBp74mBJj1AMZntdoeBbmwEBpfamEg==
+  resolved "https://github.com/UniversalMediaServer/node-imdb-api#3517efef2e1b9b802086d32837aa2639cea6ea87"
   dependencies:
     "@ungap/url-search-params" "^0.2.2"
     ky "^0.24.0"
