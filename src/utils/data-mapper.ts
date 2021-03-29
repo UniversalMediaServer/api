@@ -170,10 +170,7 @@ const imdbSeriesMap = {
     transform: val => val ? val.toString() : undefined,
   },
   'totalseasons': 'totalSeasons',
-  'type': {
-    key: 'type',
-    transform: val => 'series',
-  },
+  'type': 'type',
   'votes': 'votes',
   'year': {
     key: 'year',

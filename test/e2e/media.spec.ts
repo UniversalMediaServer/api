@@ -68,6 +68,7 @@ describe('Media Metadata endpoints', () => {
   beforeEach(async() => {
     await FailedLookupsModel.deleteMany({});
     await MediaMetadataModel.deleteMany({});
+    await SeriesMetadataModel.deleteMany({});
   });
 
   afterAll(async() => {
@@ -471,6 +472,18 @@ describe('Media Metadata endpoints', () => {
       expect(response.body._id).toEqual(newDocumentId);
       response = await got(`${appUrl}/api/media/seriestitle?title=Homeland series 1`, { responseType: 'json' });
       expect(response.body._id).toEqual(newDocumentId);
+    });
+
+    it('should fail to save non series type', async() => {
+      expect(await SeriesMetadataModel.countDocuments()).toBe(0);
+      let err;
+      try {
+        await got(`${appUrl}/api/media/seriestitle?title=Not A Series Type`, { responseType: 'json' }) as UmsApiGotResponse;
+      } catch (e) {
+        err = e;
+      }
+      expect(err).toBeTruthy();
+      expect(await SeriesMetadataModel.countDocuments()).toBe(0);
     });
 
     it('should return series with correct year', async() => {

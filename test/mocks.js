@@ -22,6 +22,12 @@ nock('https://www.omdbapi.com:443', { 'encodedQueryParams': true })
 nock('https://www.omdbapi.com:443', { 'encodedQueryParams': true })
   .persist()
   .get('/')
+  .query({"apikey":"foo","plot":"full","r":"json","t":"Not A Series Type"})
+  .reply(200, {"Title":"Not A Series Type","Year":"2016–","Rated":"TV-Y7-FV","Released":"10 Apr 2017","Runtime":"12 min","Genre":"Animation, Short, Action, Adventure, Comedy, Family, Sci-Fi","Director":"N/A","Writer":"Man of Action","Actors":"Montse Hernandez, Tara Strong, David Kaye, Roger Craig Smith","Plot":"Ben 10 is the fifth iteration of the Ben 10 franchise. It serves as a reboot of the television series loosely based upon the original series.","Language":"English","Country":"USA","Awards":"3 nominations.","Poster":"https://m.media-amazon.com/images/M/MV5BZDQyMGI3MjctNWIzYy00MmYzLWJhODEtOGE0NWM2OGU3NDI1XkEyXkFqcGdeQXVyNjkzNTYxNjI@._V1_SX300.jpg","Ratings":[{"Source":"Internet Movie Database","Value":"2.5/10"}],"Metascore":"N/A","imdbRating":"2.5","imdbVotes":"1,952","imdbID":"tt6148376","Type":"notseries","totalSeasons":"2","Response":"True"});
+
+nock('https://www.omdbapi.com:443', { 'encodedQueryParams': true })
+  .persist()
+  .get('/')
   .query({"apikey":"foo","plot":"full","r":"json","t":"Ben 10","y":"2005"})
   .reply(200, {"Title":"Ben 10","Year":"2005–2008","Rated":"TV-Y7-FV","Released":"27 Dec 2005","Runtime":"30 min","Genre":"Animation, Action, Adventure, Family, Sci-Fi","Director":"N/A","Writer":"Joe Casey, Joe Kelly, Man of Action, Duncan Rouleau, Steven T. Seagle","Actors":"Tara Strong, Paul Eiding, Meagan Moore, Dee Bradley Baker","Plot":"The story of Ben Tennyson, a typical kid who becomes very atypical after he discovers the Omnitrix, a mysterious alien device with the power to transform the wearer into ten different alien species.","Language":"English","Country":"USA","Awards":"1 win & 2 nominations.","Poster":"https://m.media-amazon.com/images/M/MV5BMGU1MGQ1YTgtZTdkYi00ODI3LWFjMzItYmZkN2IxMmM0M2M4XkEyXkFqcGdeQXVyOTgwMzk1MTA@._V1_SX300.jpg","Ratings":[{"Source":"Internet Movie Database","Value":"7.2/10"}],"Metascore":"N/A","imdbRating":"7.2","imdbVotes":"11,955","imdbID":"tt0760437","Type":"series","totalSeasons":"4","Response":"True"});
 
