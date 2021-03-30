@@ -4494,7 +4494,7 @@ mongoose-legacy-pluralize@1.0.2:
   resolved "https://registry.yarnpkg.com/mongoose-legacy-pluralize/-/mongoose-legacy-pluralize-1.0.2.tgz#3ba9f91fa507b5186d399fb40854bff18fb563e4"
   integrity sha512-Yo/7qQU4/EyIS8YDFSeenIvXxZN+ld7YdV9LqFVQJzTLye8unujAWPZ4NWKfFA+RNjh+wvTWKY9Z3E5XM6ZZiQ==
 
-mongoose@^5.12.1:
+mongoose@^5.12.2:
   version "5.12.2"
   resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-5.12.2.tgz#3274630dfb9a8e63dbda0c6e7124fd475623c6ff"
   integrity sha512-kT9t6Nvu9WPsfssn7Gzke446Il8UdMilY7Sa5vALtwoOoNOGtZEVjekZBFwsBFzTWtBA/x5gBmJoYFP+1LeDlg==
@@ -4570,10 +4570,10 @@ natural-compare@^1.4.0:
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
   integrity sha1-Sr6/7tdUHywnrPspvbvRXI1bpPc=
 
-natural@^4.0.2:
-  version "4.0.4"
-  resolved "https://registry.yarnpkg.com/natural/-/natural-4.0.4.tgz#22e7a425250cf1d3649afe97839c1d69c7eb7f99"
-  integrity sha512-WpT46A5y7oOfFH/QruNtELI++gLcxCt2luYyyq/DMjZHBb4ft0TGnuQmbXGK2S7ZgazPIv8bBK15BZiDk8Honw==
+natural@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/natural/-/natural-5.0.1.tgz#6f21524eeb67cb09f604537cacc44b35c81a784d"
+  integrity sha512-f/KYLldfYuBlxnSs0r2ROBlxltfgduO7iXKn2/xGL/U+XuKZm75+ph3LENuW0yHw5Rdnl4Wl+0EScc/jvnnlRA==
   dependencies:
     afinn-165 "^1.0.2"
     apparatus "^0.0.10"
@@ -4688,7 +4688,7 @@ normalize-package-data@^2.5.0:
 normalize-path@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/normalize-path/-/normalize-path-2.1.1.tgz#1ab28b556e198363a8c1a6f7e6fa20137fe6aed9"
-  integrity sha1-GrKLVW4Zg2Oowab35vogE3/mrtk=
+  integrity sha1-GrKLVW4Zg2b35vogE3/mrtk=
   dependencies:
     remove-trailing-separator "^1.0.1"
 
