@@ -1,4 +1,4 @@
-import { OmdbRating } from 'imdb-api/lib/interfaces';
+import { OmdbRating } from '@universalmediaserver/node-imdb-api/lib/interfaces';
 import * as mongoose from 'mongoose';
 import { Schema, Document } from 'mongoose';
 import { ValidationError } from '../helpers/customErrors';

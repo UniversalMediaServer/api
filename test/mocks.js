@@ -10,13 +10,13 @@ nock('https://www.omdbapi.com:443', { 'encodedQueryParams': true })
 nock('https://www.omdbapi.com:443', { 'encodedQueryParams': true })
   .persist()
   .get('/')
-  .query({"apikey":"foo","plot":"full","r":"json","t":"Homeland"})
+  .query({"apikey":"foo","plot":"full","r":"json","t":"Homeland","type":"series"})
   .reply(200, {"Title":"Homeland","Year":"2011–2020","Rated":"TV-MA","Released":"02 Oct 2011","Runtime":"55 min","Genre":"Crime, Drama, Mystery, Thriller","Director":"N/A","Writer":"Alex Gansa, Howard Gordon","Actors":"Claire Danes, Mandy Patinkin, Rupert Friend, Maury Sterling","Plot":"Carrie Mathison, a CIA operations officer, is on probation after carrying out an unauthorized operation in Iraq. As a result, she has been reassigned to the Counter terrorism center. Whilst in Iraq, she was warned that an American prisoner had been turned by Al-Qaeda. When Nicholas Brody, a U.S. Marine Sergeant, is rescued after being held hostage since 2003, she suspects that he is the one. While Brody is received home as a war hero, Carrie goes to any lengths necessary to catch him out.","Language":"English","Country":"USA","Awards":"Won 5 Golden Globes. Another 55 wins & 172 nominations.","Poster":"https://m.media-amazon.com/images/M/MV5BYjY2ODA0NjYtMzlkMi00ZjY5LThiNjUtNzZjYzgxNjc0MzQzXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_SX300.jpg","Ratings":[{"Source":"Internet Movie Database","Value":"8.3/10"}],"Metascore":"N/A","imdbRating":"8.3","imdbVotes":"288,641","imdbID":"tt1796960","Type":"series","totalSeasons":"8","Response":"True"});
 
 nock('https://www.omdbapi.com:443', { 'encodedQueryParams': true })
   .persist()
   .get('/')
-  .query({"apikey":"foo","plot":"full","r":"json","t":"Ben 10","y":"2016"})
+  .query({"apikey":"foo","plot":"full","r":"json","t":"Ben 10","y":"2016","type":"series"})
   .reply(200, {"Title":"Ben 10","Year":"2016–","Rated":"TV-Y7-FV","Released":"10 Apr 2017","Runtime":"12 min","Genre":"Animation, Short, Action, Adventure, Comedy, Family, Sci-Fi","Director":"N/A","Writer":"Man of Action","Actors":"Montse Hernandez, Tara Strong, David Kaye, Roger Craig Smith","Plot":"Ben 10 is the fifth iteration of the Ben 10 franchise. It serves as a reboot of the television series loosely based upon the original series.","Language":"English","Country":"USA","Awards":"3 nominations.","Poster":"https://m.media-amazon.com/images/M/MV5BZDQyMGI3MjctNWIzYy00MmYzLWJhODEtOGE0NWM2OGU3NDI1XkEyXkFqcGdeQXVyNjkzNTYxNjI@._V1_SX300.jpg","Ratings":[{"Source":"Internet Movie Database","Value":"2.5/10"}],"Metascore":"N/A","imdbRating":"2.5","imdbVotes":"1,952","imdbID":"tt6148376","Type":"series","totalSeasons":"2","Response":"True"});
 
 nock('https://www.omdbapi.com:443', { 'encodedQueryParams': true })
@@ -28,7 +28,7 @@ nock('https://www.omdbapi.com:443', { 'encodedQueryParams': true })
 nock('https://www.omdbapi.com:443', { 'encodedQueryParams': true })
   .persist()
   .get('/')
-  .query({"apikey":"foo","plot":"full","r":"json","t":"Ben 10","y":"2005"})
+  .query({"apikey":"foo","plot":"full","r":"json","t":"Ben 10","y":"2005","type":"series"})
   .reply(200, {"Title":"Ben 10","Year":"2005–2008","Rated":"TV-Y7-FV","Released":"27 Dec 2005","Runtime":"30 min","Genre":"Animation, Action, Adventure, Family, Sci-Fi","Director":"N/A","Writer":"Joe Casey, Joe Kelly, Man of Action, Duncan Rouleau, Steven T. Seagle","Actors":"Tara Strong, Paul Eiding, Meagan Moore, Dee Bradley Baker","Plot":"The story of Ben Tennyson, a typical kid who becomes very atypical after he discovers the Omnitrix, a mysterious alien device with the power to transform the wearer into ten different alien species.","Language":"English","Country":"USA","Awards":"1 win & 2 nominations.","Poster":"https://m.media-amazon.com/images/M/MV5BMGU1MGQ1YTgtZTdkYi00ODI3LWFjMzItYmZkN2IxMmM0M2M4XkEyXkFqcGdeQXVyOTgwMzk1MTA@._V1_SX300.jpg","Ratings":[{"Source":"Internet Movie Database","Value":"7.2/10"}],"Metascore":"N/A","imdbRating":"7.2","imdbVotes":"11,955","imdbID":"tt0760437","Type":"series","totalSeasons":"4","Response":"True"});
 
 nock('https://www.omdbapi.com:443', { 'encodedQueryParams': true })
@@ -169,7 +169,7 @@ nock('https://www.omdbapi.com:443', {"encodedQueryParams":true})
 nock('https://www.omdbapi.com:443', { 'encodedQueryParams': true })
   .persist()
   .get('/')
-  .query({"apikey":"foo","plot":"full","r":"json","t":"Alone"})
+  .query({"apikey":"foo","plot":"full","r":"json","t":"Alone","type":"series"})
   .reply(200, {"Title":"Alone","Year":"2015–","Rated":"TV-14","Released":"18 Jun 2015","Runtime":"44 min","Genre":"Documentary, Reality-TV","Director":"N/A","Writer":"N/A","Actors":"Nicole Apelian, Dan, David, Desmond","Plot":"Ten men try to survive as long as they can in the Vancouver Island wilderness, carrying only what can fit in a backpack. Alone in harsh, unforgiving terrain, these men must hunt, build shelters and fend off predators, all while documenting the experience themselves. It's the ultimate test of man's will.","Language":"English","Country":"USA","Awards":"N/A","Poster":"https://m.media-amazon.com/images/M/MV5BNTc1YTExN2YtZWQ2MS00MWQzLTkwMWQtMDY3ODExNDM2MGQwXkEyXkFqcGdeQXVyMzU3MTc5OTE@._V1_SX300.jpg","Ratings":[{"Source":"Internet Movie Database","Value":"8.4/10"}],"Metascore":"N/A","imdbRating":"8.4","imdbVotes":"3,233","imdbID":"tt4803766","Type":"series","totalSeasons":"1","Response":"True"});
 
 // totalSeasons has been edited from 6 to 1 to reduce mocked requests
