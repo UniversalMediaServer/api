@@ -53,6 +53,7 @@ const EPISODE_BAND_OF_BROTHERS = {
 interface UmsApiGotResponse  {
   statusCode: number;
   body: MediaMetadataInterfaceDocument;
+  headers?: object;
 }
 
 describe('get by all', () => {
@@ -76,6 +77,7 @@ describe('get by all', () => {
     it('should return a movie by imdbid, from source APIs then store', async() => {
       const spy = jest.spyOn(apihelper, 'getFromIMDbAPIV2');
       let response = await got(`${appUrl}/api/media/video?imdbID=${MOVIE_INTERSTELLAR.imdbId}`, { responseType: 'json' }) as UmsApiGotResponse;
+      expect(response.headers['X-Api-Subversion']).toBeTruthy();
       expect(response.body.title).toEqual('Interstellar');
       expect(response.body.type).toEqual('movie');
       expect(spy).toHaveBeenCalledTimes(1);
