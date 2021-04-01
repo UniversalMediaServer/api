@@ -81,7 +81,7 @@ describe('Media Metadata endpoints', () => {
     it('should return a valid response for existing media record with osdb hash', async() => {
       await MediaMetadataModel.create(interstellarMetaData);
       const res = await got(`${appUrl}/api/media/osdbhash/${interstellarMetaData.osdbHash}/1234`, { responseType: 'json' }) as UmsApiGotResponse;
-      expect(res.headers['X-Api-Subversion']).toBeTruthy();
+      expect(res.headers['x-api-subversion']).toBeTruthy();
       expect(res.statusCode).toBe(200);
       expect(res.body).toHaveProperty('_id');
       expect(res.body).toHaveProperty('genres', interstellarMetaData.genres);

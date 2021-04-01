@@ -72,7 +72,6 @@ app.use(bodyParser());
 app.use(mediaRouter.routes());
 app.use(indexRouter.routes());
 
-
 export const server = http.createServer(app.callback()).listen(PORT);
 console.log(`UMS API HTTP server is up and running on port ${PORT}`);
 
