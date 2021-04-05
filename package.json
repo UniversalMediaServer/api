@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "DEBUG=*universalmediaserver-api:server nodemon",
-    "dev:cron": "ts-node --files ./src/cron/all-episodes.ts",
+    "purge": "TS_NODE_FILES=true ts-node --files scripts/purge",
     "start": "ts-node --files src/app.ts",
     "start:prod": "./node_modules/.bin/pm2 start ecosystem.config.js --update-env",
     "test": "jest test/e2e/media-video.spec.ts --coverage --forceExit --detectOpenHandles && npm run test:mocks",
@@ -150,6 +150,7 @@
     "@typescript-eslint/parser": "^2.34.0",
     "eslint": "^7.22.0",
     "got": "^11.8.2",
+    "inquirer": "^8.0.0",
     "jest": "^26.6.3",
     "mongodb-memory-server": "^6.9.6",
     "nock": "^13.0.11",
