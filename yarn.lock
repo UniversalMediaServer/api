@@ -2194,10 +2194,10 @@ enquirer@2.3.6, enquirer@^2.3.5:
   dependencies:
     ansi-colors "^4.1.1"
 
-episode-parser@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/episode-parser/-/episode-parser-2.0.0.tgz#da00a821eda3528fb3445669a93a920ce89313df"
-  integrity sha512-2DdTLKSzHO+CO3iN/e+SMYp+tPz5vKBpJSwNvcUucGRPOklGvNk4jJSO0TkANHaYI5P6uZnVtOP0b6NMf7rfHQ==
+episode-parser@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/episode-parser/-/episode-parser-2.0.2.tgz#42a2adf23840bff5f28ff8d6ef7ce93880a676d8"
+  integrity sha512-DaVh+1h+H4UlOKz4OYTRZKY+Ce/IAGtlPY4mSqniGR6vRMl8zpDxbsACAvhUeOfPPaQo9YNXOuyW7K9VT//cdg==
 
 error-ex@^1.3.1:
   version "1.3.2"
