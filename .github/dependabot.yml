@@ -1,0 +1,29 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: weekly
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: eslint
+    versions:
+    - 7.23.0
+  - dependency-name: "@types/jest"
+    versions:
+    - 26.0.22
+  - dependency-name: urijs
+    versions:
+    - 1.19.6
+  - dependency-name: ts-jest
+    versions:
+    - 26.5.0
+    - 26.5.2
+  - dependency-name: "@types/koa"
+    versions:
+    - 2.11.8
+  - dependency-name: mongoose
+    versions:
+    - 5.11.12
+    - 5.11.15
+    - 5.11.16
