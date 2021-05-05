@@ -443,10 +443,10 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
   const imdbIdToSearch = imdbID ? imdbID
     : openSubtitlesMetadata?.imdbID ? openSubtitlesMetadata.imdbID : null;
 
-  // if the client did not pass an imdbID, but we found one from Open Subtitles, so see if we have an existing record for the now known media.
+  // if the client did not pass an imdbID, but we found one from Open Subtitles, see if we have an existing record for the now known media.
   if (!imdbID && openSubtitlesMetadata?.imdbID) {
     {
-      const existingResult = await MediaMetadata.findOne({ imdbID }, null, { lean: true }).exec();
+      const existingResult = await MediaMetadata.findOne({ imdbID: openSubtitlesMetadata.imdbID }, null, { lean: true }).exec();
       if (existingResult) {
         return ctx.body = existingResult;
       }
