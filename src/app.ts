@@ -48,7 +48,12 @@ app.use(async(ctx, next) => {
       (
         !(err instanceof MediaNotFoundError) &&
         !(err instanceof IMDbIDNotFoundError) &&
-        !(err instanceof ExternalAPIError)
+        !(err instanceof ExternalAPIError) &&
+        // Stop logging errors for the deprecated routes getBySanitizedTitle and getBySanitizedTitleV2
+        !(
+          err.stack &&
+          err.stack.includes('getBySanitizedTitle')
+        )
       )
     ) {
       console.error(err);
