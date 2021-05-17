@@ -297,6 +297,18 @@ export const getSeriesByTitle = async(ctx: ParameterizedContext): Promise<Series
   const tvSeriesInfo = await imdbAPI.get(searchRequest);
 
   if (!tvSeriesInfo) {
+    if (year) {
+      /**
+       * If the client specified a year, it may have been incorrect because of
+       * the way filename parsing works; the filename Galactica.1980.S01E01 might
+       * be about a series called "Galactica 1980", or a series called "Galactica"
+       * from 1980.
+       * So, we attempt the lookup again with the year appended to the title.
+       */
+      ctx.query.title = ctx.query.title + ' ' + year;
+      ctx.query.year = '';
+      return getSeriesByTitle(ctx);
+    }
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
