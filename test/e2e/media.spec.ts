@@ -513,6 +513,14 @@ describe('Media Metadata endpoints', () => {
       response = await got(`${appUrl}/api/media/seriestitle?title=Ben 10`, { responseType: 'json' });
       expect(response.body._id).toEqual(newDocumentId);
     });
+
+    it('should return series with misidentified year', async() => {
+      await mongoose.connection.db.collection('series_metadata').insertOne({ imdbID: 'tt0080221', title: 'Galactica 1980' });
+
+      // this request should find the result even though it's the wrong title
+      const response = await got(`${appUrl}/api/media/seriestitle?title=Galactica&year=1980`, { responseType: 'json' }) as UmsApiGotResponse;
+      expect(response.body).toHaveProperty('title', 'Galactica 1980');
+    });
   });
 
   describe('get by imdbid', () => {
