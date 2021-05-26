@@ -1,9 +1,18 @@
 name: UMS API tests
 
-on: [push]
+on:
+  push:
+    branches:
+      - '**'
+      - '!master'
+  pull_request_target:
 
 jobs:
   build:
+    if: |
+      (github.event_name == 'push' && github.actor != 'dependabot[bot]') ||
+      (github.event_name == 'pull_request_target' && github.actor == 'dependabot[bot]')
+
     runs-on: ubuntu-latest
 
     env:
