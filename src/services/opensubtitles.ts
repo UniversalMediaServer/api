@@ -9,7 +9,7 @@ osAPI.identify = async function(osQuery): Promise<OpensubtitlesIdentifyResponse>
   try {
     return await originalModule.identify(osQuery);
   } catch (err) {
-    if (err.message === 'API seems offline') {
+    if (err.message === 'API seems offline' || err.message.includes('Server under maintenance')) {
       throw new ExternalAPIError('Opensubtitles API is offline');
     }
     throw err;
