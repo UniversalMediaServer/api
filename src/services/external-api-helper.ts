@@ -5,7 +5,7 @@ import * as natural from 'natural';
 
 import osAPI from '../services/opensubtitles';
 
-import { IMDbIDNotFoundError, MediaNotFoundError } from '../helpers/customErrors';
+import { IMDbIDNotFoundError } from '../helpers/customErrors';
 import FailedLookups from '../models/FailedLookups';
 import { MediaMetadataInterface } from '../models/MediaMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
@@ -248,15 +248,20 @@ export const getFromOpenSubtitles = async(osQuery: OpenSubtitlesQuery, validatio
     }
 
     if (validateEpisodeBySeasonAndEpisode) {
-      if (validationData.season === openSubtitlesResponse.metadata.season && validationData.episode === openSubtitlesResponse.metadata.episode) {
+      if (
+        validationData.season === openSubtitlesResponse.metadata.season &&
+        validationData.episode === openSubtitlesResponse.metadata.episode
+      ) {
         passedValidation = true;
       }
     }
   }
+
+  // If the data from Open Subtitles did not match the search, treat it as a non-result.
   if (!passedValidation) {
-    await FailedLookups.updateOne({ osdbHash: osQuery.moviehash }, { $inc: { count: 1 }, failedValidation: true }, { upsert: true, setDefaultsOnInsert: true }).exec();
-    throw new MediaNotFoundError();
+    return null;
   }
+
   if (openSubtitlesResponse.type === 'episode') {
     return mapper.parseOpenSubtitlesEpisodeResponse(openSubtitlesResponse);
   }

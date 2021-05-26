@@ -3,7 +3,7 @@ import { ParameterizedContext } from 'koa';
 import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
 
-import { MediaNotFoundError, ValidationError } from '../helpers/customErrors';
+import { ExternalAPIError, MediaNotFoundError, ValidationError } from '../helpers/customErrors';
 import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
 import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
@@ -437,7 +437,14 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
       episode: episode ? episode : null,
     };
 
-    openSubtitlesMetadata = await externalAPIHelper.getFromOpenSubtitles(osQuery, validation);
+    try {
+      openSubtitlesMetadata = await externalAPIHelper.getFromOpenSubtitles(osQuery, validation);
+    } catch (e) {
+      // Rethrow errors except if they are about Open Subtitles being offline. as that happens a lot
+      if (!(e instanceof ExternalAPIError)) {
+        throw e;
+      }
+    }
 
     if (isOnlyOpenSubsSearch && !openSubtitlesMetadata) {
       await FailedLookups.updateOne({ osdbHash }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();	
