@@ -170,6 +170,18 @@ const imdbSeriesMap = {
     transform: val => val ? val.toString() : undefined,
   },
   'totalseasons': 'totalSeasons',
+  'totalSeasons': {
+    key: 'totalSeasons',
+    transform: val => {
+      if (val) {
+        const parsedValue = parseFloat(val);
+        if (!isNaN(parsedValue)) {
+          return parsedValue;
+        }
+      }
+      return undefined;
+    },
+  },
   'type': 'type',
   'votes': 'votes',
   'year': {
@@ -229,7 +241,7 @@ const imdbMovieMap = {
   },
 };
 
-const removeNotApplicable = (obj): Partial<MediaMetadataInterface | SeriesMetadataInterface> => {
+const filterUnwantedValues = (obj): Partial<MediaMetadataInterface | SeriesMetadataInterface> => {
   return _.pickBy(obj, (v) => {
     if (typeof v === 'object') {
       return _.pull(v, 'N/A');
@@ -241,27 +253,27 @@ const removeNotApplicable = (obj): Partial<MediaMetadataInterface | SeriesMetada
 class UmsDataMapper {
   parseOpenSubtitlesResponse(openSubtitlesData): Partial<MediaMetadataInterface> {
     const mappedData = objectMapper.merge(openSubtitlesData, openSubtitlesMovieMap);
-    return removeNotApplicable(mappedData);
+    return filterUnwantedValues(mappedData);
   }
 
   parseOpenSubtitlesEpisodeResponse(openSubtitlesData): Partial<MediaMetadataInterface> {
     const mappedData = objectMapper.merge(openSubtitlesData, openSubtitlesEpisodeMap);
-    return removeNotApplicable(mappedData);
+    return filterUnwantedValues(mappedData);
   }
 
   parseIMDBAPIEpisodeResponse(imdbData): Partial<MediaMetadataInterface> {
     const mappedData = objectMapper.merge(imdbData, imdbEpisodeMap);
-    return removeNotApplicable(mappedData);
+    return filterUnwantedValues(mappedData);
   }
 
   parseIMDBAPISeriesResponse(imdbData): Partial<SeriesMetadataInterface> {
     const mappedData = objectMapper.merge(imdbData, imdbSeriesMap);
-    return removeNotApplicable(mappedData);
+    return filterUnwantedValues(mappedData);
   }
 
   parseIMDBAPIMovieResponse(imdbData): Partial<MediaMetadataInterface> {
     const mappedData = objectMapper.merge(imdbData, imdbMovieMap);
-    return removeNotApplicable(mappedData);
+    return filterUnwantedValues(mappedData);
   }
 }
 

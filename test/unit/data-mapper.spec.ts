@@ -79,7 +79,7 @@ const imdbApiSeriesWithNaN = {
   'genres': 'Action, Crime, Drama, Mystery, Thriller',
   'imdbID': 'tt0455275',
   'title': 'Prison Break',
-  'totalSeasons': 'NaN',
+  'totalSeasons': 'this is not a number but it should be',
   'type': 'series',
   'year': '2005',
 };
