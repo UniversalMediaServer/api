@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 import { Schema, Document, Model } from 'mongoose';
 import * as _ from 'lodash';
-import * as escapeStringRegexp from 'escape-string-regexp';
+import escapeStringRegexp from 'escape-string-regexp';
 
 const TEXT_SCORE_MINIMUM = 1;
 
@@ -106,7 +106,6 @@ SeriesMetadataSchema.statics.findSimilarSeries = async function(title: string, s
     sortBy.startYear = 1;
   }
 
-  
   const seriesMetadata = await this.find(exactSearchQuery).sort({ startYear: 1 });
 
   if (seriesMetadata[0]) {
