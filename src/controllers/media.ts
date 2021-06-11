@@ -14,6 +14,21 @@ import { mapper } from '../utils/data-mapper';
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
 
+/**
+ * Adds a searchMatch to an existing result by IMDb ID, and returns the result.
+ *
+ * @param imdbID the IMDb ID
+ * @param title the title
+ * @returns the updated record
+ */
+const addSearchMatchByIMDbID = async(imdbID: string, title: string): Promise<MediaMetadataInterface> => {
+  return MediaMetadata.findOneAndUpdate(
+    { imdbID },
+    { $push: { searchMatches: title } },
+    { new: true, lean: true },
+  ).exec();
+};
+
 export const getByOsdbHash = async(ctx: ParameterizedContext): Promise<MediaMetadataInterface> => {
   const { osdbhash: osdbHash, filebytesize } = ctx.params;
 
@@ -125,13 +140,8 @@ export const getBySanitizedTitle = async(ctx: ParameterizedContext): Promise<Med
   const existingIMDbIDResultQuery = { imdbID: imdbData.imdbID };
   const existingResultFromIMDbID: MediaMetadataInterface = await MediaMetadata.findOne(existingIMDbIDResultQuery, null, { lean: true }).exec();
   if (existingResultFromIMDbID) {
-    const updatedResult = await MediaMetadata.findOneAndUpdate(
-      existingIMDbIDResultQuery,
-      { $push: { searchMatches: title } },
-      { new: true, lean: true },
-    ).exec();
     // @ts-ignore
-    return ctx.body = updatedResult;
+    return ctx.body = await addSearchMatchByIMDbID(imdbData.imdbID, title);
   }
 
   if (imdbData.type === 'episode') {
@@ -452,6 +462,16 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
     }
   }
 
+  // if the client did not pass an imdbID, but we found one from Open Subtitles, see if we have an existing record for the now known media.
+  if (!imdbID && openSubtitlesMetadata?.imdbID) {
+    {
+      const existingResult = await MediaMetadata.findOne({ imdbID: openSubtitlesMetadata.imdbID }, null, { lean: true }).exec();
+      if (existingResult) {
+        return ctx.body = await addSearchMatchByIMDbID(openSubtitlesMetadata.imdbID, title);
+      }
+    }
+  }
+
   // End OpenSubtitles lookups
 
   /* if the client has passed an imdbId, we'll use that as the primary source, otherwise, the one
@@ -462,15 +482,6 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
   const imdbIdToSearch = imdbID ? imdbID
     : openSubtitlesMetadata?.imdbID ? openSubtitlesMetadata.imdbID : null;
 
-  // if the client did not pass an imdbID, but we found one from Open Subtitles, see if we have an existing record for the now known media.
-  if (!imdbID && openSubtitlesMetadata?.imdbID) {
-    {
-      const existingResult = await MediaMetadata.findOne({ imdbID: openSubtitlesMetadata.imdbID }, null, { lean: true }).exec();
-      if (existingResult) {
-        return ctx.body = existingResult;
-      }
-    }
-  }
   if (title) {
     omdbSearchRequest.name = title;
   }
@@ -487,6 +498,16 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
   } catch (e) {
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
+  }
+
+  // if the client did not pass an imdbID, but we found one from Open Subtitles, see if we have an existing record for the now known media.
+  if (!imdbID && imdbData?.imdbID) {
+    {
+      const existingResult = await MediaMetadata.findOne({ imdbID: imdbData.imdbID }, null, { lean: true }).exec();
+      if (existingResult) {
+        return ctx.body = await addSearchMatchByIMDbID(imdbData.imdbID, title);
+      }
+    }
   }
 
   if (imdbData?.type === 'episode') {

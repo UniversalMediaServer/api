@@ -96,13 +96,21 @@ describe('get by all', () => {
       expect(response.body.title).toEqual('Interstellar');
       expect(response.body.type).toEqual('movie');
       expect(spy).toHaveBeenCalledTimes(1);
-      spy.mockReset();
 
       // subsequent calls should return MongoDB result rather than calling external apis
       response = await got(`${appUrl}/api/media/video?title=${MOVIE_INTERSTELLAR.title}`, { responseType: 'json' });
       expect(response.body.title).toEqual('Interstellar');
       expect(response.body.type).toEqual('movie');
-      expect(spy).toHaveBeenCalledTimes(0);
+      expect(spy).toHaveBeenCalledTimes(1);
+
+      /*
+       * Should also return the result for a similar title search with the same IMDb ID
+       * when the returned result from the external API matches an existing IMDb ID.
+       */
+      response = await got(`${appUrl}/api/media/video?title=${MOVIE_INTERSTELLAR.title.toLowerCase()}`, { responseType: 'json' });
+      expect(response.body.title).toEqual('Interstellar');
+      expect(response.body.type).toEqual('movie');
+      expect(spy).toHaveBeenCalledTimes(2);
     });
 
     it('should return a movie by osdbHash, from source APIs then store', async() => {
