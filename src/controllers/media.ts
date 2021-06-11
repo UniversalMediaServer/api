@@ -530,7 +530,7 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
       combinedResponse.osdbHash = osdbHash;
     }
     const dbMeta = await MediaMetadata.create(combinedResponse);
-    return ctx.body = dbMeta.toJSON();
+    return ctx.body = dbMeta.toObject({ useProjection: true });
   } catch (e) {
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();

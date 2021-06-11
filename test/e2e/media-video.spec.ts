@@ -74,10 +74,11 @@ describe('get by all', () => {
   });
 
   describe('Movies', () => {
-    it('should return a movie by imdbid, from source APIs then store', async() => {
+    it.only('should return a movie by imdbid, from source APIs then store', async() => {
       const spy = jest.spyOn(apihelper, 'getFromIMDbAPIV2');
       let response = await got(`${appUrl}/api/media/video?imdbID=${MOVIE_INTERSTELLAR.imdbId}`, { responseType: 'json' }) as UmsApiGotResponse;
       expect(response.headers['x-api-subversion']).toBeTruthy();
+      console.log(response.body);
       expect(response.body.title).toEqual('Interstellar');
       expect(response.body.type).toEqual('movie');
       expect(response.body.searchMatches).toBeNull();
