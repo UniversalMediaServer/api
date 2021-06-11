@@ -1,26 +1,26 @@
 import * as objectMapper from 'object-mapper';
 import * as _ from 'lodash';
-import { MediaMetadataInterface } from '../models/MediaMetadata';
+import { MediaMetadataInterface, Rating } from '../models/MediaMetadata';
 import { SeriesMetadataInterface } from '../models/SeriesMetadata';
 
 const openSubtitlesMovieMap = {
   'metadata.cast': [
     {
       key: 'actors?',
-      transform: val => _.isEmpty(_.values(val)) ? null : _.values(val),
+      transform: (val: Record<string, string>): string[] => _.isEmpty(_.values(val)) ? null : _.values(val),
     },
   ],
   'metadata.genres': [
     {
       key: 'genres?',
-      transform: val => _.isEmpty(_.values(val)) ? null : _.values(val),
+      transform: (val: Record<string, string>): string[] => _.isEmpty(_.values(val)) ? null : _.values(val),
     },
   ],
 
   'metadata.rating': [
     {
       key: 'rating',
-      transform: val => parseFloat(val),
+      transform: (val: string): number => parseFloat(val),
     },
   ],
   'metadata.goofs': 'goofs',
@@ -40,20 +40,20 @@ const openSubtitlesEpisodeMap = {
   'metadata.cast': [
     {
       key: 'actors?',
-      transform: val => _.isEmpty(_.values(val)) ? null : _.values(val),
+      transform: (val: Record<string, string>): string[] => _.isEmpty(_.values(val)) ? null : _.values(val),
     },
   ],
   'metadata.genres': [
     {
       key: 'genres?',
-      transform: val => _.isEmpty(_.values(val)) ? null : _.values(val),
+      transform: (val: Record<string, string>): string[] => _.isEmpty(_.values(val)) ? null : _.values(val),
     },
   ],
 
   'metadata.rating': [
     {
       key: 'rating',
-      transform: val => parseFloat(val),
+      transform: (val: string): number => parseFloat(val),
     },
   ],
   'metadata.goofs': 'goofs',
@@ -74,20 +74,20 @@ const openSubtitlesEpisodeMap = {
 const imdbEpisodeMap = {
   'actors': {
     key: 'actors?',
-    transform: val => _.isEmpty(val) ? null : val.split(', '),
+    transform: (val: string): string[] => _.isEmpty(val) ? null : val.split(', '),
   },
   'awards': 'awards',
   'boxoffice': 'boxoffice',
   'country': 'country',
   'director': {
     key: 'directors?',
-    transform: val => _.isEmpty(val) ? null : val.split(', '),
+    transform: (val: string): string[] => _.isEmpty(val) ? null : val.split(', '),
   },
   'episode': 'episode',
   'imdbid': 'imdbID',
   'genres': {
     key: 'genres?',
-    transform: val => _.isEmpty(val) ? null : val.split(', '),
+    transform: (val: string): string[] => _.isEmpty(val) ? null : val.split(', '),
   },
   'metascore': 'metascore',
   'plot': 'plot',
@@ -97,15 +97,19 @@ const imdbEpisodeMap = {
   'rating': 'rating',
   'ratings': {
     key: 'ratings?',
-    transform: val => {
+    transform: (val: Rating[]): Rating[] => {
       if (_.isEmpty(val)) {
         return null;
       }
 
-      const transformedValue = [];
+      const transformedValue: Rating[] = [];
       for (const rating of val) {
-        transformedValue.push({ Source: rating.source || rating.Source, Value: rating.value || rating.Value });
+        transformedValue.push({
+          Source: rating.source || rating.Source,
+          Value: rating.value || rating.Value,
+        });
       }
+
       return transformedValue;
     },
   },
@@ -116,35 +120,35 @@ const imdbEpisodeMap = {
   'title': 'title',
   'type': {
     key: 'type',
-    transform: val => 'episode',
+    transform: (): string => 'episode',
   },
   'votes': 'votes',
   'year': {
     key: 'year',
-    transform: val => val ? val.toString() : undefined,
+    transform: (val: number): string => val ? val.toString() : undefined,
   },
 };
 
 const imdbSeriesMap = {
   'actors': {
     key: 'actors?',
-    transform: val => _.isEmpty(val) ? null : val.split(', '),
+    transform: (val: string): string[] => _.isEmpty(val) ? null : val.split(', '),
   },
   'awards': 'awards',
   'country': 'country',
   'director': {
     key: 'directors?',
-    transform: val => _.isEmpty(val) ? null : val.split(', '),
+    transform: (val: string): string[] => _.isEmpty(val) ? null : val.split(', '),
   },
   'end_year': {
     key: 'endYear',
-    transform: val => val ? val.toString() : undefined,
+    transform: (val: number): string => val ? val.toString() : undefined,
   },
   'imdbid': 'imdbID',
   'title': 'title',
   'genres': {
     key: 'genres?',
-    transform: val => _.isEmpty(val) ? null : val.split(', '),
+    transform: (val: string): string[] => _.isEmpty(val) ? null : val.split(', '),
   },
   'metascore': 'metascore',
   'plot': 'plot',
@@ -153,46 +157,50 @@ const imdbSeriesMap = {
   'rating': 'rating',
   'ratings': {
     key: 'ratings?',
-    transform: val => {
+    transform: (val: Rating[]): Rating[] => {
       if (_.isEmpty(val)) {
         return null;
       }
 
-      const transformedValue = [];
+      const transformedValue: Rating[] = [];
       for (const rating of val) {
-        transformedValue.push({ Source: rating.source, Value: rating.value });
+        transformedValue.push({
+          Source: rating.source,
+          Value: rating.value,
+        });
       }
+
       return transformedValue;
     },
   },
   'start_year': {
     key: 'startYear',
-    transform: val => val ? val.toString() : undefined,
+    transform: (val: number): string => val ? val.toString() : undefined,
   },
   'totalseasons': 'totalSeasons',
   'type': 'type',
   'votes': 'votes',
   'year': {
     key: 'year',
-    transform: val => val ? val.toString() : undefined,
+    transform: (val: number): string => val ? val.toString() : undefined,
   },
 };
 
 const imdbMovieMap = {
   'actors': {
     key: 'actors?',
-    transform: val => _.isEmpty(val) ? null : val.split(', '),
+    transform: (val: string): string[] => _.isEmpty(val) ? null : val.split(', '),
   },
   'awards': 'awards',
   'boxoffice': 'boxoffice',
   'country': 'country',
   'director': {
     key: 'directors?',
-    transform: val => _.isEmpty(val) ? null : val.split(', '),
+    transform: (val: string): string[] => _.isEmpty(val) ? null : val.split(', '),
   },
   'genres': {
     key: 'genres?',
-    transform: val => _.isEmpty(val) ? null : val.split(', '),
+    transform: (val: string): string[] => _.isEmpty(val) ? null : val.split(', '),
   },
   'imdbid': 'imdbID',
   'metascore': 'metascore',
@@ -203,15 +211,19 @@ const imdbMovieMap = {
   'rating': 'rating',
   'ratings': {
     key: 'ratings?',
-    transform: val => {
+    transform: (val: Rating[]): Rating[] => {
       if (_.isEmpty(val)) {
         return null;
       }
 
-      const transformedValue = [];
+      const transformedValue: Rating[] = [];
       for (const rating of val) {
-        transformedValue.push({ Source: rating.source, Value: rating.value });
+        transformedValue.push({
+          Source: rating.source,
+          Value: rating.value,
+        });
       }
+
       return transformedValue;
     },
   },
@@ -220,16 +232,16 @@ const imdbMovieMap = {
   'title': 'title',
   'type': {
     key: 'type',
-    transform: val => 'movie',
+    transform: (): string => 'movie',
   },
   'votes': 'votes',
   'year': {
     key: 'year',
-    transform: val => val ? val.toString() : undefined,
+    transform: (val: number): string => val ? val.toString() : undefined,
   },
 };
 
-const removeNotApplicable = (obj): Partial<MediaMetadataInterface | SeriesMetadataInterface> => {
+const removeNotApplicable = (obj): any => {
   return _.pickBy(obj, (v) => {
     if (typeof v === 'object') {
       return _.pull(v, 'N/A');
@@ -239,27 +251,27 @@ const removeNotApplicable = (obj): Partial<MediaMetadataInterface | SeriesMetada
 };
 
 class UmsDataMapper {
-  parseOpenSubtitlesResponse(openSubtitlesData): Partial<MediaMetadataInterface> {
+  parseOpenSubtitlesResponse(openSubtitlesData): MediaMetadataInterface {
     const mappedData = objectMapper.merge(openSubtitlesData, openSubtitlesMovieMap);
     return removeNotApplicable(mappedData);
   }
 
-  parseOpenSubtitlesEpisodeResponse(openSubtitlesData): Partial<MediaMetadataInterface> {
+  parseOpenSubtitlesEpisodeResponse(openSubtitlesData): MediaMetadataInterface {
     const mappedData = objectMapper.merge(openSubtitlesData, openSubtitlesEpisodeMap);
     return removeNotApplicable(mappedData);
   }
 
-  parseIMDBAPIEpisodeResponse(imdbData): Partial<MediaMetadataInterface> {
+  parseIMDBAPIEpisodeResponse(imdbData): MediaMetadataInterface {
     const mappedData = objectMapper.merge(imdbData, imdbEpisodeMap);
     return removeNotApplicable(mappedData);
   }
 
-  parseIMDBAPISeriesResponse(imdbData): Partial<SeriesMetadataInterface> {
+  parseIMDBAPISeriesResponse(imdbData): SeriesMetadataInterface {
     const mappedData = objectMapper.merge(imdbData, imdbSeriesMap);
     return removeNotApplicable(mappedData);
   }
 
-  parseIMDBAPIMovieResponse(imdbData): Partial<MediaMetadataInterface> {
+  parseIMDBAPIMovieResponse(imdbData): MediaMetadataInterface {
     const mappedData = objectMapper.merge(imdbData, imdbMovieMap);
     return removeNotApplicable(mappedData);
   }

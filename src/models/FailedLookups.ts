@@ -1,3 +1,4 @@
+import { get } from 'lodash';
 import * as mongoose from 'mongoose';
 import { Schema } from 'mongoose';
 
@@ -34,7 +35,7 @@ const FailedLookupsSchema = new Schema({
   osdbHash: {
     index: true,
     required: function(): boolean {
-      return !this.title;
+      return !get(this, 'title');
     },
     type: String,
     validate: {
@@ -48,7 +49,7 @@ const FailedLookupsSchema = new Schema({
   title: {
     index: true,
     required: function(): boolean {
-      return !this.osdbHash;
+      return !get(this, 'osdbHash');
     },
     type: String,
   },

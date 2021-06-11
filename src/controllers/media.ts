@@ -11,15 +11,19 @@ import osAPI from '../services/opensubtitles';
 import imdbAPI from '../services/imdb-api';
 import * as externalAPIHelper from '../services/external-api-helper';
 import { mapper } from '../utils/data-mapper';
+import { get } from 'lodash';
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
 
 export const getByOsdbHash = async(ctx: ParameterizedContext): Promise<MediaMetadataInterface> => {
-  const { osdbhash: osdbHash, filebytesize } = ctx.params;
+  let osdbHash = get(ctx, 'params.osdbhash');
+  const filebytesize = get(ctx, ['params', 'filebytesize']);
 
   if (!osdbHash || !filebytesize) {
     throw new ValidationError('osdbhash and filebytesize are required');
   }
+
+  osdbHash = String(osdbHash);
 
   const validateMovieByYear = Boolean(ctx.query?.year);
   const validateEpisodeBySeasonAndEpisode = Boolean(ctx.query?.season && ctx.query?.episode);
@@ -36,7 +40,7 @@ export const getByOsdbHash = async(ctx: ParameterizedContext): Promise<MediaMeta
     throw new MediaNotFoundError();
   }
 
-  const osQuery = {
+  const osQuery: OpenSubtitlesIdentifyQuery = {
     moviehash: osdbHash,
     moviebytesize: parseInt(filebytesize),
     extend: true,

@@ -1,4 +1,4 @@
-import { Movie, SearchRequest, TVShow } from '@universalmediaserver/node-imdb-api';
+import { Movie, SearchRequest, SearchResults, TVShow } from '@universalmediaserver/node-imdb-api';
 import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
 import * as natural from 'natural';
@@ -34,7 +34,7 @@ export interface OpenSubtitlesValidation {
  * @param [imdbId] the IMDb ID
  * @param [searchRequest] a query to perform in order to get the imdbId
  */
-export const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Promise<MediaMetadataInterface> => {
+export const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Promise<MediaMetadataInterface | SeriesMetadataInterface> => {
   if (!imdbId && !searchRequest) {
     throw new Error('All parameters were falsy');
   }
@@ -66,7 +66,7 @@ export const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchReque
 
     if (!imdbId) {
       searchRequest.reqtype = 'movie';
-      let searchResults;
+      let searchResults: SearchResults;
       try {
         searchResults = await imdbAPI.search(searchRequest);
       } catch (e) {
@@ -91,18 +91,15 @@ export const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchReque
     return null;
   }
 
-  let metadata;
   if (imdbData.type === 'movie') {
-    metadata = mapper.parseIMDBAPIMovieResponse(imdbData);
+    return mapper.parseIMDBAPIMovieResponse(imdbData);
   } else if (imdbData.type === 'series') {
-    metadata = mapper.parseIMDBAPISeriesResponse(imdbData);
+    return mapper.parseIMDBAPISeriesResponse(imdbData);
   } else if (imdbData.type === 'episode') {
-    metadata = mapper.parseIMDBAPIEpisodeResponse(imdbData);
+    return mapper.parseIMDBAPIEpisodeResponse(imdbData);
   } else {
     throw new Error('Received a type we did not expect');
   }
-
-  return metadata;
 };
 
 /**
@@ -116,7 +113,7 @@ export const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchReque
  * @param [season] the season number if this is an episode
  * @param [episode] the episode number if this is an episode
  */
-export const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, season?: number, episode?: number): Promise<MediaMetadataInterface | null> => {
+export const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, season?: number, episode?: number): Promise<MediaMetadataInterface | SeriesMetadataInterface> => {
   if (!imdbId && !searchRequest) {
     throw new Error('Either imdbId or searchRequest must be specified');
   }
@@ -149,7 +146,7 @@ export const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
       }
     } else {
       searchRequest.reqtype = 'movie';
-      let searchResults;
+      let searchResults: SearchResults;
       try {
         searchResults = await imdbAPI.search(searchRequest);
       } catch (e) {
@@ -177,22 +174,19 @@ export const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
     return null;
   }
 
-  let metadata;
   if (isExpectingTVEpisode || imdbData.type === 'episode') {
     if (imdbData.type === 'episode') {
-      metadata = mapper.parseIMDBAPIEpisodeResponse(imdbData);
+      return mapper.parseIMDBAPIEpisodeResponse(imdbData);
     } else {
-      throw new Error('Received type ' + imdbData.type + ' but expected episode for ' + imdbId + ' ' + searchRequest + ' ' + season + ' ' + episode);
+      throw new Error(`Received type ${imdbData.type} but expected episode for ${imdbId} ${searchRequest.toString()} ${season} ${episode}`);
     }
   } else if (imdbData.type === 'movie') {
-    metadata = mapper.parseIMDBAPIMovieResponse(imdbData);
+    return mapper.parseIMDBAPIMovieResponse(imdbData);
   } else if (imdbData.type === 'series') {
-    metadata = mapper.parseIMDBAPISeriesResponse(imdbData);
+    return mapper.parseIMDBAPISeriesResponse(imdbData);
   } else {
     throw new Error('Received a type we did not expect: ' + imdbData.type);
   }
-
-  return metadata;
 };
 
 /**

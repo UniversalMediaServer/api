@@ -8,6 +8,7 @@
   },
   "scripts": {
     "dev": "DEBUG=*universalmediaserver-api:server nodemon",
+    "lint": "./node_modules/.bin/eslint src/**/*.ts",
     "purge": "TS_NODE_FILES=true ts-node --files scripts/purge",
     "start": "ts-node --files src/app.ts",
     "start:prod": "./node_modules/.bin/pm2 start ecosystem.config.js --update-env",
@@ -146,8 +147,8 @@
     "@types/natural": "^2.1.1",
     "@types/node": "^15.3.0",
     "@types/object-mapper": "^6.2.0",
-    "@typescript-eslint/eslint-plugin": "^2.34.0",
-    "@typescript-eslint/parser": "^2.34.0",
+    "@typescript-eslint/eslint-plugin": "^4.25.0",
+    "@typescript-eslint/parser": "^4.25.0",
     "eslint": "^7.26.0",
     "got": "^11.8.2",
     "inquirer": "^8.0.0",

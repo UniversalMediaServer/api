@@ -14,11 +14,13 @@ interface OpensubtitlesIdentifyResponse {
     cover: string;
     directors: object;
     duration: string;
+    episode: string;
     genres: string[];
     goofs: string;
     imdbid: string;
     language: string[];
     rating: string;
+    season: string;
     tagline: string;
     title: string;
     trivia: string;
@@ -29,6 +31,14 @@ interface OpensubtitlesIdentifyResponse {
   moviehash: string;
   subcount: string;
   type: string;
+}
+
+interface OpenSubtitlesIdentifyQuery {
+  path?: string;
+  extend?: boolean;
+  imdb?: string;
+  moviebytesize?: number;
+  moviehash?: string;
 }
 
 interface UmsQueryParams {
@@ -53,4 +63,11 @@ interface GetVideoFilter {
 interface ExactSearchQuery {
   title: RegExp;
   startYear?: string;
+}
+
+declare module 'opensubtitles-api' {
+  export class OpenSubtitles {
+    constructor(userAgent: string);
+    identify(osQuery: OpenSubtitlesIdentifyQuery): Promise<OpensubtitlesIdentifyResponse>;
+  }
 }

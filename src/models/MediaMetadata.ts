@@ -4,13 +4,13 @@ import { Schema, Document } from 'mongoose';
 import { ValidationError } from '../helpers/customErrors';
 
 export interface MediaMetadataInterface {
-  actors: Array<string>;
+  actors?: Array<string>;
   awards?: string;
   boxoffice?: string;
   country?: string;
-  directors: Array<string>;
+  directors?: Array<string>;
   episode?: string;
-  genres: Array<string>;
+  genres?: Array<string>;
   goofs?: string;
   imdbID: string;
   metascore?: string;
@@ -32,6 +32,13 @@ export interface MediaMetadataInterface {
   type: string;
   votes?: string;
   year: string;
+}
+
+export interface Rating {
+  Source?: string;
+  source?: string;
+  Value?: string;
+  value?: string;
 }
 
 export interface MediaMetadataInterfaceDocument extends Document, MediaMetadataInterface {}
