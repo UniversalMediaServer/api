@@ -106,7 +106,6 @@ SeriesMetadataSchema.statics.findSimilarSeries = async function(title: string, s
     sortBy.startYear = 1;
   }
 
-  
   const seriesMetadata = await this.find(exactSearchQuery).sort({ startYear: 1 });
 
   if (seriesMetadata[0]) {

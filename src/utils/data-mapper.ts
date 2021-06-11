@@ -178,6 +178,18 @@ const imdbSeriesMap = {
     transform: (val: number): string => val ? val.toString() : undefined,
   },
   'totalseasons': 'totalSeasons',
+  'totalSeasons': {
+    key: 'totalSeasons',
+    transform: val => {
+      if (val) {
+        const parsedValue = parseFloat(val);
+        if (!isNaN(parsedValue)) {
+          return parsedValue;
+        }
+      }
+      return undefined;
+    },
+  },
   'type': 'type',
   'votes': 'votes',
   'year': {
@@ -241,7 +253,7 @@ const imdbMovieMap = {
   },
 };
 
-const removeNotApplicable = (obj): any => {
+const filterUnwantedValues = (obj): any => {
   return _.pickBy(obj, (v) => {
     if (typeof v === 'object') {
       return _.pull(v, 'N/A');
@@ -253,27 +265,27 @@ const removeNotApplicable = (obj): any => {
 class UmsDataMapper {
   parseOpenSubtitlesResponse(openSubtitlesData): MediaMetadataInterface {
     const mappedData = objectMapper.merge(openSubtitlesData, openSubtitlesMovieMap);
-    return removeNotApplicable(mappedData);
+    return filterUnwantedValues(mappedData);
   }
 
   parseOpenSubtitlesEpisodeResponse(openSubtitlesData): MediaMetadataInterface {
     const mappedData = objectMapper.merge(openSubtitlesData, openSubtitlesEpisodeMap);
-    return removeNotApplicable(mappedData);
+    return filterUnwantedValues(mappedData);
   }
 
   parseIMDBAPIEpisodeResponse(imdbData): MediaMetadataInterface {
     const mappedData = objectMapper.merge(imdbData, imdbEpisodeMap);
-    return removeNotApplicable(mappedData);
+    return filterUnwantedValues(mappedData);
   }
 
   parseIMDBAPISeriesResponse(imdbData): SeriesMetadataInterface {
     const mappedData = objectMapper.merge(imdbData, imdbSeriesMap);
-    return removeNotApplicable(mappedData);
+    return filterUnwantedValues(mappedData);
   }
 
   parseIMDBAPIMovieResponse(imdbData): MediaMetadataInterface {
     const mappedData = objectMapper.merge(imdbData, imdbMovieMap);
-    return removeNotApplicable(mappedData);
+    return filterUnwantedValues(mappedData);
   }
 }
 
