@@ -31,5 +31,5 @@ jobs:
         node-version: '16'
     - run: yarn install
     - run: yarn run tsc:ci
-    - run: yarn lint
+    - run: node_modules/.bin/eslint src/**/*.ts
     - run: yarn test
