@@ -80,6 +80,7 @@ describe('get by all', () => {
       expect(response.headers['x-api-subversion']).toBeTruthy();
       expect(response.body.title).toEqual('Interstellar');
       expect(response.body.type).toEqual('movie');
+      expect(response.body.searchMatches).toBeUndefined();
       expect(spy).toHaveBeenCalledTimes(1);
       spy.mockReset();
 
