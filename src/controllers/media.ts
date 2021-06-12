@@ -285,6 +285,11 @@ export const getSeriesByTitle = async(ctx: ParameterizedContext): Promise<Series
     return ctx.body = dbMeta;
   }
 
+  dbMeta = await SeriesMetadata.findSimilarSeries(`${dirOrFilename} ${year}`, '');
+  if (dbMeta) {
+    return ctx.body = dbMeta;
+  }
+
   const failedLookupQuery: FailedLookupsInterface = { title: dirOrFilename, type: 'series' };
   if (year) {
     failedLookupQuery.year = year;
