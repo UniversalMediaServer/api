@@ -284,6 +284,11 @@ export const getSeriesByTitle = async(ctx: ParameterizedContext): Promise<Series
   if (dbMeta) {
     return ctx.body = dbMeta;
   }
+  // also try case when we append the year to the title
+  dbMeta = await SeriesMetadata.findSimilarSeries(`${dirOrFilename} ${year}`, '');
+  if (dbMeta) {
+    return ctx.body = dbMeta;
+  }
 
   const failedLookupQuery: FailedLookupsInterface = { title: dirOrFilename, type: 'series' };
   if (year) {
@@ -530,7 +535,7 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
       combinedResponse.osdbHash = osdbHash;
     }
     const dbMeta = await MediaMetadata.create(combinedResponse);
-    return ctx.body = dbMeta.toObject({ useProjection: true });
+    return ctx.body = dbMeta;
   } catch (e) {
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
