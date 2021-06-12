@@ -17,107 +17,6 @@
     "tsc:ci": "tsc && rm -rf dist",
     "watch": "tsc --watch"
   },
-  "eslintConfig": {
-    "env": {
-      "es6": true,
-      "node": true
-    },
-    "extends": [
-      "eslint:recommended",
-      "plugin:@typescript-eslint/eslint-recommended",
-      "plugin:@typescript-eslint/recommended",
-      "plugin:@typescript-eslint/recommended-requiring-type-checking"
-    ],
-    "globals": {
-      "Atomics": "readonly",
-      "SharedArrayBuffer": "readonly"
-    },
-    "parser": "@typescript-eslint/parser",
-    "plugins": [
-      "@typescript-eslint"
-    ],
-    "parserOptions": {
-      "ecmaVersion": 2018,
-      "project": "./tsconfig.json",
-      "sourceType": "module"
-    },
-    "rules": {
-      "@typescript-eslint/ban-ts-ignore": "off",
-      "array-bracket-spacing": "error",
-      "block-spacing": "error",
-      "comma-dangle": [
-        "error",
-        "always-multiline"
-      ],
-      "comma-spacing": "error",
-      "comma-style": "error",
-      "computed-property-spacing": "error",
-      "curly": "error",
-      "eol-last": "error",
-      "func-call-spacing": "error",
-      "function-paren-newline": "error",
-      "indent": [
-        "error",
-        2,
-        {
-          "SwitchCase": 1
-        }
-      ],
-      "key-spacing": "error",
-      "keyword-spacing": "error",
-      "linebreak-style": [
-        "off",
-        "unix"
-      ],
-      "newline-per-chained-call": "error",
-      "no-console": "off",
-      "no-multiple-empty-lines": "error",
-      "no-unused-vars": [
-        "error",
-        {
-          "args": "none"
-        }
-      ],
-      "no-whitespace-before-property": "error",
-      "object-curly-newline": [
-        "error",
-        {
-          "multiline": true
-        }
-      ],
-      "object-curly-spacing": [
-        "error",
-        "always"
-      ],
-      "object-property-newline": [
-        "error",
-        {
-          "allowAllPropertiesOnSameLine": true
-        }
-      ],
-      "padded-blocks": [
-        "error",
-        "never"
-      ],
-      "quote-props": [
-        "error",
-        "consistent"
-      ],
-      "quotes": [
-        "error",
-        "single"
-      ],
-      "semi": "error",
-      "semi-spacing": "error",
-      "space-before-blocks": "error",
-      "space-before-function-paren": [
-        "error",
-        "never"
-      ],
-      "space-in-parens": "error",
-      "spaced-comment": "error"
-    }
-  },
   "dependencies": {
     "@universalmediaserver/node-imdb-api": "4.4.2",
     "debug": "^4.3.1",
@@ -147,8 +46,8 @@
     "@types/natural": "^2.1.1",
     "@types/node": "^15.6.1",
     "@types/object-mapper": "^6.2.0",
-    "@typescript-eslint/eslint-plugin": "^4.25.0",
-    "@typescript-eslint/parser": "^4.25.0",
+    "@typescript-eslint/eslint-plugin": "^4.26.1",
+    "@typescript-eslint/parser": "^4.26.1",
     "eslint": "^7.28.0",
     "got": "^11.8.2",
     "inquirer": "^8.1.0",

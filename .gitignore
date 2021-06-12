@@ -62,6 +62,7 @@ typings/
 
 **/*.js
 
+!.eslintrc.js
 !jest-mongodb-config.js
 !jest.config.js
 !test/mocks.js
