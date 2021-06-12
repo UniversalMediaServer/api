@@ -12,7 +12,6 @@ export interface SeriesMetadataInterface extends Document {
   directors: Array<string>;
   genres: Array<string>;
   imdbID: string;
-  isEpisodesCrawled?: boolean;
   metascore?: string;
   poster?: string;
   rated?: string; // e.g 'PG-13'
@@ -59,8 +58,7 @@ const SeriesMetadataSchema: Schema = new Schema({
   directors: { type: Array },
   endYear: { type: String },
   genres: { type: Array },
-  imdbID: { type: String, required: true, index: true, unique: true },
-  isEpisodesCrawled: { type: Boolean, default: false, index: true },
+  imdbID: { type: String, required: true, index: true },
   metascore: { type: String },
   plot: { type: String },
   poster: { type: String },
