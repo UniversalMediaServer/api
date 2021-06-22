@@ -150,7 +150,7 @@
     "@typescript-eslint/parser": "^2.34.0",
     "eslint": "^7.29.0",
     "got": "^11.8.2",
-    "inquirer": "^8.1.0",
+    "inquirer": "^8.1.1",
     "jest": "^27.0.4",
     "mongodb-memory-server": "^6.9.6",
     "nock": "^13.1.0",
