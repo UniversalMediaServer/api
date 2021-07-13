@@ -134,7 +134,7 @@
     "opensubtitles-api": "^5.1.2",
     "pm2": "^5.1.0",
     "stoppable": "^1.1.0",
-    "ts-node": "^10.0.0"
+    "ts-node": "^10.1.0"
   },
   "devDependencies": {
     "@types/jest": "^26.0.24",
