@@ -5,7 +5,7 @@ import * as natural from 'natural';
 
 import osAPI from '../services/opensubtitles';
 
-import { IMDbIDNotFoundError } from '../helpers/customErrors';
+import { IMDbIDNotFoundError, ValidationError } from '../helpers/customErrors';
 import FailedLookups from '../models/FailedLookups';
 import { MediaMetadataInterface } from '../models/MediaMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
@@ -17,6 +17,7 @@ export const FAILED_LOOKUP_SKIP_DAYS = 30;
 export interface OpenSubtitlesQuery {
   moviehash: string;
   moviebytesize: number;
+  extend: boolean;
 }
 
 export interface OpenSubtitlesValidation {
@@ -232,6 +233,10 @@ export const getFromOpenSubtitles = async(osQuery: OpenSubtitlesQuery, validatio
   const validateMovieByYear = Boolean(validationData.year);
   const validateEpisodeBySeasonAndEpisode = Boolean(validationData.season && validationData.episode);
   let passedValidation = true;
+
+  if (!osQuery.moviehash || !osQuery.moviebytesize) {
+    throw new ValidationError('moviehash and moviebytesize are required');
+  }
 
   const openSubtitlesResponse = await osAPI.identify({ ...osQuery });
 

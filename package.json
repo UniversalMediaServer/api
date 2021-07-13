@@ -131,7 +131,7 @@
     "mongoose": "^5.13.2",
     "natural": "^5.0.3",
     "object-mapper": "^6.2.0",
-    "opensubtitles-api": "^5.1.2",
+    "opensubtitles-api": "UniversalMediaServer/opensubtitles-api#3c88099",
     "pm2": "^5.1.0",
     "stoppable": "^1.1.0",
     "ts-node": "^10.1.0"
