@@ -882,10 +882,10 @@
   dependencies:
     "@types/koa" "*"
 
-"@types/koa-helmet@^6.0.2":
-  version "6.0.3"
-  resolved "https://registry.yarnpkg.com/@types/koa-helmet/-/koa-helmet-6.0.3.tgz#462254ef50ea4244d91303d75b04ed85de0b1ac7"
-  integrity sha512-ksOBgHOlSCai6lSvPFn1bWyHFIrDMRPJclI6CsglKgxoof5UUqJHss3OD5ryzWzd/0yJg3ry+hUvLEq4v/SFRQ==
+"@types/koa-helmet@^6.0.4":
+  version "6.0.4"
+  resolved "https://registry.yarnpkg.com/@types/koa-helmet/-/koa-helmet-6.0.4.tgz#d908fff8fe25e1d50765f107c1fcd9b89e8a54e3"
+  integrity sha512-cSmbgKkUauVqQWPFKXEsJTcuLfkxJggXlbgeiqIeZwTz3aQpyJktrWjhOkpD7Iq5Lcq1G9TTKlj0pFZWIg6EbQ==
   dependencies:
     "@types/koa" "*"
     helmet "^4.0.0"
