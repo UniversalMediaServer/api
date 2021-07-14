@@ -67,7 +67,10 @@ const SeriesMetadataSchema: Schema = new Schema({
   ratings: { type: [new mongoose.Schema({ 'Source': String, 'Value': String })] },
   startYear: { type: String },
   title: { type: String, required: true },
-  totalSeasons: { type: Number },
+  totalSeasons: {
+    type: Number,
+    default: 0,
+  },
   type: {
     type: String,
     validate: {
