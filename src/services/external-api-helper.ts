@@ -15,9 +15,10 @@ import { mapper } from '../utils/data-mapper';
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
 
 export interface OpenSubtitlesQuery {
-  moviehash: string;
-  moviebytesize: number;
   extend: boolean;
+  moviebytesize: number;
+  moviehash: string;
+  remote: boolean;
 }
 
 export interface OpenSubtitlesValidation {

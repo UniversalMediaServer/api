@@ -56,6 +56,7 @@ export const getByOsdbHash = async(ctx: ParameterizedContext): Promise<MediaMeta
     moviehash: osdbHash,
     moviebytesize: parseInt(filebytesize),
     extend: true,
+    remote: true,
   };
 
   const openSubtitlesResponse = await osAPI.identify(osQuery);
@@ -441,7 +442,7 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
   let openSubtitlesMetadata;
 
   if (osdbHash && filebytesize) {
-    const osQuery: OpenSubtitlesQuery = { moviehash: osdbHash, moviebytesize: filebytesizeNumber, extend: true };
+    const osQuery: OpenSubtitlesQuery = { moviehash: osdbHash, moviebytesize: filebytesizeNumber, extend: true, remote: true };
     const validation = {
       year: year ? year : null,
       season: season ? season : null,
