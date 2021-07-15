@@ -11,6 +11,7 @@ import osAPI from '../services/opensubtitles';
 import imdbAPI from '../services/imdb-api';
 import * as externalAPIHelper from '../services/external-api-helper';
 import { mapper } from '../utils/data-mapper';
+import { OpenSubtitlesQuery } from '../services/external-api-helper';
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
 
@@ -51,10 +52,11 @@ export const getByOsdbHash = async(ctx: ParameterizedContext): Promise<MediaMeta
     throw new MediaNotFoundError();
   }
 
-  const osQuery = {
+  const osQuery: OpenSubtitlesQuery = {
     moviehash: osdbHash,
     moviebytesize: parseInt(filebytesize),
     extend: true,
+    remote: true,
   };
 
   const openSubtitlesResponse = await osAPI.identify(osQuery);
@@ -440,7 +442,7 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
   let openSubtitlesMetadata;
 
   if (osdbHash && filebytesize) {
-    const osQuery = { moviehash: osdbHash, moviebytesize: filebytesizeNumber };
+    const osQuery: OpenSubtitlesQuery = { moviehash: osdbHash, moviebytesize: filebytesizeNumber, extend: true, remote: true };
     const validation = {
       year: year ? year : null,
       season: season ? season : null,
