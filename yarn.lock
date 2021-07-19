@@ -3935,10 +3935,10 @@ moment-timezone@^0.5.x:
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.1.tgz#b2be769fa31940be9eeea6469c075e35006fa3d3"
   integrity sha512-kHmoybcPV8Sqy59DwNDY3Jefr64lK/by/da0ViFcuA4DH0vQg5Q6Ze5VimxkfQNSC+Mls/Kx53s7TjP1RhFEDQ==
 
-mongodb-memory-server-core@7.2.0:
-  version "7.2.0"
-  resolved "https://registry.yarnpkg.com/mongodb-memory-server-core/-/mongodb-memory-server-core-7.2.0.tgz#c7c403b729b861df3b4989224bb9cbbbcec5e618"
-  integrity sha512-GCdCaVIVipxHW5PrhhVXZIVgfa4Rht+95RwRdSFXp9MwZaGqAU+aUlcRJkE02RSdITvI6dHmXG3X+Uz7yB1ChA==
+mongodb-memory-server-core@7.3.0:
+  version "7.3.0"
+  resolved "https://registry.yarnpkg.com/mongodb-memory-server-core/-/mongodb-memory-server-core-7.3.0.tgz#e37278eb708aae8e19ab7937bdb1897e61a3a5db"
+  integrity sha512-TkSTW/ozcETulK8ppWID+eEXZ/Ova6I5Ne+8WEmcQ6YoduL3q/jdP+9qSjrERO1ZcoyRwehx+LPLrphOgNSJ1w==
   dependencies:
     "@types/tmp" "^0.2.0"
     async-mutex "^0.3.0"
@@ -3958,12 +3958,12 @@ mongodb-memory-server-core@7.2.0:
     uuid "^8.3.1"
     yauzl "^2.10.0"
 
-mongodb-memory-server@^7.2.0:
-  version "7.2.0"
-  resolved "https://registry.yarnpkg.com/mongodb-memory-server/-/mongodb-memory-server-7.2.0.tgz#b425b0014841d1d18134de8e08e6d3c6affa13e9"
-  integrity sha512-bTVzkHwNgEQHt8pRZF8Fca96eghd/72RHn0kEsnYjf0XjY5Vvg8/PvxOEWRd4Oa15tUJ6rW5eMsQhRfb1FPCFg==
+mongodb-memory-server@^7.3.0:
+  version "7.3.0"
+  resolved "https://registry.yarnpkg.com/mongodb-memory-server/-/mongodb-memory-server-7.3.0.tgz#008b6077754cf7e6dd5b8bd72b1efe0887254e10"
+  integrity sha512-5sEp+rVbHInuWxf15Lk1wy9FkhvgInjMS1UTp2UKk0q/fAL1Qisb2L3rT7CoHx0jOmpAnk5tAfT/ybUTeiDu6g==
   dependencies:
-    mongodb-memory-server-core "7.2.0"
+    mongodb-memory-server-core "7.3.0"
     tslib "^2.3.0"
 
 mongodb@3.6.8:
