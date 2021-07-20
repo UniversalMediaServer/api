@@ -1,7 +1,7 @@
 import { SearchRequest } from '@universalmediaserver/node-imdb-api';
 import { ParameterizedContext } from 'koa';
 import * as _ from 'lodash';
-import * as episodeParser from 'episode-parser';
+import episodeParser from 'episode-parser';
 
 import { ExternalAPIError, MediaNotFoundError, ValidationError } from '../helpers/customErrors';
 import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';

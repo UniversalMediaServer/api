@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 import { Schema, Document, Model } from 'mongoose';
 import * as _ from 'lodash';
-import * as escapeStringRegexp from 'escape-string-regexp';
+import escapeStringRegexp from 'escape-string-regexp';
 
 const TEXT_SCORE_MINIMUM = 1;
 
