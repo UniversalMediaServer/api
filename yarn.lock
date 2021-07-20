@@ -2422,6 +2422,11 @@ find-cache-dir@^3.3.1:
     make-dir "^3.0.2"
     pkg-dir "^4.1.0"
 
+find-package-json@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/find-package-json/-/find-package-json-1.2.0.tgz#4057d1b943f82d8445fe52dc9cf456f6b8b58083"
+  integrity sha512-+SOGcLGYDJHtyqHd87ysBhmaeQ95oWspDKnMXBrnQ9Eq4OkLNqejgoaD8xVWu6GPa0B6roa6KinCMEMcVeqONw==
+
 find-up@^4.0.0, find-up@^4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/find-up/-/find-up-4.1.0.tgz#97afe7d6cdc0bc5928584b7c8d7b16e8a9aa5d19"
@@ -3935,22 +3940,22 @@ moment-timezone@^0.5.x:
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.1.tgz#b2be769fa31940be9eeea6469c075e35006fa3d3"
   integrity sha512-kHmoybcPV8Sqy59DwNDY3Jefr64lK/by/da0ViFcuA4DH0vQg5Q6Ze5VimxkfQNSC+Mls/Kx53s7TjP1RhFEDQ==
 
-mongodb-memory-server-core@7.3.0:
-  version "7.3.0"
-  resolved "https://registry.yarnpkg.com/mongodb-memory-server-core/-/mongodb-memory-server-core-7.3.0.tgz#e37278eb708aae8e19ab7937bdb1897e61a3a5db"
-  integrity sha512-TkSTW/ozcETulK8ppWID+eEXZ/Ova6I5Ne+8WEmcQ6YoduL3q/jdP+9qSjrERO1ZcoyRwehx+LPLrphOgNSJ1w==
+mongodb-memory-server-core@6.10.0:
+  version "6.10.0"
+  resolved "https://registry.yarnpkg.com/mongodb-memory-server-core/-/mongodb-memory-server-core-6.10.0.tgz#9239c7941e5b0a225b50494563f0fc528c056690"
+  integrity sha512-Mil7M4w1231laVi3RYckVnvHANgSIHUICzdIxI5N2JM/i+uKamxkgUXmjWob188jWrWrTqeCI2vNq6KoGzRlxQ==
   dependencies:
     "@types/tmp" "^0.2.0"
     async-mutex "^0.3.0"
     camelcase "^6.1.0"
     debug "^4.2.0"
     find-cache-dir "^3.3.1"
+    find-package-json "^1.2.0"
     get-port "^5.1.1"
     https-proxy-agent "^5.0.0"
     md5-file "^5.0.0"
     mkdirp "^1.0.4"
     mongodb "^3.6.9"
-    new-find-package-json "^1.1.0"
     semver "^7.3.5"
     tar-stream "^2.1.4"
     tmp "^0.2.1"
@@ -3958,12 +3963,12 @@ mongodb-memory-server-core@7.3.0:
     uuid "^8.3.1"
     yauzl "^2.10.0"
 
-mongodb-memory-server@^7.3.0:
-  version "7.3.0"
-  resolved "https://registry.yarnpkg.com/mongodb-memory-server/-/mongodb-memory-server-7.3.0.tgz#008b6077754cf7e6dd5b8bd72b1efe0887254e10"
-  integrity sha512-5sEp+rVbHInuWxf15Lk1wy9FkhvgInjMS1UTp2UKk0q/fAL1Qisb2L3rT7CoHx0jOmpAnk5tAfT/ybUTeiDu6g==
+mongodb-memory-server@6:
+  version "6.10.0"
+  resolved "https://registry.yarnpkg.com/mongodb-memory-server/-/mongodb-memory-server-6.10.0.tgz#3011f12b69bd5cd3610eb51df57555bdab5383cb"
+  integrity sha512-u/n35Jdbl6CwlOlpFcCkMcVsckJNhKsldI2ImePe4+5e/kKgyktS97K5VBv5wppTVOblAbebFInnIsvSts74nQ==
   dependencies:
-    mongodb-memory-server-core "7.3.0"
+    mongodb-memory-server-core "6.10.0"
     tslib "^2.3.0"
 
 mongodb@3.6.10, mongodb@^3.6.9:
@@ -4074,14 +4079,6 @@ netmask@^2.0.1:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/netmask/-/netmask-2.0.2.tgz#8b01a07644065d536383835823bc52004ebac5e7"
   integrity sha512-dBpDMdxv9Irdq66304OLfEmQ9tbNRFnFTuZiLo+bD+r332bBmMJ8GBLXklIXXgxd3+v9+KUnZaUR5PJMa75Gsg==
-
-new-find-package-json@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/new-find-package-json/-/new-find-package-json-1.1.0.tgz#053e006b17f409b9a816d5bcf0ee2b90a50326a3"
-  integrity sha512-KOH3BNZcTKPzEkaJgG2iSUaurxKmefqRKmCOYH+8xqJytNIgjqU4J88BHfK+gy/UlEzlhccLyuJDJAcCgexSwA==
-  dependencies:
-    debug "^4.3.2"
-    tslib "^2.3.0"
 
 nock@^13.1.1:
   version "13.1.1"
