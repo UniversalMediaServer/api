@@ -3964,7 +3964,7 @@ mongodb-memory-server-core@6.9.6:
   optionalDependencies:
     mongodb "^3.6.2"
 
-mongodb-memory-server@^6.9.6:
+mongodb-memory-server@6.9.6:
   version "6.9.6"
   resolved "https://registry.yarnpkg.com/mongodb-memory-server/-/mongodb-memory-server-6.9.6.tgz#ced1a100f58363317a562efaf8821726c433cfd2"
   integrity sha512-BjGPPh5f61lMueG7px9DneBIrRR/GoWUHDvLWVAXhQhKVcwMMXxgeEba6zdDolZHfYAu6aYGPzhOuYKIKPgpBQ==
