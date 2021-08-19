@@ -7,7 +7,7 @@ import got from 'got';
 import * as stoppable from 'stoppable';
 
 import { MongoMemoryServer } from 'mongodb-memory-server';
-const mongod = new MongoMemoryServer();
+let mongod;
 
 interface UmsApiGotResponse  {
   statusCode: number;
@@ -57,7 +57,8 @@ let server;
 
 describe('Media Metadata endpoints', () => {
   beforeAll(async() => {
-    const mongoUrl = await mongod.getUri();
+    mongod = await MongoMemoryServer.create();
+    const mongoUrl = mongod.getUri();
     process.env.MONGO_URL = mongoUrl;
     await mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true });
     require('../mocks');

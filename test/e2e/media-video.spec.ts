@@ -8,7 +8,7 @@ import * as stoppable from 'stoppable';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import MediaMetadata, { MediaMetadataInterfaceDocument } from '../../src/models/MediaMetadata';
 
-const mongod = new MongoMemoryServer();
+let mongod;
 
 const appUrl = 'http://localhost:3000';
 let server;
@@ -58,7 +58,8 @@ interface UmsApiGotResponse  {
 
 describe('get by all', () => {
   beforeAll(async() => {
-    const mongoUrl = await mongod.getUri();
+    mongod = await MongoMemoryServer.create();
+    const mongoUrl = mongod.getUri();
     process.env.MONGO_URL = mongoUrl;
     await mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true });
     server = require('../../src/app').server;
