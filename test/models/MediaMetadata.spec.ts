@@ -17,11 +17,12 @@ const interstellarMetaData = {
   year: '2014',
 };
 
-const mongod = new MongoMemoryServer();
+let mongod;
 
 describe('Media Metadata Model', () => {
   beforeAll(async() => {
-    const mongoUrl = await mongod.getUri();
+    mongod = await MongoMemoryServer.create();
+    const mongoUrl = mongod.getUri();
     process.env.MONGO_URL = mongoUrl;
     await mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true });
   });

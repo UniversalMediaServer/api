@@ -3,11 +3,12 @@ import * as _ from 'lodash';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import FailedLookupsModel from '../../src/models/FailedLookups';
 
-const mongod = new MongoMemoryServer();
+let mongod;
 
 describe('Failed Lookups Model', () => {
   beforeAll(async() => {
-    const mongoUrl = await mongod.getUri();
+    mongod = await MongoMemoryServer.create();
+    const mongoUrl = mongod.getUri();
     process.env.MONGO_URL = mongoUrl;
     await mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true });
   });
