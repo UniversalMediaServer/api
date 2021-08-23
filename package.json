@@ -134,7 +134,7 @@
     "opensubtitles-api": "UniversalMediaServer/opensubtitles-api#adb9ec6",
     "pm2": "^5.1.0",
     "stoppable": "^1.1.0",
-    "ts-node": "^10.2.0"
+    "ts-node": "^10.2.1"
   },
   "devDependencies": {
     "@types/jest": "^27.0.1",
