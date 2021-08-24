@@ -132,7 +132,7 @@
     "natural": "^5.0.4",
     "object-mapper": "^6.2.0",
     "opensubtitles-api": "UniversalMediaServer/opensubtitles-api#adb9ec6",
-    "pm2": "^5.1.0",
+    "pm2": "^5.1.1",
     "stoppable": "^1.1.0",
     "ts-node": "^10.2.1"
   },
