@@ -919,10 +919,10 @@
     "@types/bson" "*"
     "@types/node" "*"
 
-"@types/natural@^2.1.2":
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/@types/natural/-/natural-2.1.2.tgz#f82ba70b34eec876a19cebf9af4ddbe1da4214f0"
-  integrity sha512-piNFbfpNjEbr7E8vq8RK+6yualaBv8uGw+aeq7umg9MPw9MPAjytz14d7H5Okpjp+t58gMo7Mfhuw2ZLGqGJSg==
+"@types/natural@^5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@types/natural/-/natural-5.0.0.tgz#04262f3fed2aed359b8ff30d95fc6d8d25d577bb"
+  integrity sha512-jRixmOGUsvtbZsYCt7eSTb2R+IIzyfm+AqpTwVDVPzUcIPTNizmmb5exyF+hUnWAsZqCx0/MxEodgntVWyE/fQ==
   dependencies:
     "@types/node" "*"
 
