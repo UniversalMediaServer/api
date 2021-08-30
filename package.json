@@ -151,7 +151,7 @@
     "eslint": "^7.32.0",
     "got": "^11.8.2",
     "inquirer": "^8.1.2",
-    "jest": "^27.0.6",
+    "jest": "^27.1.0",
     "mongodb-memory-server": "7.3.6",
     "nock": "^13.1.2",
     "nodemon": "^2.0.12",
