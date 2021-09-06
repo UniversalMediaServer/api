@@ -124,7 +124,7 @@ describe('Data mapper', () => {
   describe('imdbAPI responses', () => {
     describe('episodes', () => {
       it('should parse to expected flat structure', () => {
-        const parsed = mapper.parseIMDBAPIEpisodeResponse(imdbApiEpisode);
+        const parsed = mapper.parseOMDbAPIEpisodeResponse(imdbApiEpisode);
         expect(parsed.actors).toEqual(['Claire Danes', 'Damian Lewis', 'Rupert Friend', 'Morena Baccarin']);
         expect(parsed.country).toEqual('USA');
         expect(parsed.directors).toEqual(['Jeffrey Reiner']);
@@ -147,14 +147,14 @@ describe('Data mapper', () => {
       });
 
       it('should remove N/A values', () => {
-        const parsed = mapper.parseIMDBAPIEpisodeResponse(imdbApiEpisode);
+        const parsed = mapper.parseOMDbAPIEpisodeResponse(imdbApiEpisode);
         expect(parsed.awards).not.toBe('N/A');
       });
     });
 
     describe('series', () => {
       it('should remove NaN values', () => {
-        const parsed = mapper.parseIMDBAPISeriesResponse(imdbApiSeriesWithNaN);
+        const parsed = mapper.parseOMDbAPISeriesResponse(imdbApiSeriesWithNaN);
         expect(parsed.title).toBe('Prison Break');
         expect(parsed.totalSeasons).toBeUndefined();
       });

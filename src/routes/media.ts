@@ -19,14 +19,14 @@ router.get('/v2/title', async(ctx) => {
   await MediaController.getBySanitizedTitleV2(ctx);
 });
 
-router.get('/seriestitle', async(ctx) => {
-  ctx.set('X-Api-Subversion', mediaApiSubversions['/seriestitle']);
-  await MediaController.getSeriesByTitle(ctx);
-});
-
 router.get('/imdbid', async(ctx) => {
   ctx.set('X-Api-Subversion', mediaApiSubversions['/imdbid']);
   await MediaController.getByImdbID(ctx);
+});
+
+router.get('/seriestitle', async(ctx) => {
+  ctx.set('X-Api-Subversion', mediaApiSubversions['/seriestitle']);
+  await MediaController.getSeriesByTitle(ctx);
 });
 
 router.get('/video', async(ctx) => {

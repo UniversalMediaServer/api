@@ -10,9 +10,9 @@ if (process.env.NODE_ENV === 'production') {
   }
 }
 const originalModule = new imdb.Client({ apiKey: process.env.IMDB_API_KEY || 'foo', baseURL });
-const imdbAPI = _.cloneDeep(originalModule);
+const omdbAPI = _.cloneDeep(originalModule);
 
-imdbAPI.get = async(params): Promise<imdb.Movie | imdb.Episode | imdb.TVShow> => {
+omdbAPI.get = async(params): Promise<imdb.Movie | imdb.Episode | imdb.TVShow> => {
   try {
     return await originalModule.get(params);
   } catch (err) {
@@ -22,7 +22,7 @@ imdbAPI.get = async(params): Promise<imdb.Movie | imdb.Episode | imdb.TVShow> =>
   }
 };
 
-imdbAPI.search = async(params): Promise<imdb.SearchResults> => {
+omdbAPI.search = async(params): Promise<imdb.SearchResults> => {
   try {
     return await originalModule.search(params);
   } catch (err) {
@@ -33,4 +33,4 @@ imdbAPI.search = async(params): Promise<imdb.SearchResults> => {
   }
 };
 
-export default imdbAPI;
+export default omdbAPI;

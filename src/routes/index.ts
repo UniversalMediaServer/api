@@ -1,4 +1,5 @@
 import * as Router from 'koa-router';
+import * as InfoController from '../controllers/info';
 import { mediaApiSubversions } from '../helpers/subversioning';
 
 const router = new Router();
@@ -8,6 +9,10 @@ router.get('/', (ctx) => {
 
 router.get('/api/subversions', (ctx) => {
   ctx.body = { '/api/media': mediaApiSubversions };
+});
+
+router.get('/api/image-prepend', async(ctx) => {
+  await InfoController.getTMDBImagePrepend(ctx);
 });
 
 export default router;

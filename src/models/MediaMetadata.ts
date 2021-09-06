@@ -1,34 +1,47 @@
 import { OmdbRating } from '@universalmediaserver/node-imdb-api/lib/interfaces';
 import * as mongoose from 'mongoose';
 import { Schema, Document } from 'mongoose';
+import { EpisodeCreditsResponse, EpisodeImagesResponse, MovieImagesResponse } from 'moviedb-promise/dist/request-types';
+import { ProductionCompany, ProductionCountry } from 'moviedb-promise/dist/types';
 import { ValidationError } from '../helpers/customErrors';
 
 export interface MediaMetadataInterface {
   actors: Array<string>;
   awards?: string;
   boxoffice?: string;
+  budget?: number;
   country?: string;
+  credits?: EpisodeCreditsResponse;
   directors: Array<string>;
   episode?: string;
   genres: Array<string>;
   goofs?: string;
+  homepage?: string;
+  images?: MovieImagesResponse | EpisodeImagesResponse;
   imdbID: string;
   metascore?: string;
+  originalLanguage?: string;
+  originalTitle?: string;
   osdbHash?: string;
   plot?: string;
   production?: string;
+  productionCountries?: Array<ProductionCountry>;
+  productionCompanies?: Array<ProductionCompany>;
   poster?: string;
   rated?: string; // e.g 'PG-13'
   rating?: number; // e.g. 6.7
   ratings?: Array<OmdbRating>; // e.g. {"Source": "Metacritic", "Value": "67/100"}
   released?: Date;
+  revenue?: string;
   runtime?: string;
   searchMatches?: Array<string>;
   season?: string;
   seriesIMDbID?: string;
   tagline?: string;
   title: string;
+  tmdbID?: string;
   trivia?: string;
+  tvdbID?: string;
   type: string;
   votes?: string;
   year: string;
@@ -58,6 +71,7 @@ const MediaMetadataSchema: Schema = new Schema({
   },
   genres: { type: Array, required: true },
   goofs: { type: String },
+  images: { type: Array },
   imdbID: { type: String, index: true, required: true, unique: true },
   osdbHash: {
     index: true,
