@@ -193,6 +193,25 @@ export const getFromOMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
 };
 
 /**
+ * @param seriesTitle the series title
+ * @param [year] the year the series started
+ * @returns the first TV series from the list of results from TMDB by title
+ */
+export const getFirstTVSeriesFromTMDBAPIByTitle = async(seriesTitle: string, year?: number): Promise<number> => {
+  const tmdbQuery: SearchTvRequest = { query: seriesTitle };
+  if (year) {
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    tmdbQuery.first_air_date_year = year;
+  }
+  const searchResults = await moviedb.searchTv(tmdbQuery);
+  if (searchResults?.results && searchResults.results[0] && searchResults.results[0].id) {
+    return searchResults.results[0].id;
+  }
+
+  return null;
+};
+
+/**
  * Attempts a query to the TMDB API and standardizes the response
  * before returning.
  *
@@ -214,15 +233,7 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, imdbID?: string
     // TODO: Handle imdbID for episodes
     let idToSearch: string | number = imdbID;
     if (!idToSearch) {
-      const tmdbQuery: SearchTvRequest = { query: movieOrSeriesTitle };
-      if (year) {
-        // eslint-disable-next-line @typescript-eslint/camelcase
-        tmdbQuery.first_air_date_year = year;
-      }
-      const searchResults = await moviedb.searchTv(tmdbQuery);
-      if (searchResults?.results && searchResults.results[0] && searchResults.results[0].id) {
-        idToSearch = searchResults.results[0].id;
-      }
+      idToSearch = await getFirstTVSeriesFromTMDBAPIByTitle(movieOrSeriesTitle, year);
     }
 
     const episodeRequest: EpisodeRequest = {
@@ -255,7 +266,6 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, imdbID?: string
       append_to_response: 'images,external_ids,credits',
       id: idToSearch,
     });
-    // console.log(13, tmdbData);
     metadata = mapper.parseTMDBAPIMovieResponse(tmdbData);
   }
   return metadata;

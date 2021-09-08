@@ -34,11 +34,6 @@ const EPISODE_PRISONBREAK = {
   'episode': '9',
   'imdbId': 'tt5538198',
 };
-// returns null from Open Subtitles
-const EPISODE_MANDALORIAN = {
-  'osdbHash': '43f0cf3a060ce6d5z7',
-  'filebytesize': '1315319814',
-};
 
 const EPISODE_BAND_OF_BROTHERS = {
   'osdbHash': 'fbfbfc3341a24205',
@@ -114,7 +109,7 @@ describe('get by all', () => {
       response = await got(`${appUrl}/api/media/video?title=${MOVIE_INTERSTELLAR.title.toLowerCase()}`, { responseType: 'json' });
       expect(response.body.title).toEqual('Interstellar');
       expect(response.body.type).toEqual('movie');
-      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledTimes(2);
       expect(spy2).toHaveBeenCalledTimes(2);
     });
 

@@ -76,8 +76,7 @@ const tmdbEpisodeMap = {
   'air_date': 'released',
   'credits': 'credits',
   'episode_number': 'episode',
-  'external_ids.imdb_id': 'imdbID',
-  'external_ids.tvdb_id': 'tvdbID',
+  'external_ids': 'externalIDs',
   'id': 'tmdbID',
   'images': 'images',
   'name': 'title',
@@ -89,10 +88,44 @@ const tmdbEpisodeMap = {
   },
 };
 
+const tmdbSeriesMap = {
+  'created_by': 'createdBy',
+  'credits': 'credits',
+  'external_ids': 'externalIDs',
+  'first_air_date': 'firstAirDate',
+  'genres': {
+    key: 'genres?',
+    transform: (genres: Array<Genre>): Array<string> => {
+      return genres.map(genre => genre.name);
+    },
+  },
+  'homepage': 'homepage',
+  'id': 'tmdbID',
+  'images': 'images',
+  'in_production': 'inProduction',
+  'languages': 'languages',
+  'last_air_date': 'lastAirDate',
+  'name': 'title',
+  'networks': 'networks',
+  'number_of_episodes': 'numberOfEpisodes',
+  'number_of_seasons': 'numberOfSeasons',
+  'origin_country': 'originCountry',
+  'original_language': 'originalLanguage',
+  'original_title': 'originalTitle',
+  'overview': 'plot',
+  'production_companies': 'productionCompanies',
+  'production_countries': 'productionCountries',
+  'seasons': 'seasons',
+  'spoken_languages': 'spokenLanguages',
+  'status': 'status',
+  'tagline': 'tagline',
+  'type': 'seriesType', // because it clashes with our previous use of type
+};
+
 const tmdbMovieMap = {
   'budget': 'budget',
   'credits': 'credits',
-  'external_ids.imdb_id': 'imdbID',
+  'external_ids': 'externalIDs',
   'genres': {
     key: 'genres?',
     transform: (genres: Array<Genre>): Array<string> => {
@@ -309,6 +342,11 @@ class UmsDataMapper {
 
   parseTMDBAPIEpisodeResponse(tmdbData): Partial<MediaMetadataInterface> {
     const mappedData = objectMapper.merge(tmdbData, tmdbEpisodeMap);
+    return filterUnwantedValues(mappedData);
+  }
+
+  parseTMDBAPISeriesResponse(tmdbData): Partial<SeriesMetadataInterface> {
+    const mappedData = objectMapper.merge(tmdbData, tmdbSeriesMap);
     return filterUnwantedValues(mappedData);
   }
 

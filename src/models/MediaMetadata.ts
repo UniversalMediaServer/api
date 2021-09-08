@@ -1,7 +1,7 @@
 import { OmdbRating } from '@universalmediaserver/node-imdb-api/lib/interfaces';
 import * as mongoose from 'mongoose';
 import { Schema, Document } from 'mongoose';
-import { EpisodeCreditsResponse, EpisodeImagesResponse, MovieImagesResponse } from 'moviedb-promise/dist/request-types';
+import { CreditsResponse, EpisodeCreditsResponse, EpisodeExternalIdsResponse, EpisodeImagesResponse, MovieExternalIdsResponse, MovieImagesResponse } from 'moviedb-promise/dist/request-types';
 import { ProductionCompany, ProductionCountry } from 'moviedb-promise/dist/types';
 import { ValidationError } from '../helpers/customErrors';
 
@@ -11,9 +11,10 @@ export interface MediaMetadataInterface {
   boxoffice?: string;
   budget?: number;
   country?: string;
-  credits?: EpisodeCreditsResponse;
+  credits?: CreditsResponse | EpisodeCreditsResponse;
   directors: Array<string>;
   episode?: string;
+  externalIDs?: MovieExternalIdsResponse | EpisodeExternalIdsResponse;
   genres: Array<string>;
   goofs?: string;
   homepage?: string;
@@ -41,7 +42,6 @@ export interface MediaMetadataInterface {
   title: string;
   tmdbID?: string;
   trivia?: string;
-  tvdbID?: string;
   type: string;
   votes?: string;
   year: string;

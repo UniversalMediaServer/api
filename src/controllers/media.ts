@@ -12,7 +12,7 @@ import osAPI from '../services/opensubtitles';
 import imdbAPI from '../services/omdb-api';
 import * as externalAPIHelper from '../services/external-api-helper';
 import { mapper } from '../utils/data-mapper';
-import { OpenSubtitlesQuery } from '../services/external-api-helper';
+import { getFirstTVSeriesFromTMDBAPIByTitle, OpenSubtitlesQuery } from '../services/external-api-helper';
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
 
@@ -298,23 +298,45 @@ export const getSeriesByTitle = async(ctx: ParameterizedContext): Promise<Series
     throw new ValidationError('title is required');
   }
 
+  /**
+   * Return any exact or similar results.
+   *
+   * @todo revisit whether we want to allow similar results
+   *       or rely on the third-parties for that.
+   */
   let dbMeta: SeriesMetadataInterface = await SeriesMetadata.findSimilarSeries(dirOrFilename, year);
   if (dbMeta) {
     return ctx.body = dbMeta;
   }
 
+  // Return early for previously-failed lookups
   const failedLookupQuery: FailedLookupsInterface = { title: dirOrFilename, type: 'series' };
   if (year) {
     failedLookupQuery.year = year;
   }
-
   if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
     throw new MediaNotFoundError();
   }
 
+  // Extract the series name from the incoming string (usually not necessary)
   const parsed = episodeParser(dirOrFilename);
   dirOrFilename = parsed && parsed.show ? parsed.show : dirOrFilename;
+
+  // Start TMDB lookups
+  const seriesID = await getFirstTVSeriesFromTMDBAPIByTitle(dirOrFilename, Number(year));
+
+  const seriesRequest = {
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    append_to_response: 'images,external_ids,credits',
+    id: seriesID,
+  };
+
+  const tmdbResponse = await moviedb.tvInfo(seriesRequest);
+  const tmdbData = mapper.parseTMDBAPISeriesResponse(tmdbResponse);
+  // End TMDB lookups
+
+  // Start OMDb lookups
   const searchRequest: SearchRequest = {
     name: dirOrFilename,
     reqtype: 'series',
@@ -322,9 +344,8 @@ export const getSeriesByTitle = async(ctx: ParameterizedContext): Promise<Series
   if (year) {
     searchRequest.year = Number(year);
   }
-  const tvSeriesInfo = await imdbAPI.get(searchRequest);
-
-  if (!tvSeriesInfo) {
+  const omdbResponse = await imdbAPI.get(searchRequest);
+  if (!omdbResponse) {
     if (year) {
       /**
        * If the client specified a year, it may have been incorrect because of
@@ -337,11 +358,17 @@ export const getSeriesByTitle = async(ctx: ParameterizedContext): Promise<Series
       ctx.query.year = '';
       return getSeriesByTitle(ctx);
     }
+  }
+  const omdbData = mapper.parseOMDbAPISeriesResponse(omdbResponse);
+  // End OMDb lookups
+
+  const combinedResponse = _.merge(tmdbData, omdbData);
+  if (!combinedResponse || _.isEmpty(combinedResponse)) {
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
-  const metadata = mapper.parseOMDbAPISeriesResponse(tvSeriesInfo);
-  dbMeta = await SeriesMetadata.create(metadata);
+
+  dbMeta = await SeriesMetadata.create(combinedResponse);
   return ctx.body = dbMeta;
 };
 
@@ -434,19 +461,15 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
     failedQuery.push(titleFailedQuery);
   }
 
-  // find an existing metadata record, or previous failure record
-  
   const existingResult = await MediaMetadata.findOne({ $or: query }, null, { lean: true }).exec();
-
-  // we have an existing metadata record, so return it
   if (existingResult) {
+    // we have an existing metadata record, so return it
     return ctx.body = existingResult;
   }
 
   const existingFailedResult = await FailedLookups.findOne({ $or: failedQuery }, null, { lean: true }).exec();
-
-  // we have an existing failure record, so increment it, and throw not found error
   if (existingFailedResult) {
+    // we have an existing failure record, so increment it, and throw not found error
     await FailedLookups.updateOne({ _id: existingFailedResult._id }, { $inc: { count: 1 } }).exec();
     throw new MediaNotFoundError();
   }
