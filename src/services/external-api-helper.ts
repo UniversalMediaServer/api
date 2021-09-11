@@ -3,10 +3,11 @@ import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
 import * as natural from 'natural';
 
+import imdbAPI from '../services/omdb-api';
 import osAPI from '../services/opensubtitles';
 
-import { IMDbIDNotFoundError, ValidationError } from '../helpers/customErrors';
-import FailedLookups from '../models/FailedLookups';
+import { IMDbIDNotFoundError, MediaNotFoundError, ValidationError } from '../helpers/customErrors';
+import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
 import { MediaMetadataInterface } from '../models/MediaMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import omdbAPI from './omdb-api';
@@ -195,9 +196,10 @@ export const getFromOMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
 /**
  * @param seriesTitle the series title
  * @param [year] the year the series started
- * @returns the first TV series from the list of results from TMDB by title
+ * @returns the TMDB ID of the first TV series from
+ *          the list of results from TMDB by title
  */
-export const getFirstTVSeriesFromTMDBAPIByTitle = async(seriesTitle: string, year?: number): Promise<number> => {
+const getTMDBIDOfFirstTVSeriesFromTMDBAPIByTitle = async(seriesTitle: string, year?: number): Promise<number> => {
   const tmdbQuery: SearchTvRequest = { query: seriesTitle };
   if (year) {
     // eslint-disable-next-line @typescript-eslint/camelcase
@@ -233,7 +235,7 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, imdbID?: string
     // TODO: Handle imdbID for episodes
     let idToSearch: string | number = imdbID;
     if (!idToSearch) {
-      idToSearch = await getFirstTVSeriesFromTMDBAPIByTitle(movieOrSeriesTitle, year);
+      idToSearch = await getTMDBIDOfFirstTVSeriesFromTMDBAPIByTitle(movieOrSeriesTitle, year);
     }
 
     const episodeRequest: EpisodeRequest = {
@@ -272,33 +274,107 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, imdbID?: string
 };
 
 /**
- * Sets and returns series metadata by IMDb ID.
+ * Gets series metadata. Performs API lookups if we
+ * don't already have it.
  *
- * @param imdbID the IMDb ID of the series.
+ * @param [imdbID] the IMDb ID of the series
+ * @param [title] the title of the series
+ * @param [year] the first year of the series
+ * @returns series metadata
  */
-export const setSeriesMetadataByIMDbID = async(imdbID: string): Promise<SeriesMetadataInterface | null> => {
-  if (!imdbID) {
-    throw new Error('IMDb ID not supplied');
+export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: string): Promise<SeriesMetadataInterface | null> => {
+  if (!imdbID && !title) {
+    throw new Error('Either IMDb ID or title required');
   }
 
-  // Shouldn't really happen since we got this IMDb ID from their API
-  if (await FailedLookups.findOne({ imdbID }, '_id', { lean: true }).exec()) {
-    await FailedLookups.updateOne({ imdbID }, { $inc: { count: 1 } }).exec();
-    return null;
-  }
+  if (imdbID) {
+    // Shouldn't really happen since we got this IMDb ID from their API
+    if (await FailedLookups.findOne({ imdbID }, '_id', { lean: true }).exec()) {
+      await FailedLookups.updateOne({ imdbID }, { $inc: { count: 1 } }).exec();
+      return null;
+    }
 
-  const existingSeries: SeriesMetadataInterface = await SeriesMetadata.findOne({ imdbID }, null, { lean: true }).exec();
-  if (existingSeries) {
-    return existingSeries;
-  }
+    const existingSeries: SeriesMetadataInterface = await SeriesMetadata.findOne({ imdbID }, null, { lean: true }).exec();
+    if (existingSeries) {
+      return existingSeries;
+    }
 
-  const imdbData = await getFromOMDbAPIV2(imdbID);
-  if (!imdbData) {
-    await FailedLookups.updateOne({ imdbID }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
-    return null;
-  }
+    const imdbData = await getFromOMDbAPIV2(imdbID);
+    if (!imdbData) {
+      await FailedLookups.updateOne({ imdbID }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+      return null;
+    }
 
-  return SeriesMetadata.create(imdbData);
+    return SeriesMetadata.create(imdbData);
+  } else {
+    /**
+     * Return any exact or similar results.
+     *
+     * @todo revisit whether we want to allow similar results
+     *       or rely on the third-parties for that.
+     */
+    const dbMeta = await SeriesMetadata.findSimilarSeries(title, year);
+    if (dbMeta) {
+      return dbMeta;
+    }
+
+    // Return early for previously-failed lookups
+    const failedLookupQuery: FailedLookupsInterface = { title: title, type: 'series' };
+    if (year) {
+      failedLookupQuery.year = year;
+    }
+    if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
+      await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
+      throw new MediaNotFoundError();
+    }
+
+    // Extract the series name from the incoming string (usually not necessary)
+    const parsed = episodeParser(title);
+    title = parsed && parsed.show ? parsed.show : title;
+
+    // Start TMDB lookups
+    const seriesID = await getTMDBIDOfFirstTVSeriesFromTMDBAPIByTitle(title, Number(year));
+
+    const seriesRequest = {
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      append_to_response: 'images,external_ids,credits',
+      id: seriesID,
+    };
+
+    const tmdbResponse = await moviedb.tvInfo(seriesRequest);
+    const tmdbData = mapper.parseTMDBAPISeriesResponse(tmdbResponse);
+    // End TMDB lookups
+
+    // Start OMDb lookups
+    const searchRequest: SearchRequest = {
+      name: title,
+      reqtype: 'series',
+    };
+    if (year) {
+      searchRequest.year = Number(year);
+    }
+    const omdbResponse = await imdbAPI.get(searchRequest);
+    if (!omdbResponse && year) {
+      /**
+       * If the client specified a year, it may have been incorrect because of
+       * the way filename parsing works; the filename Galactica.1980.S01E01 might
+       * be about a series called "Galactica 1980", or a series called "Galactica"
+       * from 1980.
+       * So, we attempt the lookup again with the year appended to the title.
+       */
+      return getSeriesMetadata(null, title + ' ' + year);
+    }
+    const omdbData = mapper.parseOMDbAPISeriesResponse(omdbResponse);
+    // End OMDb lookups
+
+    const combinedResponse = _.merge(tmdbData, omdbData);
+    if (!combinedResponse || _.isEmpty(combinedResponse)) {
+      await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+      throw new MediaNotFoundError();
+    }
+
+    return await SeriesMetadata.create(combinedResponse);
+  }
 };
 
 /**

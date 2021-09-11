@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import { MediaMetadataInterface } from '../models/MediaMetadata';
 import { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import { Genre } from 'moviedb-promise/dist/types';
+import { SeasonMetadataInterface } from '../models/SeasonMetadata';
 
 const openSubtitlesMovieMap = {
   'metadata.cast': [
@@ -86,6 +87,17 @@ const tmdbEpisodeMap = {
     key: 'type',
     transform: (): string => 'episode',
   },
+};
+
+const tmdbSeasonMap = {
+  'air_date': 'airDate',
+  'credits': 'credits',
+  'external_ids': 'externalIDs',
+  'id': 'tmdbID',
+  'images': 'images',
+  'name': 'name',
+  'overview': 'overview',
+  'season_number': 'seasonNumber',
 };
 
 const tmdbSeriesMap = {
@@ -342,6 +354,11 @@ class UmsDataMapper {
 
   parseTMDBAPIEpisodeResponse(tmdbData): Partial<MediaMetadataInterface> {
     const mappedData = objectMapper.merge(tmdbData, tmdbEpisodeMap);
+    return filterUnwantedValues(mappedData);
+  }
+
+  parseTMDBAPISeasonResponse(tmdbData): Partial<SeasonMetadataInterface> {
+    const mappedData = objectMapper.merge(tmdbData, tmdbSeasonMap);
     return filterUnwantedValues(mappedData);
   }
 

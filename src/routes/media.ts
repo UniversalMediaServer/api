@@ -34,4 +34,9 @@ router.get('/video', async(ctx) => {
   await MediaController.getVideo(ctx);
 });
 
+router.get('/season', async(ctx) => {
+  ctx.set('X-Api-Subversion', mediaApiSubversions['/season']);
+  await MediaController.getSeason(ctx);
+});
+
 export default router;

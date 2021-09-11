@@ -1,5 +1,4 @@
 import { SearchRequest } from '@universalmediaserver/node-imdb-api';
-import * as episodeParser from 'episode-parser';
 import { ParameterizedContext } from 'koa';
 import * as _ from 'lodash';
 import { MovieDb } from 'moviedb-promise';
@@ -9,10 +8,10 @@ import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
 import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import osAPI from '../services/opensubtitles';
-import imdbAPI from '../services/omdb-api';
 import * as externalAPIHelper from '../services/external-api-helper';
 import { mapper } from '../utils/data-mapper';
-import { getFirstTVSeriesFromTMDBAPIByTitle, OpenSubtitlesQuery } from '../services/external-api-helper';
+import { OpenSubtitlesQuery } from '../services/external-api-helper';
+import SeasonMetadata, { SeasonMetadataInterface } from '../models/SeasonMetadata';
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
 
@@ -161,7 +160,7 @@ export const getBySanitizedTitle = async(ctx: ParameterizedContext): Promise<Med
   }
 
   if (imdbData.type === 'episode') {
-    await externalAPIHelper.setSeriesMetadataByIMDbID(imdbData.seriesIMDbID);
+    await externalAPIHelper.getSeriesMetadata(imdbData.seriesIMDbID);
   }
 
   try {
@@ -264,7 +263,7 @@ export const getBySanitizedTitleV2 = async(ctx: ParameterizedContext): Promise<M
   }
 
   if (imdbData.type === 'episode') {
-    await externalAPIHelper.setSeriesMetadataByIMDbID(imdbData.seriesIMDbID);
+    await externalAPIHelper.getSeriesMetadata(imdbData.seriesIMDbID);
   }
 
   try {
@@ -292,25 +291,31 @@ export const getBySanitizedTitleV2 = async(ctx: ParameterizedContext): Promise<M
 };
 
 export const getSeriesByTitle = async(ctx: ParameterizedContext): Promise<SeriesMetadataInterface> => {
-  let { title: dirOrFilename }: UmsQueryParams = ctx.query;
-  const { year }: UmsQueryParams = ctx.query;
-  if (!dirOrFilename) {
+  const { title, year }: UmsQueryParams = ctx.query;
+  if (!title) {
     throw new ValidationError('title is required');
   }
 
-  /**
-   * Return any exact or similar results.
-   *
-   * @todo revisit whether we want to allow similar results
-   *       or rely on the third-parties for that.
-   */
-  let dbMeta: SeriesMetadataInterface = await SeriesMetadata.findSimilarSeries(dirOrFilename, year);
-  if (dbMeta) {
-    return ctx.body = dbMeta;
+  const dbMeta = await externalAPIHelper.getSeriesMetadata(null, title, year);
+  return ctx.body = dbMeta;
+};
+
+/**
+ * Gets season information from TMDB since it's the only API
+ * we use that has that functionality.
+ *
+ * @param ctx 
+ * @returns 
+ */
+export const getSeason = async(ctx: ParameterizedContext): Promise<SeasonMetadataInterface> => {
+  const { season, title, year }: UmsQueryParams = ctx.query;
+  if (!title || !season) {
+    throw new ValidationError('title and season are required');
   }
+  const seasonNumber = Number(season);
 
   // Return early for previously-failed lookups
-  const failedLookupQuery: FailedLookupsInterface = { title: dirOrFilename, type: 'series' };
+  const failedLookupQuery: FailedLookupsInterface = { title, season, type: 'season' };
   if (year) {
     failedLookupQuery.year = year;
   }
@@ -319,57 +324,32 @@ export const getSeriesByTitle = async(ctx: ParameterizedContext): Promise<Series
     throw new MediaNotFoundError();
   }
 
-  // Extract the series name from the incoming string (usually not necessary)
-  const parsed = episodeParser(dirOrFilename);
-  dirOrFilename = parsed && parsed.show ? parsed.show : dirOrFilename;
-
-  // Start TMDB lookups
-  const seriesID = await getFirstTVSeriesFromTMDBAPIByTitle(dirOrFilename, Number(year));
-
-  const seriesRequest = {
-    // eslint-disable-next-line @typescript-eslint/camelcase
-    append_to_response: 'images,external_ids,credits',
-    id: seriesID,
-  };
-
-  const tmdbResponse = await moviedb.tvInfo(seriesRequest);
-  const tmdbData = mapper.parseTMDBAPISeriesResponse(tmdbResponse);
-  // End TMDB lookups
-
-  // Start OMDb lookups
-  const searchRequest: SearchRequest = {
-    name: dirOrFilename,
-    reqtype: 'series',
-  };
-  if (year) {
-    searchRequest.year = Number(year);
-  }
-  const omdbResponse = await imdbAPI.get(searchRequest);
-  if (!omdbResponse) {
-    if (year) {
-      /**
-       * If the client specified a year, it may have been incorrect because of
-       * the way filename parsing works; the filename Galactica.1980.S01E01 might
-       * be about a series called "Galactica 1980", or a series called "Galactica"
-       * from 1980.
-       * So, we attempt the lookup again with the year appended to the title.
-       */
-      ctx.query.title = ctx.query.title + ' ' + year;
-      ctx.query.year = '';
-      return getSeriesByTitle(ctx);
-    }
-  }
-  const omdbData = mapper.parseOMDbAPISeriesResponse(omdbResponse);
-  // End OMDb lookups
-
-  const combinedResponse = _.merge(tmdbData, omdbData);
-  if (!combinedResponse || _.isEmpty(combinedResponse)) {
+  const seriesMetadata = await externalAPIHelper.getSeriesMetadata(null, title, year);
+  if (!seriesMetadata?.tmdbID) {
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
 
-  dbMeta = await SeriesMetadata.create(combinedResponse);
-  return ctx.body = dbMeta;
+  // Start TMDB lookups
+  const seasonRequest = {
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    append_to_response: 'images,external_ids,credits',
+    id: seriesMetadata.tmdbID,
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    season_number: seasonNumber,
+  };
+
+  const tmdbResponse = await moviedb.seasonInfo(seasonRequest);
+  const tmdbData = mapper.parseTMDBAPISeasonResponse(tmdbResponse);
+  // End TMDB lookups
+
+  if (_.isEmpty(tmdbData)) {
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+    throw new MediaNotFoundError();
+  }
+
+  const seasonMetadata = await SeasonMetadata.create(tmdbData);
+  return ctx.body = seasonMetadata;
 };
 
 /**
@@ -571,7 +551,7 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
   }
 
   if (omdbData?.type === 'episode') {
-    await externalAPIHelper.setSeriesMetadataByIMDbID(omdbData.seriesIMDbID);
+    await externalAPIHelper.getSeriesMetadata(omdbData.seriesIMDbID);
   }
   // End OMDb lookups
 
