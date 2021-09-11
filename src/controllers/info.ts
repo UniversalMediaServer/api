@@ -3,15 +3,15 @@ import { ParameterizedContext } from 'koa';
 import TMDBConfiguration from '../models/TMDBConfiguration';
 import { moviedb } from './media';
 
-export const getTMDBImagePrepend = async(ctx: ParameterizedContext): Promise<{ imagePrepend: string }> => {
+export const getTMDBImageBaseURL = async(ctx: ParameterizedContext): Promise<{ imageBaseURL: string }> => {
   const configuration = await TMDBConfiguration.findOne().lean();
   if (configuration) {
-    return { imagePrepend: configuration.imagePrepend };
+    return { imageBaseURL: configuration.imageBaseURL };
   }
 
   const configurationResponse = await moviedb.configuration();
-  const imagePrepend = configurationResponse.images.secure_base_url;
-  await TMDBConfiguration.create({ imagePrepend: imagePrepend + 'original' });
+  const imageBaseURL = configurationResponse.images.secure_base_url;
+  await TMDBConfiguration.create({ imageBaseURL: imageBaseURL + 'original' });
 
-  return ctx.body = { imagePrepend };
+  return ctx.body = { imageBaseURL };
 };

@@ -13,7 +13,7 @@ router.get('/api/subversions', (ctx) => {
 
 router.get('/api/image-prepend', async(ctx) => {
   ctx.set('X-Api-Subversion', mediaApiSubversions['/image-prepend']);
-  await InfoController.getTMDBImagePrepend(ctx);
+  await InfoController.getTMDBImageBaseURL(ctx);
 });
 
 export default router;

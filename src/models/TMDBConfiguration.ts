@@ -4,13 +4,13 @@ import { Schema, Document } from 'mongoose';
 const THREE_DAYS_IN_SECONDS = 259200;
 
 export interface TMDBConfigurationInterface {
-  imagePrepend: string;
+  imageBaseURL: string;
 }
 
 export interface TMDBConfigurationInterfaceDocument extends Document, TMDBConfigurationInterface {}
 
 const TMDBConfigurationSchema: Schema = new Schema({
-  imagePrepend: { type: String, required: true },
+  imageBaseURL: { type: String, required: true },
   createdAt: {
     default: Date.now,
     expires: THREE_DAYS_IN_SECONDS,
