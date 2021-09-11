@@ -26,8 +26,8 @@ export interface MediaMetadataInterface {
   osdbHash?: string;
   plot?: string;
   production?: string;
-  productionCountries?: Array<ProductionCountry>;
   productionCompanies?: Array<ProductionCompany>;
+  productionCountries?: Array<ProductionCountry>;
   poster?: string;
   rated?: string; // e.g 'PG-13'
   rating?: number; // e.g. 6.7
@@ -57,22 +57,29 @@ const MediaMetadataSchema: Schema = new Schema({
   actors: { type: Array, required: true },
   awards: { type: String },
   boxoffice: { type: String },
+  budget: { type: Number },
   country: { type: String },
   createdAt: {
     type: Date,
     default: Date.now,
     select: false,
   },
+  credits: { type: Array },
   directors: { type: Array, required: true },
   episode: {
     index: true,
     required: isTypeEpisode,
     type: String,
   },
+  externalIDs: { type: Array },
   genres: { type: Array, required: true },
   goofs: { type: String },
+  homepage: { type: String },
   images: { type: Array },
   imdbID: { type: String, index: true, required: true, unique: true },
+  metascore: { type: String },
+  originalLanguage: { type: String },
+  originalTitle: { type: String },
   osdbHash: {
     index: true,
     type: String,
@@ -85,7 +92,8 @@ const MediaMetadataSchema: Schema = new Schema({
       },
     },
   },
-  metascore: { type: String },
+  productionCompanies: { type: Array },
+  productionCountries: { type: Array },
   plot: { type: String },
   production: { type: String },
   poster: { type: String },
@@ -93,6 +101,7 @@ const MediaMetadataSchema: Schema = new Schema({
   rating: { type: Number },
   ratings: { type: Array, required: true },
   released: { type: Date },
+  revenue: { type: String },
   runtime: { type: String },
   searchMatches: { type: Array, index: true, select: false },
   season: {
@@ -103,6 +112,7 @@ const MediaMetadataSchema: Schema = new Schema({
   seriesIMDbID: { type: String },
   tagline: { type: String },
   title: { type: String, index: true, required: function(): boolean { return !isTypeEpisode(this); } },
+  tmdbID: { type: String },
   trivia: { type: String },
   type: { type: String, required: true },
   votes: { type: String },

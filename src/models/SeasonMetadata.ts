@@ -17,9 +17,9 @@ export interface SeasonMetadataInterfaceDocument extends Document, SeasonMetadat
 
 const SeasonMetadataSchema: Schema = new Schema({
   airDate: { type: String },
-  credits: { type: Object },
-  externalIDs: { type: Object },
-  images: { type: Object },
+  credits: { type: Array },
+  externalIDs: { type: Array },
+  images: { type: Array },
   name: { type: String },
   overview: { type: String },
   seasonNumber: { type: Number },
