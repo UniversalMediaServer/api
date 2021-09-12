@@ -112,7 +112,7 @@ describe('Media Metadata endpoints', () => {
   });
 
   describe('get season', () => {
-    it.only('should return season metadata', async() => {
+    it('should return season metadata', async() => {
       // this request populates the series metadata
       await got(`${appUrl}/api/media/season?title=American Horror Story&season=2`, { responseType: 'json' }) as UmsApiGotResponse;
 
