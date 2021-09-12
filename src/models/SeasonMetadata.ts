@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import { Schema, Document } from 'mongoose';
+import { Schema, Model } from 'mongoose';
 import { CreditsResponse, TvSeasonImagesResponse, TvSeasonExternalIdsResponse } from 'moviedb-promise/dist/request-types';
 
 export interface SeasonMetadataInterface {
@@ -13,7 +13,8 @@ export interface SeasonMetadataInterface {
   tmdbID?: string;
 }
 
-export interface SeasonMetadataInterfaceDocument extends Document, SeasonMetadataInterface {}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface SeasonMetadataModel extends Model<SeasonMetadataInterface> {}
 
 const SeasonMetadataSchema: Schema = new Schema({
   airDate: { type: String },
@@ -37,5 +38,5 @@ SeasonMetadataSchema.virtual('imdburl').get(function() {
 // this allows us to use MongoDB Full text search https://docs.mongodb.com/manual/reference/operator/query/text/#op._S_text
 SeasonMetadataSchema.index({ 'title': 'text' });
 
-const SeasonMetadata = mongoose.model<SeasonMetadataInterfaceDocument>('SeasonMetadata', SeasonMetadataSchema);
+const SeasonMetadata = mongoose.model<SeasonMetadataInterface, SeasonMetadataModel>('SeasonMetadata', SeasonMetadataSchema);
 export default SeasonMetadata;

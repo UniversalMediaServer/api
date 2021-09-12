@@ -114,7 +114,7 @@ const SeriesMetadataSchema: Schema = new Schema({
   status: { type: String },
   tagline: { type: String },
   title: { type: String, required: true },
-  tmdbID: { type: Array },
+  tmdbID: { type: String },
   totalSeasons: {
     type: Number,
     default: 0,
