@@ -114,13 +114,11 @@ describe('Media Metadata endpoints', () => {
   describe('get season', () => {
     it('should return season metadata', async() => {
       // this request populates the series metadata
-      await got(`${appUrl}/api/media/season?title=American Horror Story&season=2`, { responseType: 'json' }) as UmsApiGotResponse;
+      const response = await got(`${appUrl}/api/media/season?title=American Horror Story&season=2`, { responseType: 'json' }) as UmsApiGotResponse;
 
-      const doc = await SeasonMetadataModel.findOne();
-      expect(doc).toHaveProperty('airDate', '2012-10-17');
-      expect(doc).toHaveProperty('credits.cast');
-      expect(doc).toHaveProperty('credits.crew');
-      expect(doc).toHaveProperty('externalIDs', [
+      expect(response.body).toHaveProperty('airDate', '2012-10-17');
+      expect(response.body).toHaveProperty('credits');
+      expect(response.body).toHaveProperty('externalIDs', [
         {
           'freebase_mid': '/m/0l96xr3',
           'freebase_id': null,
@@ -128,11 +126,11 @@ describe('Media Metadata endpoints', () => {
           'tvrage_id': null,
         },
       ]);
-      expect(doc).toHaveProperty('images.posters');
-      expect(doc).toHaveProperty('name', 'Asylum');
-      expect(doc).toHaveProperty('overview', 'From Nazis and serial killers to mutants and aliens, no one is safe inside the walls of the Briarcliff Mental Institution. In a house of healing that is anything but, troubled nun Sister Jude rules with an iron fist and Dr Arden conducts strange experiments on the facility’s patients.');
-      expect(doc).toHaveProperty('seasonNumber', 2);
-      expect(doc).toHaveProperty('tmdbID', '3702');
+      expect(response.body).toHaveProperty('images');
+      expect(response.body).toHaveProperty('name', 'Asylum');
+      expect(response.body).toHaveProperty('overview', 'From Nazis and serial killers to mutants and aliens, no one is safe inside the walls of the Briarcliff Mental Institution. In a house of healing that is anything but, troubled nun Sister Jude rules with an iron fist and Dr Arden conducts strange experiments on the facility’s patients.');
+      expect(response.body).toHaveProperty('seasonNumber', 2);
+      expect(response.body).toHaveProperty('tmdbID', '3702');
     });
   });
 });

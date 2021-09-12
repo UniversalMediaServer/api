@@ -199,7 +199,7 @@ export const getFromOMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
  * @returns the TMDB ID of the first TV series from
  *          the list of results from TMDB by title
  */
-const getTMDBIDOfFirstTVSeriesFromTMDBAPIByTitle = async(seriesTitle: string, year?: number): Promise<number> => {
+const getSeriesTMDBIDFromTMDBAPI = async(seriesTitle: string, year?: number): Promise<number> => {
   const tmdbQuery: SearchTvRequest = { query: seriesTitle };
   if (year) {
     // eslint-disable-next-line @typescript-eslint/camelcase
@@ -235,7 +235,7 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, imdbID?: string
     // TODO: Handle imdbID for episodes
     let idToSearch: string | number = imdbID;
     if (!idToSearch) {
-      idToSearch = await getTMDBIDOfFirstTVSeriesFromTMDBAPIByTitle(movieOrSeriesTitle, year);
+      idToSearch = await getSeriesTMDBIDFromTMDBAPI(movieOrSeriesTitle, year);
     }
 
     const episodeRequest: EpisodeRequest = {
@@ -333,7 +333,7 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
     title = parsed && parsed.show ? parsed.show : title;
 
     // Start TMDB lookups
-    const seriesID = await getTMDBIDOfFirstTVSeriesFromTMDBAPIByTitle(title, Number(year));
+    const seriesID = await getSeriesTMDBIDFromTMDBAPI(title, Number(year));
 
     const seriesRequest = {
       // eslint-disable-next-line @typescript-eslint/camelcase

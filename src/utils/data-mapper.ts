@@ -103,6 +103,7 @@ const tmdbSeasonMap = {
 const tmdbSeriesMap = {
   'created_by': 'createdBy',
   'credits': 'credits',
+  'external_ids.imdb_id': 'imdbID',
   'external_ids': 'externalIDs',
   'first_air_date': 'firstAirDate',
   'genres': {
