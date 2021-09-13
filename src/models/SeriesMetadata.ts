@@ -31,6 +31,7 @@ export interface SeriesMetadataInterface extends Document {
   originCountry?: Array<string>;
   originalLanguage?: string;
   originalTitle?: string;
+  plot?: string;
   poster?: string;
   productionCompanies?: Array<ProductionCompany>;
   productionCountries?: Array<Country>;

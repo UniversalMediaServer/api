@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import { mapper } from '../../src/utils/data-mapper';
 
 const openSubtitlesData = {
@@ -44,7 +45,7 @@ const openSubtitlesData = {
   type: 'movie',
 };
 
-const imdbApiEpisode = {
+const omdbApiEpisode = {
   title: 'One Last Thing',
   year: 2013,
   rated: 'TV-MA',
@@ -73,7 +74,7 @@ const imdbApiEpisode = {
   imdburl: 'https://www.imdb.com/title/tt2916312',
 };
 
-const imdbApiSeriesWithNaN = {
+const omdbApiSeriesWithNaN = {
   'actors': 'Dominic Purcell, Wentworth Miller, Amaury Nolasco',
   'directors': 'Bobby Roth',
   'genres': 'Action, Crime, Drama, Mystery, Thriller',
@@ -82,6 +83,183 @@ const imdbApiSeriesWithNaN = {
   'totalSeasons': 'this is not a number but it should be',
   'type': 'series',
   'year': '2005',
+};
+
+// this response has been shortened by removing all but one object from each array of objects
+const tmdbApiSeriesResponse = {
+  'backdrop_path': '/kaUuV7mq8eJkLu4mI5iIt2vfxgq.jpg',
+  'created_by': [
+    {
+      'id': 5174,
+      'credit_id': '587a988e9251413eba00706e',
+      'name': 'Barry Sonnenfeld',
+      'gender': 2,
+      'profile_path': '/n6y6vaAFfSqsJodgkwTxAey4NoG.jpg',
+    },
+  ],
+  'episode_run_time': [
+    45,
+  ],
+  'first_air_date': '2017-01-13',
+  'genres': [
+    {
+      'id': 10759,
+      'name': 'Action & Adventure',
+    },
+  ],
+  'homepage': 'https://www.netflix.com/title/80050008',
+  'id': 65294,
+  'in_production': false,
+  'languages': [
+    'en',
+  ],
+  'last_air_date': '2019-01-01',
+  'last_episode_to_air': {
+    'air_date': '2019-01-01',
+    'episode_number': 7,
+    'id': 1624595,
+    'name': 'The End',
+    'overview': 'The final chapter takes the orphans to a deserted island: a place of lost lives, old stories and new beginnings. It all ends here.',
+    'production_code': '',
+    'season_number': 3,
+    'still_path': '/ivzLVNFmKAQ8n7B1UBz2vGxuhSu.jpg',
+    'vote_average': 7.2,
+    'vote_count': 5,
+  },
+  'name': 'A Series of Unfortunate Events',
+  'next_episode_to_air': null,
+  'networks': [
+    {
+      'name': 'Netflix',
+      'id': 213,
+      'logo_path': '/wwemzKWzjKYJFfCeiB57q3r4Bcm.png',
+      'origin_country': '',
+    },
+  ],
+  'number_of_episodes': 25,
+  'number_of_seasons': 3,
+  'origin_country': [
+    'US',
+  ],
+  'original_language': 'en',
+  'original_name': 'A Series of Unfortunate Events',
+  'overview': 'The orphaned Baudelaire children face trials, tribulations and the evil Count Olaf, all in their quest to uncover the secret of their parents\' death.',
+  'popularity': 42.843,
+  'poster_path': '/qg7WXAatXyQq6zO3SnWnRJEayeZ.jpg',
+  'production_companies': [
+    {
+      'id': 39520,
+      'logo_path': '/h5qMfjH9jaJ5835UGdq2PZQ1a33.png',
+      'name': 'Take 5 Productions',
+      'origin_country': 'CA',
+    },
+  ],
+  'production_countries': [
+    {
+      'iso_3166_1': 'CA',
+      'name': 'Canada',
+    },
+  ],
+  'seasons': [
+    {
+      'air_date': '2017-01-13',
+      'episode_count': 8,
+      'id': 73892,
+      'name': 'Season 1',
+      'overview': '',
+      'poster_path': '/sTtt875W3YbBnPooiPPmCvHienS.jpg',
+      'season_number': 1,
+    },
+  ],
+  'spoken_languages': [
+    {
+      'english_name': 'English',
+      'iso_639_1': 'en',
+      'name': 'English',
+    },
+  ],
+  'status': 'Ended',
+  'tagline': '',
+  'type': 'Scripted',
+  'vote_average': 7.3,
+  'vote_count': 497,
+  'images': {
+    'backdrops': [
+      {
+        'aspect_ratio': 1.778,
+        'height': 720,
+        'iso_639_1': null,
+        'file_path': '/kaUuV7mq8eJkLu4mI5iIt2vfxgq.jpg',
+        'vote_average': 5.312,
+        'vote_count': 1,
+        'width': 1280,
+      },
+    ],
+    'logos': [
+      {
+        'aspect_ratio': 9.076,
+        'height': 131,
+        'iso_639_1': 'en',
+        'file_path': '/ewr9YgBxxrYA0jRRshUW44DrYfv.png',
+        'vote_average': 5.312,
+        'vote_count': 1,
+        'width': 1189,
+      },
+    ],
+    'posters': [
+      {
+        'aspect_ratio': 0.667,
+        'height': 2700,
+        'iso_639_1': 'en',
+        'file_path': '/qg7WXAatXyQq6zO3SnWnRJEayeZ.jpg',
+        'vote_average': 5.318,
+        'vote_count': 3,
+        'width': 1800,
+      },
+    ],
+  },
+  'external_ids': {
+    'imdb_id': 'tt4834206',
+    'freebase_mid': null,
+    'freebase_id': null,
+    'tvdb_id': 306304,
+    'tvrage_id': null,
+    'facebook_id': 'UnfortunateEventsNetflix',
+    'instagram_id': null,
+    'twitter_id': 'Unfortunate',
+  },
+  'credits': {
+    'cast': [
+      {
+        'adult': false,
+        'gender': 2,
+        'id': 41686,
+        'known_for_department': 'Acting',
+        'name': 'Neil Patrick Harris',
+        'original_name': 'Neil Patrick Harris',
+        'popularity': 6.135,
+        'profile_path': '/oyy0Enz4ZX8KYRYihgSgOA18Xc.jpg',
+        'character': 'Count Olaf',
+        'credit_id': '569a14fc9251414803000d3c',
+        'order': 0,
+      },
+    ],
+    'crew': [
+      {
+        'adult': false,
+        'gender': 2,
+        'id': 59722,
+        'known_for_department': 'Writing',
+        'name': 'Daniel Handler',
+        'original_name': 'Daniel Handler',
+        'popularity': 0.847,
+        'profile_path': '/A83HnjYRdSlmuWybm8jgCuOCTt7.jpg',
+        'credit_id': '5762af4bc3a3682fa70002dc',
+        'department': 'Production',
+        'job': 'Executive Producer',
+      },
+    ],
+  },
 };
 
 describe('Data mapper', () => {
@@ -121,42 +299,175 @@ describe('Data mapper', () => {
     });
   });
 
-  describe('imdbAPI responses', () => {
+  describe('OMDb API responses', () => {
     describe('episodes', () => {
       it('should parse to expected flat structure', () => {
-        const parsed = mapper.parseOMDbAPIEpisodeResponse(imdbApiEpisode);
+        const parsed = mapper.parseOMDbAPIEpisodeResponse(omdbApiEpisode);
         expect(parsed.actors).toEqual(['Claire Danes', 'Damian Lewis', 'Rupert Friend', 'Morena Baccarin']);
         expect(parsed.country).toEqual('USA');
         expect(parsed.directors).toEqual(['Jeffrey Reiner']);
         expect(parsed.episode).toEqual(9);
         expect(parsed.genres).toEqual(['Crime', 'Drama', 'Mystery', 'Thriller']);
-        expect(parsed.plot).toEqual(imdbApiEpisode.plot);
-        expect(parsed.imdbID).toEqual(imdbApiEpisode.imdbid);
+        expect(parsed.plot).toEqual(omdbApiEpisode.plot);
+        expect(parsed.imdbID).toEqual(omdbApiEpisode.imdbid);
         expect(parsed.poster).toEqual('https://m.media-amazon.com/images/M/MV5BMTc0NDc2Nzg0MV5BMl5BanBnXkFtZTgwMzA2MzM2MDE@._V1_SX300.jpg');
         expect(parsed.rated).toEqual('TV-MA');
         expect(parsed.rating).toEqual(8.6);
         expect(parsed.ratings).toEqual([{ Source: 'Internet Movie Database', Value: '8.6/10' }]);
         expect(parsed.released).toEqual('2013-11-23T11:00:00.000Z');
         expect(parsed.runtime).toEqual('57 min');
-        expect(parsed.season).toEqual(imdbApiEpisode.season);
-        expect(parsed.seriesIMDbID).toEqual(imdbApiEpisode.seriesid);
-        expect(parsed.title).toEqual(imdbApiEpisode.title);
+        expect(parsed.season).toEqual(omdbApiEpisode.season);
+        expect(parsed.seriesIMDbID).toEqual(omdbApiEpisode.seriesid);
+        expect(parsed.title).toEqual(omdbApiEpisode.title);
         expect(parsed.type).toEqual('episode');
         expect(parsed.votes).toEqual('2211');
         expect(typeof parsed.year).toBe('string');  
       });
 
       it('should remove N/A values', () => {
-        const parsed = mapper.parseOMDbAPIEpisodeResponse(imdbApiEpisode);
+        const parsed = mapper.parseOMDbAPIEpisodeResponse(omdbApiEpisode);
         expect(parsed.awards).not.toBe('N/A');
       });
     });
 
     describe('series', () => {
       it('should remove NaN values', () => {
-        const parsed = mapper.parseOMDbAPISeriesResponse(imdbApiSeriesWithNaN);
+        const parsed = mapper.parseOMDbAPISeriesResponse(omdbApiSeriesWithNaN);
         expect(parsed.title).toBe('Prison Break');
         expect(parsed.totalSeasons).toBeUndefined();
+      });
+    });
+  });
+
+  describe('TMDB API responses', () => {
+    describe('series', () => {
+      it('should parse as expected', () => {
+        const parsed = mapper.parseTMDBAPISeriesResponse(tmdbApiSeriesResponse);
+        expect(parsed.createdBy).toEqual([
+          {
+            id: 5174,
+            credit_id: '587a988e9251413eba00706e',
+            name: 'Barry Sonnenfeld',
+            gender: 2,
+            profile_path: '/n6y6vaAFfSqsJodgkwTxAey4NoG.jpg',
+          },
+        ]);
+        expect(parsed.credits).toEqual({
+          cast: [{
+            'adult': false,
+            'character': 'Count Olaf',
+            'credit_id': '569a14fc9251414803000d3c',
+            'gender': 2,
+            'id': 41686,
+            'known_for_department': 'Acting',
+            'name': 'Neil Patrick Harris',
+            'order': 0,
+            'original_name': 'Neil Patrick Harris',
+            'popularity': 6.135,
+            'profile_path': '/oyy0Enz4ZX8KYRYihgSgOA18Xc.jpg',
+          }],
+          crew: [
+            {
+              'adult': false,
+              'credit_id': '5762af4bc3a3682fa70002dc',
+              'department': 'Production',
+              'gender': 2,
+              'id': 59722,
+              'job': 'Executive Producer',
+              'known_for_department': 'Writing',
+              'name': 'Daniel Handler',
+              'original_name': 'Daniel Handler',
+              'popularity': 0.847,
+              'profile_path': '/A83HnjYRdSlmuWybm8jgCuOCTt7.jpg',
+            },
+          ],
+        });
+
+        expect(parsed.imdbID).toBe('tt4834206');
+        expect(parsed.externalIDs).toEqual({
+          imdb_id: 'tt4834206',
+          freebase_mid: null,
+          freebase_id: null,
+          tvdb_id: 306304,
+          tvrage_id: null,
+          facebook_id: 'UnfortunateEventsNetflix',
+          instagram_id: null,
+          twitter_id: 'Unfortunate',
+        });
+        expect(parsed.firstAirDate).toBe('2017-01-13');
+        expect(parsed.genres).toEqual(['Action & Adventure']);
+        expect(parsed.homepage).toBe('https://www.netflix.com/title/80050008');
+        expect(parsed.tmdbID).toBe(65294);
+        expect(parsed.images).toEqual({
+          backdrops: [{
+            'aspect_ratio': 1.778,
+            'file_path': '/kaUuV7mq8eJkLu4mI5iIt2vfxgq.jpg',
+            'height': 720,
+            'iso_639_1': null,
+            'vote_average': 5.312,
+            'vote_count': 1,
+            'width': 1280,
+          }],
+          logos: [{
+            'aspect_ratio': 9.076,
+            'file_path': '/ewr9YgBxxrYA0jRRshUW44DrYfv.png',
+            'height': 131,
+            'iso_639_1': 'en',
+            'vote_average': 5.312,
+            'vote_count': 1,
+            'width': 1189,
+          }],
+          posters: [{
+            'aspect_ratio': 0.667,
+            'file_path': '/qg7WXAatXyQq6zO3SnWnRJEayeZ.jpg',
+            'height': 2700,
+            'iso_639_1': 'en',
+            'vote_average': 5.318,
+            'vote_count': 3,
+            'width': 1800,
+          }],
+        });
+        expect(parsed.inProduction).toBe(false);
+        expect(parsed.languages).toEqual(['en']);
+        expect(parsed.lastAirDate).toBe('2019-01-01');
+        expect(parsed.title).toBe('A Series of Unfortunate Events');
+        expect(parsed.networks).toEqual([
+          {
+            name: 'Netflix',
+            id: 213,
+            logo_path: '/wwemzKWzjKYJFfCeiB57q3r4Bcm.png',
+            origin_country: '',
+          },
+        ]);
+        expect(parsed.numberOfEpisodes).toBe(25);
+        expect(parsed.numberOfSeasons).toBe(3);
+        expect(parsed.originCountry).toEqual(['US']);
+        expect(parsed.originalLanguage).toBe('en');
+        expect(parsed.plot).toBe('The orphaned Baudelaire children face trials, tribulations and the evil Count Olaf, all in their quest to uncover the secret of their parents\' death.');
+        expect(parsed.productionCompanies).toEqual([
+          {
+            id: 39520,
+            logo_path: '/h5qMfjH9jaJ5835UGdq2PZQ1a33.png',
+            name: 'Take 5 Productions',
+            origin_country: 'CA',
+          },
+        ]);
+        expect(parsed.productionCountries).toEqual([{ iso_3166_1: 'CA', name: 'Canada' }]);
+        expect(parsed.seasons).toEqual([
+          {
+            air_date: '2017-01-13',
+            episode_count: 8,
+            id: 73892,
+            name: 'Season 1',
+            overview: '',
+            poster_path: '/sTtt875W3YbBnPooiPPmCvHienS.jpg',
+            season_number: 1,
+          },
+        ]);
+        expect(parsed.spokenLanguages).toEqual([{ english_name: 'English', iso_639_1: 'en', name: 'English' }]);
+        expect(parsed.status).toBe('Ended');
+        expect(parsed.tagline).toBe('');
+        expect(parsed.seriesType).toBe('Scripted');
       });
     });
   });

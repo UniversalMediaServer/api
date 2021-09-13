@@ -11,8 +11,8 @@ router.get('/api/subversions', (ctx) => {
   ctx.body = { '/api/media': mediaApiSubversions };
 });
 
-router.get('/api/image-prepend', async(ctx) => {
-  ctx.set('X-Api-Subversion', mediaApiSubversions['/image-prepend']);
+router.get('/api/configuration', async(ctx) => {
+  ctx.set('X-Api-Subversion', mediaApiSubversions['/configuration']);
   await InfoController.getTMDBImageBaseURL(ctx);
 });
 
