@@ -1,7 +1,6 @@
 import { SearchRequest } from '@universalmediaserver/node-imdb-api';
 import { ParameterizedContext } from 'koa';
 import * as _ from 'lodash';
-import { MovieDb } from 'moviedb-promise';
 
 import { ExternalAPIError, MediaNotFoundError, ValidationError } from '../helpers/customErrors';
 import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
@@ -12,15 +11,9 @@ import * as externalAPIHelper from '../services/external-api-helper';
 import { mapper } from '../utils/data-mapper';
 import { OpenSubtitlesQuery } from '../services/external-api-helper';
 import SeasonMetadata, { SeasonMetadataInterface } from '../models/SeasonMetadata';
+import { moviedb } from '../services/tmdb-api';
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
-
-export const moviedb = new MovieDb(process.env.TMDB_API_KEY);
-if (process.env.NODE_ENV === 'production') {
-  if (!process.env.TMDB_API_KEY) {
-    throw new Error('TMDB_API_KEY not set');
-  }
-}
 
 /**
  * Adds a searchMatch to an existing result by IMDb ID, and returns the result.

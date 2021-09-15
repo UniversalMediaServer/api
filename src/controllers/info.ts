@@ -1,10 +1,11 @@
 import { ParameterizedContext } from 'koa';
 
 import TMDBConfiguration from '../models/TMDBConfiguration';
-import { moviedb } from './media';
+import { moviedb } from '../services/tmdb-api';
 
 export const getTMDBImageBaseURL = async(ctx: ParameterizedContext): Promise<{ imageBaseURL: string }> => {
-  const configuration = await TMDBConfiguration.findOne().lean().exec();
+  const configuration = await TMDBConfiguration.findOne().lean()
+    .exec();
   if (configuration) {
     return { imageBaseURL: configuration.imageBaseURL };
   }

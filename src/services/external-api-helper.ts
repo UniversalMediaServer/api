@@ -13,7 +13,7 @@ import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadat
 import omdbAPI from './omdb-api';
 import { mapper } from '../utils/data-mapper';
 import { EpisodeRequest, SearchMovieRequest, SearchTvRequest } from 'moviedb-promise/dist/request-types';
-import { moviedb } from '../controllers/media';
+import { moviedb } from './tmdb-api';
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
 
