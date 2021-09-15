@@ -293,12 +293,9 @@ export const getSeriesByTitle = async(ctx: ParameterizedContext): Promise<Series
   return ctx.body = dbMeta;
 };
 
-/**
+/*
  * Gets season information from TMDB since it's the only API
  * we use that has that functionality.
- *
- * @param ctx 
- * @returns 
  */
 export const getSeason = async(ctx: ParameterizedContext): Promise<SeasonMetadataInterface> => {
   const { season, title, year }: UmsQueryParams = ctx.query;
