@@ -12,7 +12,7 @@ import { MediaMetadataInterface } from '../models/MediaMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import omdbAPI from './omdb-api';
 import { mapper } from '../utils/data-mapper';
-import { EpisodeRequest, SearchMovieRequest, SearchTvRequest } from 'moviedb-promise/dist/request-types';
+import { EpisodeRequest, ExternalId, SearchMovieRequest, SearchTvRequest } from 'moviedb-promise/dist/request-types';
 import { moviedb } from './tmdb-api';
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
@@ -218,7 +218,7 @@ const getSeriesTMDBIDFromTMDBAPI = async(seriesTitle: string, year?: number): Pr
  * before returning.
  *
  * @param [movieOrSeriesTitle] the title of the movie or series
- * @param [imdbID] the IMDb ID of the movie or series
+ * @param [imdbID] the IMDb ID of the movie or episode
  * @param [year] the year of first release
  * @param [seasonNumber] the season number if this is an episode
  * @param [episodeNumber] the episode number if this is an episode
@@ -232,10 +232,15 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, imdbID?: string
 
   let metadata;
   if (isExpectingTVEpisode) {
-    // TODO: Handle imdbID for episodes
-    let idToSearch: string | number = imdbID;
-    if (!idToSearch) {
-      idToSearch = await getSeriesTMDBIDFromTMDBAPI(movieOrSeriesTitle, year);
+    let seriesTMDBID: number;
+    if (imdbID) {
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      const findResult = await moviedb.find({ id: imdbID, external_source: ExternalId.ImdbId });
+      // Using any here to make up for missing interface, should submit fix
+      const tvEpisodeResults = findResult.tv_episode_results[0] as any;
+      seriesTMDBID = tvEpisodeResults.show_id;
+    } else {
+      seriesTMDBID = await getSeriesTMDBIDFromTMDBAPI(movieOrSeriesTitle, year);
     }
 
     const episodeRequest: EpisodeRequest = {
@@ -243,7 +248,7 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, imdbID?: string
       append_to_response: 'images,external_ids,credits',
       // eslint-disable-next-line @typescript-eslint/camelcase
       episode_number: episodeNumber,
-      id: idToSearch,
+      id: seriesTMDBID,
       // eslint-disable-next-line @typescript-eslint/camelcase
       season_number: seasonNumber,
     };
