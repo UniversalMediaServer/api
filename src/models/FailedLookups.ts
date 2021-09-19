@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 import { Schema } from 'mongoose';
 
-const DOCUMENT_EXPIRY_IN_SECONDS = 2592000; // 30 days
+const THIRTY_DAYS_IN_SECONDS = 2592000; // 30 days
 
 export interface FailedLookupsInterface {
   episode?: string;
@@ -63,7 +63,7 @@ const FailedLookupsSchema = new Schema({
   type: { type: String, index: true },
   createdAt: {
     default: Date.now,
-    expires: DOCUMENT_EXPIRY_IN_SECONDS,
+    expires: THIRTY_DAYS_IN_SECONDS,
     type: Date,
   },
 }, {

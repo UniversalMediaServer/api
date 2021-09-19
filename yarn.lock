@@ -1287,7 +1287,7 @@ asynckit@^0.4.0:
   resolved "https://registry.yarnpkg.com/asynckit/-/asynckit-0.4.0.tgz#c79ed97f7f34cb8f2ba1bc9790bcc366474b4b79"
   integrity sha1-x57Zf380y48robyXkLzDZkdLS3k=
 
-axios@^0.21.0:
+axios@^0.21.0, axios@^0.21.1:
   version "0.21.4"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.4.tgz#c67b90dc0568e5c1cf2b0b858c43ba28e2eda575"
   integrity sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==
@@ -3981,6 +3981,14 @@ mongoose@^5.13.8:
     safe-buffer "5.2.1"
     sift "13.5.2"
     sliced "1.0.1"
+
+moviedb-promise@^3.1.9:
+  version "3.1.9"
+  resolved "https://registry.yarnpkg.com/moviedb-promise/-/moviedb-promise-3.1.9.tgz#97b5173abe4b24b5b48b7187875f330ad88d843b"
+  integrity sha512-PwaO/qF/t6uUo8yVvfMDt5mJ/HOrjvwH8j6/NguOaOV1t7z7DGBkrvSWTrMSbncRJH1Yz9g1C120URUvIC5hGg==
+  dependencies:
+    axios "^0.21.1"
+    lodash "^4.17.21"
 
 mpath@0.8.3:
   version "0.8.3"

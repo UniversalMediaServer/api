@@ -3,14 +3,17 @@ import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
 import * as natural from 'natural';
 
+import imdbAPI from '../services/omdb-api';
 import osAPI from '../services/opensubtitles';
 
-import { IMDbIDNotFoundError, ValidationError } from '../helpers/customErrors';
-import FailedLookups from '../models/FailedLookups';
+import { IMDbIDNotFoundError, MediaNotFoundError, ValidationError } from '../helpers/customErrors';
+import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
 import { MediaMetadataInterface } from '../models/MediaMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
-import imdbAPI from './imdb-api';
+import omdbAPI from './omdb-api';
 import { mapper } from '../utils/data-mapper';
+import { EpisodeRequest, ExternalId, SearchMovieRequest, SearchTvRequest } from 'moviedb-promise/dist/request-types';
+import { moviedb } from './tmdb-api';
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
 
@@ -28,21 +31,15 @@ export interface OpenSubtitlesValidation {
 }
 
 /**
- * Attempts a query to the IMDb API and standardizes the response
- * before returning.
- *
- * IMDb does not return goofs, osdbHash, tagline, trivia
- *
- * @param [imdbId] the IMDb ID
- * @param [searchRequest] a query to perform in order to get the imdbId
+ * @deprecated see getFromOMDbAPIV2
  */
-export const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Promise<MediaMetadataInterface> => {
+export const getFromOMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Promise<MediaMetadataInterface> => {
   if (!imdbId && !searchRequest) {
     throw new Error('All parameters were falsy');
   }
 
   /**
-   * We need the IMDb ID for the imdbAPI get request below so here we get it.
+   * We need the IMDb ID for the OMDb API get request below so here we get it.
    * Along the way, if the result is an episode, we also instruct our episode
    * processor to asynchronously add the other episodes for that series to the
    * queue.
@@ -53,7 +50,7 @@ export const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchReque
     if (isTVEpisode) {
       searchRequest.name = parsedFilename.show;
       searchRequest.reqtype = 'series';
-      const tvSeriesInfo = await imdbAPI.get(searchRequest);
+      const tvSeriesInfo = await omdbAPI.get(searchRequest);
 
       if (tvSeriesInfo && tvSeriesInfo instanceof TVShow) {
         const allEpisodes = await tvSeriesInfo.episodes();
@@ -70,7 +67,7 @@ export const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchReque
       searchRequest.reqtype = 'movie';
       let searchResults;
       try {
-        searchResults = await imdbAPI.search(searchRequest);
+        searchResults = await omdbAPI.search(searchRequest);
       } catch (e) {
         console.error(e);
         return null;
@@ -88,18 +85,18 @@ export const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchReque
     }
   }
 
-  const imdbData = await imdbAPI.get({ id: imdbId });
+  const imdbData = await omdbAPI.get({ id: imdbId });
   if (!imdbData) {
     return null;
   }
 
   let metadata;
   if (imdbData.type === 'movie') {
-    metadata = mapper.parseIMDBAPIMovieResponse(imdbData);
+    metadata = mapper.parseOMDbAPIMovieResponse(imdbData);
   } else if (imdbData.type === 'series') {
-    metadata = mapper.parseIMDBAPISeriesResponse(imdbData);
+    metadata = mapper.parseOMDbAPISeriesResponse(imdbData);
   } else if (imdbData.type === 'episode') {
-    metadata = mapper.parseIMDBAPIEpisodeResponse(imdbData);
+    metadata = mapper.parseOMDbAPIEpisodeResponse(imdbData);
   } else {
     throw new Error('Received a type we did not expect');
   }
@@ -108,17 +105,17 @@ export const getFromIMDbAPI = async(imdbId?: string, searchRequest?: SearchReque
 };
 
 /**
- * Attempts a query to the IMDb API and standardizes the response
+ * Attempts a query to the OMDb API and standardizes the response
  * before returning.
  *
- * IMDb does not return goofs, osdbHash, tagline, trivia
+ * OMDb does not return goofs, osdbHash, tagline, trivia
  *
  * @param [imdbId] the IMDb ID
  * @param [searchRequest] a query to perform in order to get the imdbId
  * @param [season] the season number if this is an episode
  * @param [episode] the episode number if this is an episode
  */
-export const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, season?: number, episode?: number): Promise<MediaMetadataInterface | null> => {
+export const getFromOMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, season?: number, episode?: number): Promise<MediaMetadataInterface | null> => {
   if (!imdbId && !searchRequest) {
     throw new Error('Either imdbId or searchRequest must be specified');
   }
@@ -138,7 +135,7 @@ export const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
        * @see https://github.com/worr/node-imdb-api/issues/89
        */
       searchRequest.reqtype = 'series';
-      const tvSeriesInfo = await imdbAPI.get(searchRequest);
+      const tvSeriesInfo = await omdbAPI.get(searchRequest);
 
       if (tvSeriesInfo && tvSeriesInfo instanceof TVShow) {
         const allEpisodes = await tvSeriesInfo.episodes();
@@ -153,7 +150,7 @@ export const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
       searchRequest.reqtype = 'movie';
       let searchResults;
       try {
-        searchResults = await imdbAPI.search(searchRequest);
+        searchResults = await omdbAPI.search(searchRequest);
       } catch (e) {
         console.error(e);
         return null;
@@ -172,8 +169,7 @@ export const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
     }
   }
 
-  // Return early if we already have a result for that IMDb ID
-  const imdbData = await imdbAPI.get({ id: imdbId });
+  const imdbData = await omdbAPI.get({ id: imdbId });
 
   if (!imdbData) {
     return null;
@@ -182,14 +178,14 @@ export const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
   let metadata;
   if (isExpectingTVEpisode || imdbData.type === 'episode') {
     if (imdbData.type === 'episode') {
-      metadata = mapper.parseIMDBAPIEpisodeResponse(imdbData);
+      metadata = mapper.parseOMDbAPIEpisodeResponse(imdbData);
     } else {
       throw new Error('Received type ' + imdbData.type + ' but expected episode for ' + imdbId + ' ' + searchRequest + ' ' + season + ' ' + episode);
     }
   } else if (imdbData.type === 'movie') {
-    metadata = mapper.parseIMDBAPIMovieResponse(imdbData);
+    metadata = mapper.parseOMDbAPIMovieResponse(imdbData);
   } else if (imdbData.type === 'series') {
-    metadata = mapper.parseIMDBAPISeriesResponse(imdbData);
+    metadata = mapper.parseOMDbAPISeriesResponse(imdbData);
   } else {
     throw new Error('Received a type we did not expect: ' + imdbData.type);
   }
@@ -198,33 +194,192 @@ export const getFromIMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
 };
 
 /**
- * Sets and returns series metadata by IMDb ID.
- *
- * @param imdbID the IMDb ID of the series.
+ * @param seriesTitle the series title
+ * @param [year] the year the series started
+ * @returns the TMDB ID of the first TV series from
+ *          the list of results from TMDB by title
  */
-export const setSeriesMetadataByIMDbID = async(imdbID: string): Promise<SeriesMetadataInterface | null> => {
-  if (!imdbID) {
-    throw new Error('IMDb ID not supplied');
+const getSeriesTMDBIDFromTMDBAPI = async(seriesTitle: string, year?: number): Promise<number> => {
+  const tmdbQuery: SearchTvRequest = { query: seriesTitle };
+  if (year) {
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    tmdbQuery.first_air_date_year = year;
+  }
+  const searchResults = await moviedb.searchTv(tmdbQuery);
+  if (searchResults?.results && searchResults.results[0] && searchResults.results[0].id) {
+    return searchResults.results[0].id;
   }
 
-  // Shouldn't really happen since we got this IMDb ID from their API
-  if (await FailedLookups.findOne({ imdbID }, '_id', { lean: true }).exec()) {
-    await FailedLookups.updateOne({ imdbID }, { $inc: { count: 1 } }).exec();
-    return null;
+  return null;
+};
+
+/**
+ * Attempts a query to the TMDB API and standardizes the response
+ * before returning.
+ *
+ * @param [movieOrSeriesTitle] the title of the movie or series
+ * @param [imdbID] the IMDb ID of the movie or episode
+ * @param [year] the year of first release
+ * @param [seasonNumber] the season number if this is an episode
+ * @param [episodeNumber] the episode number if this is an episode
+ */
+export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, imdbID?: string, year?: number, seasonNumber?: number, episodeNumber?: number): Promise<MediaMetadataInterface | null> => {
+  if (!movieOrSeriesTitle && !imdbID) {
+    throw new Error('Either movieOrSeriesTitle or IMDb ID must be specified');
+  }
+  // If the client specified an episode number, this is an episode
+  const isExpectingTVEpisode = Boolean(episodeNumber);
+
+  let metadata;
+  if (isExpectingTVEpisode) {
+    let seriesTMDBID: number;
+    if (imdbID) {
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      const findResult = await moviedb.find({ id: imdbID, external_source: ExternalId.ImdbId });
+      // Using any here to make up for missing interface, should submit fix
+      const tvEpisodeResults = findResult.tv_episode_results[0] as any;
+      seriesTMDBID = tvEpisodeResults.show_id;
+    } else {
+      seriesTMDBID = await getSeriesTMDBIDFromTMDBAPI(movieOrSeriesTitle, year);
+    }
+
+    const episodeRequest: EpisodeRequest = {
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      append_to_response: 'images,external_ids,credits',
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      episode_number: episodeNumber,
+      id: seriesTMDBID,
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      season_number: seasonNumber,
+    };
+
+    const tmdbData = await moviedb.episodeInfo(episodeRequest);
+    metadata = mapper.parseTMDBAPIEpisodeResponse(tmdbData);
+  } else {
+    let idToSearch: string | number = imdbID;
+    if (!idToSearch) {
+      const tmdbQuery: SearchMovieRequest = { query: movieOrSeriesTitle };
+      if (year) {
+        tmdbQuery.year = year;
+      }
+      const searchResults = await moviedb.searchMovie(tmdbQuery);
+      if (searchResults?.results && searchResults.results[0] && searchResults.results[0].id) {
+        idToSearch = searchResults.results[0].id;
+      }
+    }
+
+    const tmdbData = await moviedb.movieInfo({
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      append_to_response: 'images,external_ids,credits',
+      id: idToSearch,
+    });
+    metadata = mapper.parseTMDBAPIMovieResponse(tmdbData);
+  }
+  return metadata;
+};
+
+/**
+ * Gets series metadata. Performs API lookups if we
+ * don't already have it.
+ *
+ * @param [imdbID] the IMDb ID of the series
+ * @param [title] the title of the series
+ * @param [year] the first year of the series
+ * @returns series metadata
+ */
+export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: string): Promise<SeriesMetadataInterface | null> => {
+  if (!imdbID && !title) {
+    throw new Error('Either IMDb ID or title required');
   }
 
-  const existingSeries: SeriesMetadataInterface = await SeriesMetadata.findOne({ imdbID }, null, { lean: true }).exec();
-  if (existingSeries) {
-    return existingSeries;
-  }
+  if (imdbID) {
+    // Shouldn't really happen since we got this IMDb ID from their API
+    if (await FailedLookups.findOne({ imdbID }, '_id', { lean: true }).exec()) {
+      await FailedLookups.updateOne({ imdbID }, { $inc: { count: 1 } }).exec();
+      return null;
+    }
 
-  const imdbData = await getFromIMDbAPIV2(imdbID);
-  if (!imdbData) {
-    await FailedLookups.updateOne({ imdbID }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
-    return null;
-  }
+    const existingSeries: SeriesMetadataInterface = await SeriesMetadata.findOne({ imdbID }, null, { lean: true }).exec();
+    if (existingSeries) {
+      return existingSeries;
+    }
 
-  return SeriesMetadata.create(imdbData);
+    const imdbData = await getFromOMDbAPIV2(imdbID);
+    if (!imdbData) {
+      await FailedLookups.updateOne({ imdbID }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+      return null;
+    }
+
+    return SeriesMetadata.create(imdbData);
+  } else {
+    /**
+     * Return any exact or similar results.
+     *
+     * @todo revisit whether we want to allow similar results
+     *       or rely on the third-parties for that.
+     */
+    const dbMeta = await SeriesMetadata.findSimilarSeries(title, year);
+    if (dbMeta) {
+      return dbMeta;
+    }
+
+    // Return early for previously-failed lookups
+    const failedLookupQuery: FailedLookupsInterface = { title: title, type: 'series' };
+    if (year) {
+      failedLookupQuery.year = year;
+    }
+    if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
+      await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
+      throw new MediaNotFoundError();
+    }
+
+    // Extract the series name from the incoming string (usually not necessary)
+    const parsed = episodeParser(title);
+    title = parsed && parsed.show ? parsed.show : title;
+
+    // Start TMDB lookups
+    const seriesID = await getSeriesTMDBIDFromTMDBAPI(title, Number(year));
+
+    const seriesRequest = {
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      append_to_response: 'images,external_ids,credits',
+      id: seriesID,
+    };
+
+    const tmdbResponse = await moviedb.tvInfo(seriesRequest);
+    const tmdbData = mapper.parseTMDBAPISeriesResponse(tmdbResponse);
+    // End TMDB lookups
+
+    // Start OMDb lookups
+    const searchRequest: SearchRequest = {
+      name: title,
+      reqtype: 'series',
+    };
+    if (year) {
+      searchRequest.year = Number(year);
+    }
+    const omdbResponse = await imdbAPI.get(searchRequest);
+    if (!omdbResponse && year) {
+      /**
+       * If the client specified a year, it may have been incorrect because of
+       * the way filename parsing works; the filename Galactica.1980.S01E01 might
+       * be about a series called "Galactica 1980", or a series called "Galactica"
+       * from 1980.
+       * So, we attempt the lookup again with the year appended to the title.
+       */
+      return getSeriesMetadata(null, title + ' ' + year);
+    }
+    const omdbData = mapper.parseOMDbAPISeriesResponse(omdbResponse);
+    // End OMDb lookups
+
+    const combinedResponse = _.merge(tmdbData, omdbData);
+    if (!combinedResponse || _.isEmpty(combinedResponse)) {
+      await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+      throw new MediaNotFoundError();
+    }
+
+    return await SeriesMetadata.create(combinedResponse);
+  }
 };
 
 /**

@@ -2,6 +2,8 @@ import * as mongoose from 'mongoose';
 import { Schema, Document, Model } from 'mongoose';
 import * as _ from 'lodash';
 import * as escapeStringRegexp from 'escape-string-regexp';
+import { Network, SimplePerson, Country, SimpleSeason, TvImagesResponse, TvExternalIdsResponse, CreditsResponse } from 'moviedb-promise/dist/request-types';
+import { ProductionCompany, SpokenLanguage } from 'moviedb-promise/dist/types';
 
 const TEXT_SCORE_MINIMUM = 1;
 
@@ -9,18 +11,42 @@ export interface SeriesMetadataInterface extends Document {
   actors: Array<string>;
   awards?: string;
   country?: string;
+  createdBy?: Array<SimplePerson>;
+  credits?: CreditsResponse;
   directors: Array<string>;
+  endYear?: string;
+  externalIDs?: TvExternalIdsResponse;
+  firstAirDate?: string;
   genres: Array<string>;
+  homepage?: string;
+  images?: TvImagesResponse;
   imdbID: string;
+  inProduction?: boolean;
+  languages?: Array<string>;
+  lastAirDate?: string;
   metascore?: string;
+  networks?: Array<Network>;
+  numberOfEpisodes?: number;
+  numberOfSeasons?: number;
+  originCountry?: Array<string>;
+  originalLanguage?: string;
+  originalTitle?: string;
+  plot?: string;
   poster?: string;
+  productionCompanies?: Array<ProductionCompany>;
+  productionCountries?: Array<Country>;
   rated?: string; // e.g 'PG-13'
   rating?: number; // e.g. 6.7
   ratings?: Array<{Source: string; Value: string}>;
+  seasons?: Array<SimpleSeason>;
+  seriesType?: string;
+  spokenLanguages?: Array<SpokenLanguage>;
   startYear?: string;
-  endYear?: string;
+  status?: string;
+  tagline?: string;
   title: string;
   type: string;
+  tmdbID?: string;
   totalSeasons?: number;
   votes?: string;
   year: string;
@@ -55,18 +81,41 @@ const SeriesMetadataSchema: Schema = new Schema({
     type: Date,
     default: Date.now,
   },
+  createdBy: { type: Array },
+  credits: { type: Array },
   directors: { type: Array },
   endYear: { type: String },
+  externalIDs: { type: Array },
+  firstAirDate: { type: String },
   genres: { type: Array },
+  homepage: { type: String },
+  images: { type: Array },
   imdbID: { type: String, required: true, index: true },
+  inProduction: { type: Boolean },
+  languages: { type: Array },
+  lastAirDate: { type: String },
   metascore: { type: String },
+  networks: { type: Array },
+  numberOfEpisodes: { type: Number },
+  numberOfSeasons: { type: Number },
+  originCountry: { type: Array },
+  originalLanguage: { type: String },
+  originalTitle: { type: String },
   plot: { type: String },
   poster: { type: String },
+  productionCompanies: { type: Array },
+  productionCountries: { type: Array },
   rated: { type: String },
   rating: { type: Number },
   ratings: { type: [new mongoose.Schema({ 'Source': String, 'Value': String })] },
+  seasons: { type: Array },
+  seriesType: { type: String },
+  spokenLanguages: { type: Array },
   startYear: { type: String },
+  status: { type: String },
+  tagline: { type: String },
   title: { type: String, required: true },
+  tmdbID: { type: String },
   totalSeasons: {
     type: Number,
     default: 0,
