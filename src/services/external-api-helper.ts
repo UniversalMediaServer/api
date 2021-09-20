@@ -243,6 +243,10 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, imdbID?: string
       seriesTMDBID = await getSeriesTMDBIDFromTMDBAPI(movieOrSeriesTitle, year);
     }
 
+    if (!seriesTMDBID) {
+      return null;
+    }
+
     const episodeRequest: EpisodeRequest = {
       // eslint-disable-next-line @typescript-eslint/camelcase
       append_to_response: 'images,external_ids,credits',
@@ -266,6 +270,10 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, imdbID?: string
       if (searchResults?.results && searchResults.results[0] && searchResults.results[0].id) {
         idToSearch = searchResults.results[0].id;
       }
+    }
+
+    if (!idToSearch) {
+      return null;
     }
 
     const tmdbData = await moviedb.movieInfo({
