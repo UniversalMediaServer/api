@@ -494,10 +494,10 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
     }
   } catch (e) {
     // Log the error but continue on to try the next API, OMDb
-    if (e.message && e.message.includes('404')) {
-      const errorLog = e.response?.config?.url || e;
-      console.log(errorLog);
+    if (e.message && e.message.includes('404') && e.response?.config?.url) {
+      console.log('Received 404 response from ' + e.response.config.url);
     }
+    console.log(e);
   }
   // End TMDB lookups
 
