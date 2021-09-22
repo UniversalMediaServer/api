@@ -16,7 +16,6 @@ export interface SeriesMetadataInterface extends Document {
   directors: Array<string>;
   endYear?: string;
   externalIDs?: TvExternalIdsResponse;
-  firstAirDate?: string;
   genres: Array<string>;
   homepage?: string;
   images?: TvImagesResponse;
@@ -38,6 +37,7 @@ export interface SeriesMetadataInterface extends Document {
   rated?: string; // e.g 'PG-13'
   rating?: number; // e.g. 6.7
   ratings?: Array<{Source: string; Value: string}>;
+  released?: Date;
   seasons?: Array<SimpleSeason>;
   seriesType?: string;
   spokenLanguages?: Array<SpokenLanguage>;
@@ -86,7 +86,6 @@ const SeriesMetadataSchema: Schema = new Schema({
   directors: { type: Array },
   endYear: { type: String },
   externalIDs: { type: Array },
-  firstAirDate: { type: String },
   genres: { type: Array },
   homepage: { type: String },
   images: { type: Array },
@@ -108,6 +107,7 @@ const SeriesMetadataSchema: Schema = new Schema({
   rated: { type: String },
   rating: { type: Number },
   ratings: { type: [new mongoose.Schema({ 'Source': String, 'Value': String })] },
+  released: { type: Date },
   seasons: { type: Array },
   seriesType: { type: String },
   spokenLanguages: { type: Array },

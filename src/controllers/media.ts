@@ -408,7 +408,7 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
   }
 
   if (imdbIdToSearch) {
-    query.push({ imdbIdToSearch });
+    query.push({ imdbID: imdbIdToSearch });
     failedQuery.push({ imdbId: imdbIdToSearch });
   }
 

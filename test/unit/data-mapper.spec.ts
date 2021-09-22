@@ -85,6 +85,129 @@ const omdbApiSeriesWithNaN = {
   'year': '2005',
 };
 
+const tmdbApiMovieResponse = {
+  'adult': false,
+  'backdrop_path': '/2KjPXUYDoSbAtIQGjbEIcX6b7x5.jpg',
+  'belongs_to_collection': null,
+  'budget': 15000000,
+  'genres': [
+    {
+      'id': 12,
+      'name': 'Adventure',
+    },
+    {
+      'id': 878,
+      'name': 'Science Fiction',
+    },
+    {
+      'id': 28,
+      'name': 'Action',
+    },
+  ],
+  'homepage': '',
+  'id': 11884,
+  'imdb_id': 'tt0087597',
+  'original_language': 'en',
+  'original_title': 'The Last Starfighter',
+  'overview': 'A video game expert Alex Rogan finds himself transported to another planet after conquering The Last Starfighter video game only to find out it was just a test. He was recruited to join the team of best Starfighters to defend their world from the attack.',
+  'popularity': 8.993,
+  'poster_path': '/an1H0DPADLDlEsiUy8vE9AWqrhm.jpg',
+  'production_companies': [
+    {
+      'id': 33,
+      'logo_path': '/8lvHyhjr8oUKOOy2dKXoALWKdp0.png',
+      'name': 'Universal Pictures',
+      'origin_country': 'US',
+    },
+  ],
+  'production_countries': [
+    {
+      'iso_3166_1': 'US',
+      'name': 'United States of America',
+    },
+  ],
+  'release_date': '1984-07-13',
+  'revenue': 28733290,
+  'runtime': 101,
+  'spoken_languages': [
+    {
+      'english_name': 'English',
+      'iso_639_1': 'en',
+      'name': 'English',
+    },
+  ],
+  'status': 'Released',
+  'tagline': 'He didn\'t find his dreams... his dreams found him.',
+  'title': 'The Last Starfighter',
+  'video': false,
+  'vote_average': 6.6,
+  'vote_count': 495,
+  'images': {
+    'backdrops': [
+      {
+        'aspect_ratio': 1.778,
+        'height': 1440,
+        'iso_639_1': null,
+        'file_path': '/2KjPXUYDoSbAtIQGjbEIcX6b7x5.jpg',
+        'vote_average': 5.456,
+        'vote_count': 5,
+        'width': 2560,
+      },
+    ],
+    'logos': [],
+    'posters': [
+      {
+        'aspect_ratio': 0.667,
+        'height': 1500,
+        'iso_639_1': 'en',
+        'file_path': '/an1H0DPADLDlEsiUy8vE9AWqrhm.jpg',
+        'vote_average': 5.138,
+        'vote_count': 8,
+        'width': 1000,
+      },
+    ],
+  },
+  'external_ids': {
+    'imdb_id': 'tt0087597',
+    'facebook_id': null,
+    'instagram_id': null,
+    'twitter_id': null,
+  },
+  'credits': {
+    'cast': [
+      {
+        'adult': false,
+        'gender': 2,
+        'id': 16213,
+        'known_for_department': 'Acting',
+        'name': 'Lance Guest',
+        'original_name': 'Lance Guest',
+        'popularity': 1.285,
+        'profile_path': '/rfLT0dxqWcAsN5rcEia6tHt2UpW.jpg',
+        'cast_id': 1,
+        'character': 'Alex Rogan',
+        'credit_id': '52fe449a9251416c7503a87b',
+        'order': 0,
+      },
+    ],
+    'crew': [
+      {
+        'adult': false,
+        'gender': 0,
+        'id': 375,
+        'known_for_department': 'Sound',
+        'name': 'Bub Asman',
+        'original_name': 'Bub Asman',
+        'popularity': 1.286,
+        'profile_path': null,
+        'credit_id': '5d5ec71ef263ba001495033f',
+        'department': 'Sound',
+        'job': 'Sound Editor',
+      },
+    ],
+  },
+};
+
 // this response has been shortened by removing all but one object from each array of objects
 const tmdbApiSeriesResponse = {
   'backdrop_path': '/kaUuV7mq8eJkLu4mI5iIt2vfxgq.jpg',
@@ -394,7 +517,6 @@ describe('Data mapper', () => {
           instagram_id: null,
           twitter_id: 'Unfortunate',
         });
-        expect(parsed.firstAirDate).toBe('2017-01-13');
         expect(parsed.genres).toEqual(['Action & Adventure']);
         expect(parsed.homepage).toBe('https://www.netflix.com/title/80050008');
         expect(parsed.tmdbID).toBe(65294);
@@ -453,6 +575,7 @@ describe('Data mapper', () => {
           },
         ]);
         expect(parsed.productionCountries).toEqual([{ iso_3166_1: 'CA', name: 'Canada' }]);
+        expect(parsed.released).toBe('2017-01-13');
         expect(parsed.seasons).toEqual([
           {
             air_date: '2017-01-13',
@@ -468,6 +591,90 @@ describe('Data mapper', () => {
         expect(parsed.status).toBe('Ended');
         expect(parsed.tagline).toBe('');
         expect(parsed.seriesType).toBe('Scripted');
+        expect(parsed.year).toBe('2017');
+      });
+    });
+    describe('movies', () => {
+      it('should parse as expected', () => {
+        const parsed = mapper.parseTMDBAPIMovieResponse(tmdbApiMovieResponse);
+
+        expect(parsed.budget).toBe(15000000);
+        expect(parsed.credits).toEqual({
+          cast: [{
+            'adult': false,
+            'cast_id': 1,
+            'character': 'Alex Rogan',
+            'credit_id': '52fe449a9251416c7503a87b',
+            'gender': 2,
+            'id': 16213,
+            'known_for_department': 'Acting',
+            'name': 'Lance Guest',
+            'order': 0,
+            'original_name': 'Lance Guest',
+            'popularity': 1.285,
+            'profile_path': '/rfLT0dxqWcAsN5rcEia6tHt2UpW.jpg',
+          }],
+          crew: [{
+            'adult': false,
+            'credit_id': '5d5ec71ef263ba001495033f',
+            'department': 'Sound',
+            'gender': 0,
+            'id': 375,
+            'job': 'Sound Editor',
+            'known_for_department': 'Sound',
+            'name': 'Bub Asman',
+            'original_name': 'Bub Asman',
+            'popularity': 1.286,
+            'profile_path': null,
+          }],
+        });
+        expect(parsed.externalIDs).toEqual({
+          imdb_id: 'tt0087597',
+          facebook_id: null,
+          instagram_id: null,
+          twitter_id: null,
+        });
+        expect(parsed.genres).toEqual(['Adventure', 'Science Fiction', 'Action']);
+        expect(parsed.tmdbID).toBe(11884);
+        expect(parsed.images).toEqual({
+          backdrops: [{
+            'aspect_ratio': 1.778,
+            'file_path': '/2KjPXUYDoSbAtIQGjbEIcX6b7x5.jpg',
+            'height': 1440,
+            'iso_639_1': null,
+            'vote_average': 5.456,
+            'vote_count': 5,
+            'width': 2560,
+          }],
+          logos: [],
+          posters: [{
+            'aspect_ratio': 0.667,
+            'file_path': '/an1H0DPADLDlEsiUy8vE9AWqrhm.jpg',
+            'height': 1500,
+            'iso_639_1': 'en',
+            'vote_average': 5.138,
+            'vote_count': 8,
+            'width': 1000,
+          }],
+        });
+        expect(parsed.imdbID).toBe('tt0087597');
+        expect(parsed.originalLanguage).toBe('en');
+        expect(parsed.originalTitle).toBe('The Last Starfighter');
+        expect(parsed.plot).toBe('A video game expert Alex Rogan finds himself transported to another planet after conquering The Last Starfighter video game only to find out it was just a test. He was recruited to join the team of best Starfighters to defend their world from the attack.');
+        expect(parsed.productionCompanies).toEqual([{
+          id: 33,
+          logo_path: '/8lvHyhjr8oUKOOy2dKXoALWKdp0.png',
+          name: 'Universal Pictures',
+          origin_country: 'US',
+        }]);
+        expect(parsed.year).toBe('1984');
+        expect(parsed.released).toBe('1984-07-13');
+        expect(parsed.revenue).toBe(28733290);
+        expect(parsed.runtime).toBe(101);
+        expect(parsed.spokenLanguages).toEqual([{ english_name: 'English', iso_639_1: 'en', name: 'English' }]);
+        expect(parsed.tagline).toBe('He didn\'t find his dreams... his dreams found him.');
+        expect(parsed.title).toBe('The Last Starfighter');
+        expect(parsed.type).toBe('movie');
       });
     });
   });
