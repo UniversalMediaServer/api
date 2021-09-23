@@ -105,7 +105,16 @@ const tmdbSeriesMap = {
   'credits': 'credits',
   'external_ids.imdb_id': 'imdbID',
   'external_ids': 'externalIDs',
-  'first_air_date': 'firstAirDate',
+  'first_air_date': [
+    { key: 'released' },
+    {
+      key: 'year',
+      transform: (releaseDate: string): string => {
+        // Store the year part of the date
+        return releaseDate.substr(0, 4);
+      },
+    },
+  ],
   'genres': {
     key: 'genres?',
     transform: (genres: Array<Genre>): Array<string> => {
@@ -147,11 +156,21 @@ const tmdbMovieMap = {
   },
   'id': 'tmdbID',
   'images': 'images',
+  'imdb_id': 'imdbID',
   'original_language': 'originalLanguage',
   'original_title': 'originalTitle',
   'overview': 'plot',
   'production_companies': 'productionCompanies',
-  'release_date': 'released',
+  'release_date': [
+    { key: 'released' },
+    {
+      key: 'year',
+      transform: (releaseDate: string): string => {
+        // Store the year part of the date
+        return releaseDate.substr(0, 4);
+      },
+    },
+  ],
   'revenue': 'revenue',
   'runtime': 'runtime',
   'spoken_languages': 'spokenLanguages',

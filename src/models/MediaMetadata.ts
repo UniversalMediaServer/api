@@ -2,7 +2,7 @@ import { OmdbRating } from '@universalmediaserver/node-imdb-api/lib/interfaces';
 import * as mongoose from 'mongoose';
 import { Schema, Document } from 'mongoose';
 import { CreditsResponse, EpisodeCreditsResponse, EpisodeExternalIdsResponse, EpisodeImagesResponse, MovieExternalIdsResponse, MovieImagesResponse } from 'moviedb-promise/dist/request-types';
-import { ProductionCompany, ProductionCountry } from 'moviedb-promise/dist/types';
+import { ProductionCompany, ProductionCountry, SpokenLanguage } from 'moviedb-promise/dist/types';
 import { ValidationError } from '../helpers/customErrors';
 
 export interface MediaMetadataInterface {
@@ -38,6 +38,7 @@ export interface MediaMetadataInterface {
   searchMatches?: Array<string>;
   season?: string;
   seriesIMDbID?: string;
+  spokenLanguages?: Array<SpokenLanguage>;
   tagline?: string;
   title: string;
   tmdbID?: string;

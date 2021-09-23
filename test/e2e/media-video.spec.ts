@@ -109,7 +109,7 @@ describe('get by all', () => {
       response = await got(`${appUrl}/api/media/video?title=${MOVIE_INTERSTELLAR.title.toLowerCase()}`, { responseType: 'json' });
       expect(response.body.title).toEqual('Interstellar');
       expect(response.body.type).toEqual('movie');
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
       expect(spy2).toHaveBeenCalledTimes(2);
     });
 
