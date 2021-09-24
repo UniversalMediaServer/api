@@ -22,7 +22,6 @@ export interface SeriesMetadataInterface extends Document {
   metascore?: string;
   networks?: Array<Network>;
   numberOfEpisodes?: number;
-  numberOfSeasons?: number;
   originCountry?: Array<string>;
   originalLanguage?: string;
   originalTitle?: string;
@@ -75,7 +74,6 @@ const SeriesMetadataSchema: Schema = new Schema({
   metascore: { type: String },
   networks: { type: Array },
   numberOfEpisodes: { type: Number },
-  numberOfSeasons: { type: Number },
   originCountry: { type: Array },
   originalLanguage: { type: String },
   originalTitle: { type: String },

@@ -50,7 +50,10 @@ interface GetVideoFilter {
   title?: string;
 }
 
-interface ExactSearchQuery {
-  title: RegExp;
+interface CaseInsensitiveSearchQuery {
+  title: {
+    $regex: RegExp;
+    $options: string;
+  };
   startYear?: string;
 }

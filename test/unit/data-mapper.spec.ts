@@ -74,15 +74,38 @@ const omdbApiEpisode = {
   imdburl: 'https://www.imdb.com/title/tt2916312',
 };
 
-const omdbApiSeriesWithNaN = {
-  'actors': 'Dominic Purcell, Wentworth Miller, Amaury Nolasco',
-  'directors': 'Bobby Roth',
-  'genres': 'Action, Crime, Drama, Mystery, Thriller',
-  'imdbID': 'tt0455275',
-  'title': 'Prison Break',
-  'totalSeasons': 'this is not a number but it should be',
-  'type': 'series',
-  'year': '2005',
+const omdbApiSeries = {
+  ratings: [{ source: 'Internet Movie Database', value: '8.3/10' }],
+  title: 'Prison Break',
+  year: 0,
+  _yearData: '2005–2017',
+  rated: 'TV-14',
+  released: new Date('2005-08-28T12:00:00.000Z'),
+  runtime: '44 min',
+  genres: 'Action, Crime, Drama',
+  director: 'N/A',
+  writer: 'Paul T. Scheuring',
+  actors: 'Dominic Purcell, Wentworth Miller, Amaury Nolasco',
+  plot: 'An innocent man is framed for the homicide of the Vice President\'s brother and scheduled to be executed at a super-max penitentiary, thus it\'s up to his younger brother to save him with his genius scheme: install himself in the same prison by holding up a bank and, as the final month ticks away, launch the escape plan step-by-step to break the both of them out, with his full-body tattoo acting as his guide; a tattoo which hides the layout of the prison facility and necessary clues vital to the escape.',
+  languages: 'English, Arabic, Spanish',
+  country: 'United Kingdom, United States',
+  awards: 'Nominated for 1 Primetime Emmy. 8 wins & 32 nominations total',
+  poster: 'https://m.media-amazon.com/images/M/MV5BMTg3NTkwNzAxOF5BMl5BanBnXkFtZTcwMjM1NjI5MQ@@._V1_SX300.jpg',
+  metascore: 'N/A',
+  rating: 8.3,
+  votes: '497,403',
+  imdbid: 'tt0455275',
+  type: 'series',
+  boxoffice: undefined,
+  production: undefined,
+  website: undefined,
+  name: 'Prison Break',
+  series: true,
+  imdburl: 'https://www.imdb.com/title/tt0455275',
+  _episodes: [],
+  start_year: 2005,
+  end_year: undefined,
+  totalseasons: 5,
 };
 
 const tmdbApiMovieResponse = {
@@ -454,10 +477,25 @@ describe('Data mapper', () => {
     });
 
     describe('series', () => {
-      it('should remove NaN values', () => {
-        const parsed = mapper.parseOMDbAPISeriesResponse(omdbApiSeriesWithNaN);
-        expect(parsed.title).toBe('Prison Break');
-        expect(parsed.totalSeasons).toBeUndefined();
+      it('should parse as expected', () => {
+        const parsed = mapper.parseOMDbAPISeriesResponse(omdbApiSeries);
+        expect(parsed.actors).toEqual(['Dominic Purcell', 'Wentworth Miller', 'Amaury Nolasco']),
+        expect(parsed.awards).toBe('Nominated for 1 Primetime Emmy. 8 wins & 32 nominations total'),
+        expect(parsed.country).toBe('United Kingdom, United States'),
+        expect(parsed.directors).toEqual([]),
+        expect(parsed.imdbID).toBe('tt0455275'),
+        expect(parsed.title).toBe('Prison Break'),
+        expect(parsed.genres).toEqual(['Action', 'Crime', 'Drama']),
+        expect(parsed.plot).toBe('An innocent man is framed for the homicide of the Vice President\'s brother and scheduled to be executed at a super-max penitentiary, thus it\'s up to his younger brother to save him with his genius scheme: install himself in the same prison by holding up a bank and, as the final month ticks away, launch the escape plan step-by-step to break the both of them out, with his full-body tattoo acting as his guide; a tattoo which hides the layout of the prison facility and necessary clues vital to the escape.'),
+        expect(parsed.poster).toBe('https://m.media-amazon.com/images/M/MV5BMTg3NTkwNzAxOF5BMl5BanBnXkFtZTcwMjM1NjI5MQ@@._V1_SX300.jpg'),
+        expect(parsed.rated).toBe('TV-14'),
+        expect(parsed.rating).toBe(8.3),
+        expect(parsed.ratings).toEqual([{ Source: 'Internet Movie Database', Value: '8.3/10' }]),
+        expect(parsed.startYear).toBe('2005'),
+        expect(parsed.year).toBe('2005'),
+        expect(parsed.totalSeasons).toBe(5),
+        expect(parsed.type).toBe('series'),
+        expect(parsed.votes).toBe('497,403');
       });
     });
   });
@@ -562,7 +600,6 @@ describe('Data mapper', () => {
           },
         ]);
         expect(parsed.numberOfEpisodes).toBe(25);
-        expect(parsed.numberOfSeasons).toBe(3);
         expect(parsed.originCountry).toEqual(['US']);
         expect(parsed.originalLanguage).toBe('en');
         expect(parsed.plot).toBe('The orphaned Baudelaire children face trials, tribulations and the evil Count Olaf, all in their quest to uncover the secret of their parents\' death.');
@@ -587,10 +624,12 @@ describe('Data mapper', () => {
             season_number: 1,
           },
         ]);
+        expect(parsed.seriesType).toBe('Scripted');
         expect(parsed.spokenLanguages).toEqual([{ english_name: 'English', iso_639_1: 'en', name: 'English' }]);
+        expect(parsed.startYear).toBe('2017');
         expect(parsed.status).toBe('Ended');
         expect(parsed.tagline).toBe('');
-        expect(parsed.seriesType).toBe('Scripted');
+        expect(parsed.totalSeasons).toBe(3);
         expect(parsed.year).toBe('2017');
       });
     });

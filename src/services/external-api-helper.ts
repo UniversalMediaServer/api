@@ -1,4 +1,5 @@
 import { Movie, SearchRequest, TVShow } from '@universalmediaserver/node-imdb-api';
+import escapeStringRegexp = require('escape-string-regexp');
 import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
 import * as natural from 'natural';
@@ -28,6 +29,10 @@ export interface OpenSubtitlesValidation {
   year: string;
   season: string;
   episode: string;
+}
+
+interface SortByFilter {
+  startYear: number;
 }
 
 /**
@@ -320,14 +325,28 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
 
     return SeriesMetadata.create(imdbData);
   } else {
-    // Return early for previously-failed lookups
+    const sortBy = {} as SortByFilter;
+    const escapedTitle = new RegExp(`^${escapeStringRegexp(title)}$`);
+    const exactSearchQuery = { title: { $regex: escapedTitle, $options: 'i' } } as CaseInsensitiveSearchQuery;
     const failedLookupQuery: FailedLookupsInterface = { title: title, type: 'series' };
     if (year) {
-      failedLookupQuery.year = year;
+      failedLookupQuery.startYear = year;
+      exactSearchQuery.startYear = year;
+    } else {
+      sortBy.startYear = 1;
     }
+
+    // Return early for previously-failed lookups
     if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
       await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
       throw new MediaNotFoundError();
+    }
+
+    // Return any previous match
+    const seriesMetadata = await SeriesMetadata.findOne(exactSearchQuery, null, { lean: true }).sort(sortBy)
+      .exec();
+    if (seriesMetadata) {
+      return seriesMetadata;
     }
 
     // Extract the series name from the incoming string (usually not necessary)
@@ -335,16 +354,23 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
     title = parsed && parsed.show ? parsed.show : title;
 
     // Start TMDB lookups
+    let tmdbData = {};
     const seriesID = await getSeriesTMDBIDFromTMDBAPI(title, Number(year));
 
-    const seriesRequest = {
-      // eslint-disable-next-line @typescript-eslint/camelcase
-      append_to_response: 'images,external_ids,credits',
-      id: seriesID,
-    };
+    if (seriesID) {
+      const seriesRequest = {
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        append_to_response: 'images,external_ids,credits',
+        id: seriesID,
+      };
 
-    const tmdbResponse = await moviedb.tvInfo(seriesRequest);
-    const tmdbData = mapper.parseTMDBAPISeriesResponse(tmdbResponse);
+      try {
+        const tmdbResponse = await moviedb.tvInfo(seriesRequest);
+        tmdbData = mapper.parseTMDBAPISeriesResponse(tmdbResponse);
+      } catch (e) {
+        console.log(e);
+      }
+    }
     // End TMDB lookups
 
     // Start OMDb lookups
@@ -356,7 +382,7 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
       searchRequest.year = Number(year);
     }
     const omdbResponse = await imdbAPI.get(searchRequest);
-    if (!omdbResponse && year) {
+    if (!tmdbData && !omdbResponse && year) {
       /**
        * If the client specified a year, it may have been incorrect because of
        * the way filename parsing works; the filename Galactica.1980.S01E01 might

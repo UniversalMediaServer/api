@@ -114,6 +114,7 @@ const tmdbSeriesMap = {
         return releaseDate.substr(0, 4);
       },
     },
+    { key: 'startYear' },
   ],
   'genres': {
     key: 'genres?',
@@ -130,7 +131,7 @@ const tmdbSeriesMap = {
   'name': 'title',
   'networks': 'networks',
   'number_of_episodes': 'numberOfEpisodes',
-  'number_of_seasons': 'numberOfSeasons',
+  'number_of_seasons': 'totalSeasons',
   'origin_country': 'originCountry',
   'original_language': 'originalLanguage',
   'original_title': 'originalTitle',
@@ -236,7 +237,7 @@ const omdbEpisodeMap = {
   },
 };
 
-const imdbSeriesMap = {
+const omdbSeriesMap = {
   'actors': {
     key: 'actors?',
     transform: (val: string): Array<string> => _.isEmpty(val) ? null : val.split(', '),
@@ -276,12 +277,14 @@ const imdbSeriesMap = {
       return transformedValue;
     },
   },
-  'start_year': {
-    key: 'startYear',
-    transform: (val: number): string => val ? val.toString() : undefined,
-  },
-  'totalseasons': 'totalSeasons',
-  'totalSeasons': {
+  'start_year': [
+    {
+      key: 'startYear',
+      transform: (val: number): string => val ? val.toString() : undefined,
+    },
+    { key: 'year' },
+  ],
+  'totalseasons': {
     key: 'totalSeasons',
     transform: (val): number => {
       if (val) {
@@ -295,10 +298,6 @@ const imdbSeriesMap = {
   },
   'type': 'type',
   'votes': 'votes',
-  'year': {
-    key: 'year',
-    transform: (val: number): string => val ? val.toString() : undefined,
-  },
 };
 
 const omdbMovieMap = {
@@ -398,7 +397,7 @@ class UmsDataMapper {
   }
 
   parseOMDbAPISeriesResponse(omdbData): Partial<SeriesMetadataInterface> {
-    const mappedData = objectMapper.merge(omdbData, imdbSeriesMap);
+    const mappedData = objectMapper.merge(omdbData, omdbSeriesMap);
     return filterUnwantedValues(mappedData);
   }
 
