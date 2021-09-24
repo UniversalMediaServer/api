@@ -320,17 +320,6 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
 
     return SeriesMetadata.create(imdbData);
   } else {
-    /**
-     * Return any exact or similar results.
-     *
-     * @todo revisit whether we want to allow similar results
-     *       or rely on the third-parties for that.
-     */
-    const dbMeta = await SeriesMetadata.findSimilarSeries(title, year);
-    if (dbMeta) {
-      return dbMeta;
-    }
-
     // Return early for previously-failed lookups
     const failedLookupQuery: FailedLookupsInterface = { title: title, type: 'series' };
     if (year) {
