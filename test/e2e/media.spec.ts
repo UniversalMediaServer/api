@@ -54,13 +54,7 @@ describe('Media Metadata endpoints', () => {
       expect(doc).toHaveProperty('title', 'Homeland');
       expect(doc).toHaveProperty('startYear', '2011');
 
-      // similar searches should return the same series metadata document
-      response = await got(`${appUrl}/api/media/seriestitle?title=Homeland Season one`, { responseType: 'json' });
-      expect(response.body._id).toEqual(newDocumentId);
-
       response = await got(`${appUrl}/api/media/seriestitle?title=HoMelAnD   `, { responseType: 'json' });
-      expect(response.body._id).toEqual(newDocumentId);
-      response = await got(`${appUrl}/api/media/seriestitle?title=Homeland series 1`, { responseType: 'json' });
       expect(response.body._id).toEqual(newDocumentId);
     });
 

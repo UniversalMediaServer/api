@@ -9,6 +9,7 @@ export interface FailedLookupsInterface {
   imdbID?: string;
   osdbHash?: string;
   season?: string;
+  startYear?: string;
   title?: string;
   type?: string;
   year?: string;
@@ -45,6 +46,10 @@ const FailedLookupsSchema = new Schema({
     },
   },
   season: { index: true, type: String },
+  startYear: {
+    index: true,
+    type: String,
+  },
   title: {
     index: true,
     required: function(): boolean {
