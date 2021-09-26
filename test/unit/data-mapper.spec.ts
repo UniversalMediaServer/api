@@ -557,7 +557,6 @@ describe('Data mapper', () => {
         });
         expect(parsed.genres).toEqual(['Action & Adventure']);
         expect(parsed.homepage).toBe('https://www.netflix.com/title/80050008');
-        expect(parsed.tmdbID).toBe(65294);
         expect(parsed.images).toEqual({
           backdrops: [{
             'aspect_ratio': 1.778,
@@ -629,7 +628,9 @@ describe('Data mapper', () => {
         expect(parsed.startYear).toBe('2017');
         expect(parsed.status).toBe('Ended');
         expect(parsed.tagline).toBe('');
+        expect(parsed.tmdbID).toBe(65294);
         expect(parsed.totalSeasons).toBe(3);
+        expect(parsed.type).toBe('series');
         expect(parsed.year).toBe('2017');
       });
     });
