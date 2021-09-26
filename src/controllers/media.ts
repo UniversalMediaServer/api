@@ -283,13 +283,13 @@ export const getBySanitizedTitleV2 = async(ctx: ParameterizedContext): Promise<M
    */
 };
 
-export const getSeriesByTitle = async(ctx: ParameterizedContext): Promise<SeriesMetadataInterface> => {
-  const { title, year }: UmsQueryParams = ctx.query;
-  if (!title) {
-    throw new ValidationError('title is required');
+export const getSeries = async(ctx: ParameterizedContext): Promise<SeriesMetadataInterface> => {
+  const { imdbID, title, year }: UmsQueryParams = ctx.query;
+  if (!title && imdbID) {
+    throw new ValidationError('Either IMDb ID or title required');
   }
 
-  const dbMeta = await externalAPIHelper.getSeriesMetadata(null, title, year);
+  const dbMeta = await externalAPIHelper.getSeriesMetadata(imdbID, title, year);
   return ctx.body = dbMeta;
 };
 
