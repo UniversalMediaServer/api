@@ -3,6 +3,8 @@ import MediaMetadataModel, {  MediaMetadataInterfaceDocument } from '../../src/m
 import SeasonMetadataModel from '../../src/models/SeasonMetadata';
 import SeriesMetadataModel from '../../src/models/SeriesMetadata';
 import FailedLookupsModel from '../../src/models/FailedLookups';
+import * as apihelper from '../../src/services/external-api-helper';
+import { moviedb } from '../../src/services/tmdb-api';
 
 import * as mongoose from 'mongoose';
 import got from 'got';
@@ -44,8 +46,8 @@ describe('Media Metadata endpoints', () => {
     await mongoose.connection.dropDatabase();
   });
 
-  describe('get series by directory or filename', () => {
-    it('should return series metadata', async() => {
+  describe('get series', () => {
+    it('should return series metadata by title', async() => {
       // this request populates the series metadata
       let response = await got(`${appUrl}/api/media/seriestitle?title=Homeland S02E05`, { responseType: 'json' }) as UmsApiGotResponse;
       const newDocumentId = response.body._id;
@@ -56,6 +58,17 @@ describe('Media Metadata endpoints', () => {
 
       response = await got(`${appUrl}/api/media/seriestitle?title=HoMelAnD   `, { responseType: 'json' });
       expect(response.body._id).toEqual(newDocumentId);
+    });
+    it('should return series metadata by IMDb ID', async() => {
+      // This is the method that finds the TMDB ID from the IMDb ID
+      const spy = jest.spyOn(moviedb, 'find');
+
+      const response = await got(`${appUrl}/api/media/seriestitle?title=American Horror Story&imdbID=tt1844624`, { responseType: 'json' }) as UmsApiGotResponse;
+      expect(response.body).toHaveProperty('credits');
+      expect(response.body).toHaveProperty('totalSeasons');
+      expect(response.body).toHaveProperty('title', 'American Horror Story');
+      expect(response.body).toHaveProperty('startYear', '2011');
+      expect(spy).toHaveBeenCalledTimes(1);
     });
 
     it('should fail to save non series type', async() => {
