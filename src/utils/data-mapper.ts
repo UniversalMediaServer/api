@@ -83,6 +83,7 @@ const tmdbEpisodeMap = {
   'name': 'title',
   'overview': 'plot',
   'season_number': 'season',
+  'still_path': 'posterRelativePath',
   'type': {
     key: 'type',
     transform: (): string => 'episode',
@@ -136,6 +137,7 @@ const tmdbSeriesMap = {
   'original_language': 'originalLanguage',
   'original_title': 'originalTitle',
   'overview': 'plot',
+  'poster_path': 'posterRelativePath',
   'production_companies': 'productionCompanies',
   'production_countries': 'productionCountries',
   'seasons': 'seasons',
@@ -167,6 +169,7 @@ const tmdbMovieMap = {
   'original_language': 'originalLanguage',
   'original_title': 'originalTitle',
   'overview': 'plot',
+  'poster_path': 'posterRelativePath',
   'production_companies': 'productionCompanies',
   'release_date': [
     { key: 'released' },

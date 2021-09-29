@@ -13,7 +13,7 @@ import { MediaMetadataInterface, MediaMetadataInterfaceDocument } from '../model
 import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import omdbAPI from './omdb-api';
 import { mapper } from '../utils/data-mapper';
-import { CreditsResponse, EpisodeCreditsResponse, EpisodeExternalIdsResponse, EpisodeRequest, ExternalId, MovieExternalIdsResponse, SearchMovieRequest, SearchTvRequest, TvExternalIdsResponse } from 'moviedb-promise/dist/request-types';
+import { EpisodeRequest, ExternalId, SearchMovieRequest, SearchTvRequest } from 'moviedb-promise/dist/request-types';
 import { moviedb } from './tmdb-api';
 import TMDBConfiguration from '../models/TMDBConfiguration';
 import { LeanDocument } from 'mongoose';
@@ -424,19 +424,6 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
 };
 
 /*
- * This is just a trick to stop TypeScript errors, there is probably
- * a better way to do it.
- */
-interface JoinedMediaInterface extends SeriesMetadataInterface, LeanDocument<MediaMetadataInterfaceDocument> {
-  credits?: CreditsResponse | EpisodeCreditsResponse;
-  externalIDs?: MovieExternalIdsResponse | EpisodeExternalIdsResponse | TvExternalIdsResponse;
-  images?: {
-    posters: Array<unknown>;
-    stills: Array<unknown>;
-  };
-}
-
-/*
  * If the incoming metadata contains a poster image within the images
  * array, we populate the poster value with that, and return the whole object.
  *
@@ -450,23 +437,49 @@ interface JoinedMediaInterface extends SeriesMetadataInterface, LeanDocument<Med
  * imageBaseURL can change. The future client will request
  * that separately.
  */
-export const addPosterFromImages = async(metadata: JoinedMediaInterface): Promise<SeriesMetadataInterface | LeanDocument<MediaMetadataInterfaceDocument>> => {
-  const potentialPosters = metadata?.images?.posters ? metadata?.images?.posters : [];
-  const potentialStills = metadata?.images?.stills || [];
-  const potentialImagesCombined = _.concat(potentialPosters, potentialStills);
-  if (metadata && !metadata.poster && !_.isEmpty(potentialImagesCombined)) {
+export const addPosterFromImages = async(metadata: any): Promise<SeriesMetadataInterface | LeanDocument<MediaMetadataInterfaceDocument>> => {
+  delete metadata.poster;
+
+  if (!metadata) {
+    throw new Error('Metadata is required');
+  }
+
+  if (metadata.poster) {
+    // There is already a poster
+    return metadata;
+  }
+
+  let posterRelativePath: string;
+
+  if (metadata.posterRelativePath) {
+    posterRelativePath = metadata.posterRelativePath;
+  } else {
+    const potentialPosters = metadata?.images?.posters ? metadata?.images?.posters : [];
+    const potentialStills = metadata?.images?.stills || [];
+    const potentialImagesCombined = _.concat(potentialPosters, potentialStills);
+    if (_.isEmpty(potentialImagesCombined)) {
+      // There are no potential images
+      return metadata;
+    }
+
     const englishImages = _.filter(potentialImagesCombined, { 'iso_639_1': 'en' }) || [];
     const noLanguageImages = _.filter(potentialImagesCombined, { 'iso_639_1': null }) || [];
     const posterCandidates = _.merge(noLanguageImages, englishImages);
-    if (posterCandidates && !_.isEmpty(posterCandidates)) {
-      const firstPoster = _.first(posterCandidates);
-      if (firstPoster) {
-        const configuration = await TMDBConfiguration.findOne().lean()
-          .exec();
-        metadata.poster = configuration.imageBaseURL + 'w500' + firstPoster;
-      }
+    if (!posterCandidates || _.isEmpty(posterCandidates)) {
+      // There are no English or non-language images
+      return metadata;
     }
+
+    const firstPoster = _.first(posterCandidates);
+    posterRelativePath = firstPoster.file_path;
   }
+
+  if (posterRelativePath) {
+    const configuration = await TMDBConfiguration.findOne().lean()
+      .exec();
+    metadata.poster = configuration.imageBaseURL + 'w500' + posterRelativePath;
+  }
+
   return metadata;
 };
 

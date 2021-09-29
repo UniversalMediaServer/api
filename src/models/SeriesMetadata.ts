@@ -27,6 +27,7 @@ export interface SeriesMetadataInterface extends Document {
   originalTitle?: string;
   plot?: string;
   poster?: string;
+  posterRelativePath?: string;
   productionCompanies?: Array<ProductionCompany>;
   productionCountries?: Array<ProductionCountry>;
   rated?: string; // e.g 'PG-13'
@@ -79,6 +80,7 @@ const SeriesMetadataSchema: Schema = new Schema({
   originalTitle: { type: String },
   plot: { type: String },
   poster: { type: String },
+  posterRelativePath: { type: String },
   productionCompanies: { type: Array },
   productionCountries: { type: Array },
   rated: { type: String },
