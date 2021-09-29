@@ -13,7 +13,7 @@ import { MediaMetadataInterface, MediaMetadataInterfaceDocument } from '../model
 import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import omdbAPI from './omdb-api';
 import { mapper } from '../utils/data-mapper';
-import { EpisodeRequest, ExternalId, SearchMovieRequest, SearchTvRequest } from 'moviedb-promise/dist/request-types';
+import { CreditsResponse, EpisodeCreditsResponse, EpisodeExternalIdsResponse, EpisodeRequest, ExternalId, MovieExternalIdsResponse, SearchMovieRequest, SearchTvRequest, TvExternalIdsResponse } from 'moviedb-promise/dist/request-types';
 import { moviedb } from './tmdb-api';
 import TMDBConfiguration from '../models/TMDBConfiguration';
 import { LeanDocument } from 'mongoose';
@@ -424,6 +424,19 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
 };
 
 /*
+ * This is just a trick to stop TypeScript errors, there is probably
+ * a better way to do it.
+ */
+interface JoinedMediaInterface extends SeriesMetadataInterface, LeanDocument<MediaMetadataInterfaceDocument> {
+  credits?: CreditsResponse | EpisodeCreditsResponse;
+  externalIDs?: MovieExternalIdsResponse | EpisodeExternalIdsResponse | TvExternalIdsResponse;
+  images?: {
+    posters: Array<unknown>;
+    stills: Array<unknown>;
+  };
+}
+
+/*
  * If the incoming metadata contains a poster image within the images
  * array, we populate the poster value with that, and return the whole object.
  *
@@ -437,8 +450,8 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
  * imageBaseURL can change. The future client will request
  * that separately.
  */
-export const addPosterFromImages = async(metadata: SeriesMetadataInterface | LeanDocument<MediaMetadataInterfaceDocument>): Promise<SeriesMetadataInterface | LeanDocument<MediaMetadataInterfaceDocument>> => {
-  const potentialPosters = metadata?.images?.posters || [];
+export const addPosterFromImages = async(metadata: JoinedMediaInterface): Promise<SeriesMetadataInterface | LeanDocument<MediaMetadataInterfaceDocument>> => {
+  const potentialPosters = metadata?.images?.posters ? metadata?.images?.posters : [];
   const potentialStills = metadata?.images?.stills || [];
   const potentialImagesCombined = _.concat(potentialPosters, potentialStills);
   if (metadata && !metadata.poster && !_.isEmpty(potentialImagesCombined)) {

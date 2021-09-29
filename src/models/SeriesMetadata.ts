@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 import { Schema, Document, Model } from 'mongoose';
-import { Network, SimplePerson, Country, SimpleSeason, TvImagesResponse, TvExternalIdsResponse, CreditsResponse } from 'moviedb-promise/dist/request-types';
-import { ProductionCompany, SpokenLanguage } from 'moviedb-promise/dist/types';
+import { Network, SimplePerson, SimpleSeason, TvImagesResponse, TvExternalIdsResponse, CreditsResponse } from 'moviedb-promise/dist/request-types';
+import { ProductionCompany, ProductionCountry, SpokenLanguage } from 'moviedb-promise/dist/types';
 
 export interface SeriesMetadataInterface extends Document {
   actors: Array<string>;
@@ -28,7 +28,7 @@ export interface SeriesMetadataInterface extends Document {
   plot?: string;
   poster?: string;
   productionCompanies?: Array<ProductionCompany>;
-  productionCountries?: Array<Country>;
+  productionCountries?: Array<ProductionCountry>;
   rated?: string; // e.g 'PG-13'
   rating?: number; // e.g. 6.7
   ratings?: Array<{Source: string; Value: string}>;
