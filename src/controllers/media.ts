@@ -289,7 +289,8 @@ export const getSeries = async(ctx: ParameterizedContext): Promise<SeriesMetadat
     throw new ValidationError('Either IMDb ID or title required');
   }
 
-  const dbMeta = await externalAPIHelper.getSeriesMetadata(imdbID, title, year);
+  let dbMeta = await externalAPIHelper.getSeriesMetadata(imdbID, title, year);
+  dbMeta = await externalAPIHelper.addPosterFromImages(dbMeta);
   return ctx.body = dbMeta;
 };
 
@@ -560,7 +561,9 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
       combinedResponse.osdbHash = osdbHash;
     }
     const dbMeta = await MediaMetadata.create(combinedResponse);
-    return ctx.body = dbMeta.toObject({ useProjection: true });
+    let leanMeta = dbMeta.toObject({ useProjection: true });
+    leanMeta = await externalAPIHelper.addPosterFromImages(leanMeta);
+    return ctx.body = leanMeta;
   } catch (e) {
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();

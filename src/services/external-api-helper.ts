@@ -9,12 +9,14 @@ import osAPI from '../services/opensubtitles';
 
 import { IMDbIDNotFoundError, MediaNotFoundError, ValidationError } from '../helpers/customErrors';
 import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
-import { MediaMetadataInterface } from '../models/MediaMetadata';
+import { MediaMetadataInterface, MediaMetadataInterfaceDocument } from '../models/MediaMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import omdbAPI from './omdb-api';
 import { mapper } from '../utils/data-mapper';
 import { EpisodeRequest, ExternalId, SearchMovieRequest, SearchTvRequest } from 'moviedb-promise/dist/request-types';
 import { moviedb } from './tmdb-api';
+import TMDBConfiguration from '../models/TMDBConfiguration';
+import { LeanDocument } from 'mongoose';
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
 
@@ -312,7 +314,7 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
     }
 
     // Start TMDB lookups
-    let tmdbData = {};
+    let tmdbData: Partial<SeriesMetadataInterface> = {};
     const seriesID = await getSeriesTMDBIDFromTMDBAPI(imdbID);
 
     if (seriesID) {
@@ -419,6 +421,40 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
 
     return await SeriesMetadata.create(combinedResponse);
   }
+};
+
+/*
+ * If the incoming metadata contains a poster image within the images
+ * array, we populate the poster value with that, and return the whole object.
+ *
+ * Future clients will be able to use the raw information
+ * themselves but this is for backwards-compatibility.
+ * When the client can use the information directly from
+ * images.posters or images.stills, we should make it pass a version to prevent
+ * having to do this for those newer versions.
+ *
+ * This must be done on-the-fly like this because the
+ * imageBaseURL can change. The future client will request
+ * that separately.
+ */
+export const addPosterFromImages = async(metadata: SeriesMetadataInterface | LeanDocument<MediaMetadataInterfaceDocument>): Promise<SeriesMetadataInterface | LeanDocument<MediaMetadataInterfaceDocument>> => {
+  const potentialPosters = metadata?.images?.posters || [];
+  const potentialStills = metadata?.images?.stills || [];
+  const potentialImagesCombined = _.concat(potentialPosters, potentialStills);
+  if (metadata && !metadata.poster && !_.isEmpty(potentialImagesCombined)) {
+    const englishImages = _.filter(potentialImagesCombined, { 'iso_639_1': 'en' }) || [];
+    const noLanguageImages = _.filter(potentialImagesCombined, { 'iso_639_1': null }) || [];
+    const posterCandidates = _.merge(noLanguageImages, englishImages);
+    if (posterCandidates && !_.isEmpty(posterCandidates)) {
+      const firstPoster = _.first(posterCandidates);
+      if (firstPoster) {
+        const configuration = await TMDBConfiguration.findOne().lean()
+          .exec();
+        metadata.poster = configuration.imageBaseURL + 'w500' + firstPoster;
+      }
+    }
+  }
+  return metadata;
 };
 
 /**

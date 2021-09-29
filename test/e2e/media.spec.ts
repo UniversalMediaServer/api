@@ -3,7 +3,6 @@ import MediaMetadataModel, {  MediaMetadataInterfaceDocument } from '../../src/m
 import SeasonMetadataModel from '../../src/models/SeasonMetadata';
 import SeriesMetadataModel from '../../src/models/SeriesMetadata';
 import FailedLookupsModel from '../../src/models/FailedLookups';
-import * as apihelper from '../../src/services/external-api-helper';
 import { moviedb } from '../../src/services/tmdb-api';
 
 import * as mongoose from 'mongoose';
