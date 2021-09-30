@@ -250,8 +250,8 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, movieOrEpisodeI
       const findResult = await moviedb.find({ id: episodeIMDbID, external_source: ExternalId.ImdbId });
       // Using any here to make up for missing interface, should submit fix
       if (findResult?.tv_episode_results && findResult?.tv_episode_results[0]) {
-        const tvEpisodeResults = findResult.tv_episode_results[0] as any;
-        seriesTMDBID = tvEpisodeResults?.show_id;
+        const tvEpisodeResult = findResult.tv_episode_results[0] as any;
+        seriesTMDBID = tvEpisodeResult?.show_id;
       }
     } else {
       seriesTMDBID = await getSeriesTMDBIDFromTMDBAPI(episodeIMDbID, movieOrSeriesTitle, year);
@@ -275,26 +275,35 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, movieOrEpisodeI
     metadata = mapper.parseTMDBAPIEpisodeResponse(tmdbData);
   } else {
     const movieIMDbID = movieOrEpisodeIMDbID;
-    let idToSearch: string | number = movieIMDbID;
-    if (!idToSearch) {
+
+    let movieTMDBID: string | number;
+    if (movieIMDbID) {
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      const findResult = await moviedb.find({ id: movieIMDbID, external_source: ExternalId.ImdbId });
+      // Using any here to make up for missing interface, should submit fix
+      if (findResult?.movie_results && findResult?.movie_results[0]) {
+        const movieResult = findResult.movie_results[0] as any;
+        movieTMDBID = movieResult?.id;
+      }
+    } else {
       const tmdbQuery: SearchMovieRequest = { query: movieOrSeriesTitle };
       if (year) {
         tmdbQuery.year = year;
       }
       const searchResults = await moviedb.searchMovie(tmdbQuery);
       if (searchResults?.results && searchResults.results[0] && searchResults.results[0].id) {
-        idToSearch = searchResults.results[0].id;
+        movieTMDBID = searchResults.results[0].id;
       }
     }
 
-    if (!idToSearch) {
+    if (!movieTMDBID) {
       return null;
     }
 
     const tmdbData = await moviedb.movieInfo({
       // eslint-disable-next-line @typescript-eslint/camelcase
       append_to_response: 'images,external_ids,credits',
-      id: idToSearch,
+      id: movieTMDBID,
     });
     metadata = mapper.parseTMDBAPIMovieResponse(tmdbData);
   }
