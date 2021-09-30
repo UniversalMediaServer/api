@@ -374,10 +374,12 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, imdbID?: string
   }
   // If the client specified an episode number, this is an episode
   const isExpectingTVEpisode = Boolean(episodeNumber);
+  const yearString = year ? year.toString() : null;
 
   let metadata;
   if (isExpectingTVEpisode) {
-    const seriesTMDBID = await getSeriesTMDBIDFromTMDBAPI(imdbID, movieOrSeriesTitle, year);
+    const seriesMetadata = await getSeriesMetadata(imdbID, movieOrSeriesTitle, yearString);
+    const seriesTMDBID = seriesMetadata?.tmdbID;
     if (!seriesTMDBID) {
       return null;
     }
