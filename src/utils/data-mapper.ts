@@ -142,7 +142,13 @@ const tmdbSeriesMap = {
   'spoken_languages': 'spokenLanguages',
   'status': 'status',
   'tagline': 'tagline',
-  'type': 'seriesType', // because it clashes with our previous use of type
+  'type': [
+    { key: 'seriesType' }, // because it clashes with our previous use of type
+    {
+      key: 'type',
+      transform: (): string => 'series',
+    },
+  ],
 };
 
 const tmdbMovieMap = {

@@ -198,21 +198,25 @@ export const getFromOMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
   return metadata;
 };
 
-/**
- * @param seriesTitle the series title
- * @param [year] the year the series started
- * @returns the TMDB ID of the first TV series from
- *          the list of results from TMDB by title
- */
-const getSeriesTMDBIDFromTMDBAPI = async(seriesTitle: string, year?: number): Promise<number> => {
-  const tmdbQuery: SearchTvRequest = { query: seriesTitle };
-  if (year) {
+const getSeriesTMDBIDFromTMDBAPI = async(imdbID?: string, seriesTitle?: string, year?: number): Promise<number> => {
+  if (imdbID) {
     // eslint-disable-next-line @typescript-eslint/camelcase
-    tmdbQuery.first_air_date_year = year;
-  }
-  const searchResults = await moviedb.searchTv(tmdbQuery);
-  if (searchResults?.results && searchResults.results[0] && searchResults.results[0].id) {
-    return searchResults.results[0].id;
+    const findResult = await moviedb.find({ id: imdbID, external_source: ExternalId.ImdbId });
+    // Using any here to make up for missing interface, should submit fix
+    if (findResult?.tv_results && findResult?.tv_results[0]) {
+      const tvEpisodeResults = findResult.tv_results[0] as any;
+      return tvEpisodeResults?.id;
+    }
+  } else {
+    const tmdbQuery: SearchTvRequest = { query: seriesTitle };
+    if (year) {
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      tmdbQuery.first_air_date_year = year;
+    }
+    const searchResults = await moviedb.searchTv(tmdbQuery);
+    if (searchResults?.results && searchResults.results[0] && searchResults.results[0].id) {
+      return searchResults.results[0].id;
+    }
   }
 
   return null;
@@ -233,7 +237,7 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
   }
 
   if (imdbID) {
-    // Shouldn't really happen since we got this IMDb ID from their API
+    // We shouldn't have failures since we got this IMDb ID from their API
     if (await FailedLookups.findOne({ imdbID }, '_id', { lean: true }).exec()) {
       await FailedLookups.updateOne({ imdbID }, { $inc: { count: 1 } }).exec();
       return null;
@@ -244,13 +248,35 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
       return existingSeries;
     }
 
-    const imdbData = await getFromOMDbAPIV2(imdbID);
-    if (!imdbData) {
+    // Start TMDB lookups
+    let tmdbData = {};
+    const seriesID = await getSeriesTMDBIDFromTMDBAPI(imdbID);
+
+    if (seriesID) {
+      const seriesRequest = {
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        append_to_response: 'images,external_ids,credits',
+        id: seriesID,
+      };
+
+      try {
+        const tmdbResponse = await moviedb.tvInfo(seriesRequest);
+        tmdbData = mapper.parseTMDBAPISeriesResponse(tmdbResponse);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+    // End TMDB lookups
+
+    const omdbData = await getFromOMDbAPIV2(imdbID);
+
+    const combinedResponse = _.merge(tmdbData, omdbData);
+    if (!combinedResponse || _.isEmpty(combinedResponse)) {
       await FailedLookups.updateOne({ imdbID }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
-      return null;
+      throw new MediaNotFoundError();
     }
 
-    return SeriesMetadata.create(imdbData);
+    return SeriesMetadata.create(combinedResponse);
   } else {
     const sortBy = {} as SortByFilter;
     const escapedTitle = new RegExp(`^${escapeStringRegexp(title)}$`);
@@ -282,7 +308,7 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
 
     // Start TMDB lookups
     let tmdbData = {};
-    const seriesTMDBID = await getSeriesTMDBIDFromTMDBAPI(title, Number(year));
+    const seriesTMDBID = await getSeriesTMDBIDFromTMDBAPI(null, title, Number(year));
 
     if (seriesTMDBID) {
       const seriesRequest = {
@@ -351,19 +377,7 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, imdbID?: string
 
   let metadata;
   if (isExpectingTVEpisode) {
-    let seriesTMDBID: string;
-    if (imdbID) {
-      // eslint-disable-next-line @typescript-eslint/camelcase
-      const findResult = await moviedb.find({ id: imdbID, external_source: ExternalId.ImdbId });
-      // Using any here to make up for missing interface, should submit fix
-      const tvEpisodeResults = findResult?.tv_episode_results || [];
-      const firstTVEpisodeResult = _.first(tvEpisodeResults) as any;
-      seriesTMDBID = firstTVEpisodeResult?.show_id;
-    } else {
-      const seriesMetadata = await getSeriesMetadata(movieOrSeriesTitle, year.toString());
-      seriesTMDBID = seriesMetadata?.tmdbID;
-    }
-
+    const seriesTMDBID = await getSeriesTMDBIDFromTMDBAPI(imdbID, movieOrSeriesTitle, year);
     if (!seriesTMDBID) {
       return null;
     }

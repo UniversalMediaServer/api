@@ -26,7 +26,7 @@ router.get('/imdbid', async(ctx) => {
 
 router.get('/seriestitle', async(ctx) => {
   ctx.set('X-Api-Subversion', mediaApiSubversions['/seriestitle']);
-  await MediaController.getSeriesByTitle(ctx);
+  await MediaController.getSeries(ctx);
 });
 
 router.get('/video', async(ctx) => {
