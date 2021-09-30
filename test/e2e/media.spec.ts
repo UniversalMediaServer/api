@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import MediaMetadataModel, {  MediaMetadataInterfaceDocument } from '../../src/models/MediaMetadata';
 import SeasonMetadataModel from '../../src/models/SeasonMetadata';
-import SeriesMetadataModel from '../../src/models/SeriesMetadata';
+import SeriesMetadataModel, { SeriesMetadataInterface } from '../../src/models/SeriesMetadata';
 import FailedLookupsModel from '../../src/models/FailedLookups';
 import { moviedb } from '../../src/services/tmdb-api';
 
@@ -15,6 +15,12 @@ let mongod;
 interface UmsApiGotResponse  {
   statusCode: number;
   body: MediaMetadataInterfaceDocument;
+  headers?: object;
+}
+
+interface UmsApiSeriesGotResponse  {
+  statusCode: number;
+  body: SeriesMetadataInterface;
   headers?: object;
 }
 
@@ -48,12 +54,12 @@ describe('Media Metadata endpoints', () => {
   describe('get series', () => {
     it('should return series metadata by title', async() => {
       // this request populates the series metadata
-      let response = await got(`${appUrl}/api/media/seriestitle?title=Homeland S02E05`, { responseType: 'json' }) as UmsApiGotResponse;
+      let response = await got(`${appUrl}/api/media/seriestitle?title=Homeland S02E05`, { responseType: 'json' }) as UmsApiSeriesGotResponse;
       const newDocumentId = response.body._id;
-      const doc = await SeriesMetadataModel.findOne();
-      expect(doc).toHaveProperty('totalSeasons', 8);
-      expect(doc).toHaveProperty('title', 'Homeland');
-      expect(doc).toHaveProperty('startYear', '2011');
+      expect(response.body.totalSeasons).toBe(8);
+      expect(response.body.title).toBe('Homeland');
+      expect(response.body.startYear).toBe('2011');
+      expect(response.body.poster).toContain('https://');
 
       response = await got(`${appUrl}/api/media/seriestitle?title=HoMelAnD   `, { responseType: 'json' });
       expect(response.body._id).toEqual(newDocumentId);

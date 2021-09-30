@@ -15,8 +15,8 @@ import omdbAPI from './omdb-api';
 import { mapper } from '../utils/data-mapper';
 import { EpisodeRequest, ExternalId, SearchMovieRequest, SearchTvRequest } from 'moviedb-promise/dist/request-types';
 import { moviedb } from './tmdb-api';
-import TMDBConfiguration from '../models/TMDBConfiguration';
 import { LeanDocument } from 'mongoose';
+import { getTMDBImageBaseURL } from '../controllers/info';
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
 
@@ -234,8 +234,8 @@ const getSeriesTMDBIDFromTMDBAPI = async(imdbID?: string, seriesTitle?: string, 
  * @param [seasonNumber] the season number if this is an episode
  * @param [episodeNumber] the episode number if this is an episode
  */
-export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, imdbID?: string, year?: number, seasonNumber?: number, episodeNumber?: number): Promise<MediaMetadataInterface | null> => {
-  if (!movieOrSeriesTitle && !imdbID) {
+export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, movieOrEpisodeIMDbID?: string, year?: number, seasonNumber?: number, episodeNumber?: number): Promise<MediaMetadataInterface | null> => {
+  if (!movieOrSeriesTitle && !movieOrEpisodeIMDbID) {
     throw new Error('Either movieOrSeriesTitle or IMDb ID must be specified');
   }
   // If the client specified an episode number, this is an episode
@@ -243,7 +243,20 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, imdbID?: string
 
   let metadata;
   if (isExpectingTVEpisode) {
-    const seriesTMDBID = await getSeriesTMDBIDFromTMDBAPI(imdbID, movieOrSeriesTitle, year);
+    const episodeIMDbID = movieOrEpisodeIMDbID;
+    let seriesTMDBID: string | number;
+    if (episodeIMDbID) {
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      const findResult = await moviedb.find({ id: episodeIMDbID, external_source: ExternalId.ImdbId });
+      // Using any here to make up for missing interface, should submit fix
+      if (findResult?.tv_episode_results && findResult?.tv_episode_results[0]) {
+        const tvEpisodeResults = findResult.tv_episode_results[0] as any;
+        seriesTMDBID = tvEpisodeResults?.show_id;
+      }
+    } else {
+      seriesTMDBID = await getSeriesTMDBIDFromTMDBAPI(episodeIMDbID, movieOrSeriesTitle, year);
+    }
+
     if (!seriesTMDBID) {
       return null;
     }
@@ -261,7 +274,8 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, imdbID?: string
     const tmdbData = await moviedb.episodeInfo(episodeRequest);
     metadata = mapper.parseTMDBAPIEpisodeResponse(tmdbData);
   } else {
-    let idToSearch: string | number = imdbID;
+    const movieIMDbID = movieOrEpisodeIMDbID;
+    let idToSearch: string | number = movieIMDbID;
     if (!idToSearch) {
       const tmdbQuery: SearchMovieRequest = { query: movieOrSeriesTitle };
       if (year) {
@@ -438,8 +452,6 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
  * that separately.
  */
 export const addPosterFromImages = async(metadata: any): Promise<SeriesMetadataInterface | LeanDocument<MediaMetadataInterfaceDocument>> => {
-  delete metadata.poster;
-
   if (!metadata) {
     throw new Error('Metadata is required');
   }
@@ -475,9 +487,8 @@ export const addPosterFromImages = async(metadata: any): Promise<SeriesMetadataI
   }
 
   if (posterRelativePath) {
-    const configuration = await TMDBConfiguration.findOne().lean()
-      .exec();
-    metadata.poster = configuration.imageBaseURL + 'w500' + posterRelativePath;
+    const imageBaseURL = await getTMDBImageBaseURL();
+    metadata.poster = imageBaseURL + 'w500' + posterRelativePath;
   }
 
   return metadata;
