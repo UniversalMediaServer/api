@@ -24,7 +24,7 @@ describe('Media Metadata Model', () => {
     mongod = await MongoMemoryServer.create();
     const mongoUrl = mongod.getUri();
     process.env.MONGO_URL = mongoUrl;
-    await mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true });
+    await mongoose.connect(mongoUrl);
   });
 
   beforeEach(async() => {
