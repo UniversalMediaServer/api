@@ -223,69 +223,6 @@ const getSeriesTMDBIDFromTMDBAPI = async(imdbID?: string, seriesTitle?: string, 
 };
 
 /**
- * Attempts a query to the TMDB API and standardizes the response
- * before returning.
- *
- * @param [movieOrSeriesTitle] the title of the movie or series
- * @param [imdbID] the IMDb ID of the movie or episode
- * @param [year] the year of first release
- * @param [seasonNumber] the season number if this is an episode
- * @param [episodeNumber] the episode number if this is an episode
- */
-export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, imdbID?: string, year?: number, seasonNumber?: number, episodeNumber?: number): Promise<MediaMetadataInterface | null> => {
-  if (!movieOrSeriesTitle && !imdbID) {
-    throw new Error('Either movieOrSeriesTitle or IMDb ID must be specified');
-  }
-  // If the client specified an episode number, this is an episode
-  const isExpectingTVEpisode = Boolean(episodeNumber);
-
-  let metadata;
-  if (isExpectingTVEpisode) {
-    const seriesTMDBID = await getSeriesTMDBIDFromTMDBAPI(imdbID, movieOrSeriesTitle, year);
-    if (!seriesTMDBID) {
-      return null;
-    }
-
-    const episodeRequest: EpisodeRequest = {
-      // eslint-disable-next-line @typescript-eslint/camelcase
-      append_to_response: 'images,external_ids,credits',
-      // eslint-disable-next-line @typescript-eslint/camelcase
-      episode_number: episodeNumber,
-      id: seriesTMDBID,
-      // eslint-disable-next-line @typescript-eslint/camelcase
-      season_number: seasonNumber,
-    };
-
-    const tmdbData = await moviedb.episodeInfo(episodeRequest);
-    metadata = mapper.parseTMDBAPIEpisodeResponse(tmdbData);
-  } else {
-    let idToSearch: string | number = imdbID;
-    if (!idToSearch) {
-      const tmdbQuery: SearchMovieRequest = { query: movieOrSeriesTitle };
-      if (year) {
-        tmdbQuery.year = year;
-      }
-      const searchResults = await moviedb.searchMovie(tmdbQuery);
-      if (searchResults?.results && searchResults.results[0] && searchResults.results[0].id) {
-        idToSearch = searchResults.results[0].id;
-      }
-    }
-
-    if (!idToSearch) {
-      return null;
-    }
-
-    const tmdbData = await moviedb.movieInfo({
-      // eslint-disable-next-line @typescript-eslint/camelcase
-      append_to_response: 'images,external_ids,credits',
-      id: idToSearch,
-    });
-    metadata = mapper.parseTMDBAPIMovieResponse(tmdbData);
-  }
-  return metadata;
-};
-
-/**
  * Gets series metadata. Performs API lookups if we
  * don't already have it.
  *
@@ -371,13 +308,13 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
 
     // Start TMDB lookups
     let tmdbData = {};
-    const seriesID = await getSeriesTMDBIDFromTMDBAPI(null, title, Number(year));
+    const seriesTMDBID = await getSeriesTMDBIDFromTMDBAPI(null, title, Number(year));
 
-    if (seriesID) {
+    if (seriesTMDBID) {
       const seriesRequest = {
         // eslint-disable-next-line @typescript-eslint/camelcase
         append_to_response: 'images,external_ids,credits',
-        id: seriesID,
+        id: seriesTMDBID,
       };
 
       try {
@@ -419,6 +356,72 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
 
     return await SeriesMetadata.create(combinedResponse);
   }
+};
+
+/**
+ * Attempts a query to the TMDB API and standardizes the response
+ * before returning.
+ *
+ * @param [movieOrSeriesTitle] the title of the movie or series
+ * @param [movieOrEpisodeIMDbID] the IMDb ID of the movie or episode
+ * @param [year] the year of first release
+ * @param [seasonNumber] the season number if this is an episode
+ * @param [episodeNumber] the episode number if this is an episode
+ */
+export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, movieOrEpisodeIMDbID?: string, year?: number, seasonNumber?: number, episodeNumber?: number): Promise<MediaMetadataInterface | null> => {
+  if (!movieOrSeriesTitle && !movieOrEpisodeIMDbID) {
+    throw new Error('Either movieOrSeriesTitle or IMDb ID must be specified');
+  }
+  // If the client specified an episode number, this is an episode
+  const isExpectingTVEpisode = Boolean(episodeNumber);
+  const yearString = year ? year.toString() : null;
+
+  let metadata;
+  if (isExpectingTVEpisode) {
+    const seriesMetadata = await getSeriesMetadata(null, movieOrSeriesTitle, yearString);
+    const seriesTMDBID = seriesMetadata?.tmdbID;
+    if (!seriesTMDBID) {
+      return null;
+    }
+
+    const episodeRequest: EpisodeRequest = {
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      append_to_response: 'images,external_ids,credits',
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      episode_number: episodeNumber,
+      id: seriesTMDBID,
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      season_number: seasonNumber,
+    };
+
+    const tmdbData = await moviedb.episodeInfo(episodeRequest);
+    metadata = mapper.parseTMDBAPIEpisodeResponse(tmdbData);
+  } else {
+    let idToSearch: string | number = movieOrEpisodeIMDbID;
+    if (!idToSearch) {
+      const tmdbQuery: SearchMovieRequest = { query: movieOrSeriesTitle };
+      if (year) {
+        tmdbQuery.year = year;
+      }
+      const searchResults = await moviedb.searchMovie(tmdbQuery);
+      if (searchResults?.results && searchResults.results[0] && searchResults.results[0].id) {
+        idToSearch = searchResults.results[0].id;
+      }
+    }
+
+    if (!idToSearch) {
+      return null;
+    }
+
+    const tmdbData = await moviedb.movieInfo({
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      append_to_response: 'images,external_ids,credits',
+      id: idToSearch,
+    });
+    metadata = mapper.parseTMDBAPIMovieResponse(tmdbData);
+  }
+
+  return metadata;
 };
 
 /**

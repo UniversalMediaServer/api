@@ -1,5 +1,4 @@
 import MediaMetadataModel, {  MediaMetadataInterfaceDocument } from '../../src/models/MediaMetadata';
-import SeriesMetadataModel from '../../src/models/SeriesMetadata';
 import FailedLookupsModel from '../../src/models/FailedLookups';
 
 import * as mongoose from 'mongoose';
@@ -70,7 +69,6 @@ describe('Media Metadata endpoints', () => {
   beforeEach(async() => {
     await FailedLookupsModel.deleteMany({});
     await MediaMetadataModel.deleteMany({});
-    await SeriesMetadataModel.deleteMany({});
   });
 
   afterAll(async() => {
@@ -322,13 +320,6 @@ describe('Media Metadata endpoints', () => {
       expect(episode).toHaveProperty('type', 'episode');
       expect(episode).toHaveProperty('year', '2012');
       expect(episode.searchMatches).toBeUndefined();
-
-      const series = await SeriesMetadataModel.findOne();
-      expect(series).toHaveProperty('imdbID', 'tt1796960');
-      expect(series).toHaveProperty('totalSeasons', 8);
-      expect(series).toHaveProperty('title', 'Homeland');
-      expect(series).toHaveProperty('plot');
-      expect(series).toHaveProperty('startYear', '2011');
     });
 
     it('should search by movie title and year and store it', async() => {
@@ -385,13 +376,6 @@ describe('Media Metadata endpoints', () => {
       expect(episode).toHaveProperty('type', 'episode');
       expect(episode).toHaveProperty('year', '2012');
       expect(episode.searchMatches).toBeUndefined();
-
-      const series = await SeriesMetadataModel.findOne();
-      expect(series).toHaveProperty('imdbID', 'tt1796960');
-      expect(series).toHaveProperty('totalSeasons', 8);
-      expect(series).toHaveProperty('title', 'Homeland');
-      expect(series).toHaveProperty('plot');
-      expect(series).toHaveProperty('startYear', '2011');
     });
 
     it('should search by movie title and year and store it', async() => {

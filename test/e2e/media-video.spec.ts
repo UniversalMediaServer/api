@@ -154,7 +154,7 @@ describe('get by all', () => {
       let response = await got(`${appUrl}/api/media/video?imdbID=${EPISODE_LOST.imdbId}`, { responseType: 'json' }) as UmsApiGotResponse;
       expect(response.body.title).toEqual('Confirmed Dead');
       expect(response.body.type).toEqual('episode');
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
       spy.mockReset();
 
       // subsequent calls should return MongoDB result rather than calling external apis
@@ -170,7 +170,7 @@ describe('get by all', () => {
       expect(response.body.title).toEqual('Confirmed Dead');
       expect(response.body.type).toEqual('episode');
       expect(response.body.seriesIMDbID).toEqual('tt0411008');
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
       spy.mockReset();
 
       // subsequent calls should return MongoDB result rather than calling external apis
@@ -187,8 +187,7 @@ describe('get by all', () => {
       expect(response.body.title).toEqual('Behind the Eyes');
       expect(response.body.type).toEqual('episode');
       expect(response.body.seriesIMDbID).toEqual('tt0455275');
-      // once for episode, once for series
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
       spy.mockReset();
 
       // subsequent calls should return MongoDB result rather than calling external apis
@@ -223,8 +222,7 @@ describe('get by all', () => {
       expect(response.body.title).toEqual('Bastogne');
       expect(response.body.type).toEqual('episode');
       expect(response.body.seriesIMDbID).toEqual('tt0185906');
-      // once for episode, once for series
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
       expect(openSubsSpy).toHaveBeenCalledTimes(1);
       spy.mockReset();
       openSubsSpy.mockReset();
