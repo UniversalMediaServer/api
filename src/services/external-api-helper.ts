@@ -363,13 +363,13 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
  * before returning.
  *
  * @param [movieOrSeriesTitle] the title of the movie or series
- * @param [imdbID] the IMDb ID of the movie or episode
+ * @param [movieOrEpisodeIMDbID] the IMDb ID of the movie or episode
  * @param [year] the year of first release
  * @param [seasonNumber] the season number if this is an episode
  * @param [episodeNumber] the episode number if this is an episode
  */
-export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, imdbID?: string, year?: number, seasonNumber?: number, episodeNumber?: number): Promise<MediaMetadataInterface | null> => {
-  if (!movieOrSeriesTitle && !imdbID) {
+export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, movieOrEpisodeIMDbID?: string, year?: number, seasonNumber?: number, episodeNumber?: number): Promise<MediaMetadataInterface | null> => {
+  if (!movieOrSeriesTitle && !movieOrEpisodeIMDbID) {
     throw new Error('Either movieOrSeriesTitle or IMDb ID must be specified');
   }
   // If the client specified an episode number, this is an episode
@@ -378,7 +378,7 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, imdbID?: string
 
   let metadata;
   if (isExpectingTVEpisode) {
-    const seriesMetadata = await getSeriesMetadata(imdbID, movieOrSeriesTitle, yearString);
+    const seriesMetadata = await getSeriesMetadata(null, movieOrSeriesTitle, yearString);
     const seriesTMDBID = seriesMetadata?.tmdbID;
     if (!seriesTMDBID) {
       return null;
@@ -397,7 +397,7 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, imdbID?: string
     const tmdbData = await moviedb.episodeInfo(episodeRequest);
     metadata = mapper.parseTMDBAPIEpisodeResponse(tmdbData);
   } else {
-    let idToSearch: string | number = imdbID;
+    let idToSearch: string | number = movieOrEpisodeIMDbID;
     if (!idToSearch) {
       const tmdbQuery: SearchMovieRequest = { query: movieOrSeriesTitle };
       if (year) {
@@ -420,6 +420,7 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, imdbID?: string
     });
     metadata = mapper.parseTMDBAPIMovieResponse(tmdbData);
   }
+
   return metadata;
 };
 
