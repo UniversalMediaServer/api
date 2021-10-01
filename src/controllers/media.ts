@@ -153,10 +153,6 @@ export const getBySanitizedTitle = async(ctx: ParameterizedContext): Promise<Med
     return ctx.body = await addSearchMatchByIMDbID(imdbData.imdbID, title);
   }
 
-  if (imdbData.type === 'episode') {
-    await externalAPIHelper.getSeriesMetadata(imdbData.seriesIMDbID);
-  }
-
   try {
     imdbData.searchMatches = [title];
     /**
@@ -254,10 +250,6 @@ export const getBySanitizedTitleV2 = async(ctx: ParameterizedContext): Promise<M
     ).exec();
     // @ts-ignore
     return ctx.body = updatedResult;
-  }
-
-  if (imdbData.type === 'episode') {
-    await externalAPIHelper.getSeriesMetadata(imdbData.seriesIMDbID);
   }
 
   try {
@@ -540,10 +532,6 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
         return ctx.body = await addSearchMatchByIMDbID(imdbIdToSearch, title);
       }
     }
-  }
-
-  if (omdbData?.type === 'episode') {
-    await externalAPIHelper.getSeriesMetadata(omdbData.seriesIMDbID);
   }
   // End OMDb lookups
 
