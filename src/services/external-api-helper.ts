@@ -9,13 +9,12 @@ import osAPI from '../services/opensubtitles';
 
 import { IMDbIDNotFoundError, MediaNotFoundError, ValidationError } from '../helpers/customErrors';
 import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
-import { MediaMetadataInterface, MediaMetadataInterfaceDocument } from '../models/MediaMetadata';
+import { MediaMetadataInterface } from '../models/MediaMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import omdbAPI from './omdb-api';
 import { mapper } from '../utils/data-mapper';
 import { EpisodeRequest, ExternalId, SearchMovieRequest, SearchTvRequest } from 'moviedb-promise/dist/request-types';
 import { moviedb } from './tmdb-api';
-import { LeanDocument } from 'mongoose';
 import { getTMDBImageBaseURL } from '../controllers/info';
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
@@ -374,7 +373,7 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
  * imageBaseURL can change. The future client will request
  * that separately.
  */
-export const addPosterFromImages = async(metadata: any): Promise<SeriesMetadataInterface | LeanDocument<MediaMetadataInterfaceDocument>> => {
+export const addPosterFromImages = async(metadata: any): Promise<SeriesMetadataInterface | MediaMetadataInterface> => {
   if (!metadata) {
     throw new Error('Metadata is required');
   }
