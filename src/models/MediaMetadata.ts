@@ -25,10 +25,11 @@ export interface MediaMetadataInterface {
   originalTitle?: string;
   osdbHash?: string;
   plot?: string;
+  poster?: string;
+  posterRelativePath?: string;
   production?: string;
   productionCompanies?: Array<ProductionCompany>;
   productionCountries?: Array<ProductionCountry>;
-  poster?: string;
   rated?: string; // e.g 'PG-13'
   rating?: number; // e.g. 6.7
   ratings?: Array<OmdbRating>; // e.g. {"Source": "Metacritic", "Value": "67/100"}
@@ -96,8 +97,9 @@ const MediaMetadataSchema: Schema = new Schema({
   productionCompanies: { type: Array },
   productionCountries: { type: Array },
   plot: { type: String },
-  production: { type: String },
   poster: { type: String },
+  posterRelativePath: { type: String },
+  production: { type: String },
   rated: { type: String },
   rating: { type: Number },
   ratings: { type: Array, required: true },

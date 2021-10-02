@@ -76,6 +76,7 @@ describe('get by all', () => {
       expect(response.headers['x-api-subversion']).toBeTruthy();
       expect(response.body.title).toEqual('Interstellar');
       expect(response.body.type).toEqual('movie');
+      expect(response.body.poster).toContain('https://');
       expect(response.body.searchMatches).toBeUndefined();
       expect(spy).toHaveBeenCalledTimes(1);
       spy.mockReset();
@@ -151,14 +152,15 @@ describe('get by all', () => {
   describe('Episodes', () => {
     it('should return an episode by imdbid, from source APIs then store', async() => {
       const spy = jest.spyOn(apihelper, 'getFromOMDbAPIV2');
-      let response = await got(`${appUrl}/api/media/video?imdbID=${EPISODE_LOST.imdbId}`, { responseType: 'json' }) as UmsApiGotResponse;
+      let response = await got(`${appUrl}/api/media/video?imdbID=${EPISODE_LOST.imdbId}&season=${EPISODE_LOST.season}&episode=${EPISODE_LOST.episode}`, { responseType: 'json' }) as UmsApiGotResponse;
       expect(response.body.title).toEqual('Confirmed Dead');
       expect(response.body.type).toEqual('episode');
+      expect(response.body.poster).toContain('https://');
       expect(spy).toHaveBeenCalledTimes(1);
       spy.mockReset();
 
       // subsequent calls should return MongoDB result rather than calling external apis
-      response = await got(`${appUrl}/api/media/video?imdbID=${EPISODE_LOST.imdbId}`, { responseType: 'json' });
+      response = await got(`${appUrl}/api/media/video?imdbID=${EPISODE_LOST.imdbId}&season=${EPISODE_LOST.season}&episode=${EPISODE_LOST.episode}`, { responseType: 'json' });
       expect(spy).toHaveBeenCalledTimes(0);
       expect(response.body.title).toEqual('Confirmed Dead');
       expect(response.body.type).toEqual('episode');

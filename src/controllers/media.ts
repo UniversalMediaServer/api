@@ -1,10 +1,11 @@
 import { SearchRequest } from '@universalmediaserver/node-imdb-api';
 import { ParameterizedContext } from 'koa';
 import * as _ from 'lodash';
+import { LeanDocument } from 'mongoose';
 
 import { ExternalAPIError, MediaNotFoundError, ValidationError } from '../helpers/customErrors';
 import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
-import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
+import MediaMetadata, { MediaMetadataInterface, MediaMetadataInterfaceDocument } from '../models/MediaMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import osAPI from '../services/opensubtitles';
 import * as externalAPIHelper from '../services/external-api-helper';
@@ -275,14 +276,15 @@ export const getBySanitizedTitleV2 = async(ctx: ParameterizedContext): Promise<M
    */
 };
 
-export const getSeries = async(ctx: ParameterizedContext): Promise<SeriesMetadataInterface> => {
+export const getSeries = async(ctx: ParameterizedContext): Promise<SeriesMetadataInterface | LeanDocument<MediaMetadataInterfaceDocument>> => {
   const { imdbID, title, year }: UmsQueryParams = ctx.query;
   if (!title && imdbID) {
     throw new ValidationError('Either IMDb ID or title required');
   }
 
   const dbMeta = await externalAPIHelper.getSeriesMetadata(imdbID, title, year);
-  return ctx.body = dbMeta;
+  const dbMetaWithPosters = await externalAPIHelper.addPosterFromImages(dbMeta);
+  return ctx.body = dbMetaWithPosters;
 };
 
 /*
@@ -548,7 +550,9 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
       combinedResponse.osdbHash = osdbHash;
     }
     const dbMeta = await MediaMetadata.create(combinedResponse);
-    return ctx.body = dbMeta.toObject({ useProjection: true });
+    let leanMeta = dbMeta.toObject({ useProjection: true });
+    leanMeta = await externalAPIHelper.addPosterFromImages(leanMeta);
+    return ctx.body = leanMeta;
   } catch (e) {
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();

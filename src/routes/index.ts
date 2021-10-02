@@ -1,5 +1,5 @@
 import * as Router from 'koa-router';
-import * as InfoController from '../controllers/info';
+import { getConfig } from '../controllers/info';
 import { mediaApiSubversions } from '../helpers/subversioning';
 
 const router = new Router();
@@ -13,7 +13,7 @@ router.get('/api/subversions', (ctx) => {
 
 router.get('/api/configuration', async(ctx) => {
   ctx.set('X-Api-Subversion', mediaApiSubversions['/configuration']);
-  await InfoController.getTMDBImageBaseURL(ctx);
+  await getConfig(ctx);
 });
 
 export default router;
