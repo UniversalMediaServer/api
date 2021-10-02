@@ -550,7 +550,9 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
       combinedResponse.osdbHash = osdbHash;
     }
     const dbMeta = await MediaMetadata.create(combinedResponse);
-    let leanMeta = dbMeta.toObject({ useProjection: true });
+
+    // TODO: Investigate why we need this "as" syntax
+    let leanMeta = dbMeta.toObject({ useProjection: true }) as MediaMetadataInterface;
     leanMeta = await externalAPIHelper.addPosterFromImages(leanMeta);
     return ctx.body = leanMeta;
   } catch (e) {

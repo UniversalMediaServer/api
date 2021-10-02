@@ -32,7 +32,7 @@ describe('Media Metadata endpoints', () => {
     mongod = await MongoMemoryServer.create();
     const mongoUrl = mongod.getUri();
     process.env.MONGO_URL = mongoUrl;
-    await mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true });
+    await mongoose.connect(mongoUrl);
     require('../mocks');
     require('../opensubtitles-mocks');
     server = require('../../src/app').server;
