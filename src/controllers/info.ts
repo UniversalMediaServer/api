@@ -12,7 +12,7 @@ export const getTMDBImageBaseURL = async(): Promise<string> => {
 
   const configurationResponse = await moviedb.configuration();
   const imageBaseURL = configurationResponse.images.secure_base_url;
-  await TMDBConfiguration.create({ imageBaseURL: imageBaseURL + 'original' });
+  await TMDBConfiguration.create({ imageBaseURL: imageBaseURL });
 
   return imageBaseURL;
 };
