@@ -473,6 +473,14 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
   }
   // End OpenSubtitles lookups
 
+  const failedLookupQuery = { episode, imdbID, osdbHash, season, title, year };
+
+  if (!title && !imdbIdToSearch) {
+    // The APIs below require either a title or IMDb ID, so return if we don't have one
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+    throw new MediaNotFoundError();
+  }
+
   // Start TMDB lookups
   let tmdbData: MediaMetadataInterface;
   try {
@@ -507,8 +515,6 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
   if (year) {
     omdbSearchRequest.year = yearNumber;
   }
-
-  const failedLookupQuery = { episode, imdbID, osdbHash, season, title, year };
 
   let omdbData: MediaMetadataInterface;
   try {
