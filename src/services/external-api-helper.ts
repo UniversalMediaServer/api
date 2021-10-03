@@ -158,7 +158,9 @@ export const getFromOMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
       try {
         searchResults = await omdbAPI.search(searchRequest);
       } catch (e) {
-        console.error(e);
+        if (!e.message || !e.message.startsWith('Movie not found!')) {
+          console.error(e);
+        }
         return null;
       }
 
@@ -428,7 +430,7 @@ export const addPosterFromImages = async(metadata: any): Promise<SeriesMetadataI
  */
 export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, movieOrEpisodeIMDbID?: string, year?: number, seasonNumber?: number, episodeNumber?: number): Promise<MediaMetadataInterface | null> => {
   if (!movieOrSeriesTitle && !movieOrEpisodeIMDbID) {
-    throw new Error('Either movieOrSeriesTitle or IMDb ID must be specified');
+    throw new Error('Either movieOrSeriesTitle or movieOrEpisodeIMDbID must be specified');
   }
   // If the client specified an episode number, this is an episode
   const isExpectingTVEpisode = Boolean(episodeNumber);
