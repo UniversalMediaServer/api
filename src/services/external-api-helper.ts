@@ -158,7 +158,9 @@ export const getFromOMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
       try {
         searchResults = await omdbAPI.search(searchRequest);
       } catch (e) {
-        console.error(e);
+        if (!e.message || !e.message.startsWith('Movie not found!')) {
+          console.error(e);
+        }
         return null;
       }
 
