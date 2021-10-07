@@ -5,7 +5,7 @@ const openSubtitlesData = {
   subcount: '7',
   added: false,
   metadata: {
-    imdbid: 'tt0462538',
+    imdbid: 't0462538', // intentionally missing a "t"
     title: 'The Simpsons Movie',
     year: '2007',
     cast: {
@@ -415,7 +415,10 @@ describe('Data mapper', () => {
       // @ts-ignore
       expect(parsed.metadata).toBeUndefined();
       expect(parsed.goofs).toEqual(openSubtitlesData.metadata.goofs);
-      expect(parsed.imdbID).toEqual(openSubtitlesData.metadata.imdbid);
+
+      // Verify we have added a "t" to make the IMDb ID valid
+      expect(parsed.imdbID).toEqual('t' + openSubtitlesData.metadata.imdbid);
+
       expect(parsed.osdbHash).toEqual(openSubtitlesData.moviehash);
       expect(parsed.tagline).toEqual(openSubtitlesData.metadata.tagline);
       expect(parsed.title).toEqual(openSubtitlesData.metadata.title);

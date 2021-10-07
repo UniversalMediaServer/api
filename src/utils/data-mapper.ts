@@ -369,15 +369,38 @@ const filterUnwantedValues = (obj): Partial<MediaMetadataInterface | SeriesMetad
   });
 };
 
+/*
+ * Ensures that IMDb IDs have "tt" at the start.
+ * This is because Open Subtitles sometimes returns
+ * IMDb IDs with only one "t". For example for
+ * Ultimate Tag we received t10329660 which is correct
+ * when you add the extra "t".
+ */
+const ensureIMDbIDFormat = (metadata): Partial<MediaMetadataInterface | SeriesMetadataInterface> => {
+  if (!metadata?.imdbID || metadata.imdbID.startsWith('tt')) {
+    return metadata;
+  }
+
+  if (metadata.imdbID.startsWith('t')) {
+    metadata.imdbID = 't' + metadata.imdbID;
+    return metadata;
+  }
+
+  metadata.imdbID = 'tt' + metadata.imdbID;
+  return metadata;
+};
+
 class UmsDataMapper {
   parseOpenSubtitlesResponse(openSubtitlesData): Partial<MediaMetadataInterface> {
-    const mappedData = objectMapper.merge(openSubtitlesData, openSubtitlesMovieMap);
-    return filterUnwantedValues(mappedData);
+    let mappedData = objectMapper.merge(openSubtitlesData, openSubtitlesMovieMap);
+    mappedData = filterUnwantedValues(mappedData);
+    return ensureIMDbIDFormat(mappedData);
   }
 
   parseOpenSubtitlesEpisodeResponse(openSubtitlesData): Partial<MediaMetadataInterface> {
-    const mappedData = objectMapper.merge(openSubtitlesData, openSubtitlesEpisodeMap);
-    return filterUnwantedValues(mappedData);
+    let mappedData = objectMapper.merge(openSubtitlesData, openSubtitlesEpisodeMap);
+    mappedData = filterUnwantedValues(mappedData);
+    return ensureIMDbIDFormat(mappedData);
   }
 
   parseTMDBAPIEpisodeResponse(tmdbData): Partial<MediaMetadataInterface> {
