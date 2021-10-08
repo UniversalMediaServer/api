@@ -371,22 +371,26 @@ const filterUnwantedValues = (obj): Partial<MediaMetadataInterface | SeriesMetad
 
 /*
  * Ensures that IMDb IDs have "tt" at the start.
- * This is because Open Subtitles sometimes returns
- * IMDb IDs with only one "t". For example for
- * Ultimate Tag we received t10329660 which is correct
- * when you add the extra "t".
+ * This is because APIs sometimes return IMDb IDs with
+ * only one or no "t".
+ * For example from OMDb for Ultimate Tag we received
+ * t10329660 which is correct when you add the extra "t".
  */
-const ensureIMDbIDFormat = (metadata): Partial<MediaMetadataInterface | SeriesMetadataInterface> => {
-  if (!metadata?.imdbID || metadata.imdbID.startsWith('tt')) {
+const ensureIMDbIDFormat = (metadata, propertyName = 'imdbID'): Partial<MediaMetadataInterface | SeriesMetadataInterface> => {
+  if (
+    !metadata ||
+    !metadata[propertyName] ||
+    metadata[propertyName].startsWith('tt')
+  ) {
     return metadata;
   }
 
-  if (metadata.imdbID.startsWith('t')) {
-    metadata.imdbID = 't' + metadata.imdbID;
+  if (metadata[propertyName].startsWith('t')) {
+    metadata[propertyName] = 't' + metadata[propertyName];
     return metadata;
   }
 
-  metadata.imdbID = 'tt' + metadata.imdbID;
+  metadata[propertyName] = 'tt' + metadata[propertyName];
   return metadata;
 };
 
@@ -424,18 +428,22 @@ class UmsDataMapper {
   }
 
   parseOMDbAPIEpisodeResponse(omdbData): Partial<MediaMetadataInterface> {
-    const mappedData = objectMapper.merge(omdbData, omdbEpisodeMap);
-    return filterUnwantedValues(mappedData);
+    let mappedData = objectMapper.merge(omdbData, omdbEpisodeMap);
+    mappedData = filterUnwantedValues(mappedData);
+    mappedData = ensureIMDbIDFormat(mappedData);
+    return ensureIMDbIDFormat(mappedData, 'seriesIMDbID');
   }
 
   parseOMDbAPISeriesResponse(omdbData): Partial<SeriesMetadataInterface> {
-    const mappedData = objectMapper.merge(omdbData, omdbSeriesMap);
-    return filterUnwantedValues(mappedData);
+    let mappedData = objectMapper.merge(omdbData, omdbSeriesMap);
+    mappedData = filterUnwantedValues(mappedData);
+    return ensureIMDbIDFormat(mappedData);
   }
 
   parseOMDbAPIMovieResponse(omdbData): Partial<MediaMetadataInterface> {
-    const mappedData = objectMapper.merge(omdbData, omdbMovieMap);
-    return filterUnwantedValues(mappedData);
+    let mappedData = objectMapper.merge(omdbData, omdbMovieMap);
+    mappedData = filterUnwantedValues(mappedData);
+    return ensureIMDbIDFormat(mappedData);
   }
 }
 
