@@ -67,7 +67,7 @@ const omdbApiEpisode = {
   rating: 8.6,
   votes: '2211',
   imdbid: 'tt2916312',
-  seriesid: 'tt1796960',
+  seriesid: 't1796960', // intentionally missing a "t"
   type: 'episode',
   response: 'True',
   series: true,
@@ -466,7 +466,7 @@ describe('Data mapper', () => {
         expect(parsed.released).toEqual('2013-11-23T11:00:00.000Z');
         expect(parsed.runtime).toEqual('57 min');
         expect(parsed.season).toEqual(omdbApiEpisode.season);
-        expect(parsed.seriesIMDbID).toEqual(omdbApiEpisode.seriesid);
+        expect(parsed.seriesIMDbID).toEqual('t' + omdbApiEpisode.seriesid);
         expect(parsed.title).toEqual(omdbApiEpisode.title);
         expect(parsed.type).toEqual('episode');
         expect(parsed.votes).toEqual('2211');
