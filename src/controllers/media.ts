@@ -282,9 +282,18 @@ export const getSeries = async(ctx: ParameterizedContext): Promise<SeriesMetadat
     throw new ValidationError('Either IMDb ID or title required');
   }
 
-  const dbMeta = await externalAPIHelper.getSeriesMetadata(imdbID, title, year);
-  const dbMetaWithPosters = await externalAPIHelper.addPosterFromImages(dbMeta);
-  return ctx.body = dbMetaWithPosters;
+  try {
+    const dbMeta = await externalAPIHelper.getSeriesMetadata(imdbID, title, year);
+    if (!dbMeta) {
+      throw new MediaNotFoundError();
+    }
+
+    const dbMetaWithPosters = await externalAPIHelper.addPosterFromImages(dbMeta);
+    return ctx.body = dbMetaWithPosters;
+  } catch (err) {
+    console.error(err);
+    throw new MediaNotFoundError();
+  }
 };
 
 /*
@@ -490,8 +499,9 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
     // Log the error but continue on to try the next API, OMDb
     if (e.message && e.message.includes('404') && e.response?.config?.url) {
       console.log('Received 404 response from ' + e.response.config.url);
+    } else {
+      console.log(e);
     }
-    console.log(e);
   }
 
   // if the client did not pass an imdbID, but we found one on TMDB, see if we have an existing record for the now-known media.

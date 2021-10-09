@@ -7,7 +7,7 @@ import * as natural from 'natural';
 import imdbAPI from '../services/omdb-api';
 import osAPI from '../services/opensubtitles';
 
-import { IMDbIDNotFoundError, MediaNotFoundError, ValidationError } from '../helpers/customErrors';
+import { IMDbIDNotFoundError, ValidationError } from '../helpers/customErrors';
 import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
 import { MediaMetadataInterface } from '../models/MediaMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
@@ -276,7 +276,7 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
     const combinedResponse = _.merge(tmdbData, omdbData);
     if (!combinedResponse || _.isEmpty(combinedResponse)) {
       await FailedLookups.updateOne({ imdbID }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
-      throw new MediaNotFoundError();
+      return null;
     }
 
     return SeriesMetadata.create(combinedResponse);
@@ -295,7 +295,7 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
     // Return early for previously-failed lookups
     if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
       await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
-      throw new MediaNotFoundError();
+      return null;
     }
 
     // Return any previous match
@@ -354,7 +354,7 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
     const combinedResponse = _.merge(tmdbData, omdbData);
     if (!combinedResponse || _.isEmpty(combinedResponse)) {
       await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
-      throw new MediaNotFoundError();
+      return null;
     }
 
     return await SeriesMetadata.create(combinedResponse);
