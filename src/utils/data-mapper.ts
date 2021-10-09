@@ -112,7 +112,7 @@ const tmdbSeriesMap = {
       key: 'year',
       transform: (releaseDate: string): string => {
         // Store the year part of the date
-        return releaseDate.substr(0, 4);
+        return releaseDate ? releaseDate.substr(0, 4) : null;
       },
     },
     { key: 'startYear' },
@@ -177,7 +177,7 @@ const tmdbMovieMap = {
       key: 'year',
       transform: (releaseDate: string): string => {
         // Store the year part of the date
-        return releaseDate.substr(0, 4);
+        return releaseDate ? releaseDate.substr(0, 4) : null;
       },
     },
   ],
