@@ -12,7 +12,7 @@ import * as externalAPIHelper from '../services/external-api-helper';
 import { mapper } from '../utils/data-mapper';
 import { OpenSubtitlesQuery } from '../services/external-api-helper';
 import SeasonMetadata, { SeasonMetadataInterface } from '../models/SeasonMetadata';
-import { moviedb } from '../services/tmdb-api';
+import { tmdb } from '../services/tmdb-api';
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
 
@@ -332,7 +332,7 @@ export const getSeason = async(ctx: ParameterizedContext): Promise<SeasonMetadat
     season_number: seasonNumber,
   };
 
-  const tmdbResponse = await moviedb.seasonInfo(seasonRequest);
+  const tmdbResponse = await tmdb.seasonInfo(seasonRequest);
   const tmdbData = mapper.parseTMDBAPISeasonResponse(tmdbResponse);
   // End TMDB lookups
 
