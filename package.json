@@ -144,7 +144,7 @@
     "@types/koa-helmet": "^6.0.4",
     "@types/koa-router": "^7.4.4",
     "@types/lodash": "^4.14.175",
-    "@types/natural": "^5.0.0",
+    "@types/natural": "^5.1.0",
     "@types/node": "^16.10.3",
     "@types/object-mapper": "^6.2.0",
     "@typescript-eslint/eslint-plugin": "^2.34.0",

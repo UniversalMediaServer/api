@@ -926,10 +926,10 @@
   resolved "https://registry.yarnpkg.com/@types/mime/-/mime-1.3.2.tgz#93e25bf9ee75fe0fd80b594bc4feb0e862111b5a"
   integrity sha512-YATxVxgRqNH6nHEIsvg6k2Boc1JHI9ZbH5iWFFv/MTkchz3b1ieGDa5T0a9RznNdI0KhVbdbWSN+KWWrQZRxTw==
 
-"@types/natural@^5.0.0":
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/@types/natural/-/natural-5.0.0.tgz#04262f3fed2aed359b8ff30d95fc6d8d25d577bb"
-  integrity sha512-jRixmOGUsvtbZsYCt7eSTb2R+IIzyfm+AqpTwVDVPzUcIPTNizmmb5exyF+hUnWAsZqCx0/MxEodgntVWyE/fQ==
+"@types/natural@^5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@types/natural/-/natural-5.1.0.tgz#bb003b328db83db5bf138829ecf79ce26e9997c0"
+  integrity sha512-b6HzwfHcxK9himwAnhyth8Nz3CcbbgM/qu8bkSVEE/WzMUNR2wo2RHaVK5XVVakwP8EVcI5MAysaOkG8iWhEag==
   dependencies:
     "@types/node" "*"
 
