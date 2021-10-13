@@ -3,18 +3,32 @@ import { ParameterizedContext } from 'koa';
 import TMDBConfiguration from '../models/TMDBConfiguration';
 import { tmdb } from '../services/tmdb-api';
 
+let configuration: { imageBaseURL: string };
+let configurationExpiryDate: Date;
+
 export const getTMDBImageBaseURL = async(): Promise<string> => {
-  const configuration = await TMDBConfiguration.findOne().lean()
-    .exec();
-  if (configuration) {
+  // 1) Return in-memory value unless it has expired
+  const today = new Date();
+  if (configuration && configurationExpiryDate && today < configurationExpiryDate) {
     return configuration.imageBaseURL;
   }
 
-  const configurationResponse = await tmdb.configuration();
-  const imageBaseURL = configurationResponse.images.secure_base_url;
-  await TMDBConfiguration.create({ imageBaseURL: imageBaseURL });
+  // 2) See if it has already been fetched to our database
+  configuration = await TMDBConfiguration.findOne().lean()
+    .exec();
 
-  return imageBaseURL;
+  // 3) Last try, get it from TMDB directly, and persist to memory and database
+  if (!configuration) {
+    const configurationResponse = await tmdb.configuration();
+    const imageBaseURL = configurationResponse.images.secure_base_url;
+    configuration = { imageBaseURL };
+    await TMDBConfiguration.create(configuration);
+  }
+
+  configurationExpiryDate = new Date();
+  configurationExpiryDate.setDate(today.getDate() + 3);
+
+  return configuration.imageBaseURL;
 };
 
 export const getConfig = async(ctx: ParameterizedContext): Promise<{ imageBaseURL: string }> => {
