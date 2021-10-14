@@ -3,7 +3,7 @@ import MediaMetadataModel, {  MediaMetadataInterfaceDocument } from '../../src/m
 import SeasonMetadataModel from '../../src/models/SeasonMetadata';
 import SeriesMetadataModel, { SeriesMetadataInterface } from '../../src/models/SeriesMetadata';
 import FailedLookupsModel from '../../src/models/FailedLookups';
-import { moviedb } from '../../src/services/tmdb-api';
+import { tmdb } from '../../src/services/tmdb-api';
 
 import * as mongoose from 'mongoose';
 import got from 'got';
@@ -66,7 +66,7 @@ describe('Media Metadata endpoints', () => {
     });
     it('should return series metadata by IMDb ID', async() => {
       // This is the method that finds the TMDB ID from the IMDb ID
-      const spy = jest.spyOn(moviedb, 'find');
+      const spy = jest.spyOn(tmdb, 'find');
 
       const response = await got(`${appUrl}/api/media/seriestitle?title=American Horror Story&imdbID=tt1844624`, { responseType: 'json' }) as UmsApiGotResponse;
       expect(response.body).toHaveProperty('credits');
