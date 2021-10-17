@@ -451,7 +451,7 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
   // the database does not have a record of this file, so begin search for metadata on external apis.
 
   // Start OpenSubtitles lookups
-  let openSubtitlesMetadata;
+  let openSubtitlesMetadata: Partial<MediaMetadataInterface>;
   if (osdbHash && filebytesize) {
     const osQuery: OpenSubtitlesQuery = { moviehash: osdbHash, moviebytesize: filebytesizeNumber, extend: true, remote: true };
     const validation = {
@@ -551,7 +551,7 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
   }
   // End OMDb lookups
 
-  const combinedResponse = _.merge(openSubtitlesMetadata, tmdbData, omdbData);
+  const combinedResponse = _.merge(openSubtitlesMetadata, omdbData, tmdbData);
   if (!combinedResponse || _.isEmpty(combinedResponse)) {
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
