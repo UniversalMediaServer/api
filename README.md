@@ -31,5 +31,8 @@ Runs the server
 #### `yarn test`
 Runs the test suite
 
+#### `yarn test:unit`
+Runs the unit tests
+
 #### `yarn run start:prod`
 Starts the API and cron job in production mode, which uses PM2 for process management. TypeScript files are compiled in memory on application start.

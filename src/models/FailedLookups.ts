@@ -76,5 +76,15 @@ const FailedLookupsSchema = new Schema({
   timestamps: true,
 });
 
+FailedLookupsSchema.index({ title: 1, year: 1 });
+FailedLookupsSchema.index({ title: 1, year: 1, imdbID: 1 });
+FailedLookupsSchema.index({ title: 1, year: 1, imdbID: 1, osdbHash: 1 });
+FailedLookupsSchema.index({ title: 1, year: 1, imdbID: 1, osdbHash: 1, season: 1, episode: 1 });
+FailedLookupsSchema.index({ title: 1, year: 1,            osdbHash: 1 });
+FailedLookupsSchema.index({ title: 1, year: 1,            osdbHash: 1, season: 1, episode: 1 });
+FailedLookupsSchema.index({ title: 1,                                  season: 1, episode: 1 });
+FailedLookupsSchema.index({ title: 1,                     osdbHash: 1, season: 1, episode: 1 });
+FailedLookupsSchema.index({ title: 1,                     osdbHash: 1 });
+
 const FailedLookups = mongoose.model<FailedLookupsInterfaceDocument>('FailedLookups', FailedLookupsSchema);
 export default FailedLookups;
