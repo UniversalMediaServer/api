@@ -1,6 +1,6 @@
 import * as Router from 'koa-router';
 import { getConfig } from '../controllers/info';
-import { mediaApiSubversions } from '../helpers/subversioning';
+import { subversions } from '../helpers/subversioning';
 
 const router = new Router();
 router.get('/', (ctx) => {
@@ -8,11 +8,11 @@ router.get('/', (ctx) => {
 });
 
 router.get('/api/subversions', (ctx) => {
-  ctx.body = { '/api/media': mediaApiSubversions };
+  ctx.body = subversions;
 });
 
 router.get('/api/configuration', async(ctx) => {
-  ctx.set('X-Api-Subversion', mediaApiSubversions['/configuration']);
+  ctx.set('X-Api-Subversion', subversions['configuration']);
   await getConfig(ctx);
 });
 
