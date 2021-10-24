@@ -9,14 +9,22 @@ if (process.env.NODE_ENV === 'production' && !process.env.TMDB_API_KEY) {
 const originalModule = new MovieDb(process.env.TMDB_API_KEY);
 export const tmdb = _.cloneDeep(originalModule);
 
+const handleError = (err: Error): void => {
+  const responseStatus = _.get(err, 'response.status');
+  let responseStatusString: string;
+  if (responseStatus) {
+    responseStatusString = responseStatus.toString();
+  }
+  if (responseStatusString && /^5/.exec(responseStatusString)) {
+    throw new ExternalAPIError('TMDB API is offline');
+  }
+};
+
 tmdb.configuration = async(): Promise<ConfigurationResponse> => {
   try {
     return await originalModule.configuration();
   } catch (err) {
-    const responseStatus = _.get(err, 'response.status');
-    if (responseStatus && responseStatus.match(/^5/)) {
-      throw new ExternalAPIError('TMDB API is offline');
-    }
+    handleError(err);
   }
 };
 
@@ -24,10 +32,7 @@ tmdb.episodeInfo = async(params?: EpisodeRequest): Promise<Episode> => {
   try {
     return await originalModule.episodeInfo(params);
   } catch (err) {
-    const responseStatus = _.get(err, 'response.status');
-    if (responseStatus && responseStatus.match(/^5/)) {
-      throw new ExternalAPIError('TMDB API is offline');
-    }
+    handleError(err);
   }
 };
 
@@ -35,10 +40,7 @@ tmdb.find = async(params?: FindRequest): Promise<FindResponse> => {
   try {
     return await originalModule.find(params);
   } catch (err) {
-    const responseStatus = _.get(err, 'response.status');
-    if (responseStatus && responseStatus.match(/^5/)) {
-      throw new ExternalAPIError('TMDB API is offline');
-    }
+    handleError(err);
   }
 };
 
@@ -46,10 +48,7 @@ tmdb.searchMovie = async(params?: SearchMovieRequest): Promise<MovieResultsRespo
   try {
     return await originalModule.searchMovie(params);
   } catch (err) {
-    const responseStatus = _.get(err, 'response.status');
-    if (responseStatus && responseStatus.match(/^5/)) {
-      throw new ExternalAPIError('TMDB API is offline');
-    }
+    handleError(err);
   }
 };
 
@@ -57,10 +56,7 @@ tmdb.searchTv = async(params?: SearchTvRequest): Promise<TvResultsResponse> => {
   try {
     return await originalModule.searchTv(params);
   } catch (err) {
-    const responseStatus = _.get(err, 'response.status');
-    if (responseStatus && responseStatus.match(/^5/)) {
-      throw new ExternalAPIError('TMDB API is offline');
-    }
+    handleError(err);
   }
 };
 
@@ -68,10 +64,7 @@ tmdb.seasonInfo = async(params?: TvSeasonRequest): Promise<TvSeasonResponse> => 
   try {
     return await originalModule.seasonInfo(params);
   } catch (err) {
-    const responseStatus = _.get(err, 'response.status');
-    if (responseStatus && responseStatus.match(/^5/)) {
-      throw new ExternalAPIError('TMDB API is offline');
-    }
+    handleError(err);
   }
 };
 
@@ -79,9 +72,6 @@ tmdb.tvInfo = async(params: string | number | IdAppendToResponseRequest): Promis
   try {
     return await originalModule.tvInfo(params);
   } catch (err) {
-    const responseStatus = _.get(err, 'response.status');
-    if (responseStatus && responseStatus.match(/^5/)) {
-      throw new ExternalAPIError('TMDB API is offline');
-    }
+    handleError(err);
   }
 };
