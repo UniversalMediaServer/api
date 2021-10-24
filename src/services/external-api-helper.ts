@@ -262,18 +262,14 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
         id: seriesID,
       };
 
-      try {
-        const tmdbResponse = await tmdb.tvInfo(seriesRequest);
-        tmdbData = mapper.parseTMDBAPISeriesResponse(tmdbResponse);
-      } catch (e) {
-        console.log(e);
-      }
+      const tmdbResponse = await tmdb.tvInfo(seriesRequest);
+      tmdbData = mapper.parseTMDBAPISeriesResponse(tmdbResponse);
     }
     // End TMDB lookups
 
     const omdbData = await getFromOMDbAPIV2(imdbID);
 
-    const combinedResponse = _.merge(tmdbData, omdbData);
+    const combinedResponse = _.merge(omdbData, tmdbData);
     if (!combinedResponse || _.isEmpty(combinedResponse)) {
       await FailedLookups.updateOne({ imdbID }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
       return null;
@@ -320,12 +316,8 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
         id: seriesTMDBID,
       };
 
-      try {
-        const tmdbResponse = await tmdb.tvInfo(seriesRequest);
-        tmdbData = mapper.parseTMDBAPISeriesResponse(tmdbResponse);
-      } catch (e) {
-        console.log(e);
-      }
+      const tmdbResponse = await tmdb.tvInfo(seriesRequest);
+      tmdbData = mapper.parseTMDBAPISeriesResponse(tmdbResponse);
     }
     // End TMDB lookups
 
@@ -351,7 +343,7 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
     const omdbData = mapper.parseOMDbAPISeriesResponse(omdbResponse);
     // End OMDb lookups
 
-    const combinedResponse = _.merge(tmdbData, omdbData);
+    const combinedResponse = _.merge(omdbData, tmdbData);
     if (!combinedResponse || _.isEmpty(combinedResponse)) {
       await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
       return null;
