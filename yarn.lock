@@ -729,6 +729,13 @@
     "@types/connect" "*"
     "@types/node" "*"
 
+"@types/bson@*":
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/@types/bson/-/bson-4.2.0.tgz#a2f71e933ff54b2c3bf267b67fa221e295a33337"
+  integrity sha512-ELCPqAdroMdcuxqwMgUpifQyRoTpyYCNr1V9xKyF40VsBobsj+BbWNRvwGchMgBPGqkw655ypkjj2MEF5ywVwg==
+  dependencies:
+    bson "*"
+
 "@types/cacheable-request@^6.0.1":
   version "6.0.2"
   resolved "https://registry.yarnpkg.com/@types/cacheable-request/-/cacheable-request-6.0.2.tgz#c324da0197de0a98a2312156536ae262429ff6b9"
@@ -903,6 +910,14 @@
   version "1.3.2"
   resolved "https://registry.yarnpkg.com/@types/mime/-/mime-1.3.2.tgz#93e25bf9ee75fe0fd80b594bc4feb0e862111b5a"
   integrity sha512-YATxVxgRqNH6nHEIsvg6k2Boc1JHI9ZbH5iWFFv/MTkchz3b1ieGDa5T0a9RznNdI0KhVbdbWSN+KWWrQZRxTw==
+
+"@types/mongodb@^3.6.20":
+  version "3.6.20"
+  resolved "https://registry.yarnpkg.com/@types/mongodb/-/mongodb-3.6.20.tgz#b7c5c580644f6364002b649af1c06c3c0454e1d2"
+  integrity sha512-WcdpPJCakFzcWWD9juKoZbRtQxKIMYF/JIAM4JrNHrMcnJL6/a2NWjXxW7fo9hxboxxkg+icff8d7+WIEvKgYQ==
+  dependencies:
+    "@types/bson" "*"
+    "@types/node" "*"
 
 "@types/natural@^5.1.0":
   version "5.1.0"
@@ -1428,17 +1443,17 @@ bser@2.1.1:
   dependencies:
     node-int64 "^0.4.0"
 
-bson@^1.1.4:
-  version "1.1.6"
-  resolved "https://registry.yarnpkg.com/bson/-/bson-1.1.6.tgz#fb819be9a60cd677e0853aee4ca712a785d6618a"
-  integrity sha512-EvVNVeGo4tHxwi8L6bPj3y3itEvStdwvvlojVxxbyYfoaxJ6keLgrTuKdyfEAszFK+H3olzBuafE0yoh0D1gdg==
-
-bson@^4.2.2, bson@^4.5.2:
+bson@*, bson@^4.2.2, bson@^4.5.2:
   version "4.5.3"
   resolved "https://registry.yarnpkg.com/bson/-/bson-4.5.3.tgz#de3783b357a407d935510beb1fbb285fef43bb06"
   integrity sha512-qVX7LX79Mtj7B3NPLzCfBiCP6RAsjiV8N63DjlaVVpZW+PFoDTxQ4SeDbSpcqgE6mXksM5CAwZnXxxxn/XwC0g==
   dependencies:
     buffer "^5.6.0"
+
+bson@^1.1.4:
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/bson/-/bson-1.1.6.tgz#fb819be9a60cd677e0853aee4ca712a785d6618a"
+  integrity sha512-EvVNVeGo4tHxwi8L6bPj3y3itEvStdwvvlojVxxbyYfoaxJ6keLgrTuKdyfEAszFK+H3olzBuafE0yoh0D1gdg==
 
 buffer-crc32@~0.2.3:
   version "0.2.13"
@@ -3861,11 +3876,12 @@ mongodb-connection-string-url@^2.0.0:
     "@types/whatwg-url" "^8.2.1"
     whatwg-url "^9.1.0"
 
-mongodb-memory-server-core@7.4.4:
-  version "7.4.4"
-  resolved "https://registry.yarnpkg.com/mongodb-memory-server-core/-/mongodb-memory-server-core-7.4.4.tgz#8dbbb49563eac2654b81086f5d7f594f70618c72"
-  integrity sha512-eIq8/mwsBlbwdYDGOHyUrpXKdOv5Tx4FD1ArkjBg/mm4gyOhBmRGvqa4L0yFq7r74K8nBghm3Qz8+9Hw1OK0TA==
+mongodb-memory-server-core@7.5.1:
+  version "7.5.1"
+  resolved "https://registry.yarnpkg.com/mongodb-memory-server-core/-/mongodb-memory-server-core-7.5.1.tgz#b90e9d8231253ae0ba146158bcc43ae6f1e93375"
+  integrity sha512-jZEbtLJ9P/+6UKr8mcfRKI0fyEKSwHuT4nXVTV3e9OJgJTtgcn9NxgglenuKh40FrdZypB9oOwW6wZzLXZZyNQ==
   dependencies:
+    "@types/mongodb" "^3.6.20"
     "@types/tmp" "^0.2.0"
     async-mutex "^0.3.2"
     camelcase "^6.1.0"
@@ -3884,12 +3900,12 @@ mongodb-memory-server-core@7.4.4:
     uuid "^8.3.1"
     yauzl "^2.10.0"
 
-mongodb-memory-server@7.4.4:
-  version "7.4.4"
-  resolved "https://registry.yarnpkg.com/mongodb-memory-server/-/mongodb-memory-server-7.4.4.tgz#d388f7b79e069d5179e41e2bdcdde262acf70f56"
-  integrity sha512-gOJ1tjzt8LdHVLIOOC3NgSX4rqFHIQahAT3W5F7wJFXrYvuVxmDoXn2NcOP1QPsHrPc+LXIFNjX/rHtogi4VRA==
+mongodb-memory-server@7.5.1:
+  version "7.5.1"
+  resolved "https://registry.yarnpkg.com/mongodb-memory-server/-/mongodb-memory-server-7.5.1.tgz#2d153bf2d4fd193805b142344914fb10dac9591a"
+  integrity sha512-7CppmoT65fkW2kMkKAVTtUMngmIWk1bGUDhoWX7D+Scee6aa1sZGyBfj1fdCNScFpXbiZqG819IPZyHzAr0UqQ==
   dependencies:
-    mongodb-memory-server-core "7.4.4"
+    mongodb-memory-server-core "7.5.1"
     tslib "^2.3.0"
 
 mongodb@4.1.3:
