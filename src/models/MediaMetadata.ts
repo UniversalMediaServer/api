@@ -138,4 +138,13 @@ MediaMetadataSchema.virtual('imdburl').get(function() {
 });
 
 const MediaMetadata = mongoose.model<MediaMetadataInterfaceDocument>('MediaMetadata', MediaMetadataSchema);
+
+MediaMetadata.on('index', function(err) {
+  if (err) {
+    console.error('MediaMetadata index error: %s', err);
+  } else {
+    console.info('MediaMetadata indexing complete');
+  }
+});
+
 export default MediaMetadata;

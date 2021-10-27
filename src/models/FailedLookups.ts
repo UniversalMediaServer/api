@@ -77,4 +77,13 @@ const FailedLookupsSchema = new Schema({
 });
 
 const FailedLookups = mongoose.model<FailedLookupsInterfaceDocument>('FailedLookups', FailedLookupsSchema);
+
+FailedLookups.on('index', function(err) {
+  if (err) {
+    console.error('FailedLookups index error: %s', err);
+  } else {
+    console.info('FailedLookups indexing complete');
+  }
+});
+
 export default FailedLookups;

@@ -39,4 +39,13 @@ SeasonMetadataSchema.virtual('imdburl').get(function() {
 SeasonMetadataSchema.index({ 'title': 'text' });
 
 const SeasonMetadata = mongoose.model<SeasonMetadataInterface, SeasonMetadataModel>('SeasonMetadata', SeasonMetadataSchema);
+
+SeasonMetadata.on('index', function(err) {
+  if (err) {
+    console.error('SeasonMetadata index error: %s', err);
+  } else {
+    console.info('SeasonMetadata indexing complete');
+  }
+});
+
 export default SeasonMetadata;
