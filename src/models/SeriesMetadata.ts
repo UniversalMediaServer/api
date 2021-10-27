@@ -119,4 +119,13 @@ SeriesMetadataSchema.virtual('imdburl').get(function() {
 });
 
 const SeriesMetadata = mongoose.model<SeriesMetadataInterface, SeriesMetadataModel>('SeriesMetadata', SeriesMetadataSchema);
+
+SeriesMetadata.on('index', function(err) {
+  if (err) {
+    console.error('SeriesMetadata index error: %s', err);
+  } else {
+    console.info('SeriesMetadata indexing complete');
+  }
+});
+
 export default SeriesMetadata;
