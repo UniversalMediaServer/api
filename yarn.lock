@@ -3977,10 +3977,10 @@ natural-compare@^1.4.0:
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
   integrity sha1-Sr6/7tdUHywnrPspvbvRXI1bpPc=
 
-natural@^5.1.10:
-  version "5.1.10"
-  resolved "https://registry.yarnpkg.com/natural/-/natural-5.1.10.tgz#9d322b494bc2775bf7e74b39740510a4b40f8340"
-  integrity sha512-NQx52cXz6yKPHNNyg4vpm60T1QOgKrqwVQ7loW3Lx7wjq1OS1amNsTHNkBLtkawZQx5IvOvnjs2GKVuh29Gadw==
+natural@^5.1.11:
+  version "5.1.11"
+  resolved "https://registry.yarnpkg.com/natural/-/natural-5.1.11.tgz#1e3ee96d5aa463e44b70d33cbb35845a301199aa"
+  integrity sha512-ecITGKjUNXxj6+g0oD0nEzYgmUxK3WRbye3zy1OUmRhgWx04BEQGILc5LnqpdYpKsA+D3CDDJMImyX70Li8dyw==
   dependencies:
     afinn-165 "^1.0.2"
     apparatus "^0.0.10"
