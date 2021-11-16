@@ -128,7 +128,7 @@
     "koa-qs": "^3.0.0",
     "koa-router": "^10.1.1",
     "lodash": "^4.17.21",
-    "mongoose": "6.0.12",
+    "mongoose": "6.0.13",
     "moviedb-promise": "^3.1.11",
     "natural": "^5.1.11",
     "object-mapper": "^6.2.0",
