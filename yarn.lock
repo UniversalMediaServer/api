@@ -3935,10 +3935,10 @@ mongoose@6.0.13:
     sift "13.5.2"
     sliced "1.0.1"
 
-moviedb-promise@^3.1.11:
-  version "3.1.11"
-  resolved "https://registry.yarnpkg.com/moviedb-promise/-/moviedb-promise-3.1.11.tgz#be8a9a32367670e60bf13ee3a9738021c91a3082"
-  integrity sha512-uT+2vzhkcr+RdAfrqf2evP/CB6sVL5eTjPy6kRChxjT+bHywIEmOeliEcJVr+tvJhqYxrbsrJOdDrHRV/2d1aQ==
+moviedb-promise@^3.1.12:
+  version "3.1.12"
+  resolved "https://registry.yarnpkg.com/moviedb-promise/-/moviedb-promise-3.1.12.tgz#3efe82d26155a8b44ac1afd612d8e8a55ddf38d1"
+  integrity sha512-CTpIVsToA0wz6YfW2zwO9k+eS12+1x7x7oZ8AegfosigxWxyw0kIcpI8Tz9SDYLzoleUCss42JfAgVrdEjU8wg==
   dependencies:
     axios "^0.21.1"
     lodash "^4.17.21"
