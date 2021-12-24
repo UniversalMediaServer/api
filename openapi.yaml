@@ -1,0 +1,1050 @@
+openapi: "3.0.1"
+info:
+  version: 1.0.0
+  title: Universal Media Server API
+  description: API Endpoint used by Universal Media Server's core application to retrieve media metadata
+  contact:
+    name: Universal Media Server forums
+    url: https://www.universalmediaserver.com/forum/
+servers:
+  - url: https://api.universalmediaserver.com
+paths:
+  /:
+    get:
+      description: |
+        Returns the current health status of the API
+      responses:
+        '200':
+          description: Successful health status response
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Status'
+
+  /api/subversions:
+    get:
+      description: |
+        Returns the current API subversions in use. This can be used by API consumers to purge a cached metadata document if a new endpoint subversion has been released (with bugfixes or enhancements)
+      responses:
+        '200':
+          description: API subversions
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Subversions'
+
+  /api/configuration:
+    get:
+      description: |
+        Returns the current configuration that an API consumer should use to fetch referenced resources, such as current baseurls for thumbnail images
+      responses:
+        '200':
+          description: Configuration values in use
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Configuration'
+
+  /api/media/osdbhash/{osdbhash}/{filebytesize}:
+    get:
+      description: |
+        Returns media metadata for the Opensubtitles hash of a file
+      externalDocs:
+        url: https://trac.opensubtitles.org/projects/opensubtitles/wiki/HashSourceCodes
+        description: Learn more about how to generate Open Subtitles file hashes
+      parameters:
+        - in: path
+          name: osdbhash
+          description: A OpenSubtitles hash of a media file
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: filebytesize
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Media metadata
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/MediaMetadata'
+        '404':
+          description: Metadata not found
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/MetadataNotFoundError'
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/RequestValidationError'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/DependencyError'
+
+  /api/media/title:
+    get:
+      description: |
+        Returns media metadata by title
+      parameters:
+        - in: query
+          name: title
+          description: Title of the media file
+          schema:
+            type: string
+            example: The Matrix Reloaded
+          required: true
+        - in: query
+          name: year
+          description: Release year of the media. Providing this parameter increases result accuracy.
+          schema:
+            type: string
+            example: 2003
+      responses:
+        '200':
+          description: Media metadata
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/MediaMetadata'
+        '404':
+          description: Metadata not found
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/MetadataNotFoundError'
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/RequestValidationError'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/DependencyError'
+
+  /api/media/v2/title:
+    get:
+      description: |
+        Returns media metadata by title
+      parameters:
+        - in: query
+          name: title
+          description: Title of the media file
+          schema:
+            type: string
+            example: The Matrix Reloaded
+          required: true
+        - in: query
+          name: episode
+          description: Episode number, if media is a tv series episode
+          schema:
+            type: string
+            example: 8
+        - in: query
+          name: season
+          description: Season number, if media is a tv series
+          schema:
+            type: string
+            example: 1
+        - in: query
+          name: year
+          description: Release year of the media. Providing this parameter increases result accuracy.
+          schema:
+            type: string
+            example: 2003
+      responses:
+        '200':
+          description: Media metadata
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/MediaMetadata'
+        '404':
+          description: Metadata not found
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/MetadataNotFoundError'
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/RequestValidationError'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/DependencyError'
+
+  /api/media/imdbid:
+    get:
+      description: |
+        Returns series metadata by title or imbdID
+      parameters:
+        - in: query
+          name: imdbid
+          description: imdb.com id
+          schema:
+            type: string
+            example: tt0455275
+          required: true
+      responses:
+        '200':
+          description: Series metadata
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/MediaMetadata'
+        '404':
+          description: Metadata not found
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/MetadataNotFoundError'
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/RequestValidationError'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/DependencyError'
+  /api/media/seriestitle:
+    get:
+      description: |
+        Returns series metadata by title or imbdID
+      parameters:
+        - in: query
+          name: title
+          description: Title of the series
+          schema:
+            type: string
+            example: Prison Break
+        - in: query
+          name: year
+          description: Release year of the media. Providing this parameter increases result accuracy.
+          schema:
+            type: string
+            example: 2005
+        - in: query
+          name: imdbID
+          description: imdb.com id
+          schema:
+            type: string
+            example: tt0455275
+      responses:
+        '200':
+          description: Series metadata
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/SeriesMetadata'
+        '404':
+          description: Metadata not found
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/MetadataNotFoundError'
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/RequestValidationError'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/DependencyError'
+
+  /api/media/video:
+    get:
+      description: |
+        Returns media metadata
+      parameters:
+        - in: query
+          name: title
+          description: Title of the media file
+          schema:
+            type: string
+            example: The Matrix Reloaded
+        - in: query
+          name: year
+          description: Release year of the media. Providing this parameter increases result accuracy.
+          schema:
+            type: string
+            example: 2003
+        - in: query
+          name: osdbHash
+          description: osdbHash of the media file
+          schema:
+            type: string
+            example: 0f0f4c9f3416e24f
+        - in: query
+          name: imdbID
+          description: imdbID of the media file
+          schema:
+            type: string
+            example: tt0816692
+        - in: query
+          name: episode
+          description: episode number of the media file
+          schema:
+            type: string
+            example: 3
+        - in: query
+          name: season
+          description: season number of the media file
+          schema:
+            type: string
+            example: 1
+        - in: query
+          name: filebytesize
+          description: filebytesize of the media file
+          schema:
+            type: string
+            example: 2431697820
+      responses:
+        '200':
+          description: Media metadata
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/MediaMetadata'
+        '404':
+          description: Metadata not found
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/MetadataNotFoundError'
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/RequestValidationError'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/DependencyError'
+
+  /api/media/season:
+    get:
+      description: |
+        Returns season metadata
+      parameters:
+        - in: query
+          name: title
+          description: Title of the tv series
+          schema:
+            type: string
+            example: The Simpsons
+          required: true
+        - in: query
+          name: season
+          description: Season of the tv series
+          schema:
+            type: string
+            example: 1
+          required: true
+        - in: query
+          name: year
+          description: Year of the season aired
+          schema:
+            type: string
+            example: 1989
+      responses:
+        '200':
+          description: Media metadata
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/SeasonMetadata'
+        '404':
+          description: Metadata not found
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/MetadataNotFoundError'
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/RequestValidationError'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/DependencyError'
+
+components:
+  schemas:
+    Status:
+      type: object
+      properties:
+        status:
+          type: string
+          example: OK
+
+    Subversions:
+      type: object
+      properties:
+        configuration:
+          type: string
+          example: "1"
+        season:
+          type: string
+          example: "1"
+        series:
+          type: string
+          example: "1"
+        video:
+          type: string
+          example: "1"
+
+    Configuration:
+      type: object
+      properties:
+        imageBaseURL:
+          type: string
+
+    ExternalIds:
+      type: array
+      items:
+        type: object
+        properties:
+          imdb_id:
+            type: string
+            example: tt0455275
+          freebase_mid:
+            type: string
+            example: /m/0cmqz_
+          freebase_id:
+            type: string
+            example: /en/the_simpsons_season_1
+          tvdb_id:
+            type: number
+            example: 2727
+          tvrage_id:
+            type: string
+          facebook_id:
+            type: string
+            example: PrisonBreak
+          instagram_id:
+            type: string
+            example: prisonbreak
+          twitter_id:
+            type: string
+            example: PrisonBreak
+
+    SeasonMetadata:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 61c4fe6cdda2797a73f2bb86
+        airDate:
+          type: string
+          format: date
+          example: 1989-12-17
+        credits:
+          $ref: '#/components/schemas/Credits'
+        externalIDs:
+          $ref: '#/components/schemas/ExternalIds'
+        genres:
+          type: array
+          items:
+            type: string
+            example: Action
+        images:
+          type: array
+          items:
+            type: string
+            example: Action
+        tmdbID:
+          type: string
+          example: 3582
+        revenue:
+          type: string
+          example: 701729206
+        seasonNumner:
+          type: number
+          example: 1
+        name:
+          type: string
+          example: Season 1
+        createdAt:
+          type: string
+          format: date-time
+          example: 2021-12-16T07:10:24.066Z
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2021-12-16T07:10:24.066Z
+
+    MediaMetadata:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 6178aa67dda2797a734dfbb3
+        actors:
+          type: array
+          items:
+            type: string
+            example: Keanu Reeves
+        awards:
+          type: string
+          example: 8 wins & 34 nominations
+        budget:
+          type: number
+          example: 165000000
+        boxoffice: 
+          type: string
+          example: $281,576,461
+        country:
+          type: string
+          example: United States
+        credits:
+          $ref: '#/components/schemas/Credits'
+        directors:
+          type: array
+          items:
+            type: string
+            example: Lana Wachowski
+        externalIDs:
+          $ref: '#/components/schemas/ExternalIds'
+        genres:
+          type: array
+          items:
+            type: string
+            example: Action
+        images:
+          type: array
+          items:
+            type: string
+            example: Action
+        imdbID:
+          type: string
+          example: tt0234215
+        metascore:
+          type: string
+          example: tt0234215
+        productionCompanies:
+          type: array
+          items:
+            type: string
+            example: Action
+        productionCountries:
+          type: array
+          items:
+            type: string
+            example: Action
+        plot:
+          type: string
+          example: In this second adventure, Neo and the rebel leaders estimate that they have 72 hours until Zion falls under siege to the Machine Army. Only a matter of hours separates the last human enclave on Earth from 250,000 Sentinels programmed to destroy mankind. But the citizens of Zion, emboldened by Morpheus conviction that the One will fulfill the Oracles Prophecy and end the war with the Machines, rest all manner of hope and expectation on Neo, who finds himself stalled by disturbing visions as he searches for a course of action.
+        poster:
+          type: string
+          example: https://m.media-amazon.com/images/M/MV5BODE0MzZhZTgtYzkwYi00YmI5LThlZWYtOWRmNWE5ODk0NzMxXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg
+        posterRelativePath:
+          type: string
+          example: /gEU2QniE6E77NI6lCU6MxlNBvIx.jpg
+        rated:
+          type: string
+          example: R
+        rating:
+          type: number
+          example: 7.2
+        ratings:
+          type: array
+          items:
+            type: object
+            properties:
+              Source:
+                type: string
+                example: Internet Movie Database
+              Value:
+                type: string
+                example: 7.2/10
+        released:
+          type: string
+          format: date-time
+          example: 2003-05-15T00:00:00.000Z
+        revenue:
+          type: string
+          example: 701729206
+        runtime:
+          type: string
+          example: 138 min
+        title:
+          type: string
+          example: The Matrix Reloaded
+        type:
+          type: string
+          example: movie
+        votes:
+          type: string
+          example: 544,956
+        year:
+          type: string
+          example: 2003
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2021-12-16T07:10:24.066Z
+    Credits:
+      type: array
+      items:
+        type: object
+        properties:
+          cast:
+            type: array
+            items:
+              type: object
+              properties:
+                adult:
+                  type: boolean
+                  example: false
+                gender:
+                  type: number
+                  example: 2
+                id:
+                  type: number
+                  example: 3972
+                known_for_department:
+                  type: string
+                  example: Acting
+                name:
+                  type: string
+                  example: Wentworth Miller
+                original_name:
+                  type: string
+                  example: Wentworth Miller
+                popularity: 
+                  type: number
+                  example: 5.008
+                profile_path:
+                  type: string
+                  example: /1apvr7onOG9OuGjQqlBytBEEY1n.jpg
+                character: 
+                  type: string
+                  example: Michael Scofield
+                credit_id:
+                  type: string
+                  example: 52572f15760ee3776a320742
+                order:
+                  type: number
+                  example: 0
+          crew:
+            type: array
+            items:
+              type: object
+    SeriesMetadata:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 617b774450f42c1b646b9ee9
+        actors:
+          type: array
+          items:
+            type: string
+            example: Dominic Purcell
+        awards:
+          type: string
+          example: Nominated for 1 Primetime Emmy. 8 wins & 32 nominations total
+        country:
+          type: string
+          example: United Kingdom, United States
+        createdBy:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 54869
+              credit_id:
+                type: string
+                example: 52572f17760ee3776a320b04
+              name:
+                type: string
+                example: Paul Scheuring
+              gender:
+                type: number
+                example: 2
+              profile_path:
+                type: string
+        credits:
+          $ref: '#/components/schemas/Credits'
+        directors:
+          type: array
+        externalIDs:
+          $ref: '#/components/schemas/ExternalIds'
+        genres:
+          type: array
+          items:
+            type: string
+            example: Action & Adventure
+        homepage:
+          type: string
+          example: http://www.fox.com/prisonbreak
+        images:
+          $ref: '#/components/schemas/Images'
+        imdbID:
+          type: string
+          example: tt0455275
+        inProduction:
+          type: boolean
+          example: true
+        languages:
+          type: array
+          items:
+            type: string
+            example: en
+        lastAirDate:
+          type: string
+          example: 2017-05-30
+        networks:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: FOX
+              id:
+                type: number
+                example: 19
+              logo_path:
+                type: string
+                example: /1DSpHrWyOORkL9N2QHX7Adt31mQ.png
+              origin_country:
+                type: string
+                example: US
+        numberOfEpisodes:
+          type: number
+          example: 88
+        originCountry:
+          type: array
+          items:
+            type: string
+            example: US
+        originalLanguage:
+          type: string
+          example: en
+        plot:
+          type: string
+          example: Due to a political conspiracy, an innocent man is sent to death row and his only hope is his brother, who makes it his mission to deliberately get himself sent to the same prison in order to break the both of them out, from the inside out.
+        poster:
+          type: string
+          example: https://m.media-amazon.com/images/M/MV5BMTg3NTkwNzAxOF5BMl5BanBnXkFtZTcwMjM1NjI5MQ@@._V1_SX300.jpg
+        posterRelativePath:
+          type: string
+          example: /5E1BhkCgjLBlqx557Z5yzcN0i88.jpg
+        productionCompanies: 
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 33423
+              logo_path:
+                type: string
+                example: /6HRO4RN1sz9Ts2hu2FhHRhDtbar.pn
+              name:
+                type: string
+                example: Cartoon Network
+              origin_country:
+                type: string
+                example: US
+        productionCountries:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 90836
+              logo_path:
+                type: string
+              name:
+                type: string
+                example: Prison Break Productions
+              origin_country:
+                type: string
+        rated:
+          type: string
+          example: TV-14
+        rating:
+          type: number
+          example: 8.3
+        ratings:
+          type: array
+          items:
+            type: object
+            properties:
+              _id:
+                type: string
+                example: 6179105ace4e504b5734b674
+              Source:
+                type: string
+                example: Internet Movie Database
+              Value:
+                type: string
+                example: 8.3/10
+        released:
+          type: string
+          format: date-time
+          example: 2005-08-29T00:00:00.000Z
+        seasons:
+          type: array
+          items:
+            type: object
+            properties:
+              air_date:
+                type: string
+                format: date
+                example: 2005-08-29
+              episode_count:
+                type: number
+                example: 22
+              id:
+                type: number
+                example: 7132
+              name:
+                type: string
+                example: Season 1
+              overview:
+                type: string
+                example: Lincoln Burrows is currently on death row and scheduled to die in a few months for an assassination his younger brother Michael is convinced he did not commit. With no other options and time winding down, Michael takes drastic measures to get himself incarcerated alongside his brother in Fox River State Penitentiary. Once he's inside, Michael, a structural engineer with the blueprints for the prison, begins to execute an elaborate plan to break Lincoln out and prove him innocent.
+              poster_path:
+                type: string
+                example: /jnMW2qcOjgwsjHx6QkOIeXShsLi.jpg
+              season_number:
+                type: number
+                example: 1
+        seriesType:
+          type: string
+          example: Scripted
+        spokenLanguages:
+          type: array
+          items:
+            type: object
+            properties:
+              english_name:
+                type: string
+                example: English
+              iso_639_1:
+                type: string
+                example: en
+              name:
+                type: string
+                example: English
+        startYear:
+          type: string
+          example: 2005
+        status: 
+          type: string
+          example: Ended
+        tagline:
+          type: string
+          example: Break in. Break out. Save your brother's life.
+        title:
+          type: string
+          example: Prison Break
+        tmdbID:
+          type: string
+          example: 2288
+          description: Series id on https://www.themoviedb.org/
+        totalSeasons:
+          type: number
+          example: 5
+        type:
+          type: string
+          example: series
+        votes:
+          type: string
+          example: 500,009
+        year:
+          type: string
+          example: 2005
+        createdAt:
+          type: string
+          format: date-time
+          example: 2021-10-27T08:39:54.757Z
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2021-10-27T08:39:54.757Z
+
+    Images:
+      type: array
+      items:
+        type: object
+        properties:
+          backdrops:
+            type: array
+            items:
+              type: object
+              properties:
+                aspect_ratio:
+                  type: number
+                  example: 1.777
+                height:
+                  type: number
+                  example: 1294
+                iso_639_1:
+                  type: string
+                  example: en
+                file_path:
+                  type: string
+                  example: /92OPBZpLc82y8CzOtrQ8P9RDvIN.jpg
+                vote_average:
+                  type: number
+                  example: 5.322,
+                vote_count:
+                  type: number
+                  example: 5
+                width:
+                  type: number
+                  example: 2300
+          logos:
+            type: array
+            items:
+              type: object
+              properties:
+                aspect_ratio:
+                  type: number
+                  example: 1.777
+                height:
+                  type: number
+                  example: 1294
+                iso_639_1:
+                  type: string
+                  example: en
+                file_path:
+                  type: string
+                  example: /92OPBZpLc82y8CzOtrQ8P9RDvIN.jpg
+                vote_average:
+                  type: number
+                  example: 5.322,
+                vote_count:
+                  type: number
+                  example: 5
+                width:
+                  type: number
+                  example: 2300
+          posters:
+            type: array
+            items:
+              type: object
+              properties:
+                aspect_ratio:
+                  type: number
+                  example: 0.667
+                height:
+                  type: number
+                  example: 3000
+                iso_639_1:
+                  type: string
+                  example: en
+                file_path:
+                  type: string
+                  example: /a4H0UR7aUkGZlT6Q9r9grBrjJWR.jpg
+                vote_average:
+                  type: number
+                  example: 5.384
+                vote_count:
+                  type: number
+                  example: 2
+                width:
+                  type: number
+                  example: 2000
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+
+    DependencyError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Opensubtitles API is offline
+
+    MetadataNotFoundError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Metadata not found.
+
+    RequestValidationError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: title, osdbHash or imdbId is a required parameter
