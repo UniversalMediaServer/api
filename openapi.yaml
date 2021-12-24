@@ -19,7 +19,6 @@ paths:
           content:
             application/json:
               schema:
-                type: object
                 $ref: '#/components/schemas/Status'
 
   /api/subversions:
@@ -32,7 +31,6 @@ paths:
           content:
             application/json:
               schema:
-                type: object
                 $ref: '#/components/schemas/Subversions'
 
   /api/configuration:
@@ -45,7 +43,6 @@ paths:
           content:
             application/json:
               schema:
-                type: object
                 $ref: '#/components/schemas/Configuration'
 
   /api/media/osdbhash/{osdbhash}/{filebytesize}:
@@ -73,28 +70,24 @@ paths:
           content:
             application/json:
               schema:
-                type: object
                 $ref: '#/components/schemas/MediaMetadata'
         '404':
           description: Metadata not found
           content:
             application/json:
               schema:
-                type: object
                 $ref: '#/components/schemas/MetadataNotFoundError'
         '422':
           description: Unprocessable Entity
           content:
             application/json:
               schema:
-                type: object
                 $ref: '#/components/schemas/RequestValidationError'
         '503':
           description: Service unavailable
           content:
             application/json:
               schema:
-                type: object
                 $ref: '#/components/schemas/DependencyError'
 
   /api/media/title:
@@ -121,28 +114,24 @@ paths:
           content:
             application/json:
               schema:
-                type: object
                 $ref: '#/components/schemas/MediaMetadata'
         '404':
           description: Metadata not found
           content:
             application/json:
               schema:
-                type: object
                 $ref: '#/components/schemas/MetadataNotFoundError'
         '422':
           description: Unprocessable Entity
           content:
             application/json:
               schema:
-                type: object
                 $ref: '#/components/schemas/RequestValidationError'
         '503':
           description: Service unavailable
           content:
             application/json:
               schema:
-                type: object
                 $ref: '#/components/schemas/DependencyError'
 
   /api/media/v2/title:
@@ -181,28 +170,24 @@ paths:
           content:
             application/json:
               schema:
-                type: object
                 $ref: '#/components/schemas/MediaMetadata'
         '404':
           description: Metadata not found
           content:
             application/json:
               schema:
-                type: object
                 $ref: '#/components/schemas/MetadataNotFoundError'
         '422':
           description: Unprocessable Entity
           content:
             application/json:
               schema:
-                type: object
                 $ref: '#/components/schemas/RequestValidationError'
         '503':
           description: Service unavailable
           content:
             application/json:
               schema:
-                type: object
                 $ref: '#/components/schemas/DependencyError'
 
   /api/media/imdbid:
@@ -223,28 +208,24 @@ paths:
           content:
             application/json:
               schema:
-                type: object
                 $ref: '#/components/schemas/MediaMetadata'
         '404':
           description: Metadata not found
           content:
             application/json:
               schema:
-                type: object
                 $ref: '#/components/schemas/MetadataNotFoundError'
         '422':
           description: Unprocessable Entity
           content:
             application/json:
               schema:
-                type: object
                 $ref: '#/components/schemas/RequestValidationError'
         '503':
           description: Service unavailable
           content:
             application/json:
               schema:
-                type: object
                 $ref: '#/components/schemas/DependencyError'
   /api/media/seriestitle:
     get:
@@ -275,28 +256,24 @@ paths:
           content:
             application/json:
               schema:
-                type: object
                 $ref: '#/components/schemas/SeriesMetadata'
         '404':
           description: Metadata not found
           content:
             application/json:
               schema:
-                type: object
                 $ref: '#/components/schemas/MetadataNotFoundError'
         '422':
           description: Unprocessable Entity
           content:
             application/json:
               schema:
-                type: object
                 $ref: '#/components/schemas/RequestValidationError'
         '503':
           description: Service unavailable
           content:
             application/json:
               schema:
-                type: object
                 $ref: '#/components/schemas/DependencyError'
 
   /api/media/video:
@@ -352,28 +329,24 @@ paths:
           content:
             application/json:
               schema:
-                type: object
                 $ref: '#/components/schemas/MediaMetadata'
         '404':
           description: Metadata not found
           content:
             application/json:
               schema:
-                type: object
                 $ref: '#/components/schemas/MetadataNotFoundError'
         '422':
           description: Unprocessable Entity
           content:
             application/json:
               schema:
-                type: object
                 $ref: '#/components/schemas/RequestValidationError'
         '503':
           description: Service unavailable
           content:
             application/json:
               schema:
-                type: object
                 $ref: '#/components/schemas/DependencyError'
 
   /api/media/season:
@@ -407,28 +380,24 @@ paths:
           content:
             application/json:
               schema:
-                type: object
                 $ref: '#/components/schemas/SeasonMetadata'
         '404':
           description: Metadata not found
           content:
             application/json:
               schema:
-                type: object
                 $ref: '#/components/schemas/MetadataNotFoundError'
         '422':
           description: Unprocessable Entity
           content:
             application/json:
               schema:
-                type: object
                 $ref: '#/components/schemas/RequestValidationError'
         '503':
           description: Service unavailable
           content:
             application/json:
               schema:
-                type: object
                 $ref: '#/components/schemas/DependencyError'
 
 components:
@@ -733,6 +702,9 @@ components:
           $ref: '#/components/schemas/Credits'
         directors:
           type: array
+          items:
+            type: string
+            example: Lana Wachowski
         externalIDs:
           $ref: '#/components/schemas/ExternalIds'
         genres:
