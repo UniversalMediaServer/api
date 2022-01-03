@@ -138,7 +138,7 @@
     "ts-node": "^10.3.0"
   },
   "devDependencies": {
-    "@types/jest": "^27.0.3",
+    "@types/jest": "^27.4.0",
     "@types/koa": "^2.13.4",
     "@types/koa-bodyparser": "^4.3.5",
     "@types/koa-helmet": "^6.0.4",
