@@ -278,7 +278,7 @@ export const getBySanitizedTitleV2 = async(ctx: ParameterizedContext): Promise<M
 
 export const getSeries = async(ctx: ParameterizedContext): Promise<SeriesMetadataInterface | LeanDocument<MediaMetadataInterfaceDocument>> => {
   const { imdbID, title, year }: UmsQueryParams = ctx.query;
-  if (!title && imdbID) {
+  if (!title && !imdbID) {
     throw new ValidationError('Either IMDb ID or title required');
   }
 
