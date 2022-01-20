@@ -1,7 +1,8 @@
 config:
-  target: "https://143.198.5.34"
-  tls:
-    rejectUnauthorized: false
+  # target: "https://143.198.5.34"
+  # tls:
+  #   rejectUnauthorized: false
+  target: "https://api.universalmediaserver.com"
   http:
     extendedMetrics: true
   phases:
