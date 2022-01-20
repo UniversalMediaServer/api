@@ -3,9 +3,9 @@ config:
   http:
     extendedMetrics: true
   phases:
-    - duration: 120
-      arrivalRate: 10
-      rampTo: 50
+    - duration: 300
+      arrivalRate: 20
+      rampTo: 100
   payload:
     path: "movies.csv"
     fields:
