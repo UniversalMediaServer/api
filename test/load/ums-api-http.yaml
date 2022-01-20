@@ -18,3 +18,5 @@ scenarios:
         url: "/"
     - get:
         url: "/api/media/video?title={{title}}"
+    - get:
+        url: "/api/media/season?title={{title}}&season=1"
