@@ -1,10 +1,10 @@
 
 name: Production load tests
 
-on: 
-  workflow_dispatch:
-    tags:
-      description: 'Load test'  
+on:
+  pull_request:
+    branches:    
+      - 'loadtest/**'
 jobs:
   artillery:
     runs-on: ubuntu-latest
