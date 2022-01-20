@@ -21,7 +21,7 @@ jobs:
         run: /home/node/artillery/bin/artillery run --output reports/report.json test/load/ums-api-http.yaml
 
       - name: Generate HTML report
-        run: /home/node/artillery/bin/artillery report --output reports/report reports/report.json
+        run: /home/node/artillery/bin/artillery report --output reports/report.html reports/report.json
 
       - name: Archive test report
         uses: actions/upload-artifact@v2
