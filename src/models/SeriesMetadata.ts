@@ -90,7 +90,7 @@ const SeriesMetadataSchema: Schema = new Schema({
   seasons: { type: Array },
   seriesType: { type: String },
   spokenLanguages: { type: Array },
-  startYear: { type: String },
+  startYear: { type: String, index: true },
   status: { type: String },
   tagline: { type: String },
   title: { type: String, index: true, required: true },

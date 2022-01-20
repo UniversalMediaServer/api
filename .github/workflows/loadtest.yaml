@@ -1,0 +1,30 @@
+
+name: Production load tests
+
+on: 
+  workflow_dispatch:
+    tags:
+      description: 'Load test'  
+jobs:
+  artillery:
+    runs-on: ubuntu-latest
+    container: artilleryio/artillery:latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Make reports directory
+        run: mkdir reports
+
+      - name: Execute load tests
+        run: /home/node/artillery/bin/artillery run --output reports/report.json test/load/ums-api-http.yaml
+
+      - name: Generate HTML report
+        run: /home/node/artillery/bin/artillery report --output reports/report reports/report.json
+
+      - name: Archive test report
+        uses: actions/upload-artifact@v2
+        with:
+          name: artillery-test-report
+          path: reports/*
