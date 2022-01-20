@@ -1,5 +1,6 @@
 import * as mongoose from 'mongoose';
 import { Mongoose } from 'mongoose';
+mongoose.set('bufferCommands', false);
 
 export default (db: string): void => {
   if (!db) {
@@ -7,7 +8,11 @@ export default (db: string): void => {
   }
 
   const connect = async(): Promise<Mongoose> => {
-    return await mongoose.connect(db);
+    const options = {
+      maxPoolSize: 30,
+      minPoolSize: 15,
+    };
+    return await mongoose.connect(db, options);
   };
   connect().catch(error => console.error(error));
 
