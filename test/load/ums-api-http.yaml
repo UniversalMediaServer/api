@@ -1,11 +1,23 @@
 config:
-  target: "https://api.universalmediaserver.com"
+  target: "https://143.198.5.34"
+  tls:
+    rejectUnauthorized: false
   http:
     extendedMetrics: true
   phases:
-    - duration: 300
-      arrivalRate: 20
-      rampTo: 100
+    - duration: 60
+      arrivalRate: 10
+      name: 'Warm up'
+    - duration: 120
+      arrivalRate: 10
+      rampTo: 25
+      name: 'Ramp up'
+    - duration: 1200
+      arrivalRate: 25
+      name: 'Cruise'
+    - duration: 30
+      arrivalRate: 100
+      name: 'Crash'
   payload:
     path: "movies.csv"
     fields:
