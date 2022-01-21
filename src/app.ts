@@ -11,6 +11,7 @@ import * as https from 'https';
 const debug = Debug('universalmediaserver-api:server');
 import indexRouter from './routes/index';
 import mediaRouter  from './routes/media';
+import deprecatedMediaRouter  from './routes/deprecated/media';
 import { ExternalAPIError, IMDbIDNotFoundError, MediaNotFoundError, ValidationError } from './helpers/customErrors';
 
 const app = new Koa();
@@ -74,6 +75,7 @@ app.use(async(ctx: ParameterizedContext, next) => {
 });
 
 app.use(bodyParser());
+app.use(deprecatedMediaRouter.routes());
 app.use(mediaRouter.routes());
 app.use(indexRouter.routes());
 

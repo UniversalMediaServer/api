@@ -4,22 +4,6 @@ import { subversions } from '../helpers/subversioning';
 
 const router = new Router({ prefix: '/api/media' });
 
-router.get('/osdbhash/:osdbhash/:filebytesize', async(ctx) => {
-  await MediaController.getByOsdbHash(ctx);
-});
-
-router.get('/title', async(ctx) => {
-  await MediaController.getBySanitizedTitle(ctx);
-});
-
-router.get('/v2/title', async(ctx) => {
-  await MediaController.getBySanitizedTitleV2(ctx);
-});
-
-router.get('/imdbid', async(ctx) => {
-  await MediaController.getByImdbID(ctx);
-});
-
 router.get('/seriestitle', async(ctx) => {
   ctx.set('X-Api-Subversion', subversions['series']);
   await MediaController.getSeries(ctx);
