@@ -165,10 +165,15 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
     throw new Error('Either IMDb ID or title required');
   }
 
+  let failedLookupQuery: FailedLookupsInterface;
+  let omdbData: Partial<SeriesMetadataInterface>;
+  let tmdbData: Partial<SeriesMetadataInterface>;
+
   if (imdbID) {
+    failedLookupQuery = { imdbID };
     // We shouldn't have failures since we got this IMDb ID from their API
-    if (await FailedLookups.findOne({ imdbID }, '_id', { lean: true }).exec()) {
-      await FailedLookups.updateOne({ imdbID }, { $inc: { count: 1 } }).exec();
+    if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
+      await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
       return null;
     }
 
@@ -178,7 +183,6 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
     }
 
     // Start TMDB lookups
-    let tmdbData: Partial<SeriesMetadataInterface> = {};
     const seriesID = await getSeriesTMDBIDFromTMDBAPI(imdbID);
 
     if (seriesID) {
@@ -193,20 +197,12 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
     }
     // End TMDB lookups
 
-    const omdbData = await getFromOMDbAPIV2(imdbID);
-
-    const combinedResponse = _.merge(omdbData, tmdbData);
-    if (!combinedResponse || _.isEmpty(combinedResponse)) {
-      await FailedLookups.updateOne({ imdbID }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
-      return null;
-    }
-
-    return SeriesMetadata.create(combinedResponse);
+    omdbData = await getFromOMDbAPIV2(imdbID);
   } else {
     const sortBy = {} as SortByFilter;
     const escapedTitle = new RegExp(`^${escapeStringRegexp(title)}$`);
     const exactSearchQuery = { title: { $regex: escapedTitle, $options: 'i' } } as CaseInsensitiveSearchQuery;
-    const failedLookupQuery: FailedLookupsInterface = { title: title, type: 'series' };
+    failedLookupQuery = { title: title, type: 'series' };
     if (year) {
       failedLookupQuery.startYear = year;
       exactSearchQuery.startYear = year;
@@ -232,7 +228,6 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
     title = parsed && parsed.show ? parsed.show : title;
 
     // Start TMDB lookups
-    let tmdbData = {};
     const seriesTMDBID = await getSeriesTMDBIDFromTMDBAPI(null, title, Number(year));
 
     if (seriesTMDBID) {
@@ -266,17 +261,17 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
        */
       return getSeriesMetadata(null, title + ' ' + year);
     }
-    const omdbData = mapper.parseOMDbAPISeriesResponse(omdbResponse);
+    omdbData = mapper.parseOMDbAPISeriesResponse(omdbResponse);
     // End OMDb lookups
-
-    const combinedResponse = _.merge(omdbData, tmdbData);
-    if (!combinedResponse || _.isEmpty(combinedResponse)) {
-      await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
-      return null;
-    }
-
-    return await SeriesMetadata.create(combinedResponse);
   }
+
+  const combinedResponse = _.merge(omdbData, tmdbData);
+  if (!combinedResponse || _.isEmpty(combinedResponse)) {
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+    return null;
+  }
+
+  return await SeriesMetadata.create(combinedResponse);
 };
 
 /*
