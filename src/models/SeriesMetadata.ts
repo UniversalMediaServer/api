@@ -34,6 +34,7 @@ export interface SeriesMetadataInterface extends Document {
   rating?: number; // e.g. 6.7
   ratings?: Array<{Source: string; Value: string}>;
   released?: Date;
+  searchMatches?: Array<string>;
   seasons?: Array<SimpleSeason>;
   seriesType?: string;
   spokenLanguages?: Array<SpokenLanguage>;
@@ -87,6 +88,7 @@ const SeriesMetadataSchema: Schema = new Schema({
   rating: { type: Number },
   ratings: { type: [new mongoose.Schema({ 'Source': String, 'Value': String })] },
   released: { type: Date },
+  searchMatches: { type: Array, index: true, select: false },
   seasons: { type: Array },
   seriesType: { type: String },
   spokenLanguages: { type: Array },

@@ -1,5 +1,4 @@
 import { Movie, SearchRequest, TVShow } from '@universalmediaserver/node-imdb-api';
-import escapeStringRegexp = require('escape-string-regexp');
 import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
 import * as natural from 'natural';
@@ -35,6 +34,21 @@ export interface OpenSubtitlesValidation {
 interface SortByFilter {
   startYear: number;
 }
+
+/**
+ * Adds a searchMatch to an existing result by IMDb ID, and returns the result.
+ *
+ * @param imdbID the IMDb ID
+ * @param title the title
+ * @returns the updated record
+ */
+const addSearchMatchByIMDbID = async(imdbID: string, title: string): Promise<SeriesMetadataInterface> => {
+  return SeriesMetadata.findOneAndUpdate(
+    { imdbID },
+    { $push: { searchMatches: title } },
+    { new: true, lean: true },
+  ).exec();
+};
 
 /**
  * Attempts a query to the OMDb API and standardizes the response
@@ -158,9 +172,10 @@ const getSeriesTMDBIDFromTMDBAPI = async(imdbID?: string, seriesTitle?: string, 
  * @param [imdbID] the IMDb ID of the series
  * @param [title] the title of the series
  * @param [year] the first year of the series
+ * @param [titleToCache] the original title, used for caching if this method is calling itself
  * @returns series metadata
  */
-export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: string): Promise<SeriesMetadataInterface | null> => {
+export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: string, titleToCache?: string): Promise<SeriesMetadataInterface | null> => {
   if (!imdbID && !title) {
     throw new Error('Either IMDb ID or title required');
   }
@@ -179,7 +194,12 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
 
     const existingSeries: SeriesMetadataInterface = await SeriesMetadata.findOne({ imdbID }, null, { lean: true }).exec();
     if (existingSeries) {
-      return existingSeries;
+      const updatedResult = await SeriesMetadata.findOneAndUpdate(
+        { imdbID },
+        { $push: { searchMatches: title } },
+        { new: true, lean: true },
+      ).exec();
+      return updatedResult;
     }
 
     // Start TMDB lookups
@@ -200,12 +220,11 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
     omdbData = await getFromOMDbAPIV2(imdbID);
   } else {
     const sortBy = {} as SortByFilter;
-    const escapedTitle = new RegExp(`^${escapeStringRegexp(title)}$`);
-    const exactSearchQuery = { title: { $regex: escapedTitle, $options: 'i' } } as CaseInsensitiveSearchQuery;
+    const titleQuery: GetSeriesFilter = { searchMatches: { $in: [title] } };
     failedLookupQuery = { title: title, type: 'series' };
     if (year) {
       failedLookupQuery.startYear = year;
-      exactSearchQuery.startYear = year;
+      titleQuery.startYear = year;
     } else {
       sortBy.startYear = 1;
     }
@@ -213,13 +232,28 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
     // Return early for previously-failed lookups
     if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
       await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
+
+      // Also store a failed result for the title that the client sent
+      if (titleToCache) {
+        await FailedLookups.updateOne({ title: titleToCache, type: 'series' }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+      }
+
       return null;
     }
 
     // Return any previous match
-    const seriesMetadata = await SeriesMetadata.findOne(exactSearchQuery, null, { lean: true }).sort(sortBy)
+    const seriesMetadata = await SeriesMetadata.findOne(titleQuery, null, { lean: true }).sort(sortBy)
       .exec();
     if (seriesMetadata) {
+      // Also cache the result for the title that the client sent
+      if (titleToCache) {
+        return await SeriesMetadata.findOneAndUpdate(
+          { _id: seriesMetadata._id },
+          { $push: { searchMatches: titleToCache } },
+          { new: true, lean: true },
+        ).exec();
+      }
+
       return seriesMetadata;
     }
 
@@ -242,6 +276,14 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
     }
     // End TMDB lookups
 
+    // If we found an IMDb ID from TMDB, see if we have an existing record for the now-known media.
+    if (tmdbData.imdbID) {
+      const existingResult = await SeriesMetadata.findOne({ imdbID: tmdbData.imdbID }, null, { lean: true }).exec();
+      if (existingResult) {
+        return await addSearchMatchByIMDbID(tmdbData.imdbID, title);
+      }
+    }
+
     // Start OMDb lookups
     const searchRequest: SearchRequest = {
       name: title,
@@ -251,6 +293,7 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
       searchRequest.year = Number(year);
     }
     const omdbResponse = await imdbAPI.get(searchRequest);
+
     if (!tmdbData && !omdbResponse && year) {
       /**
        * If the client specified a year, it may have been incorrect because of
@@ -263,15 +306,43 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
     }
     omdbData = mapper.parseOMDbAPISeriesResponse(omdbResponse);
     // End OMDb lookups
+
+    // If we found an IMDb ID from OMDb, see if we have an existing record for the now-known media.
+    if (omdbData.imdbID) {
+      const existingResult = await SeriesMetadata.findOne({ imdbID: omdbData.imdbID }, null, { lean: true }).exec();
+      if (existingResult) {
+        return await addSearchMatchByIMDbID(omdbData.imdbID, title);
+      }
+    }
   }
 
   const combinedResponse = _.merge(omdbData, tmdbData);
   if (!combinedResponse || _.isEmpty(combinedResponse)) {
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+
+    // Also store a failed result for the title that the client sent
+    if (titleToCache) {
+      failedLookupQuery.title = titleToCache;
+      await FailedLookups.updateOne({ failedLookupQuery, type: 'series' }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+    }
+
     return null;
   }
 
-  return await SeriesMetadata.create(combinedResponse);
+  if (title) {
+    combinedResponse.searchMatches = [title];
+  }
+
+  let response = await SeriesMetadata.create(combinedResponse);
+
+  // Cache the result for the title that the client sent
+  if (titleToCache) {
+    combinedResponse.searchMatches = combinedResponse.searchMatches || [];
+    combinedResponse.searchMatches.push(titleToCache);
+    response = await SeriesMetadata.create(combinedResponse);
+  }
+
+  return response;
 };
 
 /*

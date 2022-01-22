@@ -3,7 +3,7 @@ import { ParameterizedContext } from 'koa';
 import * as _ from 'lodash';
 
 import { MediaNotFoundError, ValidationError } from '../../helpers/customErrors';
-import FailedLookups from '../../models/FailedLookups';
+import FailedLookups, { FailedLookupsInterface } from '../../models/FailedLookups';
 import MediaMetadata, { MediaMetadataInterface } from '../../models/MediaMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../../models/SeriesMetadata';
 import osAPI from '../../services/opensubtitles';
@@ -106,7 +106,7 @@ export const getBySanitizedTitle = async(ctx: ParameterizedContext): Promise<Med
   }
 
   // If we already failed to get a result, return early
-  const failedLookupQuery: GetVideoFilter = { title };
+  const failedLookupQuery: FailedLookupsInterface = { title };
   if (year) {
     failedLookupQuery.year = year.toString();
   }
@@ -130,10 +130,8 @@ export const getBySanitizedTitle = async(ctx: ParameterizedContext): Promise<Med
    * If we already have a result based on IMDb ID, return it after adding
    * this new searchMatch to the array.
    */
-  const existingIMDbIDResultQuery = { imdbID: imdbData.imdbID };
-  const existingResultFromIMDbID: MediaMetadataInterface = await MediaMetadata.findOne(existingIMDbIDResultQuery, null, { lean: true }).exec();
+  const existingResultFromIMDbID: MediaMetadataInterface = await MediaMetadata.findOne({ imdbID: imdbData.imdbID }, null, { lean: true }).exec();
   if (existingResultFromIMDbID) {
-    // @ts-ignore
     return ctx.body = await addSearchMatchByIMDbID(imdbData.imdbID, title);
   }
 
@@ -188,7 +186,7 @@ export const getBySanitizedTitleV2 = async(ctx: ParameterizedContext): Promise<M
   }
 
   // If we already failed to get a result, return early
-  const failedLookupQuery: GetVideoFilter = { title };
+  const failedLookupQuery: FailedLookupsInterface = { title };
   if (year) {
     failedLookupQuery.year = year.toString();
   }
@@ -224,15 +222,9 @@ export const getBySanitizedTitleV2 = async(ctx: ParameterizedContext): Promise<M
    * If we already have a result based on IMDb ID, return it after adding
    * this new searchMatch to the array.
    */
-  const existingIMDbIDResultQuery = { imdbID: imdbData.imdbID };
-  const existingResultFromIMDbID: MediaMetadataInterface = await MediaMetadata.findOne(existingIMDbIDResultQuery, null, { lean: true }).exec();
+  const existingResultFromIMDbID: MediaMetadataInterface = await MediaMetadata.findOne({ imdbID: imdbData.imdbID }, null, { lean: true }).exec();
   if (existingResultFromIMDbID) {
-    const updatedResult = await MediaMetadata.findOneAndUpdate(
-      existingIMDbIDResultQuery,
-      { $push: { searchMatches: title } },
-      { new: true, lean: true },
-    ).exec();
-    // @ts-ignore
+    const updatedResult = await addSearchMatchByIMDbID(imdbData.imdbID, title);
     return ctx.body = updatedResult;
   }
 

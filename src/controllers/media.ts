@@ -128,7 +128,7 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
 
   if (title) {
     const titleQuery: GetVideoFilter = { searchMatches: { $in: [title] } };
-    const titleFailedQuery: GetVideoFilter = { title };
+    const titleFailedQuery: FailedLookupsInterface = { title };
 
     if (year) {
       titleQuery.year = year;
