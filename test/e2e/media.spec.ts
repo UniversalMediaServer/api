@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import MediaMetadataModel, {  MediaMetadataInterfaceDocument } from '../../src/models/MediaMetadata';
+import MediaMetadataModel, { MediaMetadataInterfaceDocument } from '../../src/models/MediaMetadata';
 import SeasonMetadataModel from '../../src/models/SeasonMetadata';
 import SeriesMetadataModel, { SeriesMetadataInterface } from '../../src/models/SeriesMetadata';
 import FailedLookupsModel from '../../src/models/FailedLookups';

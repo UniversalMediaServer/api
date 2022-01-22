@@ -47,7 +47,11 @@ interface GetVideoFilter {
   episode?: string;
   searchMatches?: object;
   season?: string;
-  title?: string;
+}
+
+interface GetSeriesFilter {
+  startYear?: string;
+  searchMatches?: object;
 }
 
 interface CaseInsensitiveSearchQuery {
