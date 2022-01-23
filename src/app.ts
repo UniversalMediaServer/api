@@ -16,7 +16,7 @@ import mediaRouter  from './routes/media';
 import { ExternalAPIError, IMDbIDNotFoundError, MediaNotFoundError, ValidationError } from './helpers/customErrors';
 
 client.collectDefaultMetrics({ register: client.register });
-// @ts-ignore
+// @ts-expect-error
 const app = new Koa().use(koaPrometheus.DefaultHTTPMetricsInjector(client.register));
 
 koaQs(app, 'first');
