@@ -12,6 +12,8 @@ const debug = Debug('universalmediaserver-api:server');
 import indexRouter from './routes/index';
 import mediaRouter  from './routes/media';
 import deprecatedMediaRouter  from './routes/deprecated/media';
+import metadataRouter  from './routes/metadata';
+import { natsWrapper } from './services/nats';
 import { ExternalAPIError, IMDbIDNotFoundError, MediaNotFoundError, ValidationError } from './helpers/customErrors';
 
 const app = new Koa();
@@ -23,6 +25,7 @@ const db: string = process.env.MONGO_URL;
 const PORT: string = process.env.PORT || '3000';
 const bypassMongo: boolean = Boolean(process.env.BYPASS_MONGO) || false;
 connect(db);
+natsWrapper.connect();
 
 app.use(helmet());
 // error handler
@@ -76,6 +79,7 @@ app.use(async(ctx: ParameterizedContext, next) => {
 
 app.use(bodyParser());
 app.use(deprecatedMediaRouter.routes());
+app.use(metadataRouter.routes());
 app.use(mediaRouter.routes());
 app.use(indexRouter.routes());
 

@@ -6,7 +6,7 @@ import { LeanDocument } from 'mongoose';
 import { ExternalAPIError, MediaNotFoundError, ValidationError } from '../helpers/customErrors';
 import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
 import MediaMetadata, { MediaMetadataInterface, MediaMetadataInterfaceDocument } from '../models/MediaMetadata';
-import { SeriesMetadataInterface } from '../models/SeriesMetadata';
+import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import * as externalAPIHelper from '../services/external-api-helper';
 import { mapper } from '../utils/data-mapper';
 import { OpenSubtitlesQuery } from '../services/external-api-helper';
@@ -286,4 +286,18 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
+};
+// return all metadata from a job result
+// todo see if digital ocean response size could be an issue
+export const getByIds = async(ctx: ParameterizedContext): Promise<any> => {
+  const promises = [];
+
+  if (ctx.request.body.seriesDocumentIds) {
+    SeriesMetadata.find({ _id: { $in: ctx.request.body.seriesDocumentIds } }).lean();
+  }
+  if (ctx.request.body.fileDocumentIds) {
+    MediaMetadata.find({ _id: { $in: ctx.request.body.fileDocumentIds } }).lean();
+  }
+  const documents = await Promise.all(promises);
+  return ctx.body = documents;
 };

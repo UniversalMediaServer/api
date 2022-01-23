@@ -6,6 +6,12 @@ The required Node.js and Yarn versions are listed in the `package.json` file.
 
 You can run `nvm use` and `yvm use` from the project root if you have [Node version manager](https://github.com/nvm-sh/nvm) and [Yarn version manager](https://yvm.js.org)s installed to select the correct version.
 
+### Nats
+Nats must be running locally on port 4222.
+
+Docker: `docker run -p 4222:4444 nats -p 4444`
+Other: https://nats.io/download/
+
 ### Environment variables
 
 - `MONGO_URL` URL to a running Mongo instance which includes user and password
@@ -20,7 +26,7 @@ You can run `nvm use` and `yvm use` from the project root if you have [Node vers
 Watches for changes to TypeScript files and compiles them to JavaScript (use `yarn run build` to do it manually)
 
 #### `yarn dev`
-Runs the development server and restarts it when any file is changed
+Runs the development api server (and restarts it when any file is changed) and the async processor
 
 #### `yarn dev:cron`
 Runs the cron job feature using ts-node
