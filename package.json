@@ -125,6 +125,7 @@
     "koa": "^2.13.3",
     "koa-bodyparser": "^4.3.0",
     "koa-helmet": "^6.1.0",
+    "koa-prometheus-adv": "^1.0.1",
     "koa-qs": "^3.0.0",
     "koa-router": "^10.1.1",
     "lodash": "^4.17.21",
@@ -134,6 +135,8 @@
     "object-mapper": "^6.2.0",
     "opensubtitles-api": "UniversalMediaServer/opensubtitles-api#adb9ec6",
     "pm2": "^5.1.2",
+    "pm2-cluster-prom": "^2.1.0",
+    "prom-client": "^14.0.1",
     "stoppable": "^1.1.0",
     "ts-node": "^10.3.0"
   },
