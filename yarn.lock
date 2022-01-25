@@ -4166,10 +4166,10 @@ mongoose@6.1.8:
     regexp-clone "1.0.0"
     sift "13.5.2"
 
-moviedb-promise@^3.1.12:
-  version "3.1.12"
-  resolved "https://registry.yarnpkg.com/moviedb-promise/-/moviedb-promise-3.1.12.tgz#3efe82d26155a8b44ac1afd612d8e8a55ddf38d1"
-  integrity sha512-CTpIVsToA0wz6YfW2zwO9k+eS12+1x7x7oZ8AegfosigxWxyw0kIcpI8Tz9SDYLzoleUCss42JfAgVrdEjU8wg==
+moviedb-promise@^3.1.13:
+  version "3.1.13"
+  resolved "https://registry.yarnpkg.com/moviedb-promise/-/moviedb-promise-3.1.13.tgz#c44355b22c0a2e7ea5339140d72dfd56cd89575e"
+  integrity sha512-bsB8rsNftsscJegP3DKB7mG90vqG4F+Nvn4GuN7N/JPgODjEO9hAc4i/jcxc8Qr9qHHokTbqCuYt5x/1DbZzXg==
   dependencies:
     axios "^0.21.1"
     lodash "^4.17.21"
