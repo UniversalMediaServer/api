@@ -56,7 +56,7 @@ export const getSeries = async(ctx: ParameterizedContext): Promise<SeriesMetadat
  */
 export const getSeason = async(ctx: ParameterizedContext): Promise<SeasonMetadataInterface> => {
   const { season, title, year }: UmsQueryParams = ctx.query;
-  if (title || season) {
+  if (!title || !season) {
     throw new ValidationError('title and season are required');
   }
   const seasonNumber = Number(season);
