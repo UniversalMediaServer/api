@@ -302,7 +302,7 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
        * from 1980.
        * So, we attempt the lookup again with the year appended to the title.
        */
-      return getSeriesMetadata(null, title + ' ' + year);
+      return getSeriesMetadata(null, title + ' ' + year, null, title);
     }
     omdbData = mapper.parseOMDbAPISeriesResponse(omdbResponse);
     // End OMDb lookups

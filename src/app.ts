@@ -9,12 +9,17 @@ import * as fs from 'fs';
 import * as http from 'http';
 import * as https from 'https';
 const debug = Debug('universalmediaserver-api:server');
+import * as koaPrometheus from 'koa-prometheus-adv';
+import * as client from 'prom-client';
 import indexRouter from './routes/index';
 import mediaRouter  from './routes/media';
 import deprecatedMediaRouter  from './routes/deprecated/media';
 import { ExternalAPIError, IMDbIDNotFoundError, MediaNotFoundError, ValidationError } from './helpers/customErrors';
 
-const app = new Koa();
+client.collectDefaultMetrics({ register: client.register });
+// @ts-expect-error
+const app = new Koa().use(koaPrometheus.DefaultHTTPMetricsInjector(client.register));
+
 koaQs(app, 'first');
 
 import connect from './models/connection';
