@@ -277,7 +277,7 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
     // End TMDB lookups
 
     // If we found an IMDb ID from TMDB, see if we have an existing record for the now-known media.
-    if (tmdbData.imdbID) {
+    if (_.get(tmdbData, 'imdbID')) {
       const existingResult = await SeriesMetadata.findOne({ imdbID: tmdbData.imdbID }, null, { lean: true }).exec();
       if (existingResult) {
         return await addSearchMatchByIMDbID(tmdbData.imdbID, title);
@@ -308,7 +308,7 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
     // End OMDb lookups
 
     // If we found an IMDb ID from OMDb, see if we have an existing record for the now-known media.
-    if (omdbData.imdbID) {
+    if (_.get(omdbData, 'imdbID')) {
       const existingResult = await SeriesMetadata.findOne({ imdbID: omdbData.imdbID }, null, { lean: true }).exec();
       if (existingResult) {
         return await addSearchMatchByIMDbID(omdbData.imdbID, title);
