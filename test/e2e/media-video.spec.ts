@@ -92,6 +92,7 @@ describe('get by all', () => {
       const spy = jest.spyOn(apihelper, 'getFromOMDbAPIV2');
       const spy2 = jest.spyOn(apihelper, 'getFromTMDBAPI');
       let response = await got(`${appUrl}/api/media/video?title=${MOVIE_INTERSTELLAR.title}`, { responseType: 'json' }) as UmsApiGotResponse;
+      const createdDocumentId = response.body._id;
       expect(response.body.title).toEqual('Interstellar');
       expect(response.body.type).toEqual('movie');
       expect(spy).toHaveBeenCalledTimes(1);
@@ -103,15 +104,13 @@ describe('get by all', () => {
       expect(spy).toHaveBeenCalledTimes(1);
       expect(spy2).toHaveBeenCalledTimes(1);
 
-      /*
-       * Should also return the result for a similar title search with the same IMDb ID
-       * when the returned result from the external API matches an existing IMDb ID.
-       */
       response = await got(`${appUrl}/api/media/video?title=${MOVIE_INTERSTELLAR.title.toLowerCase()}`, { responseType: 'json' });
       expect(response.body.title).toEqual('Interstellar');
       expect(response.body.type).toEqual('movie');
-      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledTimes(2);
       expect(spy2).toHaveBeenCalledTimes(2);
+      // should add a new searchMatch to the existing document
+      expect(response.body._id).toEqual(createdDocumentId);
     });
 
     it('should return a movie by title AND imdbId from source APIs then store', async() => {
