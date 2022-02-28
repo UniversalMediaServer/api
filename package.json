@@ -146,7 +146,7 @@
     "@types/koa-bodyparser": "^4.3.5",
     "@types/koa-helmet": "^6.0.4",
     "@types/koa-router": "^7.4.4",
-    "@types/lodash": "^4.14.178",
+    "@types/lodash": "^4.14.179",
     "@types/natural": "^5.1.0",
     "@types/node": "^16.11.12",
     "@types/object-mapper": "^6.2.0",
