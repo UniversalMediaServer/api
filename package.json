@@ -138,7 +138,7 @@
     "pm2-cluster-prom": "^2.1.0",
     "prom-client": "^14.0.1",
     "stoppable": "^1.1.0",
-    "ts-node": "^10.5.0"
+    "ts-node": "^10.7.0"
   },
   "devDependencies": {
     "@types/jest": "^27.4.1",
