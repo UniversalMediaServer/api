@@ -1122,10 +1122,10 @@
     "@types/bson" "*"
     "@types/node" "*"
 
-"@types/natural@^5.1.0":
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/@types/natural/-/natural-5.1.0.tgz#bb003b328db83db5bf138829ecf79ce26e9997c0"
-  integrity sha512-b6HzwfHcxK9himwAnhyth8Nz3CcbbgM/qu8bkSVEE/WzMUNR2wo2RHaVK5XVVakwP8EVcI5MAysaOkG8iWhEag==
+"@types/natural@^5.1.1":
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/@types/natural/-/natural-5.1.1.tgz#d4b5c9bf9356d861cf8468949d2fbca30dd1cdcc"
+  integrity sha512-BqppT8eHJvc0pN81XE7Rx5P8Osg1TSnOx3iwzLWImIO+6DwNUfpKR20tvg713O2eqHoxLcqrBaL10foo1mw/Xw==
   dependencies:
     "@types/node" "*"
 
