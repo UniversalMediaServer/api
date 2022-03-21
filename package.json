@@ -119,7 +119,7 @@
   },
   "dependencies": {
     "@universalmediaserver/node-imdb-api": "4.4.2",
-    "debug": "^4.3.3",
+    "debug": "^4.3.4",
     "episode-parser": "^2.0.2",
     "escape-string-regexp": "5",
     "koa": "^2.13.3",
