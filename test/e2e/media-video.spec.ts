@@ -244,7 +244,7 @@ describe('get by all', () => {
       } catch (e) {
         error = e;
       }
-      expect(error.message).toEqual('Response code 404 (Not Found)');
+      expect(error.message).toEqual('Request failed with status code 404');
       expect(await FailedLookupsModel.countDocuments()).toEqual(1);
       expect(spy).toHaveBeenCalledTimes(1);
       spy.mockReset();
@@ -254,7 +254,7 @@ describe('get by all', () => {
       } catch (e) {
         error = e;
       }
-      expect(error.message).toEqual('Response code 404 (Not Found)');
+      expect(error.message).toEqual('Request failed with status code 404');
       expect(spy).toHaveBeenCalledTimes(0);
     });
 
@@ -267,7 +267,7 @@ describe('get by all', () => {
       } catch (e) {
         error = e;
       }
-      expect(error.message).toEqual('Response code 404 (Not Found)');
+      expect(error.message).toEqual('Request failed with status code 404');
       expect(await FailedLookupsModel.countDocuments()).toEqual(1);
       expect(spy).toHaveBeenCalledTimes(1);
       spy.mockReset();
@@ -277,7 +277,7 @@ describe('get by all', () => {
       } catch (e) {
         error = e;
       }
-      expect(error.message).toEqual('Response code 404 (Not Found)');
+      expect(error.message).toEqual('Request failed with status code 404');
       expect(spy).toHaveBeenCalledTimes(0);
     });
   });
@@ -290,7 +290,7 @@ describe('get by all', () => {
       } catch (e) {
         error = e;
       }
-      expect(error.message).toEqual('Response code 422 (Unprocessable Entity)');
+      expect(error.message).toEqual('Request failed with status code 422');
     });
 
     it('should require filebytesize if attempting osbdHash search', async() => {
@@ -300,7 +300,7 @@ describe('get by all', () => {
       } catch (e) {
         error = e;
       }
-      expect(error.message).toEqual('Response code 422 (Unprocessable Entity)');
+      expect(error.message).toEqual('Request failed with status code 422');
     });
   });
 });

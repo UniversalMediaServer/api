@@ -139,7 +139,7 @@ describe('Media Metadata endpoints', () => {
         } catch (e) {
           error = e;
         }
-        expect(error.message).toEqual('Response code 404 (Not Found)');
+        expect(error.message).toEqual('Request failed with status code 404');
         let doc = await FailedLookupsModel.findOne({ osdbHash: 'f4245d9379d31e30' });
         expect(doc).toHaveProperty('_id');
         expect(doc).toHaveProperty('osdbHash');
@@ -161,7 +161,7 @@ describe('Media Metadata endpoints', () => {
         } catch (e) {
           error = e;
         }
-        expect(error.message).toEqual('Response code 404 (Not Found)');
+        expect(error.message).toEqual('Request failed with status code 404');
         const doc = await FailedLookupsModel.findOne({ osdbHash: theSimpsonsMetaData.osdbHash });
         expect(doc).toHaveProperty('_id');
         expect(doc).toHaveProperty('osdbHash');
@@ -175,7 +175,7 @@ describe('Media Metadata endpoints', () => {
         } catch (e) {
           error = e;
         }
-        expect(error.message).toEqual('Response code 404 (Not Found)');
+        expect(error.message).toEqual('Request failed with status code 404');
         const doc = await FailedLookupsModel.findOne({ osdbHash: prisonBreakEpisodeMetadata.osdbHash });
         expect(doc).toHaveProperty('_id');
         expect(doc).toHaveProperty('osdbHash');
@@ -189,7 +189,7 @@ describe('Media Metadata endpoints', () => {
         } catch (e) {
           error = e;
         }
-        expect(error.message).toEqual('Response code 404 (Not Found)');
+        expect(error.message).toEqual('Request failed with status code 404');
         const doc = await FailedLookupsModel.findOne({ osdbHash: prisonBreakEpisodeMetadata.osdbHash });
         expect(doc).toHaveProperty('_id');
         expect(doc).toHaveProperty('osdbHash');
@@ -203,7 +203,7 @@ describe('Media Metadata endpoints', () => {
         } catch (e) {
           error = e;
         }
-        expect(error.message).toEqual('Response code 404 (Not Found)');
+        expect(error.message).toEqual('Request failed with status code 404');
         const doc = await FailedLookupsModel.findOne({ osdbHash: prisonBreakEpisodeMetadata.osdbHash });
         expect(doc).toHaveProperty('_id');
         expect(doc).toHaveProperty('osdbHash');
@@ -259,7 +259,7 @@ describe('Media Metadata endpoints', () => {
         } catch (e) {
           error = e;
         }
-        expect(error.message).toEqual('Response code 404 (Not Found)');
+        expect(error.message).toEqual('Request failed with status code 404');
         const doc = await FailedLookupsModel.findOne({ osdbHash: 'f4245d9379d31e30' });
         expect(doc).toBeFalsy();
       });
@@ -271,7 +271,7 @@ describe('Media Metadata endpoints', () => {
         } catch (e) {
           error = e;
         }
-        expect(error.message).toEqual('Response code 404 (Not Found)');
+        expect(error.message).toEqual('Request failed with status code 404');
         const doc = await FailedLookupsModel.findOne({ osdbHash: 'f4245d9379d31e30' });
         expect(doc).toBeFalsy();
       });
@@ -283,7 +283,7 @@ describe('Media Metadata endpoints', () => {
         } catch (e) {
           error = e;
         }
-        expect(error.message).toEqual('Response code 404 (Not Found)');
+        expect(error.message).toEqual('Request failed with status code 404');
         const doc = await FailedLookupsModel.findOne({ osdbHash: 'f4245d9379d31e30' });
         expect(doc).toBeFalsy();
       });
@@ -296,7 +296,7 @@ describe('Media Metadata endpoints', () => {
       } catch (e) {
         error = e;
       }
-      expect(error.message).toEqual('Response code 404 (Not Found)');
+      expect(error.message).toEqual('Request failed with status code 404');
       const doc = await FailedLookupsModel.findOne({ osdbHash: 'a04cfbeafc4af7eb' });
       expect(doc).toHaveProperty('_id');
       expect(doc).toHaveProperty('osdbHash');
@@ -340,7 +340,7 @@ describe('Media Metadata endpoints', () => {
         await axios.get(`${appUrl}/api/media/title`);
       } catch (err) {
         expect(err).toBeInstanceOf(Error);
-        expect(err.message).toEqual('Response code 422 (Unprocessable Entity)');
+        expect(err.message).toEqual('Request failed with status code 422');
       }
     });
 
@@ -421,7 +421,7 @@ describe('Media Metadata endpoints', () => {
         await axios.get(`${appUrl}/api/media/v2/title`);
       } catch (err) {
         expect(err).toBeInstanceOf(Error);
-        expect(err.message).toEqual('Response code 422 (Unprocessable Entity)');
+        expect(err.message).toEqual('Request failed with status code 422');
       }
     });
 
