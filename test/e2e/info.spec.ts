@@ -1,16 +1,15 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import TMDBConfigurationModel, { TMDBConfigurationInterface } from '../../src/models/TMDBConfiguration';
 
 import * as mongoose from 'mongoose';
-import got from 'got';
+import axios from 'axios';
 import * as stoppable from 'stoppable';
 
 import { MongoMemoryServer } from 'mongodb-memory-server';
 let mongod;
 
-interface UmsApiGotResponse  {
-  statusCode: number;
-  body: TMDBConfigurationInterface;
+interface UmsApiAxiosResponse  {
+  status: number;
+  data: TMDBConfigurationInterface;
   headers?: object;
 }
 
@@ -37,9 +36,9 @@ describe('Info endpoint', () => {
   });
 
   it('should return configuration', async() => {
-    const response = await got(`${appUrl}/api/configuration`, { responseType: 'json' }) as UmsApiGotResponse;
+    const response = await axios.get(`${appUrl}/api/configuration`) as UmsApiAxiosResponse;
 
-    expect(response.body).toHaveProperty('imageBaseURL');
-    expect(response.body.imageBaseURL).toContain('https://image.tmdb.org/');
+    expect(response.data).toHaveProperty('imageBaseURL');
+    expect(response.data.imageBaseURL).toContain('https://image.tmdb.org/');
   });
 });
