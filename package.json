@@ -156,7 +156,7 @@
     "got": "^11.8.3",
     "inquirer": "^8.2.2",
     "jest": "^27.5.1",
-    "mongodb-memory-server": "7.5.1",
+    "mongodb-memory-server": "8.4.2",
     "nock": "^13.2.4",
     "nodemon": "^2.0.15",
     "ts-jest": "^27.1.4",
