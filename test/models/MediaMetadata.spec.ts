@@ -123,7 +123,7 @@ describe('Media Metadata Model', () => {
       const response = await MediaMetadataModel.findOne({ osdbHash: interstellarMetaData.osdbHash }, null, { explain: true }).exec();
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'inputStage', 'stage'])).toEqual('IXSCAN');
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'stage'])).toEqual('FETCH');
-      expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'stage'])).toEqual('PROJECTION');
+      expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'stage'])).toEqual('PROJECTION_DEFAULT');
     });
 
     it('should use index when find by title', async() => {
@@ -131,7 +131,7 @@ describe('Media Metadata Model', () => {
       const response = await MediaMetadataModel.findOne({ title: interstellarMetaData.title }, null, { explain: true }).exec();
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'inputStage', 'stage'])).toEqual('IXSCAN');
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'stage'])).toEqual('FETCH');
-      expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'stage'])).toEqual('PROJECTION');
+      expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'stage'])).toEqual('PROJECTION_DEFAULT');
     });
 
     it('should use index when find by searchMatches', async() => {
@@ -139,7 +139,7 @@ describe('Media Metadata Model', () => {
       const response = await MediaMetadataModel.findOne({ searchMatches: { $in: [interstellarMetaData.searchMatches[0]] } }, null, { explain: true }).exec();
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'inputStage', 'stage'])).toEqual('IXSCAN');
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'stage'])).toEqual('FETCH');
-      expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'stage'])).toEqual('PROJECTION');
+      expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'stage'])).toEqual('PROJECTION_DEFAULT');
     });
   });
 });
