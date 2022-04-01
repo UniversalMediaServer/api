@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { mapper } from '../../src/utils/data-mapper';
 
 const openSubtitlesData = {
