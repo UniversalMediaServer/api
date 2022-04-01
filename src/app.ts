@@ -17,7 +17,7 @@ import deprecatedMediaRouter  from './routes/deprecated/media';
 import { ExternalAPIError, IMDbIDNotFoundError, MediaNotFoundError, ValidationError } from './helpers/customErrors';
 
 client.collectDefaultMetrics({ register: client.register });
-// @ts-expect-error
+// @ts-expect-error there is an incompatible type error because koa-prometheus-adv is abandoned
 const app = new Koa().use(koaPrometheus.DefaultHTTPMetricsInjector(client.register));
 
 koaQs(app, 'first');

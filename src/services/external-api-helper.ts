@@ -143,17 +143,15 @@ export const getFromOMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
 
 const getSeriesTMDBIDFromTMDBAPI = async(imdbID?: string, seriesTitle?: string, year?: number): Promise<number> => {
   if (imdbID) {
-    // eslint-disable-next-line @typescript-eslint/camelcase
     const findResult = await tmdb.find({ id: imdbID, external_source: ExternalId.ImdbId });
     // Using any here to make up for missing interface, should submit fix
     if (findResult?.tv_results && findResult?.tv_results[0]) {
-      const tvEpisodeResults = findResult.tv_results[0] as any;
+      const tvEpisodeResults = findResult.tv_results[0];
       return tvEpisodeResults?.id;
     }
   } else {
     const tmdbQuery: SearchTvRequest = { query: seriesTitle };
     if (year) {
-      // eslint-disable-next-line @typescript-eslint/camelcase
       tmdbQuery.first_air_date_year = year;
     }
     const searchResults = await tmdb.searchTv(tmdbQuery);
@@ -207,7 +205,6 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
 
     if (seriesID) {
       const seriesRequest = {
-        // eslint-disable-next-line @typescript-eslint/camelcase
         append_to_response: 'images,external_ids,credits',
         id: seriesID,
       };
@@ -266,7 +263,6 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
 
     if (seriesTMDBID) {
       const seriesRequest = {
-        // eslint-disable-next-line @typescript-eslint/camelcase
         append_to_response: 'images,external_ids,credits',
         id: seriesTMDBID,
       };
@@ -425,7 +421,6 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, movieOrEpisodeI
     const episodeIMDbID = movieOrEpisodeIMDbID;
     let seriesTMDBID: string | number;
     if (episodeIMDbID) {
-      // eslint-disable-next-line @typescript-eslint/camelcase
       const findResult = await tmdb.find({ id: episodeIMDbID, external_source: ExternalId.ImdbId });
       // Using any here to make up for missing interface, should submit fix
       if (findResult?.tv_episode_results && findResult?.tv_episode_results[0]) {
@@ -442,12 +437,9 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, movieOrEpisodeI
     }
 
     const episodeRequest: EpisodeRequest = {
-      // eslint-disable-next-line @typescript-eslint/camelcase
       append_to_response: 'images,external_ids,credits',
-      // eslint-disable-next-line @typescript-eslint/camelcase
       episode_number: episodeNumber,
       id: seriesTMDBID,
-      // eslint-disable-next-line @typescript-eslint/camelcase
       season_number: seasonNumber,
     };
 
@@ -458,11 +450,10 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, movieOrEpisodeI
 
     let movieTMDBID: string | number;
     if (movieIMDbID) {
-      // eslint-disable-next-line @typescript-eslint/camelcase
       const findResult = await tmdb.find({ id: movieIMDbID, external_source: ExternalId.ImdbId });
       // Using any here to make up for missing interface, should submit fix
       if (findResult?.movie_results && findResult?.movie_results[0]) {
-        const movieResult = findResult.movie_results[0] as any;
+        const movieResult = findResult.movie_results[0];
         movieTMDBID = movieResult?.id;
       }
     } else {
@@ -481,7 +472,6 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, movieOrEpisodeI
     }
 
     const tmdbData = await tmdb.movieInfo({
-      // eslint-disable-next-line @typescript-eslint/camelcase
       append_to_response: 'images,external_ids,credits',
       id: movieTMDBID,
     });

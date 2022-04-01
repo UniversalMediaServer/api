@@ -79,10 +79,8 @@ export const getSeason = async(ctx: ParameterizedContext): Promise<SeasonMetadat
 
   // Start TMDB lookups
   const seasonRequest = {
-    // eslint-disable-next-line @typescript-eslint/camelcase
     append_to_response: 'images,external_ids,credits',
     id: seriesMetadata.tmdbID,
-    // eslint-disable-next-line @typescript-eslint/camelcase
     season_number: seasonNumber,
   };
 

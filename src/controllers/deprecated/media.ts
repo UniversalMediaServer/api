@@ -142,7 +142,7 @@ export const getBySanitizedTitle = async(ctx: ParameterizedContext): Promise<Med
      * Once clarity on the feature, or if a bugfix is released we could refactor the below
      */
     let newlyCreatedResult = await MediaMetadata.create(imdbData);
-    // @ts-ignore
+    // @ts-expect-error these types get confused because of lean results
     newlyCreatedResult = newlyCreatedResult.toObject();
     delete newlyCreatedResult.searchMatches;
     return ctx.body = newlyCreatedResult;
@@ -235,7 +235,7 @@ export const getBySanitizedTitleV2 = async(ctx: ParameterizedContext): Promise<M
      * Once clarity on the feature, or if a bugfix is released we could refactor the below
      */
     let newlyCreatedResult = await MediaMetadata.create(imdbData);
-    // @ts-ignore
+    // @ts-expect-error these types get confused because of lean results
     newlyCreatedResult = newlyCreatedResult.toObject();
     delete newlyCreatedResult.searchMatches;
     return ctx.body = newlyCreatedResult;
