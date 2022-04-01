@@ -33,16 +33,9 @@ const EPISODE_PRISONBREAK = {
   'season': '5',
   'episode': '9',
   'imdbId': 'tt5538198',
-};
-
-const EPISODE_BAND_OF_BROTHERS = {
-  'osdbHash': 'fbfbfc3341a24205',
-  'filebytesize': '547090397',
-  'imdbID': 'tt1247462',
-  'season': '1',
-  'episode': '6',
-  'title': 'Band of Brothers',
-  'year': '2001',
+  'year': 2017,
+  'seriesIMDbID': 'tt0455275',
+  'title': 'Behind the Eyes',
 };
 
 interface UmsApiGotResponse  {
@@ -214,16 +207,18 @@ describe('get by all', () => {
       const spy = jest.spyOn(apihelper, 'getFromOMDbAPIV2');
       const openSubsSpy = jest.spyOn(apihelper, 'getFromOpenSubtitles');
       const url = `${appUrl}/api/media/video?`+
-        `osdbHash=${EPISODE_BAND_OF_BROTHERS.osdbHash}`+
-        `&filebytesize=${EPISODE_BAND_OF_BROTHERS.filebytesize}`+
-        `&title=${EPISODE_BAND_OF_BROTHERS.title}`+
-        `&season=${EPISODE_BAND_OF_BROTHERS.season}`+
-        `&episode=${EPISODE_BAND_OF_BROTHERS.episode}`+
-        `&year=${EPISODE_BAND_OF_BROTHERS.year}`;
+        `osdbHash=${EPISODE_PRISONBREAK.osdbHash}`+
+        `&filebytesize=${EPISODE_PRISONBREAK.filebytesize}`+
+        `&title=${EPISODE_PRISONBREAK.title}`+
+        `&season=${EPISODE_PRISONBREAK.season}`+
+        `&episode=${EPISODE_PRISONBREAK.episode}`+
+        `&year=${EPISODE_PRISONBREAK.year}`;
       let response = await got(url, { responseType: 'json' }) as UmsApiGotResponse;
-      expect(response.body.title).toEqual('Bastogne');
+      expect(response.body.title).toEqual(EPISODE_PRISONBREAK.title);
       expect(response.body.type).toEqual('episode');
-      expect(response.body.seriesIMDbID).toEqual('tt0185906');
+
+      // This value comes from OMDb
+      expect(response.body.seriesIMDbID).toEqual(EPISODE_PRISONBREAK.seriesIMDbID);
       expect(spy).toHaveBeenCalledTimes(1);
       expect(openSubsSpy).toHaveBeenCalledTimes(1);
       spy.mockReset();
@@ -233,9 +228,9 @@ describe('get by all', () => {
       response = await got(url, { responseType: 'json' });
       expect(spy).toHaveBeenCalledTimes(0);
       expect(openSubsSpy).toHaveBeenCalledTimes(0);
-      expect(response.body.title).toEqual('Bastogne');
+      expect(response.body.title).toEqual(EPISODE_PRISONBREAK.title);
       expect(response.body.type).toEqual('episode');
-      expect(response.body.seriesIMDbID).toEqual('tt0185906');
+      expect(response.body.seriesIMDbID).toEqual(EPISODE_PRISONBREAK.seriesIMDbID);
     });
   });
 
