@@ -247,7 +247,7 @@ describe('Media Metadata endpoints', () => {
         } catch (e) {
           error = e;
         }
-        expect(error.message).toEqual('Response code 503 (Service Unavailable)');
+        expect(error.message).toEqual('Request failed with status code 503');
         const doc = await FailedLookupsModel.findOne({ osdbHash: 'h4245d9379d31e33' });
         expect(doc).toEqual(null);
       });
@@ -466,7 +466,7 @@ describe('Media Metadata endpoints', () => {
       } catch (e) {
         error = e;
       }
-      expect(error.message).toEqual('Response code 503 (Service Unavailable)');
+      expect(error.message).toEqual('Request failed with status code 503');
       expect(await FailedLookupsModel.countDocuments({})).toEqual(0);
     });
   });
