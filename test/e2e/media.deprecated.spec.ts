@@ -8,9 +8,9 @@ import * as stoppable from 'stoppable';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 let mongod;
 
-interface UmsApiGotResponse  {
-  statusCode: number;
-  body: MediaMetadataInterfaceDocument;
+interface UmsApiAxiosResponse  {
+  status: number;
+  data: MediaMetadataInterfaceDocument;
   headers?: object;
 }
 
@@ -79,45 +79,45 @@ describe('Media Metadata endpoints', () => {
   describe('get by osdb hash', () => {
     it('should return a valid response for existing media record with osdb hash', async() => {
       await MediaMetadataModel.create(interstellarMetaData);
-      const res = await axios.get(`${appUrl}/api/media/osdbhash/${interstellarMetaData.osdbHash}/1234`) as UmsApiGotResponse;
-      expect(res.statusCode).toBe(200);
-      expect(res.body).toHaveProperty('_id');
-      expect(res.body).toHaveProperty('genres', interstellarMetaData.genres);
-      expect(res.body).toHaveProperty('osdbHash', interstellarMetaData.osdbHash);
-      expect(res.body).toHaveProperty('title', interstellarMetaData.title);
+      const res = await axios.get(`${appUrl}/api/media/osdbhash/${interstellarMetaData.osdbHash}/1234`) as UmsApiAxiosResponse;
+      expect(res.status).toBe(200);
+      expect(res.data).toHaveProperty('_id');
+      expect(res.data).toHaveProperty('genres', interstellarMetaData.genres);
+      expect(res.data).toHaveProperty('osdbHash', interstellarMetaData.osdbHash);
+      expect(res.data).toHaveProperty('title', interstellarMetaData.title);
     });
 
     it('should return a valid response for a new osdbhash, then store it', async() => {
       // using example file from https://trac.opensubtitles.org/projects/opensubtitles/wiki/HashSourceCodes
-      const res = await axios.get(`${appUrl}/api/media/osdbhash/${theSimpsonsMetaData.osdbHash}/12909756`) as UmsApiGotResponse;
-      expect(res.statusCode).toBe(200);
-      expect(res.body).toHaveProperty('_id');
-      expect(res.body).toHaveProperty('year', '2007');
-      expect(res.body).toHaveProperty('osdbHash', theSimpsonsMetaData.osdbHash);
-      expect(res.body).toHaveProperty('title', 'The Simpsons Movie');
-      expect(res.body).toHaveProperty('imdbID', 'tt0462538');
-      expect(res.body).toHaveProperty('type', 'movie');
-      expect(res.body).toHaveProperty('goofs');
-      expect(res.body).toHaveProperty('trivia');
-      expect(res.body).toHaveProperty('tagline');
+      const res = await axios.get(`${appUrl}/api/media/osdbhash/${theSimpsonsMetaData.osdbHash}/12909756`) as UmsApiAxiosResponse;
+      expect(res.status).toBe(200);
+      expect(res.data).toHaveProperty('_id');
+      expect(res.data).toHaveProperty('year', '2007');
+      expect(res.data).toHaveProperty('osdbHash', theSimpsonsMetaData.osdbHash);
+      expect(res.data).toHaveProperty('title', 'The Simpsons Movie');
+      expect(res.data).toHaveProperty('imdbID', 'tt0462538');
+      expect(res.data).toHaveProperty('type', 'movie');
+      expect(res.data).toHaveProperty('goofs');
+      expect(res.data).toHaveProperty('trivia');
+      expect(res.data).toHaveProperty('tagline');
       // from IMDb API
-      expect(res.body).toHaveProperty('ratings', [
+      expect(res.data).toHaveProperty('ratings', [
         { Source: 'Internet Movie Database', Value: '7.3/10' },
         { Source: 'Rotten Tomatoes', Value: '88%' },
         { Source: 'Metacritic', Value: '80/100' },
       ]);
-      expect(res.body).toHaveProperty('metascore', '80');
-      expect(res.body).toHaveProperty('poster', 'https://m.media-amazon.com/images/M/MV5BMTgxMDczMTA5N15BMl5BanBnXkFtZTcwMzk1MzMzMw@@._V1_SX300.jpg');
-      expect(res.body).toHaveProperty('rated', 'PG-13');
-      expect(res.body).toHaveProperty('rating', 7.3);
-      expect(res.body).toHaveProperty('runtime', '87 min');
-      expect(res.body).toHaveProperty('votes', '298,859');
-      expect(res.body).toHaveProperty('boxoffice', '$183,100,000');
-      expect(res.body).toHaveProperty('genres', ['Animation', 'Adventure', 'Comedy']);
-      expect(res.body).toHaveProperty('actors', ['Dan Castellaneta', 'Julie Kavner', 'Nancy Cartwright', 'Yeardley Smith', 'Hank Azaria', 'Harry Shearer', 'Pamela Hayden', 'Tress MacNeille', 'Albert Brooks', 'Karl Wiedergott', 'Marcia Wallace', 'Russi Taylor', 'Maggie Roswell', 'Phil Rosenthal', 'Billie Joe Armstrong']);
+      expect(res.data).toHaveProperty('metascore', '80');
+      expect(res.data).toHaveProperty('poster', 'https://m.media-amazon.com/images/M/MV5BMTgxMDczMTA5N15BMl5BanBnXkFtZTcwMzk1MzMzMw@@._V1_SX300.jpg');
+      expect(res.data).toHaveProperty('rated', 'PG-13');
+      expect(res.data).toHaveProperty('rating', 7.3);
+      expect(res.data).toHaveProperty('runtime', '87 min');
+      expect(res.data).toHaveProperty('votes', '298,859');
+      expect(res.data).toHaveProperty('boxoffice', '$183,100,000');
+      expect(res.data).toHaveProperty('genres', ['Animation', 'Adventure', 'Comedy']);
+      expect(res.data).toHaveProperty('actors', ['Dan Castellaneta', 'Julie Kavner', 'Nancy Cartwright', 'Yeardley Smith', 'Hank Azaria', 'Harry Shearer', 'Pamela Hayden', 'Tress MacNeille', 'Albert Brooks', 'Karl Wiedergott', 'Marcia Wallace', 'Russi Taylor', 'Maggie Roswell', 'Phil Rosenthal', 'Billie Joe Armstrong']);
   
       // should save to db
-      const doc = await MediaMetadataModel.findOne({ osdbHash: res.body.osdbHash });
+      const doc = await MediaMetadataModel.findOne({ osdbHash: res.data.osdbHash });
   
       expect(doc).toHaveProperty('_id');
       expect(doc).toHaveProperty('year', '2007');
@@ -220,9 +220,9 @@ describe('Media Metadata endpoints', () => {
         error = e;
       }
       expect(error).toBeUndefined();
-      expect(response.body).toHaveProperty('_id');
-      expect(response.body).toHaveProperty('plot');
-      expect(response.body).toHaveProperty('osdbHash', prisonBreakEpisodeMetadata.osdbHash);
+      expect(response.data).toHaveProperty('_id');
+      expect(response.data).toHaveProperty('plot');
+      expect(response.data).toHaveProperty('osdbHash', prisonBreakEpisodeMetadata.osdbHash);
     });
 
     it('should return a movie response when validation is supplied and passes', async() => {
@@ -234,8 +234,8 @@ describe('Media Metadata endpoints', () => {
         error = e;
       }
       expect(error).toBeUndefined();
-      expect(response.body).toHaveProperty('_id');
-      expect(response.body).toHaveProperty('osdbHash', theSimpsonsMetaData.osdbHash);
+      expect(response.data).toHaveProperty('_id');
+      expect(response.data).toHaveProperty('osdbHash', theSimpsonsMetaData.osdbHash);
     });
 
     describe('should NOT create a failed lookup document', () => {
@@ -305,9 +305,9 @@ describe('Media Metadata endpoints', () => {
 
   describe('get by title v1', () => {
     it('should search by series title and store it, and not return searchMatches', async() => {
-      const response = await axios.get(`${appUrl}/api/media/title?title=Homeland S02E05`) as UmsApiGotResponse;
-      expect(response.body).toHaveProperty('_id');
-      expect(response.body).not.toHaveProperty('searchMatches');
+      const response = await axios.get(`${appUrl}/api/media/title?title=Homeland S02E05`) as UmsApiAxiosResponse;
+      expect(response.data).toHaveProperty('_id');
+      expect(response.data).not.toHaveProperty('searchMatches');
 
       const episode = await MediaMetadataModel.findOne({ searchMatches: { $in: ['Homeland S02E05'] } });
       expect(episode).toHaveProperty('_id');
@@ -322,8 +322,8 @@ describe('Media Metadata endpoints', () => {
     });
 
     it('should search by movie title and year and store it', async() => {
-      const response = await axios.get(`${appUrl}/api/media/title?title=The Grinch&year=2018`) as UmsApiGotResponse;
-      expect(response.body).toHaveProperty('_id');
+      const response = await axios.get(`${appUrl}/api/media/title?title=The Grinch&year=2018`) as UmsApiAxiosResponse;
+      expect(response.data).toHaveProperty('_id');
 
       const movie = await MediaMetadataModel.findOne({ searchMatches: { $in: ['The Grinch'] } });
       expect(movie).toHaveProperty('_id');
@@ -345,8 +345,8 @@ describe('Media Metadata endpoints', () => {
     });
 
     it('should return best match for movie titles which return many search results from OMDb', async() => {
-      const response = await axios.get(`${appUrl}/api/media/title?title=The Matrix Reloaded&year=2003`) as UmsApiGotResponse;
-      expect(response.body.title).toBe('The Matrix Reloaded');
+      const response = await axios.get(`${appUrl}/api/media/title?title=The Matrix Reloaded&year=2003`) as UmsApiAxiosResponse;
+      expect(response.data.title).toBe('The Matrix Reloaded');
       /*
         The external API returns 5 movies for this title search, so the above test asserts we select the correct one, which is decided by
         using Jaro-Winkler string distance estimations vs the title that the client passed to us. This test determines the above to be the correct result, provided
@@ -362,8 +362,8 @@ describe('Media Metadata endpoints', () => {
   describe('get by title v2', () => {
     it('should search by series title, season and episode numbers, and store it, and not return searchMatches', async() => {
       const response = await axios.get(`${appUrl}/api/media/v2/title?title=Homeland&season=2&episode=5`);
-      expect(response.body).toHaveProperty('_id');
-      expect(response.body).not.toHaveProperty('searchMatches');
+      expect(response.data).toHaveProperty('_id');
+      expect(response.data).not.toHaveProperty('searchMatches');
 
       const episode = await MediaMetadataModel.findOne({ searchMatches: { $in: ['Homeland'] } });
       expect(episode).toHaveProperty('_id');
@@ -379,7 +379,7 @@ describe('Media Metadata endpoints', () => {
 
     it('should search by movie title and year and store it', async() => {
       const response = await axios.get(`${appUrl}/api/media/v2/title?title=The Grinch&year=2018`);
-      expect(response.body).toHaveProperty('_id');
+      expect(response.data).toHaveProperty('_id');
 
       const movie = await MediaMetadataModel.findOne({ searchMatches: { $in: ['The Grinch'] } });
       expect(movie).toHaveProperty('_id');
@@ -398,7 +398,7 @@ describe('Media Metadata endpoints', () => {
       await MediaMetadataModel.create(aloneMovieMetaData);
 
       let response = await axios.get(`${appUrl}/api/media/v2/title?title=Alone&season=1&episode=1`);
-      expect(response.body).toHaveProperty('_id');
+      expect(response.data).toHaveProperty('_id');
 
       const episode = await MediaMetadataModel.findOne({ searchMatches: { $in: ['Alone'] }, season: '1', episode: '1' });
       expect(episode).toHaveProperty('episode', aloneEpisodeMetaData.episode);
@@ -409,11 +409,11 @@ describe('Media Metadata endpoints', () => {
       expect(episode).toHaveProperty('year', aloneEpisodeMetaData.year);
 
       response = await axios.get(`${appUrl}/api/media/v2/title?title=Alone&year=2020`);
-      expect(response.body).toHaveProperty('genres', aloneMovieMetaData.genres);
-      expect(response.body).toHaveProperty('imdbID', aloneMovieMetaData.imdbID);
-      expect(response.body).toHaveProperty('title', aloneMovieMetaData.title);
-      expect(response.body).toHaveProperty('type', aloneMovieMetaData.type);
-      expect(response.body).toHaveProperty('year', aloneMovieMetaData.year);
+      expect(response.data).toHaveProperty('genres', aloneMovieMetaData.genres);
+      expect(response.data).toHaveProperty('imdbID', aloneMovieMetaData.imdbID);
+      expect(response.data).toHaveProperty('title', aloneMovieMetaData.title);
+      expect(response.data).toHaveProperty('type', aloneMovieMetaData.type);
+      expect(response.data).toHaveProperty('year', aloneMovieMetaData.year);
     });
 
     it('should require title as query param', async() => {
@@ -426,8 +426,8 @@ describe('Media Metadata endpoints', () => {
     });
 
     it('should return best match for movie titles which return many search results from OMDb', async() => {
-      const response = await axios.get(`${appUrl}/api/media/v2/title?title=The Matrix Reloaded&year=2003`) as UmsApiGotResponse;
-      expect(response.body.title).toBe('The Matrix Reloaded');
+      const response = await axios.get(`${appUrl}/api/media/v2/title?title=The Matrix Reloaded&year=2003`) as UmsApiAxiosResponse;
+      expect(response.data.title).toBe('The Matrix Reloaded');
       /*
         The external API returns 5 movies for this title search, so the above test asserts we select the correct one, which is decided by
         using Jaro-Winkler string distance estimations vs the title that the client passed to us. This test determines the above to be the correct result, provided
@@ -442,21 +442,21 @@ describe('Media Metadata endpoints', () => {
 
   describe('get by imdbid', () => {
     it('should return a movie by imdbid', async() => {
-      const response = await axios.get(`${appUrl}/api/media/imdbid?imdbid=tt0462538`) as UmsApiGotResponse;
-      expect(response.body.title).toEqual('The Simpsons Movie');
-      expect(response.body.type).toEqual('movie');
+      const response = await axios.get(`${appUrl}/api/media/imdbid?imdbid=tt0462538`) as UmsApiAxiosResponse;
+      expect(response.data.title).toEqual('The Simpsons Movie');
+      expect(response.data.type).toEqual('movie');
     });
 
     it('should return a series by imdbid', async() => {
-      const response = await axios.get(`${appUrl}/api/media/imdbid?imdbid=tt1796960`) as UmsApiGotResponse;
-      expect(response.body.title).toEqual('Homeland');
-      expect(response.body.type).toEqual('series');
+      const response = await axios.get(`${appUrl}/api/media/imdbid?imdbid=tt1796960`) as UmsApiAxiosResponse;
+      expect(response.data.title).toEqual('Homeland');
+      expect(response.data.type).toEqual('series');
     });
 
     it('should return an episode by imdbid', async() => {
-      const response = await axios.get(`${appUrl}/api/media/imdbid?imdbid=tt3388032`) as UmsApiGotResponse;
-      expect(response.body.title).toEqual('Proof of Concept');
-      expect(response.body.type).toEqual('episode');
+      const response = await axios.get(`${appUrl}/api/media/imdbid?imdbid=tt3388032`) as UmsApiAxiosResponse;
+      expect(response.data.title).toEqual('Proof of Concept');
+      expect(response.data.type).toEqual('episode');
     });
 
     it('should NOT create a failed lookup document when IMDB api is down', async() => {
