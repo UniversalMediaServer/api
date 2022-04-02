@@ -21,9 +21,7 @@ omdbAPI.get = async(params): Promise<imdb.Movie | imdb.Episode | imdb.TVShow> =>
   try {
     return await originalModule.get(params);
   } catch (err) {
-    if (_.get(err, 'response.status') === 503) {
-      throw new ExternalAPIError('IMDb API is offline');
-    }
+    handleError(err);
   }
 };
 
@@ -32,11 +30,17 @@ omdbAPI.search = async(params): Promise<imdb.SearchResults> => {
   try {
     return await originalModule.search(params);
   } catch (err) {
-    if (_.get(err, 'response.status') === 503) {
-      throw new ExternalAPIError('IMDb API is offline');
-    }
-    throw err;
+    handleError(err);
   }
 };
+
+const handleError = (err: Error) => {
+  if (_.get(err, 'response.status') === 503) {
+    throw new ExternalAPIError('IMDb API is offline');
+  }
+  if (!err.message || err.message.indexOf('Movie not found!') !== 0) {
+    throw err;
+  }
+}
 
 export default omdbAPI;

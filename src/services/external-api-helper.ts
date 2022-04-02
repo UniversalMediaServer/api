@@ -1,4 +1,4 @@
-import { Movie, SearchRequest, TVShow } from '@universalmediaserver/node-imdb-api';
+import { Movie, SearchRequest, SearchResults, TVShow } from '@universalmediaserver/node-imdb-api';
 import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
 import * as natural from 'natural';
@@ -93,13 +93,9 @@ export const getFromOMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
       }
     } else {
       searchRequest.reqtype = 'movie';
-      let searchResults;
-      try {
-        searchResults = await omdbAPI.search(searchRequest);
-      } catch (e) {
-        if (!e.message || !e.message.startsWith('Movie not found!')) {
-          console.error(e);
-        }
+      const searchResults = await omdbAPI.search(searchRequest);
+
+      if (!searchResults) {
         return null;
       }
 
