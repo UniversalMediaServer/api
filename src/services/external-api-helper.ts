@@ -3,8 +3,7 @@ import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
 import * as natural from 'natural';
 
-import imdbAPI from '../services/omdb-api';
-import osAPI from '../services/opensubtitles';
+import osAPI from './opensubtitles';
 
 import { ValidationError } from '../helpers/customErrors';
 import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
@@ -288,7 +287,7 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
     if (year) {
       searchRequest.year = Number(year);
     }
-    const omdbResponse = await imdbAPI.get(searchRequest);
+    const omdbResponse = await omdbAPI.get(searchRequest);
 
     if (!tmdbData && !omdbResponse && year) {
       /**
