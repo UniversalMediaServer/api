@@ -45,7 +45,10 @@ export const getSeries = async(ctx: ParameterizedContext): Promise<SeriesMetadat
     const dbMetaWithPosters = await externalAPIHelper.addPosterFromImages(dbMeta);
     return ctx.body = dbMetaWithPosters;
   } catch (err) {
-    console.error(err);
+    // log unexpected errors
+    if (!(err instanceof MediaNotFoundError)) {
+      console.error(err);
+    }
     throw new MediaNotFoundError();
   }
 };
