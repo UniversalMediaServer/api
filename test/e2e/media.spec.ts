@@ -7,6 +7,7 @@ import { tmdb } from '../../src/services/tmdb-api';
 import * as mongoose from 'mongoose';
 import axios from 'axios';
 import * as stoppable from 'stoppable';
+import app, { PORT } from '../../src/app';
 
 import { MongoMemoryServer } from 'mongodb-memory-server';
 let mongod;
@@ -23,19 +24,31 @@ interface UmsApiSeriesAxiosResponse  {
   headers?: object;
 }
 
+const americanHorrorStorySeries = {
+  title: 'American Horror Story',
+  imdbID: 'tt1844624',
+}
+
 const appUrl = 'http://localhost:3000';
 let server;
 
 describe('Media Metadata endpoints', () => {
-  beforeAll(async() => {
-    mongod = await MongoMemoryServer.create();
-    const mongoUrl = mongod.getUri();
-    process.env.MONGO_URL = mongoUrl;
-    await mongoose.connect(mongoUrl);
+  beforeAll((done) => {
     require('../mocks');
     require('../opensubtitles-mocks');
-    server = require('../../src/app').server;
-    stoppable(server, 0);
+    MongoMemoryServer.create()
+      .then((value) => {
+        mongod = value;
+        const mongoUrl = mongod.getUri();
+        process.env.MONGO_URL = mongoUrl;
+        return mongoose.connect(mongoUrl);
+      })
+      .then(() => {
+        server = app.listen(PORT, () => {
+          stoppable(server, 0);
+          done();
+        })
+      });
   });
 
   beforeEach(async() => {
@@ -67,10 +80,10 @@ describe('Media Metadata endpoints', () => {
       // This is the method that finds the TMDB ID from the IMDb ID
       const spy = jest.spyOn(tmdb, 'find');
 
-      const response = await axios.get(`${appUrl}/api/media/seriestitle?title=American Horror Story&imdbID=tt1844624`) as UmsApiAxiosResponse;
+      const response = await axios.get(`${appUrl}/api/media/seriestitle?title=${americanHorrorStorySeries.title}&imdbID=${americanHorrorStorySeries.imdbID}`) as UmsApiAxiosResponse;
       expect(response.data).toHaveProperty('credits');
       expect(response.data).toHaveProperty('totalSeasons');
-      expect(response.data).toHaveProperty('title', 'American Horror Story');
+      expect(response.data).toHaveProperty('title', americanHorrorStorySeries.title);
       expect(response.data).toHaveProperty('startYear', '2011');
       expect(spy).toHaveBeenCalledTimes(1);
     });

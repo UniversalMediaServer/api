@@ -5,6 +5,7 @@ import axios from 'axios';
 import * as stoppable from 'stoppable';
 
 import { MongoMemoryServer } from 'mongodb-memory-server';
+import app, { PORT } from '../../src/app';
 let mongod;
 
 interface UmsApiAxiosResponse  {
@@ -17,13 +18,22 @@ const appUrl = 'http://localhost:3000';
 let server;
 
 describe('Info endpoint', () => {
-  beforeAll(async() => {
-    mongod = await MongoMemoryServer.create();
-    const mongoUrl = mongod.getUri();
-    process.env.MONGO_URL = mongoUrl;
-    await mongoose.connect(mongoUrl);
-    server = require('../../src/app').server;
-    stoppable(server, 0);
+  beforeAll((done) => {
+    require('../mocks');
+    require('../opensubtitles-mocks');
+    MongoMemoryServer.create()
+      .then((value) => {
+        mongod = value;
+        const mongoUrl = mongod.getUri();
+        process.env.MONGO_URL = mongoUrl;
+        return mongoose.connect(mongoUrl);
+      })
+      .then(() => {
+        server = app.listen(PORT, () => {
+          stoppable(server, 0);
+          done();
+        })
+      });
   });
 
   beforeEach(async() => {
