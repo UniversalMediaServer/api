@@ -77,11 +77,22 @@ const tmdbEpisodeMap = {
   'air_date': 'released',
   'credits': 'credits',
   'episode_number': 'episode',
+  'external_ids.imdb_id': 'imdbID',
   'external_ids': 'externalIDs',
   'id': 'tmdbID',
   'images': 'images',
   'name': 'title',
   'overview': 'plot',
+  'release_date': [
+    { key: 'released' },
+    {
+      key: 'year',
+      transform: (releaseDate: string): string => {
+        // Store the year part of the date
+        return releaseDate ? releaseDate.substr(0, 4) : null;
+      },
+    },
+  ],
   'season_number': 'season',
   'still_path': 'posterRelativePath',
   'type': {
