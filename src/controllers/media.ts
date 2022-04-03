@@ -178,6 +178,7 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
     } catch (e) {
       // Rethrow errors except if they are about Open Subtitles being offline. as that happens a lot
       if (!(e instanceof ExternalAPIError)) {
+        console.error(e);
         throw e;
       }
     }
@@ -243,6 +244,7 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
     omdbData = await externalAPIHelper.getFromOMDbAPIV2(imdbIdToSearch, omdbSearchRequest, seasonNumber, episodeNumber);
     imdbIdToSearch = imdbIdToSearch || omdbData?.imdbID;
   } catch (e) {
+    console.error(e);
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
@@ -284,6 +286,7 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
     leanMeta = await externalAPIHelper.addPosterFromImages(leanMeta);
     return ctx.body = leanMeta;
   } catch (e) {
+    console.error(e,combinedResponse);
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
