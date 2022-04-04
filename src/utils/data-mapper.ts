@@ -245,10 +245,7 @@ const omdbEpisodeMap = {
   'season': 'season',
   'seriesid': 'seriesIMDbID',
   'title': 'title',
-  'type': {
-    key: 'type',
-    transform: (): string => 'episode',
-  },
+  'type': 'type',
   'votes': 'votes',
   'year': {
     key: 'year',
