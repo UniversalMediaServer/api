@@ -38,7 +38,13 @@ const handleError = (err: Error) => {
   if (_.get(err, 'response.status') === 503) {
     throw new ExternalAPIError('IMDb API is offline');
   }
-  if (!err.message || err.message.indexOf('Movie not found!') !== 0) {
+  if (
+    !err.message ||
+    (
+      err.message.indexOf('Movie not found!') !== 0 &&
+      err.message.indexOf('Series not found!') !== 0
+    )
+  ) {
     throw err;
   }
 }
