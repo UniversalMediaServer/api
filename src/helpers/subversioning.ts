@@ -8,5 +8,5 @@ export const subversions = {
   'configuration': '1',
   'season': '1',
   'series': '1',
-  'video': '1',
+  'video': '2',
 };
