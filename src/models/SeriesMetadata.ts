@@ -4,18 +4,18 @@ import { Network, SimplePerson, SimpleSeason, TvImagesResponse, TvExternalIdsRes
 import { ProductionCompany, ProductionCountry, SpokenLanguage } from 'moviedb-promise/dist/types';
 
 export interface SeriesMetadataInterface extends Document {
-  actors: Array<string>;
+  actors?: Array<string>;
   awards?: string;
   country?: string;
   createdBy?: Array<SimplePerson>;
   credits?: CreditsResponse;
-  directors: Array<string>;
+  directors?: Array<string>;
   endYear?: string;
   externalIDs?: TvExternalIdsResponse;
   genres: Array<string>;
   homepage?: string;
   images?: TvImagesResponse;
-  imdbID: string;
+  imdbID?: string;
   inProduction?: boolean;
   languages?: Array<string>;
   lastAirDate?: string;
@@ -69,7 +69,7 @@ const SeriesMetadataSchema: Schema = new Schema({
   genres: { type: Array },
   homepage: { type: String },
   images: { type: Array },
-  imdbID: { type: String, required: true, index: true },
+  imdbID: { type: String, index: true },
   inProduction: { type: Boolean },
   languages: { type: Array },
   lastAirDate: { type: String },
