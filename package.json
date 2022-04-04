@@ -11,7 +11,7 @@
     "purge": "TS_NODE_FILES=true ts-node --files scripts/purge",
     "start": "ts-node --files src/app.ts",
     "start:prod": "./node_modules/.bin/pm2 start ecosystem.config.js --update-env",
-    "test": "jest test/e2e/media-video.spec.ts --coverage --forceExit --detectOpenHandles && npm run test:mocks",
+    "test": "unset IMDB_API_KEY && OS_API_USERAGENT=OS_API_MOCK_KEY jest test/e2e/media-video.spec.ts --coverage --forceExit --detectOpenHandles && npm run test:mocks",
     "test:mocks": "unset IMDB_API_KEY && OS_API_USERAGENT=OS_API_MOCK_KEY jest test/**/*.spec.ts  --testPathIgnorePatterns test/e2e/media-video.spec.ts --coverage --forceExit --detectOpenHandles",
     "test:models": "jest test/models/*.spec.ts --coverage --forceExit --detectOpenHandles",
     "tsc:ci": "tsc && rm -rf dist",
@@ -60,7 +60,6 @@
     "pm2": "^5.2.0",
     "pm2-cluster-prom": "^2.1.0",
     "prom-client": "^14.0.1",
-    "stoppable": "^1.1.0",
     "ts-node": "^10.7.0"
   },
   "devDependencies": {
@@ -82,6 +81,7 @@
     "mongodb-memory-server": "8.4.2",
     "nock": "^13.2.4",
     "nodemon": "^2.0.15",
+    "stoppable": "^1.1.0",
     "ts-jest": "^27.1.4",
     "typescript": "^4.6.3"
   }
