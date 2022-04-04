@@ -1,4 +1,4 @@
-import { Movie, SearchRequest, SearchResults, TVShow } from '@universalmediaserver/node-imdb-api';
+import { Movie, SearchRequest, TVShow } from '@universalmediaserver/node-imdb-api';
 import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
 import * as natural from 'natural';
@@ -61,8 +61,8 @@ const addSearchMatchByIMDbID = async(imdbID: string, title: string): Promise<Ser
  * @param [episode] the episode number if this is an episode
  */
 export const getFromOMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, season?: number, episode?: number): Promise<MediaMetadataInterface | null> => {
-  if (!imdbId && !searchRequest) {
-    throw new Error('Either imdbId or searchRequest must be specified');
+  if (!imdbId && !_.get(searchRequest, 'name')) {
+    throw new Error('Either imdbId or searchRequest.name must be specified');
   }
   // If the client specified an episode number, this is an episode
   const isExpectingTVEpisode = Boolean(episode);
@@ -110,6 +110,10 @@ export const getFromOMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
 
       imdbId = searchResult.imdbid;
     }
+  }
+
+  if (!imdbId) {
+    return null;
   }
 
   const imdbData = await omdbAPI.get({ id: imdbId });

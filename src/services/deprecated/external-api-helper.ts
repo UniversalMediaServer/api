@@ -12,8 +12,8 @@ import { mapper } from '../../utils/data-mapper';
  * @deprecated see getFromOMDbAPIV2
  */
 export const getFromOMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Promise<MediaMetadataInterface> => {
-  if (!imdbId && !searchRequest) {
-    throw new Error('All parameters were falsy');
+  if (!imdbId && !_.get(searchRequest, 'name')) {
+    throw new Error('Either imdbId or searchRequest.name must be specified');
   }
 
   /**
@@ -61,6 +61,10 @@ export const getFromOMDbAPI = async(imdbId?: string, searchRequest?: SearchReque
 
       imdbId = searchResult.imdbid;
     }
+  }
+
+  if (!imdbId) {
+    return null;
   }
 
   const imdbData = await omdbAPI.get({ id: imdbId });
