@@ -56,7 +56,7 @@ const isTypeEpisode = function(context?: MediaMetadataInterface): boolean {
 };
 
 const MediaMetadataSchema: Schema = new Schema({
-  actors: { type: Array, required: true },
+  actors: { type: Array },
   awards: { type: String },
   boxoffice: { type: String },
   budget: { type: Number },
@@ -67,18 +67,18 @@ const MediaMetadataSchema: Schema = new Schema({
     select: false,
   },
   credits: { type: Array },
-  directors: { type: Array, required: true },
+  directors: { type: Array },
   episode: {
     index: true,
     required: isTypeEpisode,
     type: String,
   },
   externalIDs: { type: Array },
-  genres: { type: Array, required: true },
+  genres: { type: Array },
   goofs: { type: String },
   homepage: { type: String },
   images: { type: Array },
-  imdbID: { type: String, index: true, required: true, unique: true },
+  imdbID: { type: String, index: true },
   metascore: { type: String },
   originalLanguage: { type: String },
   originalTitle: { type: String },
@@ -102,7 +102,7 @@ const MediaMetadataSchema: Schema = new Schema({
   production: { type: String },
   rated: { type: String },
   rating: { type: Number },
-  ratings: { type: Array, required: true },
+  ratings: { type: Array },
   released: { type: Date },
   revenue: { type: String },
   runtime: { type: String },
@@ -119,7 +119,7 @@ const MediaMetadataSchema: Schema = new Schema({
   trivia: { type: String },
   type: { type: String, required: true },
   votes: { type: String },
-  year: { index: true, required: true, type: String },
+  year: { index: true, type: String },
 }, {
   collection: 'media_metadata',
   timestamps: true,
