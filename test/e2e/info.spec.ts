@@ -32,7 +32,7 @@ describe('Info endpoint', () => {
         server = app.listen(PORT, () => {
           stoppable(server, 0);
           done();
-        })
+        });
       });
   });
 
