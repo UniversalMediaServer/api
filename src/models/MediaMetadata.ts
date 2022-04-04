@@ -6,20 +6,20 @@ import { ProductionCompany, ProductionCountry, SpokenLanguage } from 'moviedb-pr
 import { ValidationError } from '../helpers/customErrors';
 
 export interface MediaMetadataInterface {
-  actors: Array<string>;
+  actors?: Array<string>;
   awards?: string;
   boxoffice?: string;
   budget?: number;
   country?: string;
   credits?: CreditsResponse | EpisodeCreditsResponse;
-  directors: Array<string>;
+  directors?: Array<string>;
   episode?: string;
   externalIDs?: MovieExternalIdsResponse | EpisodeExternalIdsResponse;
-  genres: Array<string>;
+  genres?: Array<string>;
   goofs?: string;
   homepage?: string;
   images?: MovieImagesResponse | EpisodeImagesResponse;
-  imdbID: string;
+  imdbID?: string;
   metascore?: string;
   originalLanguage?: string;
   originalTitle?: string;
@@ -46,7 +46,7 @@ export interface MediaMetadataInterface {
   trivia?: string;
   type: string;
   votes?: string;
-  year: string;
+  year?: string;
 }
 
 export interface MediaMetadataInterfaceDocument extends Document, MediaMetadataInterface {}
