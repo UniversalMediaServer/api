@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { mapper } from '../../src/utils/data-mapper';
 
 const openSubtitlesData = {
@@ -412,7 +411,7 @@ describe('Data mapper', () => {
   describe('OpenSubtitles responses', () => {
     it('should parse to expected flat structure', () => {
       const parsed = mapper.parseOpenSubtitlesResponse(openSubtitlesData);
-      // @ts-ignore
+      // @ts-expect-error metadata is supposed to not exist
       expect(parsed.metadata).toBeUndefined();
       expect(parsed.goofs).toEqual(openSubtitlesData.metadata.goofs);
 

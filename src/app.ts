@@ -9,19 +9,27 @@ import * as fs from 'fs';
 import * as http from 'http';
 import * as https from 'https';
 const debug = Debug('universalmediaserver-api:server');
+import * as koaPrometheus from 'koa-prometheus-adv';
+import * as client from 'prom-client';
 import indexRouter from './routes/index';
 import mediaRouter  from './routes/media';
+import deprecatedMediaRouter  from './routes/deprecated/media';
 import { ExternalAPIError, IMDbIDNotFoundError, MediaNotFoundError, ValidationError } from './helpers/customErrors';
 
-const app = new Koa();
+client.collectDefaultMetrics({ register: client.register });
+// @ts-expect-error there is an incompatible type error because koa-prometheus-adv is abandoned
+const app = new Koa().use(koaPrometheus.DefaultHTTPMetricsInjector(client.register));
+
 koaQs(app, 'first');
 
 import connect from './models/connection';
 
 const db: string = process.env.MONGO_URL;
-const PORT: string = process.env.PORT || '3000';
+export const PORT: string = process.env.PORT || '3000';
 const bypassMongo: boolean = Boolean(process.env.BYPASS_MONGO) || false;
-connect(db);
+if (process.env.NODE_ENV !== 'test') {
+  connect(db);
+}
 
 app.use(helmet());
 // error handler
@@ -74,19 +82,23 @@ app.use(async(ctx: ParameterizedContext, next) => {
 });
 
 app.use(bodyParser());
+app.use(deprecatedMediaRouter.routes());
 app.use(mediaRouter.routes());
 app.use(indexRouter.routes());
 
-export const server = http.createServer(app.callback()).listen(PORT);
-console.log(`UMS API HTTP server is up and running on port ${PORT}`);
+export let server: http.Server;
+if (process.env.NODE_ENV !== 'test') {
+  server = http.createServer(app.callback()).listen(PORT);
+  console.log(`UMS API HTTP server is up and running on port ${PORT}`);
 
-if (process.env.UMS_API_PRIVATE_KEY_LOCATION && process.env.UMS_API_PUBLIC_KEY_LOCATION) {
-  const httpsOptions = {
-    key: fs.readFileSync(process.env.UMS_API_PRIVATE_KEY_LOCATION),
-    cert: fs.readFileSync(process.env.UMS_API_PUBLIC_KEY_LOCATION),
-  };
-  https.createServer(httpsOptions, app.callback()).listen(443);
-  console.log('UMS API HTTPS server is up and running on port 443');
+  if (process.env.UMS_API_PRIVATE_KEY_LOCATION && process.env.UMS_API_PUBLIC_KEY_LOCATION) {
+    const httpsOptions = {
+      key: fs.readFileSync(process.env.UMS_API_PRIVATE_KEY_LOCATION),
+      cert: fs.readFileSync(process.env.UMS_API_PUBLIC_KEY_LOCATION),
+    };
+    https.createServer(httpsOptions, app.callback()).listen(443);
+    console.log('UMS API HTTPS server is up and running on port 443');
+  }
 }
 
 export default app;

@@ -1,13 +1,11 @@
 import { Movie, SearchRequest, TVShow } from '@universalmediaserver/node-imdb-api';
-import escapeStringRegexp = require('escape-string-regexp');
 import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
 import * as natural from 'natural';
 
-import imdbAPI from '../services/omdb-api';
-import osAPI from '../services/opensubtitles';
+import osAPI from './opensubtitles';
 
-import { IMDbIDNotFoundError, ValidationError } from '../helpers/customErrors';
+import { ValidationError } from '../helpers/customErrors';
 import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
 import { MediaMetadataInterface } from '../models/MediaMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
@@ -37,77 +35,18 @@ interface SortByFilter {
 }
 
 /**
- * @deprecated see getFromOMDbAPIV2
+ * Adds a searchMatch to an existing result by IMDb ID, and returns the result.
+ *
+ * @param imdbID the IMDb ID
+ * @param title the title
+ * @returns the updated record
  */
-export const getFromOMDbAPI = async(imdbId?: string, searchRequest?: SearchRequest): Promise<MediaMetadataInterface> => {
-  if (!imdbId && !searchRequest) {
-    throw new Error('All parameters were falsy');
-  }
-
-  /**
-   * We need the IMDb ID for the OMDb API get request below so here we get it.
-   * Along the way, if the result is an episode, we also instruct our episode
-   * processor to asynchronously add the other episodes for that series to the
-   * queue.
-   */
-  if (!imdbId) {
-    const parsedFilename = episodeParser(searchRequest.name);
-    const isTVEpisode = Boolean(parsedFilename && parsedFilename.show && parsedFilename.season && parsedFilename.episode);
-    if (isTVEpisode) {
-      searchRequest.name = parsedFilename.show;
-      searchRequest.reqtype = 'series';
-      const tvSeriesInfo = await omdbAPI.get(searchRequest);
-
-      if (tvSeriesInfo && tvSeriesInfo instanceof TVShow) {
-        const allEpisodes = await tvSeriesInfo.episodes();
-        const currentEpisode = _.find(allEpisodes, { season: parsedFilename.season, episode: parsedFilename.episode });
-        if (!currentEpisode) {
-          throw new IMDbIDNotFoundError();
-        }
-
-        imdbId = currentEpisode.imdbid;
-      }
-    }
-
-    if (!imdbId) {
-      searchRequest.reqtype = 'movie';
-      let searchResults;
-      try {
-        searchResults = await omdbAPI.search(searchRequest);
-      } catch (e) {
-        console.error(e);
-        return null;
-      }
-      // find the best search results utilising the Jaro-Winkler distance metric
-      const searchResultStringDistance = searchResults.results.map(result => natural.JaroWinklerDistance(searchRequest.name, result.title));
-      const bestSearchResultKey = _.indexOf(searchResultStringDistance, _.max(searchResultStringDistance));
-
-      const searchResult = searchResults.results[bestSearchResultKey] as Movie;
-      if (!searchResult) {
-        throw new IMDbIDNotFoundError();
-      }
-
-      imdbId = searchResult.imdbid;
-    }
-  }
-
-  const imdbData = await omdbAPI.get({ id: imdbId });
-  if (!imdbData) {
-    return null;
-  }
-
-  let metadata;
-  if (imdbData.type === 'movie') {
-    metadata = mapper.parseOMDbAPIMovieResponse(imdbData);
-  } else if (imdbData.type === 'series') {
-    metadata = mapper.parseOMDbAPISeriesResponse(imdbData);
-  } else if (imdbData.type === 'episode') {
-    metadata = mapper.parseOMDbAPIEpisodeResponse(imdbData);
-  } else {
-    throw new Error('Received a type we did not expect');
-  }
-
-  return metadata;
+const addSearchMatchByIMDbID = async(imdbID: string, title: string): Promise<SeriesMetadataInterface> => {
+  return SeriesMetadata.findOneAndUpdate(
+    { imdbID },
+    { $push: { searchMatches: title } },
+    { new: true, lean: true },
+  ).exec();
 };
 
 /**
@@ -122,8 +61,8 @@ export const getFromOMDbAPI = async(imdbId?: string, searchRequest?: SearchReque
  * @param [episode] the episode number if this is an episode
  */
 export const getFromOMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, season?: number, episode?: number): Promise<MediaMetadataInterface | null> => {
-  if (!imdbId && !searchRequest) {
-    throw new Error('Either imdbId or searchRequest must be specified');
+  if (!imdbId && !_.get(searchRequest, 'name')) {
+    throw new Error('Either imdbId or searchRequest.name must be specified');
   }
   // If the client specified an episode number, this is an episode
   const isExpectingTVEpisode = Boolean(episode);
@@ -154,13 +93,9 @@ export const getFromOMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
       }
     } else {
       searchRequest.reqtype = 'movie';
-      let searchResults;
-      try {
-        searchResults = await omdbAPI.search(searchRequest);
-      } catch (e) {
-        if (!e.message || !e.message.startsWith('Movie not found!')) {
-          console.error(e);
-        }
+      const searchResults = await omdbAPI.search(searchRequest);
+
+      if (!searchResults) {
         return null;
       }
 
@@ -175,6 +110,10 @@ export const getFromOMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
 
       imdbId = searchResult.imdbid;
     }
+  }
+
+  if (!imdbId) {
+    return null;
   }
 
   const imdbData = await omdbAPI.get({ id: imdbId });
@@ -203,17 +142,15 @@ export const getFromOMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
 
 const getSeriesTMDBIDFromTMDBAPI = async(imdbID?: string, seriesTitle?: string, year?: number): Promise<number> => {
   if (imdbID) {
-    // eslint-disable-next-line @typescript-eslint/camelcase
     const findResult = await tmdb.find({ id: imdbID, external_source: ExternalId.ImdbId });
     // Using any here to make up for missing interface, should submit fix
     if (findResult?.tv_results && findResult?.tv_results[0]) {
-      const tvEpisodeResults = findResult.tv_results[0] as any;
+      const tvEpisodeResults = findResult.tv_results[0];
       return tvEpisodeResults?.id;
     }
   } else {
     const tmdbQuery: SearchTvRequest = { query: seriesTitle };
     if (year) {
-      // eslint-disable-next-line @typescript-eslint/camelcase
       tmdbQuery.first_air_date_year = year;
     }
     const searchResults = await tmdb.searchTv(tmdbQuery);
@@ -232,32 +169,41 @@ const getSeriesTMDBIDFromTMDBAPI = async(imdbID?: string, seriesTitle?: string, 
  * @param [imdbID] the IMDb ID of the series
  * @param [title] the title of the series
  * @param [year] the first year of the series
+ * @param [titleToCache] the original title, used for caching if this method is calling itself
  * @returns series metadata
  */
-export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: string): Promise<SeriesMetadataInterface | null> => {
+export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: string, titleToCache?: string): Promise<SeriesMetadataInterface | null> => {
   if (!imdbID && !title) {
     throw new Error('Either IMDb ID or title required');
   }
 
+  let failedLookupQuery: FailedLookupsInterface;
+  let omdbData: Partial<SeriesMetadataInterface>;
+  let tmdbData: Partial<SeriesMetadataInterface>;
+
   if (imdbID) {
+    failedLookupQuery = { imdbID };
     // We shouldn't have failures since we got this IMDb ID from their API
-    if (await FailedLookups.findOne({ imdbID }, '_id', { lean: true }).exec()) {
-      await FailedLookups.updateOne({ imdbID }, { $inc: { count: 1 } }).exec();
+    if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
+      await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
       return null;
     }
 
     const existingSeries: SeriesMetadataInterface = await SeriesMetadata.findOne({ imdbID }, null, { lean: true }).exec();
     if (existingSeries) {
-      return existingSeries;
+      const updatedResult = await SeriesMetadata.findOneAndUpdate(
+        { imdbID },
+        { $push: { searchMatches: title } },
+        { new: true, lean: true },
+      ).exec();
+      return updatedResult;
     }
 
     // Start TMDB lookups
-    let tmdbData: Partial<SeriesMetadataInterface> = {};
     const seriesID = await getSeriesTMDBIDFromTMDBAPI(imdbID);
 
     if (seriesID) {
       const seriesRequest = {
-        // eslint-disable-next-line @typescript-eslint/camelcase
         append_to_response: 'images,external_ids,credits',
         id: seriesID,
       };
@@ -267,23 +213,14 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
     }
     // End TMDB lookups
 
-    const omdbData = await getFromOMDbAPIV2(imdbID);
-
-    const combinedResponse = _.merge(omdbData, tmdbData);
-    if (!combinedResponse || _.isEmpty(combinedResponse)) {
-      await FailedLookups.updateOne({ imdbID }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
-      return null;
-    }
-
-    return SeriesMetadata.create(combinedResponse);
+    omdbData = await getFromOMDbAPIV2(imdbID);
   } else {
     const sortBy = {} as SortByFilter;
-    const escapedTitle = new RegExp(`^${escapeStringRegexp(title)}$`);
-    const exactSearchQuery = { title: { $regex: escapedTitle, $options: 'i' } } as CaseInsensitiveSearchQuery;
-    const failedLookupQuery: FailedLookupsInterface = { title: title, type: 'series' };
+    const titleQuery: GetSeriesFilter = { searchMatches: { $in: [title] } };
+    failedLookupQuery = { title: title, type: 'series' };
     if (year) {
       failedLookupQuery.startYear = year;
-      exactSearchQuery.startYear = year;
+      titleQuery.startYear = year;
     } else {
       sortBy.startYear = 1;
     }
@@ -291,13 +228,28 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
     // Return early for previously-failed lookups
     if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
       await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
+
+      // Also store a failed result for the title that the client sent
+      if (titleToCache) {
+        await FailedLookups.updateOne({ title: titleToCache, type: 'series' }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+      }
+
       return null;
     }
 
     // Return any previous match
-    const seriesMetadata = await SeriesMetadata.findOne(exactSearchQuery, null, { lean: true }).sort(sortBy)
+    const seriesMetadata = await SeriesMetadata.findOne(titleQuery, null, { lean: true }).sort(sortBy)
       .exec();
     if (seriesMetadata) {
+      // Also cache the result for the title that the client sent
+      if (titleToCache) {
+        return await SeriesMetadata.findOneAndUpdate(
+          { _id: seriesMetadata._id },
+          { $push: { searchMatches: titleToCache } },
+          { new: true, lean: true },
+        ).exec();
+      }
+
       return seriesMetadata;
     }
 
@@ -306,12 +258,10 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
     title = parsed && parsed.show ? parsed.show : title;
 
     // Start TMDB lookups
-    let tmdbData = {};
     const seriesTMDBID = await getSeriesTMDBIDFromTMDBAPI(null, title, Number(year));
 
     if (seriesTMDBID) {
       const seriesRequest = {
-        // eslint-disable-next-line @typescript-eslint/camelcase
         append_to_response: 'images,external_ids,credits',
         id: seriesTMDBID,
       };
@@ -321,6 +271,14 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
     }
     // End TMDB lookups
 
+    // If we found an IMDb ID from TMDB, see if we have an existing record for the now-known media.
+    if (_.get(tmdbData, 'imdbID')) {
+      const existingResult = await SeriesMetadata.findOne({ imdbID: tmdbData.imdbID }, null, { lean: true }).exec();
+      if (existingResult) {
+        return await addSearchMatchByIMDbID(tmdbData.imdbID, title);
+      }
+    }
+
     // Start OMDb lookups
     const searchRequest: SearchRequest = {
       name: title,
@@ -329,7 +287,8 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
     if (year) {
       searchRequest.year = Number(year);
     }
-    const omdbResponse = await imdbAPI.get(searchRequest);
+    const omdbResponse = await omdbAPI.get(searchRequest);
+
     if (!tmdbData && !omdbResponse && year) {
       /**
        * If the client specified a year, it may have been incorrect because of
@@ -338,19 +297,47 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
        * from 1980.
        * So, we attempt the lookup again with the year appended to the title.
        */
-      return getSeriesMetadata(null, title + ' ' + year);
+      return getSeriesMetadata(null, title + ' ' + year, null, title);
     }
-    const omdbData = mapper.parseOMDbAPISeriesResponse(omdbResponse);
+    omdbData = mapper.parseOMDbAPISeriesResponse(omdbResponse);
     // End OMDb lookups
 
-    const combinedResponse = _.merge(omdbData, tmdbData);
-    if (!combinedResponse || _.isEmpty(combinedResponse)) {
-      await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
-      return null;
+    // If we found an IMDb ID from OMDb, see if we have an existing record for the now-known media.
+    if (_.get(omdbData, 'imdbID')) {
+      const existingResult = await SeriesMetadata.findOne({ imdbID: omdbData.imdbID }, null, { lean: true }).exec();
+      if (existingResult) {
+        return await addSearchMatchByIMDbID(omdbData.imdbID, title);
+      }
+    }
+  }
+
+  const combinedResponse = _.merge(omdbData, tmdbData);
+  if (!combinedResponse || _.isEmpty(combinedResponse)) {
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+
+    // Also store a failed result for the title that the client sent
+    if (titleToCache) {
+      failedLookupQuery.title = titleToCache;
+      await FailedLookups.updateOne({ failedLookupQuery, type: 'series' }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     }
 
-    return await SeriesMetadata.create(combinedResponse);
+    return null;
   }
+
+  if (title) {
+    combinedResponse.searchMatches = [title];
+  }
+
+  let response = await SeriesMetadata.create(combinedResponse);
+
+  // Cache the result for the title that the client sent
+  if (titleToCache) {
+    combinedResponse.searchMatches = combinedResponse.searchMatches || [];
+    combinedResponse.searchMatches.push(titleToCache);
+    response = await SeriesMetadata.create(combinedResponse);
+  }
+
+  return response;
 };
 
 /*
@@ -433,7 +420,6 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, movieOrEpisodeI
     const episodeIMDbID = movieOrEpisodeIMDbID;
     let seriesTMDBID: string | number;
     if (episodeIMDbID) {
-      // eslint-disable-next-line @typescript-eslint/camelcase
       const findResult = await tmdb.find({ id: episodeIMDbID, external_source: ExternalId.ImdbId });
       // Using any here to make up for missing interface, should submit fix
       if (findResult?.tv_episode_results && findResult?.tv_episode_results[0]) {
@@ -450,27 +436,25 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, movieOrEpisodeI
     }
 
     const episodeRequest: EpisodeRequest = {
-      // eslint-disable-next-line @typescript-eslint/camelcase
       append_to_response: 'images,external_ids,credits',
-      // eslint-disable-next-line @typescript-eslint/camelcase
       episode_number: episodeNumber,
       id: seriesTMDBID,
-      // eslint-disable-next-line @typescript-eslint/camelcase
       season_number: seasonNumber,
     };
 
     const tmdbData = await tmdb.episodeInfo(episodeRequest);
-    metadata = mapper.parseTMDBAPIEpisodeResponse(tmdbData);
+    if (tmdbData) {
+      metadata = mapper.parseTMDBAPIEpisodeResponse(tmdbData);
+    }
   } else {
     const movieIMDbID = movieOrEpisodeIMDbID;
 
     let movieTMDBID: string | number;
     if (movieIMDbID) {
-      // eslint-disable-next-line @typescript-eslint/camelcase
       const findResult = await tmdb.find({ id: movieIMDbID, external_source: ExternalId.ImdbId });
       // Using any here to make up for missing interface, should submit fix
       if (findResult?.movie_results && findResult?.movie_results[0]) {
-        const movieResult = findResult.movie_results[0] as any;
+        const movieResult = findResult.movie_results[0];
         movieTMDBID = movieResult?.id;
       }
     } else {
@@ -489,11 +473,12 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, movieOrEpisodeI
     }
 
     const tmdbData = await tmdb.movieInfo({
-      // eslint-disable-next-line @typescript-eslint/camelcase
       append_to_response: 'images,external_ids,credits',
       id: movieTMDBID,
     });
-    metadata = mapper.parseTMDBAPIMovieResponse(tmdbData);
+    if (tmdbData) {
+      metadata = mapper.parseTMDBAPIMovieResponse(tmdbData);
+    }
   }
 
   return metadata;

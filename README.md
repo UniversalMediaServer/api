@@ -33,3 +33,14 @@ Runs the test suite
 
 #### `yarn run start:prod`
 Starts the API and cron job in production mode, which uses PM2 for process management. TypeScript files are compiled in memory on application start.
+
+### Debugging
+
+#### OpenSubtitles
+Our OpenSubtitles API module uses `xmlrpc` to transform XML requests before they hit that module, so one way to see the raw request and response bodies is to edit that library locally.
+Add the following code in `./node_modules/xmlrpc/lib/client.js` after [this line](https://github.com/baalexander/node-xmlrpc/blob/643dc8f80cd284849b6c07e650ddfb9213168a39/lib/client.js#L129).
+
+```
+console.log('OpenSubtitles request body', xml);
+console.log('OpenSubtitles response body', body.join(''));
+```

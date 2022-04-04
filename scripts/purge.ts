@@ -1,6 +1,6 @@
 'use strict';
 import * as inquirer from 'inquirer';
-import got from 'got';
+import axios from 'axios';
 import connect from '../src/models/connection';
 import MediaMetadata from '../src/models/MediaMetadata';
 import SeriesMetadata from '../src/models/SeriesMetadata';
@@ -9,8 +9,8 @@ import EpisodeProcessing from '../src/models/EpisodeProcessing';
 
 const db = process.env.MONGO_URL;
 
-const client = got.extend({
-  prefixUrl: 'https://api.cloudflare.com/client/v4',
+const client = axios.create({
+  baseURL: 'https://api.cloudflare.com/client/v4',
   headers: {
     'X-Auth-Email': process.env.CF_API_KEY_EMAIL,
     'X-Auth-Key': process.env.CF_API_KEY,

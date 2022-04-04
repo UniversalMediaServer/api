@@ -4,18 +4,18 @@ import { Network, SimplePerson, SimpleSeason, TvImagesResponse, TvExternalIdsRes
 import { ProductionCompany, ProductionCountry, SpokenLanguage } from 'moviedb-promise/dist/types';
 
 export interface SeriesMetadataInterface extends Document {
-  actors: Array<string>;
+  actors?: Array<string>;
   awards?: string;
   country?: string;
   createdBy?: Array<SimplePerson>;
   credits?: CreditsResponse;
-  directors: Array<string>;
+  directors?: Array<string>;
   endYear?: string;
   externalIDs?: TvExternalIdsResponse;
   genres: Array<string>;
   homepage?: string;
   images?: TvImagesResponse;
-  imdbID: string;
+  imdbID?: string;
   inProduction?: boolean;
   languages?: Array<string>;
   lastAirDate?: string;
@@ -34,6 +34,7 @@ export interface SeriesMetadataInterface extends Document {
   rating?: number; // e.g. 6.7
   ratings?: Array<{Source: string; Value: string}>;
   released?: Date;
+  searchMatches?: Array<string>;
   seasons?: Array<SimpleSeason>;
   seriesType?: string;
   spokenLanguages?: Array<SpokenLanguage>;
@@ -68,7 +69,7 @@ const SeriesMetadataSchema: Schema = new Schema({
   genres: { type: Array },
   homepage: { type: String },
   images: { type: Array },
-  imdbID: { type: String, required: true, index: true },
+  imdbID: { type: String, index: true },
   inProduction: { type: Boolean },
   languages: { type: Array },
   lastAirDate: { type: String },
@@ -87,10 +88,11 @@ const SeriesMetadataSchema: Schema = new Schema({
   rating: { type: Number },
   ratings: { type: [new mongoose.Schema({ 'Source': String, 'Value': String })] },
   released: { type: Date },
+  searchMatches: { type: Array, index: true, select: false },
   seasons: { type: Array },
   seriesType: { type: String },
   spokenLanguages: { type: Array },
-  startYear: { type: String },
+  startYear: { type: String, index: true },
   status: { type: String },
   tagline: { type: String },
   title: { type: String, index: true, required: true },
