@@ -47,7 +47,7 @@ describe('Media Metadata endpoints', () => {
         server = app.listen(PORT, () => {
           stoppable(server, 0);
           done();
-        })
+        });
       });
   });
 
