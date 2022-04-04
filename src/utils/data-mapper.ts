@@ -74,16 +74,7 @@ const openSubtitlesEpisodeMap = {
 };
 
 const tmdbEpisodeMap = {
-  'air_date': 'released',
-  'credits': 'credits',
-  'episode_number': 'episode',
-  'external_ids.imdb_id': 'imdbID',
-  'external_ids': 'externalIDs',
-  'id': 'tmdbID',
-  'images': 'images',
-  'name': 'title',
-  'overview': 'plot',
-  'release_date': [
+  'air_date': [
     { key: 'released' },
     {
       key: 'year',
@@ -93,6 +84,14 @@ const tmdbEpisodeMap = {
       },
     },
   ],
+  'credits': 'credits',
+  'episode_number': 'episode',
+  'external_ids.imdb_id': 'imdbID',
+  'external_ids': 'externalIDs',
+  'id': 'tmdbID',
+  'images': 'images',
+  'name': 'title',
+  'overview': 'plot',
   'season_number': 'season',
   'still_path': 'posterRelativePath',
   'type': {
