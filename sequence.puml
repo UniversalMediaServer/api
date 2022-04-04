@@ -13,7 +13,7 @@ API -> "Universal Media Server Client": If found, return API response
 
 == Create a new metadata record ==
 
-API -> IMDB : Query source API 1
+API -> TMDB : Query source API 1
 API -> OpenSubtitles : Query source API 2
 API -> OMDB : Query source API 3
 
