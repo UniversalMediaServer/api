@@ -443,7 +443,9 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, movieOrEpisodeI
     };
 
     const tmdbData = await tmdb.episodeInfo(episodeRequest);
-    metadata = mapper.parseTMDBAPIEpisodeResponse(tmdbData);
+    if (tmdbData) {
+      metadata = mapper.parseTMDBAPIEpisodeResponse(tmdbData);
+    }
   } else {
     const movieIMDbID = movieOrEpisodeIMDbID;
 
@@ -474,7 +476,9 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, movieOrEpisodeI
       append_to_response: 'images,external_ids,credits',
       id: movieTMDBID,
     });
-    metadata = mapper.parseTMDBAPIMovieResponse(tmdbData);
+    if (tmdbData) {
+      metadata = mapper.parseTMDBAPIMovieResponse(tmdbData);
+    }
   }
 
   return metadata;
