@@ -8,6 +8,7 @@ database "API MongoDB"
 == Retrieve an existing metadata record ==
 
 API -> "API MongoDB": (2) Query for existing metadata record
+API -> "API MongoDB": Query for existing failed lookup record
 "API MongoDB" -> API: Existing metadata found
 API -> "Universal Media Server Client": If found, return API response
 
