@@ -318,7 +318,7 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
     // Also store a failed result for the title that the client sent
     if (titleToCache) {
       failedLookupQuery.title = titleToCache;
-      await FailedLookups.updateOne({ failedLookupQuery, type: 'series' }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+      await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     }
 
     return null;
