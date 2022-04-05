@@ -1,0 +1,24 @@
+@startuml
+participant "Universal Media Server Client"
+participant "API"
+database "API MongoDB"
+autonumber
+
+"Universal Media Server Client" -> API: UMS client requests metadata about a media file
+
+== Retrieve an existing metadata record ==
+
+API -> "API MongoDB": Query for existing metadata record
+API -> "API MongoDB": Query for existing failed lookup record
+"API MongoDB" -> API: Existing metadata found
+API -> "Universal Media Server Client": If found, return API response
+
+== Create a new metadata record ==
+
+API -> TMDB : Query source API 1
+API -> OpenSubtitles : Query source API 2
+API -> OMDB : Query source API 3
+
+API -> "API MongoDB": (3) Save metadata to MongoDB
+
+API -> "Universal Media Server Client": Return API response
