@@ -137,10 +137,7 @@ export const getBySanitizedTitle = async(ctx: ParameterizedContext): Promise<Med
 
   try {
     imdbData.searchMatches = [title];
-    /**
-     * The below section is untidy due to the following possible bug https://github.com/Automattic/mongoose/issues/9118
-     * Once clarity on the feature, or if a bugfix is released we could refactor the below
-     */
+
     let newlyCreatedResult = await MediaMetadata.create(imdbData);
     // @ts-expect-error these types get confused because of lean results
     newlyCreatedResult = newlyCreatedResult.toObject();
@@ -160,10 +157,15 @@ export const getBySanitizedTitle = async(ctx: ParameterizedContext): Promise<Med
  * @deprecated
  */
 export const getBySanitizedTitleV2 = async(ctx: ParameterizedContext): Promise<MediaMetadataInterface> => {
-  const { title }: UmsQueryParams = ctx.query;
-  const episode = ctx.query.episode ? Number(ctx.query.episode) : null;
+  const { episode, title }: UmsQueryParams = ctx.query;
   const season = ctx.query.season ? Number(ctx.query.season) : null;
   const year = ctx.query.year ? Number(ctx.query.year) : null;
+
+  let episodeNumbers = null;
+  if (episode) {
+    const episodes = episode.split('-');
+    episodeNumbers = episodes.map(Number);
+  }
 
   if (!title) {
     throw new ValidationError('title is required');
@@ -207,7 +209,7 @@ export const getBySanitizedTitleV2 = async(ctx: ParameterizedContext): Promise<M
   }
   let imdbData: MediaMetadataInterface;
   try {
-    imdbData = await externalAPIHelper.getFromOMDbAPIV2(null, searchRequest, season, episode);
+    imdbData = await externalAPIHelper.getFromOMDbAPIV2(null, searchRequest, season, episodeNumbers);
   } catch (e) {
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
@@ -230,10 +232,12 @@ export const getBySanitizedTitleV2 = async(ctx: ParameterizedContext): Promise<M
 
   try {
     imdbData.searchMatches = [title];
-    /**
-     * The below section is untidy due to the following possible bug https://github.com/Automattic/mongoose/issues/9118
-     * Once clarity on the feature, or if a bugfix is released we could refactor the below
-     */
+
+    // Ensure that we return and cache the same episode number that was searched for
+    if (episodeNumbers && episodeNumbers.length > 1 && episodeNumbers[0] === imdbData.episode) {
+      imdbData.episode = episode;
+    }
+
     let newlyCreatedResult = await MediaMetadata.create(imdbData);
     // @ts-expect-error these types get confused because of lean results
     newlyCreatedResult = newlyCreatedResult.toObject();
@@ -244,12 +248,6 @@ export const getBySanitizedTitleV2 = async(ctx: ParameterizedContext): Promise<M
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
-
-  /**
-   * @todo OpenSubtitles-api doesn't return complete enough data from
-   * its SearchSubtitles function, but we can possibly figure out how to search
-   * OpenSubtitles for that fallback data.
-   */
 };
 
 /**

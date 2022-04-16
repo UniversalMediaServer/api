@@ -11,7 +11,7 @@ import { MediaMetadataInterface } from '../models/MediaMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import omdbAPI from './omdb-api';
 import { mapper } from '../utils/data-mapper';
-import { EpisodeRequest, ExternalId, SearchMovieRequest, SearchTvRequest } from 'moviedb-promise/dist/request-types';
+import { Episode, EpisodeRequest, ExternalId, SearchMovieRequest, SearchTvRequest } from 'moviedb-promise/dist/request-types';
 import { tmdb } from './tmdb-api';
 import { getTMDBImageBaseURL } from '../controllers/info';
 
@@ -58,14 +58,14 @@ const addSearchMatchByIMDbID = async(imdbID: string, title: string): Promise<Ser
  * @param [imdbId] the IMDb ID
  * @param [searchRequest] a query to perform in order to get the imdbId
  * @param [season] the season number if this is an episode
- * @param [episode] the episode number if this is an episode
+ * @param [episodeNumbers] the episode number/s if this is episode/s
  */
-export const getFromOMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, season?: number, episode?: number): Promise<MediaMetadataInterface | null> => {
+export const getFromOMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, season?: number, episodeNumbers?: number[]): Promise<MediaMetadataInterface | null> => {
   if (!imdbId && !_.get(searchRequest, 'name')) {
     throw new Error('Either imdbId or searchRequest.name must be specified');
   }
-  // If the client specified an episode number, this is an episode
-  const isExpectingTVEpisode = Boolean(episode);
+  // If the client specified episode number/s, this is episode/s
+  const isExpectingTVEpisode = Boolean(episodeNumbers);
 
   // We need the IMDb ID for the imdbAPI get request below so here we get it.
   if (!imdbId) {
@@ -84,7 +84,7 @@ export const getFromOMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
 
       if (tvSeriesInfo && tvSeriesInfo instanceof TVShow) {
         const allEpisodes = await tvSeriesInfo.episodes();
-        const currentEpisode = _.find(allEpisodes, { season, episode });
+        const currentEpisode = _.find(allEpisodes, { season, episode: episodeNumbers[0] });
         if (!currentEpisode) {
           return null;
         }
@@ -127,7 +127,7 @@ export const getFromOMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
     if (imdbData.type === 'episode') {
       metadata = mapper.parseOMDbAPIEpisodeResponse(imdbData);
     } else {
-      throw new Error('Received type ' + imdbData.type + ' but expected episode for ' + imdbId + ' ' + searchRequest + ' ' + season + ' ' + episode);
+      throw new Error('Received type ' + imdbData.type + ' but expected episode for ' + imdbId + ' ' + searchRequest + ' ' + season + ' ' + episodeNumbers);
     }
   } else if (imdbData.type === 'movie') {
     metadata = mapper.parseOMDbAPIMovieResponse(imdbData);
@@ -407,12 +407,12 @@ export const addPosterFromImages = async(metadata: any): Promise<SeriesMetadataI
  * @param [seasonNumber] the season number if this is an episode
  * @param [episodeNumber] the episode number if this is an episode
  */
-export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, movieOrEpisodeIMDbID?: string, year?: number, seasonNumber?: number, episodeNumber?: number): Promise<MediaMetadataInterface | null> => {
+export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, movieOrEpisodeIMDbID?: string, year?: number, seasonNumber?: number, episodeNumbers?: number[]): Promise<MediaMetadataInterface | null> => {
   if (!movieOrSeriesTitle && !movieOrEpisodeIMDbID) {
     throw new Error('Either movieOrSeriesTitle or movieOrEpisodeIMDbID must be specified');
   }
-  // If the client specified an episode number, this is an episode
-  const isExpectingTVEpisode = Boolean(episodeNumber);
+  // If the client specified episode number/s, this is episode/s
+  const isExpectingTVEpisode = Boolean(episodeNumbers);
   const yearString = year ? year.toString() : null;
 
   let metadata;
@@ -435,16 +435,26 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, movieOrEpisodeI
       return null;
     }
 
-    const episodeRequest: EpisodeRequest = {
-      append_to_response: 'images,external_ids,credits',
-      episode_number: episodeNumber,
-      id: seriesTMDBID,
-      season_number: seasonNumber,
-    };
+    for (let i = 0; i < episodeNumbers.length; i++) {
+      const episodeRequest: EpisodeRequest = {
+        append_to_response: 'images,external_ids,credits',
+        episode_number: episodeNumbers[i],
+        id: seriesTMDBID,
+        season_number: seasonNumber,
+      };
 
-    const tmdbData = await tmdb.episodeInfo(episodeRequest);
-    if (tmdbData) {
-      metadata = mapper.parseTMDBAPIEpisodeResponse(tmdbData);
+      /*
+       * Parse the full episode data for the first episode, and
+       * append the title for subsequent ones.
+       */
+      const tmdbData: Episode = await tmdb.episodeInfo(episodeRequest);
+      if (tmdbData) {
+        if (i === 0) {
+          metadata = mapper.parseTMDBAPIEpisodeResponse(tmdbData);
+        } else {
+          metadata.title = metadata.title ? metadata.title + ' & ' + tmdbData.name : tmdbData.name;
+        }
+      }
     }
   } else {
     const movieIMDbID = movieOrEpisodeIMDbID;

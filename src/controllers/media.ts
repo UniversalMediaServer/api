@@ -103,7 +103,12 @@ export const getSeason = async(ctx: ParameterizedContext): Promise<SeasonMetadat
 export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataInterface> => {
   const { title, osdbHash, imdbID }: UmsQueryParams = ctx.query;
   const { episode, season, year, filebytesize }: UmsQueryParams = ctx.query;
-  const [episodeNumber, seasonNumber, yearNumber, filebytesizeNumber] = [episode, season, year, filebytesize].map(param => param ? Number(param) : null);
+  const [seasonNumber, yearNumber, filebytesizeNumber] = [season, year, filebytesize].map(param => param ? Number(param) : null);
+  let episodeNumbers = null;
+  if (episode) {
+    const episodes = episode.split('-');
+    episodeNumbers = episodes.map(Number);
+  }
 
   if (!title && !osdbHash && !imdbID) {
     throw new ValidationError('title, osdbHash or imdbId is a required parameter');
@@ -135,7 +140,7 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
       titleQuery.year = year;
       titleFailedQuery.year = year;
     }
-    if (episodeNumber) {
+    if (episode) {
       titleQuery.episode = episode;
       titleFailedQuery.episode = episode;
     }
@@ -206,7 +211,7 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
   // Start TMDB lookups
   let tmdbData: MediaMetadataInterface;
   try {
-    tmdbData = await externalAPIHelper.getFromTMDBAPI(title, imdbIdToSearch, yearNumber, seasonNumber, episodeNumber);
+    tmdbData = await externalAPIHelper.getFromTMDBAPI(title, imdbIdToSearch, yearNumber, seasonNumber, episodeNumbers);
     imdbIdToSearch = imdbIdToSearch || tmdbData?.imdbID;
   } catch (e) {
     // Log the error but continue on to try the next API, OMDb
@@ -241,7 +246,7 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
 
   let omdbData: MediaMetadataInterface;
   try {
-    omdbData = await externalAPIHelper.getFromOMDbAPIV2(imdbIdToSearch, omdbSearchRequest, seasonNumber, episodeNumber);
+    omdbData = await externalAPIHelper.getFromOMDbAPIV2(imdbIdToSearch, omdbSearchRequest, seasonNumber, episodeNumbers);
     imdbIdToSearch = imdbIdToSearch || omdbData?.imdbID;
   } catch (e) {
     console.error(e);
@@ -279,6 +284,12 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
     if (osdbHash) {
       combinedResponse.osdbHash = osdbHash;
     }
+
+    // Ensure that we return and cache the same episode number that was searched for
+    if (episodeNumbers.length > 1 && episodeNumbers[0] === combinedResponse.episode) {
+      combinedResponse.episode = episode;
+    }
+
     const dbMeta = await MediaMetadata.create(combinedResponse);
 
     // TODO: Investigate why we need this "as" syntax
