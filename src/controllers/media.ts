@@ -286,7 +286,7 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
     }
 
     // Ensure that we return and cache the same episode number that was searched for
-    if (episodeNumbers.length > 1 && episodeNumbers[0] === combinedResponse.episode) {
+    if (episodeNumbers && episodeNumbers.length > 1 && episodeNumbers[0] === combinedResponse.episode) {
       combinedResponse.episode = episode;
     }
 
