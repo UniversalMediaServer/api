@@ -85,7 +85,7 @@ describe('Media Metadata endpoints', () => {
   });
 
   describe('get by osdb hash', () => {
-    it('should return a valid response for existing media record with osdb hash', async() => {
+    test('should return a valid response for existing media record with osdb hash', async() => {
       await MediaMetadataModel.create(interstellarMetaData);
       const res = await axios.get(`${appUrl}/api/media/osdbhash/${interstellarMetaData.osdbHash}/1234`) as UmsApiAxiosResponse;
       expect(res.status).toBe(200);
@@ -95,7 +95,7 @@ describe('Media Metadata endpoints', () => {
       expect(res.data).toHaveProperty('title', interstellarMetaData.title);
     });
 
-    it('should return a valid response for a new osdbhash, then store it', async() => {
+    test('should return a valid response for a new osdbhash, then store it', async() => {
       // using example file from https://trac.opensubtitles.org/projects/opensubtitles/wiki/HashSourceCodes
       const res = await axios.get(`${appUrl}/api/media/osdbhash/${theSimpsonsMetaData.osdbHash}/12909756`) as UmsApiAxiosResponse;
       expect(res.status).toBe(200);
@@ -140,7 +140,7 @@ describe('Media Metadata endpoints', () => {
     });
 
     describe('should create a failed lookup document', () => {
-      it('when Open Subtitles cannot find metadata and increment count field', async() => {
+      test('when Open Subtitles cannot find metadata and increment count field', async() => {
         let error;
         try {
           await axios.get(`${appUrl}/api/media/osdbhash/f4245d9379d31e30/1234`);
@@ -162,7 +162,7 @@ describe('Media Metadata endpoints', () => {
         expect(doc.count).toBe(2);
       });
 
-      it('when client validation by year fails', async() => {
+      test('when client validation by year fails', async() => {
         let error;
         try {
           await axios.get(`${appUrl}/api/media/osdbhash/${theSimpsonsMetaData.osdbHash}/1234?year=9999`);
@@ -176,7 +176,7 @@ describe('Media Metadata endpoints', () => {
         expect(doc.failedValidation).toBe(true);
       });
 
-      it('when client validation for season fails', async() => {
+      test('when client validation for season fails', async() => {
         let error;
         try {
           await axios.get(`${appUrl}/api/media/osdbhash/${prisonBreakEpisodeMetadata.osdbHash}/1234?season=999&episode=4`);
@@ -190,7 +190,7 @@ describe('Media Metadata endpoints', () => {
         expect(doc.failedValidation).toBe(true);
       });
 
-      it('when client validation for episode fails', async() => {
+      test('when client validation for episode fails', async() => {
         let error;
         try {
           await axios.get(`${appUrl}/api/media/osdbhash/${prisonBreakEpisodeMetadata.osdbHash}/1234?season=1&episode=999`);
@@ -204,7 +204,7 @@ describe('Media Metadata endpoints', () => {
         expect(doc.failedValidation).toBe(true);
       });
 
-      it('when client validation for season AND episode fails', async() => {
+      test('when client validation for season AND episode fails', async() => {
         let error;
         try {
           await axios.get(`${appUrl}/api/media/osdbhash/${prisonBreakEpisodeMetadata.osdbHash}/1234?season=999&episode=999`);
@@ -219,7 +219,7 @@ describe('Media Metadata endpoints', () => {
       });
     });
 
-    it('should return an episode response when validation is supplied and passes', async() => {
+    test('should return an episode response when validation is supplied and passes', async() => {
       let error;
       let response;
       try {
@@ -233,7 +233,7 @@ describe('Media Metadata endpoints', () => {
       expect(response.data).toHaveProperty('osdbHash', prisonBreakEpisodeMetadata.osdbHash);
     });
 
-    it('should return a movie response when validation is supplied and passes', async() => {
+    test('should return a movie response when validation is supplied and passes', async() => {
       let error;
       let response;
       try {
@@ -247,7 +247,7 @@ describe('Media Metadata endpoints', () => {
     });
 
     describe('should NOT create a failed lookup document', () => {
-      it('when Open Subtitles is offline', async() => {
+      test('when Open Subtitles is offline', async() => {
         await FailedLookupsModel.deleteMany({});
         let error;
         try {
@@ -260,7 +260,7 @@ describe('Media Metadata endpoints', () => {
         expect(doc).toEqual(null);
       });
 
-      it('when we did not receive a filebytesize', async() => {
+      test('when we did not receive a filebytesize', async() => {
         let error;
         try {
           await axios.get(`${appUrl}/api/media/osdbhash/f4245d9379d31e30/`);
@@ -272,7 +272,7 @@ describe('Media Metadata endpoints', () => {
         expect(doc).toBeFalsy();
       });
 
-      it('when we did not receive a hash', async() => {
+      test('when we did not receive a hash', async() => {
         let error;
         try {
           await axios.get(`${appUrl}/api/media/osdbhash//1234`);
@@ -284,7 +284,7 @@ describe('Media Metadata endpoints', () => {
         expect(doc).toBeFalsy();
       });
 
-      it('when we did not receive a valid hash', async() => {
+      test('when we did not receive a valid hash', async() => {
         let error;
         try {
           await axios.get(`${appUrl}/api/media/osdbhash/notTheRightAmountOfCharacters/1234`);
@@ -297,7 +297,7 @@ describe('Media Metadata endpoints', () => {
       });
     });
 
-    it('should not throw an exception when Open Subtitles passes bad data', async() => {
+    test('should not throw an exception when Open Subtitles passes bad data', async() => {
       let error;
       try {
         await axios.get(`${appUrl}/api/media/osdbhash/a04cfbeafc4af7eb/884419440`);
@@ -312,7 +312,7 @@ describe('Media Metadata endpoints', () => {
   });
 
   describe('get by title v1', () => {
-    it('should search by series title and store it, and not return searchMatches', async() => {
+    test('should search by series title and store it, and not return searchMatches', async() => {
       const response = await axios.get(`${appUrl}/api/media/title?title=Homeland S02E05`) as UmsApiAxiosResponse;
       expect(response.data).toHaveProperty('_id');
       expect(response.data).not.toHaveProperty('searchMatches');
@@ -329,7 +329,7 @@ describe('Media Metadata endpoints', () => {
       expect(episode.searchMatches).toBeUndefined();
     });
 
-    it('should search by movie title and year and store it', async() => {
+    test('should search by movie title and year and store it', async() => {
       const response = await axios.get(`${appUrl}/api/media/title?title=The Grinch&year=2018`) as UmsApiAxiosResponse;
       expect(response.data).toHaveProperty('_id');
 
@@ -343,7 +343,7 @@ describe('Media Metadata endpoints', () => {
       expect(movie.searchMatches).toBeUndefined();
     });
 
-    it('should require title as query param', async() => {
+    test('should require title as query param', async() => {
       try {
         await axios.get(`${appUrl}/api/media/title`);
       } catch (err) {
@@ -352,7 +352,7 @@ describe('Media Metadata endpoints', () => {
       }
     });
 
-    it('should return best match for movie titles which return many search results from OMDb', async() => {
+    test('should return best match for movie titles which return many search results from OMDb', async() => {
       const response = await axios.get(`${appUrl}/api/media/title?title=The Matrix Reloaded&year=2003`) as UmsApiAxiosResponse;
       expect(response.data.title).toBe('The Matrix Reloaded');
       /*
@@ -368,7 +368,7 @@ describe('Media Metadata endpoints', () => {
   });
 
   describe('get by title v2', () => {
-    it('should search by series title, season and episode numbers, and store it, and not return searchMatches', async() => {
+    test('should search by series title, season and episode numbers, and store it, and not return searchMatches', async() => {
       const response = await axios.get(`${appUrl}/api/media/v2/title?title=Homeland&season=2&episode=5`);
       expect(response.data).toHaveProperty('_id');
       expect(response.data).not.toHaveProperty('searchMatches');
@@ -385,7 +385,7 @@ describe('Media Metadata endpoints', () => {
       expect(episode.searchMatches).toBeUndefined();
     });
 
-    it('should search by movie title and year and store it', async() => {
+    test('should search by movie title and year and store it', async() => {
       const response = await axios.get(`${appUrl}/api/media/v2/title?title=The Grinch&year=2018`);
       expect(response.data).toHaveProperty('_id');
 
@@ -399,7 +399,7 @@ describe('Media Metadata endpoints', () => {
       expect(movie.searchMatches).toBeUndefined();
     });
 
-    it(`
+    test(`
       should not return a movie result when looking for an episode
       should not return an episode when looking for a movie
     `, async() => {
@@ -424,7 +424,7 @@ describe('Media Metadata endpoints', () => {
       expect(response.data).toHaveProperty('year', aloneMovieMetaData.year);
     });
 
-    it('should require title as query param', async() => {
+    test('should require title as query param', async() => {
       try {
         await axios.get(`${appUrl}/api/media/v2/title`);
       } catch (err) {
@@ -433,7 +433,7 @@ describe('Media Metadata endpoints', () => {
       }
     });
 
-    it('should return best match for movie titles which return many search results from OMDb', async() => {
+    test('should return best match for movie titles which return many search results from OMDb', async() => {
       const response = await axios.get(`${appUrl}/api/media/v2/title?title=The Matrix Reloaded&year=2003`) as UmsApiAxiosResponse;
       expect(response.data.title).toBe('The Matrix Reloaded');
       /*
@@ -449,25 +449,25 @@ describe('Media Metadata endpoints', () => {
   });
 
   describe('get by imdbid', () => {
-    it('should return a movie by imdbid', async() => {
+    test('should return a movie by imdbid', async() => {
       const response = await axios.get(`${appUrl}/api/media/imdbid?imdbid=tt0462538`) as UmsApiAxiosResponse;
       expect(response.data.title).toEqual('The Simpsons Movie');
       expect(response.data.type).toEqual('movie');
     });
 
-    it('should return a series by imdbid', async() => {
+    test('should return a series by imdbid', async() => {
       const response = await axios.get(`${appUrl}/api/media/imdbid?imdbid=tt1796960`) as UmsApiAxiosResponse;
       expect(response.data.title).toEqual('Homeland');
       expect(response.data.type).toEqual('series');
     });
 
-    it('should return an episode by imdbid', async() => {
+    test('should return an episode by imdbid', async() => {
       const response = await axios.get(`${appUrl}/api/media/imdbid?imdbid=tt3388032`) as UmsApiAxiosResponse;
       expect(response.data.title).toEqual('Proof of Concept');
       expect(response.data.type).toEqual('episode');
     });
 
-    it('should NOT create a failed lookup document when IMDB api is down', async() => {
+    test('should NOT create a failed lookup document when IMDB api is down', async() => {
       let error;
       try {
         await axios.get(`${appUrl}/api/media/imdbid?imdbid=mocked-outage-id`);
