@@ -257,7 +257,7 @@ describe('get by all', () => {
       expect(response.data.seriesIMDbID).toEqual(EPISODE_PRISONBREAK.seriesIMDbID);
     });
     // this also tests opensubtitles validation
-    test.only('should return two episodes when passed all possible params, from source APIs then store', async() => {
+    test('should return two episodes when passed all possible params, from source APIs then store', async() => {
       const spy = jest.spyOn(apihelper, 'getFromOMDbAPIV2');
       const openSubsSpy = jest.spyOn(apihelper, 'getFromOpenSubtitles');
       const url = `${appUrl}/api/media/video?`+
