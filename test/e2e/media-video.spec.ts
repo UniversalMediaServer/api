@@ -256,7 +256,7 @@ describe('get by all', () => {
       expect(response.data.type).toEqual('episode');
       expect(response.data.seriesIMDbID).toEqual(EPISODE_PRISONBREAK.seriesIMDbID);
     });
-    // this also tests opensubtitles validation
+
     test('should return two episodes when passed all possible params, from source APIs then store', async() => {
       const spy = jest.spyOn(apihelper, 'getFromOMDbAPIV2');
       const openSubsSpy = jest.spyOn(apihelper, 'getFromOpenSubtitles');
@@ -270,6 +270,7 @@ describe('get by all', () => {
       let response = await axios.get(url) as UmsApiAxiosResponse;
       expect(response.data.title).toEqual(EPISODE_AVATAR.episodeTitle);
       expect(response.data.type).toEqual('episode');
+      expect(response.data.episode).toEqual('14-15');
 
       // This value comes from OMDb
       expect(response.data.seriesIMDbID).toEqual(EPISODE_AVATAR.seriesIMDbID);
@@ -284,6 +285,7 @@ describe('get by all', () => {
       expect(openSubsSpy).toHaveBeenCalledTimes(0);
       expect(response.data.title).toEqual(EPISODE_AVATAR.episodeTitle);
       expect(response.data.type).toEqual('episode');
+      expect(response.data.episode).toEqual(EPISODE_AVATAR.episode);
       expect(response.data.seriesIMDbID).toEqual(EPISODE_AVATAR.seriesIMDbID);
     });
   });
