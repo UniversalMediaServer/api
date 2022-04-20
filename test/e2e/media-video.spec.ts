@@ -40,6 +40,7 @@ const EPISODE_PRISONBREAK = {
 };
 
 const EPISODE_AVATAR = {
+  'episodeTitle': 'Chapter Fourteen: The Boiling Rock, Part 1 & Chapter Fifteen: The Boiling Rock, Part 2',
   'osdbHash': 'de334f38f153fb6f',
   'filebytesize': '4695739425',
   'season': '3',
@@ -48,7 +49,6 @@ const EPISODE_AVATAR = {
   'year': 2005,
   'seriesIMDbID': 'tt0417299',
   'title': 'Avatar: The Last Airbender',
-  'episodeTitle': 'Chapter Fourteen: The Boiling Rock, Part 1 & Chapter Fifteen: The Boiling Rock, Part 2',
 };
 
 interface UmsApiAxiosResponse  {
@@ -270,7 +270,7 @@ describe('get by all', () => {
       let response = await axios.get(url) as UmsApiAxiosResponse;
       expect(response.data.title).toEqual(EPISODE_AVATAR.episodeTitle);
       expect(response.data.type).toEqual('episode');
-      expect(response.data.episode).toEqual('14-15');
+      expect(response.data.episode).toEqual(EPISODE_AVATAR.episode);
 
       // This value comes from OMDb
       expect(response.data.seriesIMDbID).toEqual(EPISODE_AVATAR.seriesIMDbID);
