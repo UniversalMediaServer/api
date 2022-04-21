@@ -309,7 +309,7 @@ export const getSeries = async(ctx: ParameterizedContext): Promise<SeriesMetadat
       throw new MediaNotFoundError();
     }
 
-    const dbMetaWithPosters = await externalAPIHelper.addPosterFromImages(dbMeta);
+    const dbMetaWithPosters = await deprecatedExternalAPIHelper.addPosterFromImages(dbMeta);
     return ctx.body = dbMetaWithPosters;
   } catch (err) {
     // log unexpected errors
@@ -517,7 +517,7 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
 
     // TODO: Investigate why we need this "as" syntax
     let leanMeta = dbMeta.toObject({ useProjection: true }) as MediaMetadataInterface;
-    leanMeta = await externalAPIHelper.addPosterFromImages(leanMeta);
+    leanMeta = await deprecatedExternalAPIHelper.addPosterFromImages(leanMeta);
     return ctx.body = leanMeta;
   } catch (e) {
     console.error(e,combinedResponse);
