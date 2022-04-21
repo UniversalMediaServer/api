@@ -30,7 +30,7 @@ export const addSearchMatchByIMDbID = async(imdbID: string, title: string): Prom
   ).exec();
 };
 
-export const getSeries = async(ctx: ParameterizedContext): Promise<SeriesMetadataInterface | LeanDocument<MediaMetadataInterfaceDocument>> => {
+export const getSeriesV2 = async(ctx: ParameterizedContext): Promise<SeriesMetadataInterface | LeanDocument<MediaMetadataInterfaceDocument>> => {
   const { imdbID, title, year }: UmsQueryParams = ctx.query;
   if (!title && !imdbID) {
     throw new ValidationError('Either IMDb ID or title required');
@@ -42,8 +42,7 @@ export const getSeries = async(ctx: ParameterizedContext): Promise<SeriesMetadat
       throw new MediaNotFoundError();
     }
 
-    const dbMetaWithPosters = await externalAPIHelper.addPosterFromImages(dbMeta);
-    return ctx.body = dbMetaWithPosters;
+    return ctx.body = dbMeta;
   } catch (err) {
     // log unexpected errors
     if (!(err instanceof MediaNotFoundError)) {
@@ -100,7 +99,7 @@ export const getSeason = async(ctx: ParameterizedContext): Promise<SeasonMetadat
   return ctx.body = seasonMetadata;
 };
 
-export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataInterface> => {
+export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadataInterface> => {
   const { title, osdbHash, imdbID }: UmsQueryParams = ctx.query;
   const { episode, season, year, filebytesize }: UmsQueryParams = ctx.query;
   const [seasonNumber, yearNumber, filebytesizeNumber] = [season, year, filebytesize].map(param => param ? Number(param) : null);
@@ -293,8 +292,7 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
     const dbMeta = await MediaMetadata.create(combinedResponse);
 
     // TODO: Investigate why we need this "as" syntax
-    let leanMeta = dbMeta.toObject({ useProjection: true }) as MediaMetadataInterface;
-    leanMeta = await externalAPIHelper.addPosterFromImages(leanMeta);
+    const leanMeta = dbMeta.toObject({ useProjection: true }) as MediaMetadataInterface;
     return ctx.body = leanMeta;
   } catch (e) {
     console.error(e,combinedResponse);
