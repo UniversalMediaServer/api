@@ -1,4 +1,4 @@
-import * as imdb from '@universalmediaserver/node-imdb-api';
+import * as imdb from '@universalmediaserver/imdb-api';
 import * as _ from 'lodash';
 import { ExternalAPIError } from '../helpers/customErrors';
 import * as client from 'prom-client';

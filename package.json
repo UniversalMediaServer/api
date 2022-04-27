@@ -41,7 +41,7 @@
     }
   },
   "dependencies": {
-    "@universalmediaserver/node-imdb-api": "4.4.2",
+    "@universalmediaserver/imdb-api": "https://github.com/UniversalMediaServer/node-imdb-api#2908e9347c9b1470b1257eb68453713e9c28b8bc",
     "debug": "^4.3.4",
     "episode-parser": "^2.0.2",
     "escape-string-regexp": "5",
