@@ -1,4 +1,4 @@
-import { Movie, SearchRequest, TVShow } from '@universalmediaserver/node-imdb-api';
+import { Movie, SearchRequest, TVShow } from '@universalmediaserver/imdb-api';
 import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
 import * as natural from 'natural';

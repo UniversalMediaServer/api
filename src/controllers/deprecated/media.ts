@@ -1,4 +1,4 @@
-import { SearchRequest } from '@universalmediaserver/node-imdb-api';
+import { SearchRequest } from '@universalmediaserver/imdb-api';
 import { ParameterizedContext } from 'koa';
 import * as _ from 'lodash';
 import { LeanDocument } from 'mongoose';
