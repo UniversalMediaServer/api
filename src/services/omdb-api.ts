@@ -42,7 +42,8 @@ const handleError = (err: Error) => {
     !err.message ||
     (
       err.message.indexOf('Movie not found!') !== 0 &&
-      err.message.indexOf('Series not found!') !== 0
+      err.message.indexOf('Series not found!') !== 0 &&
+      err.message.indexOf('Series or season not found!') !== 0
     )
   ) {
     throw err;
