@@ -1053,9 +1053,9 @@
   resolved "https://registry.yarnpkg.com/@ungap/url-search-params/-/url-search-params-0.2.2.tgz#2de3bdec21476a9b70ef11fd7b794752f9afa04c"
   integrity sha512-qQsguKXZVKdCixOHX9jqnX/K/1HekPDpGKyEcXHT+zR6EjGA7S4boSuelL4uuPv6YfhN0n8c4UxW+v/Z3gM2iw==
 
-"@universalmediaserver/imdb-api@https://github.com/UniversalMediaServer/node-imdb-api#52c68be46fee7b2a66650eedf6d59a86be31a307":
+"@universalmediaserver/imdb-api@https://github.com/UniversalMediaServer/node-imdb-api#8bdef69c6d5d6663b7e3f3d7b61b24794be2c38e":
   version "4.4.2"
-  resolved "https://github.com/UniversalMediaServer/node-imdb-api#52c68be46fee7b2a66650eedf6d59a86be31a307"
+  resolved "https://github.com/UniversalMediaServer/node-imdb-api#8bdef69c6d5d6663b7e3f3d7b61b24794be2c38e"
   dependencies:
     "@ungap/url-search-params" "^0.2.2"
     ky "^0.24.0"
