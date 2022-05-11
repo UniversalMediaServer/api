@@ -67,3 +67,13 @@ typings/
 !test/mocks.js
 !test/opensubtitles-mocks.js
 !ecosystem.config.js
+
+# yarn 3
+
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions

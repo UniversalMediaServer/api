@@ -1,4 +1,4 @@
-/**
+/*
  * These versions get bumped to tell the client that
  * it should update its relevant data.
  * e.g. if we did an API change that improved our results
