@@ -11,8 +11,8 @@
     "purge": "TS_NODE_FILES=true ts-node --files scripts/purge",
     "start": "ts-node --files src/app.ts",
     "start:prod": "./node_modules/.bin/pm2 start ecosystem.config.js --update-env",
-    "test": "unset IMDB_API_KEY && unset NODE_ENV && OS_API_USERAGENT=OS_API_MOCK_KEY jest test/e2e/media-video.spec.ts --coverage --forceExit --detectOpenHandles && npm run test:mocks",
-    "test:mocks": "unset IMDB_API_KEY && unset NODE_ENV && OS_API_USERAGENT=OS_API_MOCK_KEY jest test/**/*.spec.ts  --testPathIgnorePatterns test/e2e/media-video.spec.ts --coverage --forceExit --detectOpenHandles",
+    "test": "IMDB_API_KEY=foo NODE_ENV=test OS_API_USERAGENT=OS_API_MOCK_KEY jest test/e2e/media-video.spec.ts --coverage --forceExit --detectOpenHandles && npm run test:mocks",
+    "test:mocks": "IMDB_API_KEY=foo NODE_ENV=test OS_API_USERAGENT=OS_API_MOCK_KEY jest test/**/*.spec.ts  --testPathIgnorePatterns test/e2e/media-video.spec.ts --coverage --forceExit --detectOpenHandles",
     "test:models": "jest test/models/*.spec.ts --coverage --forceExit --detectOpenHandles",
     "tsc:ci": "tsc && rm -rf dist",
     "watch": "tsc --watch"
