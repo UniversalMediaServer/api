@@ -1125,7 +1125,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/koa-bodyparser@npm:^4.3.7":
+"@types/koa-bodyparser@npm:4.3.7":
   version: 4.3.7
   resolution: "@types/koa-bodyparser@npm:4.3.7"
   dependencies:
@@ -1143,7 +1143,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/koa-helmet@npm:^6.0.4":
+"@types/koa-helmet@npm:6.0.4":
   version: 6.0.4
   resolution: "@types/koa-helmet@npm:6.0.4"
   dependencies:
@@ -1153,7 +1153,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/koa-router@npm:^7.4.4":
+"@types/koa-router@npm:7.4.4":
   version: 7.4.4
   resolution: "@types/koa-router@npm:7.4.4"
   dependencies:
@@ -1162,7 +1162,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/koa@npm:*, @types/koa@npm:^2.13.4":
+"@types/koa@npm:*, @types/koa@npm:2.13.4":
   version: 2.13.4
   resolution: "@types/koa@npm:2.13.4"
   dependencies:
@@ -1178,7 +1178,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:^4.14.182":
+"@types/lodash@npm:4.14.182":
   version: 4.14.182
   resolution: "@types/lodash@npm:4.14.182"
   checksum: 7dd137aa9dbabd632408bd37009d984655164fa1ecc3f2b6eb94afe35bf0a5852cbab6183148d883e9c73a958b7fec9a9bcf7c8e45d41195add6a18c34958209
@@ -1192,7 +1192,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/natural@npm:^5.1.1":
+"@types/natural@npm:5.1.1":
   version: 5.1.1
   resolution: "@types/natural@npm:5.1.1"
   dependencies:
@@ -1215,7 +1215,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/object-mapper@npm:^6.2.0":
+"@types/object-mapper@npm:6.2.0":
   version: 6.2.0
   resolution: "@types/object-mapper@npm:6.2.0"
   checksum: f391258bdd40efbf5518a90bc54fd1eb0840446615629946e961e0106e7da5d5e99aa945fb39d171993192626395f107ca7c5212eb61e6a5d56e776d050ad39c
@@ -1309,7 +1309,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:^5.21.0":
+"@typescript-eslint/eslint-plugin@npm:5.21.0":
   version: 5.21.0
   resolution: "@typescript-eslint/eslint-plugin@npm:5.21.0"
   dependencies:
@@ -1332,7 +1332,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:^5.21.0":
+"@typescript-eslint/parser@npm:5.21.0":
   version: 5.21.0
   resolution: "@typescript-eslint/parser@npm:5.21.0"
   dependencies:
@@ -1776,6 +1776,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"axios@npm:0.27.2":
+  version: 0.27.2
+  resolution: "axios@npm:0.27.2"
+  dependencies:
+    follow-redirects: ^1.14.9
+    form-data: ^4.0.0
+  checksum: 38cb7540465fe8c4102850c4368053c21683af85c5fdf0ea619f9628abbcb59415d1e22ebc8a6390d2bbc9b58a9806c874f139767389c862ec9b772235f06854
+  languageName: node
+  linkType: hard
+
 "axios@npm:^0.21.0":
   version: 0.21.4
   resolution: "axios@npm:0.21.4"
@@ -1791,16 +1801,6 @@ __metadata:
   dependencies:
     follow-redirects: ^1.14.8
   checksum: d9eb58ff4bc0b36a04783fc9ff760e9245c829a5a1052ee7ca6013410d427036b1d10d04e7380c02f3508c5eaf3485b1ae67bd2adbfec3683704745c8d7a6e1a
-  languageName: node
-  linkType: hard
-
-"axios@npm:^0.27.2":
-  version: 0.27.2
-  resolution: "axios@npm:0.27.2"
-  dependencies:
-    follow-redirects: ^1.14.9
-    form-data: ^4.0.0
-  checksum: 38cb7540465fe8c4102850c4368053c21683af85c5fdf0ea619f9628abbcb59415d1e22ebc8a6390d2bbc9b58a9806c874f139767389c862ec9b772235f06854
   languageName: node
   linkType: hard
 
@@ -2585,7 +2585,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:4, debug@npm:4.x, debug@npm:^4.1.0, debug@npm:^4.1.1, debug@npm:^4.3.1, debug@npm:^4.3.2, debug@npm:^4.3.3, debug@npm:^4.3.4, debug@npm:~4.3.1":
+"debug@npm:4, debug@npm:4.3.4, debug@npm:4.x, debug@npm:^4.1.0, debug@npm:^4.1.1, debug@npm:^4.3.1, debug@npm:^4.3.2, debug@npm:^4.3.3, debug@npm:^4.3.4, debug@npm:~4.3.1":
   version: 4.3.4
   resolution: "debug@npm:4.3.4"
   dependencies:
@@ -2869,7 +2869,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"episode-parser@npm:^2.0.2":
+"episode-parser@npm:2.0.2":
   version: 2.0.2
   resolution: "episode-parser@npm:2.0.2"
   checksum: ff8f8391b5ef850edd916f254a80671b711b610b42dd9c6f9eedaf8a059b9ad276bbef1008e981b17b3deb1d3a3a2397fd842102683167bd436a7d7063156fbe
@@ -2913,7 +2913,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"escape-string-regexp@npm:5":
+"escape-string-regexp@npm:5.0.0":
   version: 5.0.0
   resolution: "escape-string-regexp@npm:5.0.0"
   checksum: 20daabe197f3cb198ec28546deebcf24b3dbb1a5a269184381b3116d12f0532e06007f4bc8da25669d6a7f8efb68db0758df4cd981f57bc5b57f521a3e12c59e
@@ -4736,7 +4736,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest@npm:^27.5.1":
+"jest@npm:27.5.1":
   version: 27.5.1
   resolution: "jest@npm:27.5.1"
   dependencies:
@@ -4933,7 +4933,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"koa-bodyparser@npm:^4.3.0":
+"koa-bodyparser@npm:4.3.0":
   version: 4.3.0
   resolution: "koa-bodyparser@npm:4.3.0"
   dependencies:
@@ -4960,7 +4960,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"koa-helmet@npm:^6.1.0":
+"koa-helmet@npm:6.1.0":
   version: 6.1.0
   resolution: "koa-helmet@npm:6.1.0"
   dependencies:
@@ -4969,7 +4969,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"koa-prometheus-adv@npm:^1.0.1":
+"koa-prometheus-adv@npm:1.0.1":
   version: 1.0.1
   resolution: "koa-prometheus-adv@npm:1.0.1"
   dependencies:
@@ -4978,7 +4978,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"koa-qs@npm:^3.0.0":
+"koa-qs@npm:3.0.0":
   version: 3.0.0
   resolution: "koa-qs@npm:3.0.0"
   dependencies:
@@ -4988,7 +4988,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"koa-router@npm:^10.1.1":
+"koa-router@npm:10.1.1":
   version: 10.1.1
   resolution: "koa-router@npm:10.1.1"
   dependencies:
@@ -5001,7 +5001,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"koa@npm:^2.13.3":
+"koa@npm:2.13.4":
   version: 2.13.4
   resolution: "koa@npm:2.13.4"
   dependencies:
@@ -5135,7 +5135,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:^4.17.14, lodash@npm:^4.17.21, lodash@npm:^4.7.0":
+"lodash@npm:4.17.21, lodash@npm:^4.17.14, lodash@npm:^4.17.21, lodash@npm:^4.7.0":
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
   checksum: eb835a2e51d381e561e508ce932ea50a8e5a68f4ebdd771ea240d3048244a8d13658acbd502cd4829768c56f2e16bdd4340b9ea141297d472517b83868e677f7
@@ -5524,7 +5524,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"moviedb-promise@npm:^3.1.13":
+"moviedb-promise@npm:3.1.14":
   version: 3.1.14
   resolution: "moviedb-promise@npm:3.1.14"
   dependencies:
@@ -5629,7 +5629,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nock@npm:^13.2.4":
+"nock@npm:13.2.4":
   version: 13.2.4
   resolution: "nock@npm:13.2.4"
   dependencies:
@@ -5685,7 +5685,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nodemon@npm:^2.0.16":
+"nodemon@npm:2.0.16":
   version: 2.0.16
   resolution: "nodemon@npm:2.0.16"
   dependencies:
@@ -5786,7 +5786,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"object-mapper@npm:^6.2.0":
+"object-mapper@npm:6.2.0":
   version: 6.2.0
   resolution: "object-mapper@npm:6.2.0"
   checksum: c3fd864528b6992aec789e107d97830ba5e0b4d6e53aad7ee9eeba2407ba415169ef1023823427caa5061e830cce8ddc290eac59c4e99b947a2058e0fc438408
@@ -6130,7 +6130,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pm2-cluster-prom@npm:^2.1.0":
+"pm2-cluster-prom@npm:2.1.0":
   version: 2.1.0
   resolution: "pm2-cluster-prom@npm:2.1.0"
   peerDependencies:
@@ -6172,7 +6172,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pm2@npm:^5.2.0":
+"pm2@npm:5.2.0":
   version: 5.2.0
   resolution: "pm2@npm:5.2.0"
   dependencies:
@@ -6250,21 +6250,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"prom-client@npm:14.0.1":
+  version: 14.0.1
+  resolution: "prom-client@npm:14.0.1"
+  dependencies:
+    tdigest: ^0.1.1
+  checksum: 864c19b7086eda8fae652385bc8b8aeb155f85922e58672d07a64918a603341e120e65e08f9d77ccab546518dc18930284da8743c2aac3c968f626d7063d6bba
+  languageName: node
+  linkType: hard
+
 "prom-client@npm:^11.0.0":
   version: 11.5.3
   resolution: "prom-client@npm:11.5.3"
   dependencies:
     tdigest: ^0.1.1
   checksum: 9ed7ffc880a525aec05de940268cc50df9393a7c077fbf0e4a1607369821f65bcd439bd5b9e0adf9d7a2041a64c6aa98281492eea0e0aaf07b2f854627eee8f3
-  languageName: node
-  linkType: hard
-
-"prom-client@npm:^14.0.1":
-  version: 14.0.1
-  resolution: "prom-client@npm:14.0.1"
-  dependencies:
-    tdigest: ^0.1.1
-  checksum: 864c19b7086eda8fae652385bc8b8aeb155f85922e58672d07a64918a603341e120e65e08f9d77ccab546518dc18930284da8743c2aac3c968f626d7063d6bba
   languageName: node
   linkType: hard
 
@@ -6950,7 +6950,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stoppable@npm:^1.1.0":
+"stoppable@npm:1.1.0":
   version: 1.1.0
   resolution: "stoppable@npm:1.1.0"
   checksum: 63104fcbdece130bc4906fd982061e763d2ef48065ed1ab29895e5ad00552c625f8a4c50c9cd2e3bfa805c8a2c3bfdda0f07c5ae39694bd2d5cb0bee1618d1e9
@@ -7278,7 +7278,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-jest@npm:^27.1.4":
+"ts-jest@npm:27.1.4":
   version: 27.1.4
   resolution: "ts-jest@npm:27.1.4"
   dependencies:
@@ -7311,7 +7311,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-node@npm:^10.7.0":
+"ts-node@npm:10.7.0":
   version: 10.7.0
   resolution: "ts-node@npm:10.7.0"
   dependencies:
@@ -7462,7 +7462,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.6.4":
+"typescript@npm:4.6.4":
   version: 4.6.4
   resolution: "typescript@npm:4.6.4"
   bin:
@@ -7472,7 +7472,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^4.6.4#~builtin<compat/typescript>":
+"typescript@patch:typescript@4.6.4#~builtin<compat/typescript>":
   version: 4.6.4
   resolution: "typescript@patch:typescript@npm%3A4.6.4#~builtin<compat/typescript>::version=4.6.4&hash=7ad353"
   bin:
@@ -7535,46 +7535,46 @@ __metadata:
   resolution: "universalmediaserver-api@workspace:."
   dependencies:
     "@types/jest": 27.5.1
-    "@types/koa": ^2.13.4
-    "@types/koa-bodyparser": ^4.3.7
-    "@types/koa-helmet": ^6.0.4
-    "@types/koa-router": ^7.4.4
-    "@types/lodash": ^4.14.182
-    "@types/natural": ^5.1.1
+    "@types/koa": 2.13.4
+    "@types/koa-bodyparser": 4.3.7
+    "@types/koa-helmet": 6.0.4
+    "@types/koa-router": 7.4.4
+    "@types/lodash": 4.14.182
+    "@types/natural": 5.1.1
     "@types/node": 16.11.35
-    "@types/object-mapper": ^6.2.0
-    "@typescript-eslint/eslint-plugin": ^5.21.0
-    "@typescript-eslint/parser": ^5.21.0
+    "@types/object-mapper": 6.2.0
+    "@typescript-eslint/eslint-plugin": 5.21.0
+    "@typescript-eslint/parser": 5.21.0
     "@universalmediaserver/imdb-api": "https://github.com/UniversalMediaServer/node-imdb-api#8bdef69c6d5d6663b7e3f3d7b61b24794be2c38e"
-    axios: ^0.27.2
-    debug: ^4.3.4
-    episode-parser: ^2.0.2
-    escape-string-regexp: 5
+    axios: 0.27.2
+    debug: 4.3.4
+    episode-parser: 2.0.2
+    escape-string-regexp: 5.0.0
     eslint: 8.15.0
     inquirer: 8.2.4
-    jest: ^27.5.1
-    koa: ^2.13.3
-    koa-bodyparser: ^4.3.0
-    koa-helmet: ^6.1.0
-    koa-prometheus-adv: ^1.0.1
-    koa-qs: ^3.0.0
-    koa-router: ^10.1.1
-    lodash: ^4.17.21
+    jest: 27.5.1
+    koa: 2.13.4
+    koa-bodyparser: 4.3.0
+    koa-helmet: 6.1.0
+    koa-prometheus-adv: 1.0.1
+    koa-qs: 3.0.0
+    koa-router: 10.1.1
+    lodash: 4.17.21
     mongodb-memory-server: 8.5.2
     mongoose: 6.3.1
-    moviedb-promise: ^3.1.13
+    moviedb-promise: 3.1.14
     natural: 5.2.2
-    nock: ^13.2.4
-    nodemon: ^2.0.16
-    object-mapper: ^6.2.0
+    nock: 13.2.4
+    nodemon: 2.0.16
+    object-mapper: 6.2.0
     opensubtitles-api: "UniversalMediaServer/opensubtitles-api#adb9ec6"
-    pm2: ^5.2.0
-    pm2-cluster-prom: ^2.1.0
-    prom-client: ^14.0.1
-    stoppable: ^1.1.0
-    ts-jest: ^27.1.4
-    ts-node: ^10.7.0
-    typescript: ^4.6.4
+    pm2: 5.2.0
+    pm2-cluster-prom: 2.1.0
+    prom-client: 14.0.1
+    stoppable: 1.1.0
+    ts-jest: 27.1.4
+    ts-node: 10.7.0
+    typescript: 4.6.4
   languageName: unknown
   linkType: soft
 
