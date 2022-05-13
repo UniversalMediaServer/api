@@ -54,7 +54,7 @@
     "lodash": "^4.17.21",
     "mongoose": "6.3.1",
     "moviedb-promise": "^3.1.13",
-    "natural": "^5.1.13",
+    "natural": "5.2.2",
     "object-mapper": "^6.2.0",
     "opensubtitles-api": "UniversalMediaServer/opensubtitles-api#adb9ec6",
     "pm2": "^5.2.0",

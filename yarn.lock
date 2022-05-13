@@ -5568,9 +5568,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"natural@npm:^5.1.13":
-  version: 5.1.13
-  resolution: "natural@npm:5.1.13"
+"natural@npm:5.2.2":
+  version: 5.2.2
+  resolution: "natural@npm:5.2.2"
   dependencies:
     afinn-165: ^1.0.2
     apparatus: ^0.0.10
@@ -5578,7 +5578,7 @@ __metadata:
     sylvester: ^0.0.12
     underscore: ^1.9.1
     wordnet-db: ^3.1.11
-  checksum: 5af7c0d201f17abdcf3bd24f76b0ee827734b93c98d5f5296b9929fc1d6d064ba673b87936320b136a55def76773824d5aeea0c53b55f132591d8a6168d1463e
+  checksum: 84b471f3d160ecfbc6b45c5d8214d9ee251b275177d968ed536f0f59e689d0d8d440f39ad4c416d500153a5c6f8de7c4c9e902a2ef28cb7c3b3a4745c886570f
   languageName: node
   linkType: hard
 
@@ -7553,7 +7553,7 @@ __metadata:
     mongodb-memory-server: 8.5.2
     mongoose: 6.3.1
     moviedb-promise: ^3.1.13
-    natural: ^5.1.13
+    natural: 5.2.2
     nock: ^13.2.4
     nodemon: ^2.0.16
     object-mapper: ^6.2.0
