@@ -76,7 +76,7 @@
     "@typescript-eslint/parser": "^5.21.0",
     "axios": "^0.27.2",
     "eslint": "8.15.0",
-    "inquirer": "^8.2.2",
+    "inquirer": "^8.2.4",
     "jest": "^27.5.1",
     "mongodb-memory-server": "8.5.2",
     "nock": "^13.2.4",
