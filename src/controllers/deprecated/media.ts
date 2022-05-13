@@ -140,7 +140,6 @@ export const getBySanitizedTitle = async(ctx: ParameterizedContext): Promise<Med
     imdbData.searchMatches = [title];
 
     let newlyCreatedResult = await MediaMetadata.create(imdbData);
-    // @ts-expect-error these types get confused because of lean results
     newlyCreatedResult = newlyCreatedResult.toObject();
     delete newlyCreatedResult.searchMatches;
     return ctx.body = newlyCreatedResult;
@@ -240,7 +239,6 @@ export const getBySanitizedTitleV2 = async(ctx: ParameterizedContext): Promise<M
     }
 
     let newlyCreatedResult = await MediaMetadata.create(imdbData);
-    // @ts-expect-error these types get confused because of lean results
     newlyCreatedResult = newlyCreatedResult.toObject();
     delete newlyCreatedResult.searchMatches;
     return ctx.body = newlyCreatedResult;
@@ -310,6 +308,7 @@ export const getSeries = async(ctx: ParameterizedContext): Promise<SeriesMetadat
     }
 
     const dbMetaWithPosters = await deprecatedExternalAPIHelper.addPosterFromImages(dbMeta);
+    // @ts-expect-error these types get confused but it's deprecated so won't fix
     return ctx.body = dbMetaWithPosters;
   } catch (err) {
     // log unexpected errors
