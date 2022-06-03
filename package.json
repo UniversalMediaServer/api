@@ -79,7 +79,7 @@
     "inquirer": "8.2.4",
     "jest": "28.1.0",
     "mongodb-memory-server": "8.6.0",
-    "nock": "13.2.4",
+    "nock": "13.2.6",
     "nodemon": "2.0.16",
     "stoppable": "1.1.0",
     "ts-jest": "28.0.3",
