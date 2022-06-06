@@ -1,18 +1,17 @@
 import { Movie, SearchRequest, TVShow } from '@universalmediaserver/imdb-api';
 import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
+import { Episode, EpisodeRequest, ExternalId, SearchMovieRequest, SearchTvRequest } from 'moviedb-promise/dist/request-types';
 import * as natural from 'natural';
 
 import osAPI from './opensubtitles';
-
+import omdbAPI from './omdb-api';
+import { tmdb } from './tmdb-api';
 import { ValidationError } from '../helpers/customErrors';
 import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
 import { MediaMetadataInterface } from '../models/MediaMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
-import omdbAPI from './omdb-api';
 import { mapper } from '../utils/data-mapper';
-import { Episode, EpisodeRequest, ExternalId, SearchMovieRequest, SearchTvRequest } from 'moviedb-promise/dist/request-types';
-import { tmdb } from './tmdb-api';
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
 
@@ -27,10 +26,6 @@ export interface OpenSubtitlesValidation {
   year: string;
   season: string;
   episode: string;
-}
-
-interface SortByFilter {
-  startYear: number;
 }
 
 /**
@@ -214,14 +209,14 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
 
     omdbData = await getFromOMDbAPIV2(imdbID);
   } else {
-    const sortBy = {} as SortByFilter;
+    const sortBy = {};
     const titleQuery: GetSeriesFilter = { searchMatches: { $in: [title] } };
     failedLookupQuery = { title: title, type: 'series' };
     if (year) {
       failedLookupQuery.startYear = year;
       titleQuery.startYear = year;
     } else {
-      sortBy.startYear = 1;
+      sortBy['startYear'] = 1;
     }
 
     // Return early for previously-failed lookups
