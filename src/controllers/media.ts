@@ -56,7 +56,7 @@ export const getSeriesV2 = async(ctx: ParameterizedContext): Promise<SeriesMetad
  * Gets season information from TMDB since it's the only API
  * we use that has that functionality.
  */
-export const getSeason = async(ctx: ParameterizedContext): Promise<SeasonMetadataInterface> => {
+export const getSeason = async(ctx: ParameterizedContext): Promise<Partial<SeasonMetadataInterface>> => {
   const { season, title, year }: UmsQueryParams = ctx.query;
   if (!title || !season) {
     throw new ValidationError('title and season are required');

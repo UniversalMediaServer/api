@@ -166,7 +166,7 @@ const getSeriesTMDBIDFromTMDBAPI = async(imdbID?: string, seriesTitle?: string, 
  * @param [titleToCache] the original title, used for caching if this method is calling itself
  * @returns series metadata
  */
-export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: string, titleToCache?: string): Promise<SeriesMetadataInterface | null> => {
+export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: string, titleToCache?: string): Promise<Partial<SeriesMetadataInterface> | null> => {
   if (!imdbID && !title) {
     throw new Error('Either IMDb ID or title required');
   }
