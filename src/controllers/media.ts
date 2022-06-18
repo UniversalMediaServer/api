@@ -30,7 +30,7 @@ export const addSearchMatchByIMDbID = async(imdbID: string, title: string): Prom
   ).exec();
 };
 
-export const getSeriesV2 = async(ctx: ParameterizedContext): Promise<SeriesMetadataInterface | LeanDocument<MediaMetadataInterfaceDocument>> => {
+export const getSeriesV2 = async(ctx: ParameterizedContext): Promise<Partial<SeriesMetadataInterface> | LeanDocument<MediaMetadataInterfaceDocument>> => {
   const { imdbID, title, year }: UmsQueryParams = ctx.query;
   if (!title && !imdbID) {
     throw new ValidationError('Either IMDb ID or title required');
