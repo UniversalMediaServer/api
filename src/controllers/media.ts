@@ -30,7 +30,7 @@ export const addSearchMatchByIMDbID = async(imdbID: string, title: string): Prom
   ).exec();
 };
 
-export const getSeriesV2 = async(ctx: ParameterizedContext): Promise<SeriesMetadataInterface | LeanDocument<MediaMetadataInterfaceDocument>> => {
+export const getSeriesV2 = async(ctx: ParameterizedContext): Promise<Partial<SeriesMetadataInterface> | LeanDocument<MediaMetadataInterfaceDocument>> => {
   const { imdbID, title, year }: UmsQueryParams = ctx.query;
   if (!title && !imdbID) {
     throw new ValidationError('Either IMDb ID or title required');
@@ -56,7 +56,7 @@ export const getSeriesV2 = async(ctx: ParameterizedContext): Promise<SeriesMetad
  * Gets season information from TMDB since it's the only API
  * we use that has that functionality.
  */
-export const getSeason = async(ctx: ParameterizedContext): Promise<SeasonMetadataInterface> => {
+export const getSeason = async(ctx: ParameterizedContext): Promise<Partial<SeasonMetadataInterface>> => {
   const { season, title, year }: UmsQueryParams = ctx.query;
   if (!title || !season) {
     throw new ValidationError('title and season are required');
