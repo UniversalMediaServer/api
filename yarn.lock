@@ -5462,9 +5462,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongodb-memory-server-core@npm:8.6.1":
-  version: 8.6.1
-  resolution: "mongodb-memory-server-core@npm:8.6.1"
+"mongodb-memory-server-core@npm:8.7.1":
+  version: 8.7.1
+  resolution: "mongodb-memory-server-core@npm:8.7.1"
   dependencies:
     "@types/tmp": ^0.2.3
     async-mutex: ^0.3.2
@@ -5474,29 +5474,29 @@ __metadata:
     get-port: ^5.1.1
     https-proxy-agent: ^5.0.1
     md5-file: ^5.0.0
-    mongodb: ^4.5.0
-    new-find-package-json: ^1.1.0
+    mongodb: ^4.7.0
+    new-find-package-json: ^2.0.0
     semver: ^7.3.7
     tar-stream: ^2.1.4
     tmp: ^0.2.1
     tslib: ^2.4.0
     uuid: ^8.3.1
     yauzl: ^2.10.0
-  checksum: bf351a61985ce9d7729cac875475d8df2689a85aa2151b2825e7e0c6324ed467212b4cca426cfa98d90d44992af33378027bfb882039aa9f907535627bd7e226
+  checksum: d62a07b02fed1017581320c8ca3c2673fa1c192fac0075fd31124a2793ac6575e36092336e06e0c189019da52baaae30590f7d57e5532a2e235044c644526b71
   languageName: node
   linkType: hard
 
-"mongodb-memory-server@npm:8.6.1":
-  version: 8.6.1
-  resolution: "mongodb-memory-server@npm:8.6.1"
+"mongodb-memory-server@npm:8.7.1":
+  version: 8.7.1
+  resolution: "mongodb-memory-server@npm:8.7.1"
   dependencies:
-    mongodb-memory-server-core: 8.6.1
+    mongodb-memory-server-core: 8.7.1
     tslib: ^2.4.0
-  checksum: cef0b246cc153a1ef5799ff8849a3336208e391116eb4d47be4ffef44a362b7081eb5815f9dbf5d475bae065ba0118fdc8793630c5e337e775f0bc1b9ac9508c
+  checksum: 696c363d56e4cb4f969e4b82c5aaade814e01e98dd080f35252136c4ee78d66cf3da3822be24e242703dc8d3b3d4bf99f6a6abf04af88ea024a389749512125f
   languageName: node
   linkType: hard
 
-"mongodb@npm:4.7.0":
+"mongodb@npm:4.7.0, mongodb@npm:^4.7.0":
   version: 4.7.0
   resolution: "mongodb@npm:4.7.0"
   dependencies:
@@ -5509,22 +5509,6 @@ __metadata:
     saslprep:
       optional: true
   checksum: 6c8ddf1d14a4392d83702aa532e5a1e6deaa501cfd66e352a1226358422716e340465ca4b0f2c5d8f660bf15c06456059953fb99482f714c1dab408ecfe3aeea
-  languageName: node
-  linkType: hard
-
-"mongodb@npm:^4.5.0":
-  version: 4.5.0
-  resolution: "mongodb@npm:4.5.0"
-  dependencies:
-    bson: ^4.6.2
-    denque: ^2.0.1
-    mongodb-connection-string-url: ^2.5.2
-    saslprep: ^1.0.3
-    socks: ^2.6.2
-  dependenciesMeta:
-    saslprep:
-      optional: true
-  checksum: 423974a663c90e6673226a9ad691e8b445ecd43fc4e9e424343644b20c35188bd3d6692dcc2798022cc6b5c6f4391b54747c7543134b46f93cb3da428e5f9246
   languageName: node
   linkType: hard
 
@@ -5638,13 +5622,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"new-find-package-json@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "new-find-package-json@npm:1.1.0"
+"new-find-package-json@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "new-find-package-json@npm:2.0.0"
   dependencies:
-    debug: ^4.3.2
-    tslib: ^2.3.0
-  checksum: 818e5a837f87c62fb9bc4893247fd9b7b2ff1bbf25b174af9e9ec22d60d44ce355e60f80ed0657652370cca06e59539c7df292354250820403fa33cd210e76ed
+    debug: ^4.3.4
+  checksum: 5488ead794bd506894ddd8f3ac6240615e625ce56241ed6ff41a5ff46bdf495a81881bef6d25a3aa16d25f742e86e5629c2d052cd2f60530db3a85b2b1bd146c
   languageName: node
   linkType: hard
 
@@ -7323,7 +7306,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.0.1, tslib@npm:^2.1.0, tslib@npm:^2.3.0, tslib@npm:^2.3.1":
+"tslib@npm:^2.0.1, tslib@npm:^2.1.0, tslib@npm:^2.3.1":
   version: 2.3.1
   resolution: "tslib@npm:2.3.1"
   checksum: de17a98d4614481f7fcb5cd53ffc1aaf8654313be0291e1bfaee4b4bb31a20494b7d218ff2e15017883e8ea9626599b3b0e0229c18383ba9dce89da2adf15cb9
@@ -7527,7 +7510,7 @@ __metadata:
     koa-qs: 3.0.0
     koa-router: 10.1.1
     lodash: 4.17.21
-    mongodb-memory-server: 8.6.1
+    mongodb-memory-server: 8.7.1
     mongoose: 6.4.0
     moviedb-promise: 3.1.15
     natural: 5.2.2
