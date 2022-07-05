@@ -72,7 +72,7 @@
     "@types/natural": "5.1.1",
     "@types/node": "16.11.41",
     "@types/object-mapper": "6.2.0",
-    "@typescript-eslint/eslint-plugin": "5.29.0",
+    "@typescript-eslint/eslint-plugin": "5.30.5",
     "@typescript-eslint/parser": "5.29.0",
     "axios": "0.27.2",
     "eslint": "8.18.0",
