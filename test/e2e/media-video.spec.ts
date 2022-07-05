@@ -40,7 +40,7 @@ const EPISODE_PRISONBREAK = {
 };
 
 const EPISODE_AVATAR = {
-  'episodeTitle': 'Chapter Fourteen: The Boiling Rock, Part 1 & Chapter Fifteen: The Boiling Rock, Part 2',
+  'episodeTitle': 'The Boiling Rock (1) & The Boiling Rock (2)',
   'osdbHash': 'de334f38f153fb6f',
   'filebytesize': '4695739425',
   'season': '3',
