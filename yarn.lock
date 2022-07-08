@@ -3672,7 +3672,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"http-errors@npm:2.0.0":
+"http-errors@npm:2.0.0, http-errors@npm:^2.0.0":
   version: 2.0.0
   resolution: "http-errors@npm:2.0.0"
   dependencies:
@@ -3685,7 +3685,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"http-errors@npm:^1.6.3, http-errors@npm:^1.7.3, http-errors@npm:~1.8.0":
+"http-errors@npm:^1.6.3, http-errors@npm:~1.8.0":
   version: 1.8.1
   resolution: "http-errors@npm:1.8.1"
   dependencies:
@@ -4695,16 +4695,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"koa-router@npm:10.1.1":
-  version: 10.1.1
-  resolution: "koa-router@npm:10.1.1"
+"koa-router@npm:11.0.1":
+  version: 11.0.1
+  resolution: "koa-router@npm:11.0.1"
   dependencies:
-    debug: ^4.1.1
-    http-errors: ^1.7.3
+    http-errors: ^2.0.0
     koa-compose: ^4.1.0
     methods: ^1.1.2
-    path-to-regexp: ^6.1.0
-  checksum: 65e6cd4a7f8a4d98c665b00ee4c2c05340cb38ca035590ce71c23a25c0a01f6d2434d9a68366d7c218af9c94e5d8e20c7fe9e7f7dfbb98d69b11b5ae3246aaf8
+    path-to-regexp: ^6.2.1
+  checksum: 5101bc023f8f4d8a69d637c4f804161befeecf539f785ff961a22ce6701bd49f6f4db506c62eda8f3fed5ea74a930ab55a79771ff4655a0235a8b03472809084
   languageName: node
   linkType: hard
 
@@ -5669,10 +5668,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"path-to-regexp@npm:^6.1.0":
-  version: 6.2.0
-  resolution: "path-to-regexp@npm:6.2.0"
-  checksum: a6aca74d2d6e2e7594d812f653cf85e9cb5054d3a8d80f099722a44ef6ad22639b02078e5ea83d11db16321c3e4359e3f1ab0274fa78dad0754a6e53f630b0fc
+"path-to-regexp@npm:^6.2.1":
+  version: 6.2.1
+  resolution: "path-to-regexp@npm:6.2.1"
+  checksum: f0227af8284ea13300f4293ba111e3635142f976d4197f14d5ad1f124aebd9118783dd2e5f1fe16f7273743cc3dbeddfb7493f237bb27c10fdae07020cc9b698
   languageName: node
   linkType: hard
 
@@ -7052,7 +7051,7 @@ __metadata:
     koa-helmet: 6.1.0
     koa-prometheus-adv: 1.0.1
     koa-qs: 3.0.0
-    koa-router: 10.1.1
+    koa-router: 11.0.1
     lodash: 4.17.21
     mongodb-memory-server: 8.7.2
     mongoose: 6.4.0
