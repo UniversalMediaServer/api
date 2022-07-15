@@ -60,7 +60,7 @@
     "pm2": "5.2.0",
     "pm2-cluster-prom": "2.1.0",
     "prom-client": "14.0.1",
-    "ts-node": "10.8.2"
+    "ts-node": "10.9.1"
   },
   "devDependencies": {
     "@types/jest": "28.1.4",
