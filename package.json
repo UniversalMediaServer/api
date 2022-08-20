@@ -53,7 +53,7 @@
     "koa-router": "11.0.1",
     "lodash": "4.17.21",
     "mongoose": "6.4.6",
-    "moviedb-promise": "3.1.15",
+    "moviedb-promise": "3.1.17",
     "natural": "5.2.3",
     "object-mapper": "6.2.0",
     "opensubtitles-api": "UniversalMediaServer/opensubtitles-api#adb9ec6",
