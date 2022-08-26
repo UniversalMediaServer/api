@@ -5991,12 +5991,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prom-client@npm:14.0.1":
-  version: 14.0.1
-  resolution: "prom-client@npm:14.0.1"
+"prom-client@npm:14.1.0":
+  version: 14.1.0
+  resolution: "prom-client@npm:14.1.0"
   dependencies:
     tdigest: ^0.1.1
-  checksum: 864c19b7086eda8fae652385bc8b8aeb155f85922e58672d07a64918a603341e120e65e08f9d77ccab546518dc18930284da8743c2aac3c968f626d7063d6bba
+  checksum: 88f8e67020c0af07d09ab8f15caaa2a3d0810b01d903d0977d82947d3b0100a539db77bcccfde0bf2449a85060475f7fb05b64e7c34951c8a54b84240ae7ae81
   languageName: node
   linkType: hard
 
@@ -7178,7 +7178,7 @@ __metadata:
     opensubtitles-api: "UniversalMediaServer/opensubtitles-api#adb9ec6"
     pm2: 5.2.0
     pm2-cluster-prom: 2.1.0
-    prom-client: 14.0.1
+    prom-client: 14.1.0
     stoppable: 1.1.0
     ts-jest: 28.0.8
     ts-node: 10.9.1
