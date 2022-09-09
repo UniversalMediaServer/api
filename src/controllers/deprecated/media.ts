@@ -308,7 +308,6 @@ export const getSeries = async(ctx: ParameterizedContext): Promise<SeriesMetadat
     }
 
     const dbMetaWithPosters = await deprecatedExternalAPIHelper.addPosterFromImages(dbMeta);
-    // @ts-expect-error these types get confused but it's deprecated so won't fix
     return ctx.body = dbMetaWithPosters;
   } catch (err) {
     // log unexpected errors
