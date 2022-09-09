@@ -1342,12 +1342,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/koa-bodyparser@npm:4.3.7":
-  version: 4.3.7
-  resolution: "@types/koa-bodyparser@npm:4.3.7"
+"@types/koa-bodyparser@npm:4.3.8":
+  version: 4.3.8
+  resolution: "@types/koa-bodyparser@npm:4.3.8"
   dependencies:
     "@types/koa": "*"
-  checksum: 3a2cac14cb4a720d017d7708fbe9e8a310b5ecebbe62703a2606bb48c775fbeaf9fd601ba9cb7add03c7059f90327d8bcad3d70443eaea383b117b5c020054ec
+  checksum: df4501f4c29e24e6ffe4149accaaa4ac3aee9e0cac8fe0239f53f36bff4acfde4ffb4294212453efaa8a4231c66d139a9577f0d25cc491832c1b2904a5943f89
   languageName: node
   linkType: hard
 
@@ -7207,7 +7207,7 @@ __metadata:
   dependencies:
     "@types/jest": 29.0.0
     "@types/koa": 2.13.5
-    "@types/koa-bodyparser": 4.3.7
+    "@types/koa-bodyparser": 4.3.8
     "@types/koa-helmet": 6.0.4
     "@types/koa-router": 7.4.4
     "@types/lodash": 4.14.184
