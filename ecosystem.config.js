@@ -6,7 +6,7 @@ module.exports = {
   apps: [
     {
       name: 'API',
-      script: 'ts-node',
+      script: 'node_modules/.bin/ts-node',
       args: '--files ./src/app.ts',
       env: { NODE_ENV: 'production' },
       instances: 4,
