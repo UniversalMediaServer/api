@@ -155,7 +155,7 @@ const tmdbSeriesMap = {
   'status': 'status',
   'tagline': 'tagline',
   'type': [
-    { key: 'seriesType' }, // because it clashes with our previous use of type
+    { key: 'seriesType' }, // tmdb uses "type" to mean the type of series
     {
       key: 'type',
       transform: (): string => 'series',
