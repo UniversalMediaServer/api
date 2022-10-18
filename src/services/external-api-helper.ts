@@ -172,8 +172,8 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
   }
 
   let failedLookupQuery: FailedLookupsInterface;
-  let omdbData: Partial<SeriesMetadataInterface>;
-  let tmdbData: Partial<SeriesMetadataInterface>;
+  let omdbData: Partial<SeriesMetadataInterface> = {};
+  let tmdbData: Partial<SeriesMetadataInterface> = {};
 
   if (imdbID) {
     failedLookupQuery = { imdbID };
@@ -208,6 +208,11 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
     // End TMDB lookups
 
     omdbData = await getFromOMDbAPIV2(imdbID);
+
+    // discard non-series results
+    if (omdbData.type && omdbData.type !== 'series') {
+      omdbData = {};
+    }
   } else {
     const sortBy = {};
     const titleQuery: GetSeriesFilter = { searchMatches: { $in: [title] } };
@@ -294,6 +299,12 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
       return getSeriesMetadata(null, title + ' ' + year, null, title);
     }
     omdbData = mapper.parseOMDbAPISeriesResponse(omdbResponse);
+
+    // discard non-series results
+    if (omdbData.type && omdbData.type !== 'series') {
+      omdbData = {};
+    }
+
     // End OMDb lookups
 
     // If we found an IMDb ID from OMDb, see if we have an existing record for the now-known media.

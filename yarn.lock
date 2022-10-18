@@ -5674,13 +5674,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"opensubtitles-api@https://github.com/UniversalMediaServer/opensubtitles-api#adb9ec61036887a2aaa7dbd58535e2a6cb8c0116":
+"opensubtitles-api@https://github.com/UniversalMediaServer/opensubtitles-api#94e2339b2e38533e518e6556f49b65e541bbe9e3":
   version: 5.1.2
-  resolution: "opensubtitles-api@https://github.com/UniversalMediaServer/opensubtitles-api.git#commit=adb9ec61036887a2aaa7dbd58535e2a6cb8c0116"
+  resolution: "opensubtitles-api@https://github.com/UniversalMediaServer/opensubtitles-api.git#commit=94e2339b2e38533e518e6556f49b65e541bbe9e3"
   dependencies:
     urijs: ^1.19.1
     xmlrpc: ^1.3.2
-  checksum: 38f4ba3cbd9266859abada73bb5615cb8007a393a5f28d869547298cbebeebb6decc85908f87bfa4c22fa7021579b195ce3861bc7475527c0f8fcad4d6a334f1
+  checksum: 196960052cd44d553c71514150b54edfd11b1191511cd5066d7e0cefd0bf435599c37035658521d6e32a37392c3a7e17f2cdcac70d702bf3ef34404204bc7bff
   languageName: node
   linkType: hard
 
@@ -7267,7 +7267,7 @@ __metadata:
     nock: 13.2.9
     nodemon: 2.0.20
     object-mapper: 6.2.0
-    opensubtitles-api: "https://github.com/UniversalMediaServer/opensubtitles-api#adb9ec61036887a2aaa7dbd58535e2a6cb8c0116"
+    opensubtitles-api: "https://github.com/UniversalMediaServer/opensubtitles-api#94e2339b2e38533e518e6556f49b65e541bbe9e3"
     pm2: 5.2.2
     pm2-cluster-prom: 2.1.0
     prom-client: 14.1.0
