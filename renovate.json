@@ -2,5 +2,16 @@
   "extends": [
     "config:base"
   ],
-  "schedule": ["on friday"]
+  "schedule": ["on friday"],
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true
+  },
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["patch"],
+      "matchCurrentVersion": "!/^0/",
+      "automerge": true
+    }
+  ]
 }
