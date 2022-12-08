@@ -13,6 +13,7 @@ export interface FailedLookupsInterface {
   title?: string;
   type?: string;
   year?: string;
+  language?: string;
   count?: number;
 
   // Added automatically:
@@ -66,6 +67,7 @@ const FailedLookupsSchema = new Schema({
     type: Boolean,
   },
   type: { type: String, index: true },
+  language: { type: String, index: true },
   createdAt: {
     default: Date.now,
     expires: THIRTY_DAYS_IN_SECONDS,

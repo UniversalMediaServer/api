@@ -5,6 +5,7 @@ import { LeanDocument } from 'mongoose';
 
 import { ExternalAPIError, MediaNotFoundError, ValidationError } from '../helpers/customErrors';
 import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
+import { LocalizeMetadataInterface } from '../models/LocalizeMetadata';
 import MediaMetadata, { MediaMetadataInterface, MediaMetadataInterfaceDocument } from '../models/MediaMetadata';
 import { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import * as externalAPIHelper from '../services/external-api-helper';
@@ -97,6 +98,30 @@ export const getSeason = async(ctx: ParameterizedContext): Promise<Partial<Seaso
 
   const seasonMetadata = await SeasonMetadata.create(tmdbData);
   return ctx.body = seasonMetadata;
+};
+
+/*
+ * Gets localized information from TMDB since it's the only API
+ * we use that has that functionality.
+ */
+export const getLocalize = async(ctx: ParameterizedContext): Promise<Partial<LocalizeMetadataInterface>> => {
+  const { imdbID, language }: UmsQueryParams = ctx.query;
+  if (!language || !imdbID) {
+    throw new ValidationError('IMDb ID and language are required');
+  }
+
+  try {
+    const findResult = await externalAPIHelper.getLocalizedMetadata(imdbID, language);
+    if (!findResult) {
+      throw new MediaNotFoundError();
+    }
+    return ctx.body = findResult;
+  } catch (err) {
+    if (!(err instanceof MediaNotFoundError)) {
+      console.error(err);
+    }
+    throw new MediaNotFoundError();
+  }
 };
 
 export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadataInterface> => {

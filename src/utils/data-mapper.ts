@@ -1,9 +1,10 @@
 import * as objectMapper from 'object-mapper';
 import * as _ from 'lodash';
+import { LocalizeMetadataInterface } from '../models/LocalizeMetadata';
 import { MediaMetadataInterface } from '../models/MediaMetadata';
+import { SeasonMetadataInterface } from '../models/SeasonMetadata';
 import { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import { Genre } from 'moviedb-promise/dist/types';
-import { SeasonMetadataInterface } from '../models/SeasonMetadata';
 
 const openSubtitlesMovieMap = {
   'metadata.cast': [
@@ -98,6 +99,15 @@ const tmdbEpisodeMap = {
     key: 'type',
     transform: (): string => 'episode',
   },
+};
+
+const tmdbLocalizeMap = {
+  'id': 'tmdbID',
+  'overview': 'plot',
+  'poster_path': 'posterRelativePath',
+  'tagline': 'tagline',
+  'title': 'title',
+  'name': 'title',
 };
 
 const tmdbSeasonMap = {
@@ -431,6 +441,11 @@ class UmsDataMapper {
 
   parseTMDBAPIMovieResponse(tmdbData): Partial<MediaMetadataInterface> {
     const mappedData = objectMapper.merge(tmdbData, tmdbMovieMap);
+    return filterUnwantedValues(mappedData);
+  }
+
+  parseTMDBAPILocalizeResponse(tmdbData): Partial<LocalizeMetadataInterface> {
+    const mappedData = objectMapper.merge(tmdbData, tmdbLocalizeMap);
     return filterUnwantedValues(mappedData);
   }
 

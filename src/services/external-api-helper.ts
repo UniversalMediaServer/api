@@ -9,6 +9,7 @@ import omdbAPI from './omdb-api';
 import { tmdb } from './tmdb-api';
 import { ValidationError } from '../helpers/customErrors';
 import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
+import LocalizeMetadata, { LocalizeMetadataInterface } from '../models/LocalizeMetadata';
 import { MediaMetadataInterface } from '../models/MediaMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import { mapper } from '../utils/data-mapper';
@@ -343,6 +344,57 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, year?: s
   }
 
   return response;
+};
+
+/**
+ * Gets localized metadata. Performs API lookups if we
+ * don't already have it.
+ *
+ * @param [imdbID] the IMDb ID of the media
+ * @param [language] the language
+ * @param [year] the first year of the series
+ * @param [titleToCache] the original title, used for caching if this method is calling itself
+ * @returns series metadata
+ */
+export const getLocalizedMetadata = async(imdbID?: string, language?: string): Promise<Partial<LocalizeMetadataInterface> | null> => {
+  if (!language || !imdbID) {
+    throw new ValidationError('IMDb ID and language are required');
+  }
+
+  let failedLookupQuery: FailedLookupsInterface = { imdbID, language };
+  let tmdbData: Partial<LocalizeMetadataInterface>;
+
+  // We shouldn't have failures since we got this IMDb ID from their API
+  if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
+    console.log('FailedLookups in db');
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
+    return null;
+  }
+
+  const existingLocalize: LocalizeMetadataInterface = await LocalizeMetadata.findOne({ imdbID, language }, null, { lean: true }).exec();
+  if (existingLocalize) {
+    return existingLocalize;
+  }
+
+  // Start TMDB lookups
+  const findResult = await tmdb.find({ id: imdbID, external_source: ExternalId.ImdbId, language: language });
+  if (!findResult) {
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+	return null;
+  }
+
+  if (findResult.movie_results && !_.isEmpty(findResult.movie_results)) {
+    tmdbData = mapper.parseTMDBAPILocalizeResponse(findResult.movie_results[0]);
+  } else if (findResult.tv_results && !_.isEmpty(findResult.tv_results)) {
+    tmdbData = mapper.parseTMDBAPILocalizeResponse(findResult.tv_results[0]);
+  }
+  if (!tmdbData || _.isEmpty(tmdbData)) {
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+    return null;
+  }
+  tmdbData.imdbID = imdbID;
+  tmdbData.language = language;
+  return await LocalizeMetadata.create(tmdbData);
 };
 
 /**

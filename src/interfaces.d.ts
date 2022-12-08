@@ -40,6 +40,7 @@ interface UmsQueryParams {
   episode?: string;
   season?: string;
   osdbHash?: string;
+  language?: string;
 }
 
 interface GetVideoFilter {
