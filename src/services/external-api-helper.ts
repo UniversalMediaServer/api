@@ -361,7 +361,7 @@ export const getLocalizedMetadata = async(imdbID?: string, language?: string): P
     throw new ValidationError('IMDb ID and language are required');
   }
 
-  let failedLookupQuery: FailedLookupsInterface = { imdbID, language };
+  const failedLookupQuery: FailedLookupsInterface = { imdbID, language };
   let tmdbData: Partial<LocalizeMetadataInterface>;
 
   // We shouldn't have failures since we got this IMDb ID from their API
