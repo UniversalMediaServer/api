@@ -366,7 +366,6 @@ export const getLocalizedMetadata = async(imdbID?: string, language?: string): P
 
   // We shouldn't have failures since we got this IMDb ID from their API
   if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
-    console.log('FailedLookups in db');
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
     return null;
   }
