@@ -1,6 +1,6 @@
 import * as Router from 'koa-router';
-import { getAggregateMetrics } from 'pm2-cluster-prom';
 import { getConfig } from '../controllers/info';
+import { getAggregateMetrics } from '../helpers/pm2-cluster-prom';
 import { subversions } from '../helpers/subversioning';
 
 const router = new Router();
