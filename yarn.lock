@@ -2348,14 +2348,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@universalmediaserver/imdb-api@https://github.com/UniversalMediaServer/node-imdb-api#8bdef69c6d5d6663b7e3f3d7b61b24794be2c38e":
+"@universalmediaserver/imdb-api@https://github.com/UniversalMediaServer/node-imdb-api/archive/8bdef69c6d5d6663b7e3f3d7b61b24794be2c38e.tar.gz":
   version: 4.4.2
-  resolution: "@universalmediaserver/imdb-api@https://github.com/UniversalMediaServer/node-imdb-api.git#commit=8bdef69c6d5d6663b7e3f3d7b61b24794be2c38e"
+  resolution: "@universalmediaserver/imdb-api@https://github.com/UniversalMediaServer/node-imdb-api/archive/8bdef69c6d5d6663b7e3f3d7b61b24794be2c38e.tar.gz"
   dependencies:
     "@ungap/url-search-params": ^0.2.2
     ky: ^0.24.0
     ky-universal: ^0.8.2
-  checksum: bf9b650c70beb96f10cd806e5b1a7c265b555284f08b152164c714c16b59e6900213ffebd7cbd04bafc6fbdc25d97692fec08ddf07a647036d8ca52fdf658ec6
+  checksum: 73fc7c82ef8bedee5177dee9ff2f6b8afb1ae13d01768acb45961d28d1e9520583e68736ed70b7c886bb01bb460adc7f4677f037d2770bafffb3fff35ec64100
   languageName: node
   linkType: hard
 
@@ -6340,13 +6340,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"opensubtitles-api@https://github.com/UniversalMediaServer/opensubtitles-api#94e2339b2e38533e518e6556f49b65e541bbe9e3":
+"opensubtitles-api@https://github.com/UniversalMediaServer/opensubtitles-api/archive/94e2339b2e38533e518e6556f49b65e541bbe9e3.tar.gz":
   version: 5.1.2
-  resolution: "opensubtitles-api@https://github.com/UniversalMediaServer/opensubtitles-api.git#commit=94e2339b2e38533e518e6556f49b65e541bbe9e3"
+  resolution: "opensubtitles-api@https://github.com/UniversalMediaServer/opensubtitles-api/archive/94e2339b2e38533e518e6556f49b65e541bbe9e3.tar.gz"
   dependencies:
     urijs: ^1.19.1
     xmlrpc: ^1.3.2
-  checksum: ced9c64f71675d1c866b6780bdce2b4dc3080ccaa276a6d9eb70c8c3363e9ed1015829c5bb9d91e80cce15334ded6378e36a516618cce3066101fa521022d4a3
+  checksum: 238d2836b04660dd1f28337b19b8bc2bfaa7234bffa280dcd5b65461b51a9d2c1a252bc164b58dc7e825c46663b496c535015bb2f33f2ccc86798ce447649341
   languageName: node
   linkType: hard
 
@@ -7893,7 +7893,7 @@ __metadata:
     "@types/object-mapper": 6.2.0
     "@typescript-eslint/eslint-plugin": 5.46.0
     "@typescript-eslint/parser": 5.46.0
-    "@universalmediaserver/imdb-api": "https://github.com/UniversalMediaServer/node-imdb-api#8bdef69c6d5d6663b7e3f3d7b61b24794be2c38e"
+    "@universalmediaserver/imdb-api": "https://github.com/UniversalMediaServer/node-imdb-api/archive/8bdef69c6d5d6663b7e3f3d7b61b24794be2c38e.tar.gz"
     axios: 1.2.1
     debug: 4.3.4
     episode-parser: 2.0.2
@@ -7915,7 +7915,7 @@ __metadata:
     nock: 13.2.9
     nodemon: 2.0.20
     object-mapper: 6.2.0
-    opensubtitles-api: "https://github.com/UniversalMediaServer/opensubtitles-api#94e2339b2e38533e518e6556f49b65e541bbe9e3"
+    opensubtitles-api: "https://github.com/UniversalMediaServer/opensubtitles-api/archive/94e2339b2e38533e518e6556f49b65e541bbe9e3.tar.gz"
     pm2: 5.2.2
     prom-client: 14.1.0
     stoppable: 1.1.0
