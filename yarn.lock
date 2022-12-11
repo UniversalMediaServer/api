@@ -6346,7 +6346,7 @@ __metadata:
   dependencies:
     urijs: ^1.19.1
     xmlrpc: ^1.3.2
-  checksum: 238d2836b04660dd1f28337b19b8bc2bfaa7234bffa280dcd5b65461b51a9d2c1a252bc164b58dc7e825c46663b496c535015bb2f33f2ccc86798ce447649341
+  checksum: 196960052cd44d553c71514150b54edfd11b1191511cd5066d7e0cefd0bf435599c37035658521d6e32a37392c3a7e17f2cdcac70d702bf3ef34404204bc7bff
   languageName: node
   linkType: hard
 
