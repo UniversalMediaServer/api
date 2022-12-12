@@ -211,6 +211,8 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
   let tmdbData: MediaMetadataInterface;
   try {
     tmdbData = await externalAPIHelper.getFromTMDBAPI(title, imdbIdToSearch, yearNumber, seasonNumber, episodeNumbers);
+    console.log('title: ', title);
+    console.log('tmdbData: ', tmdbData);
     imdbIdToSearch = imdbIdToSearch || tmdbData?.imdbID;
   } catch (e) {
     // Log the error but continue on to try the next API, OMDb
