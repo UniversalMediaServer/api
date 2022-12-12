@@ -234,6 +234,12 @@ nock('https://www.omdbapi.com:443', { 'encodedQueryParams': true })
 nock('https://www.omdbapi.com:443', { 'encodedQueryParams': true })
   .persist()
   .get('/')
+  .query({"apikey":"foo","r":"json","i":"tt0411008","Season":"3"})
+  .reply(200, {"Title":"Lost","Season":"3","totalSeasons":"3","Episodes":[{"Title":"Flashes Before Your Eyes","Released":"2007-02-14","Episode":"8","imdbRating":"N/A","imdbID":"tt0928284"}],"Response":"True"});
+
+nock('https://www.omdbapi.com:443', { 'encodedQueryParams': true })
+  .persist()
+  .get('/')
   .query({"apikey":"foo","r":"json","i":"tt0417299","Season":"1"})
   .reply(200, {"Response":"False","Error":"Series or season not found!"});
 
@@ -241,6 +247,12 @@ nock('https://www.omdbapi.com:443', { 'encodedQueryParams': true })
   .persist()
   .get('/')
   .query({"apikey":"foo","r":"json","i":"tt0417299","Season":"2"})
+  .reply(200, {"Response":"False","Error":"Series or season not found!"});
+
+nock('https://www.omdbapi.com:443', { 'encodedQueryParams': true })
+  .persist()
+  .get('/')
+  .query({"apikey":"foo","r":"json","i":"tt0417299","Season":"3"})
   .reply(200, {"Response":"False","Error":"Series or season not found!"});
 
 // https://www.omdbapi.com/?Season=1&apikey=foo&i=tt0411008&r=json
