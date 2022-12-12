@@ -396,7 +396,7 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, movieOrEpisodeI
        * append the title for subsequent ones.
        */
       const tmdbData: Episode = await tmdb.episodeInfo(episodeRequest);
-      if (tmdbData) {
+     if (tmdbData) {
         if (i === 0) {
           metadata = mapper.parseTMDBAPIEpisodeResponse(tmdbData);
         } else {
