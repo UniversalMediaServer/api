@@ -148,6 +148,7 @@ describe('Media Metadata endpoints', () => {
           'freebase_id': null,
           'tvdb_id': 497727,
           'tvrage_id': null,
+		  "wikidata_id": null,
         },
       ]);
       expect(response.data).toHaveProperty('images');
