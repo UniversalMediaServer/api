@@ -1,7 +1,7 @@
 /* eslint-disable */ 
 const nock = require('nock');
 
-nock('https://www.omdbapi.com:443', { 'encodedQueryParams': true })
+nock('https://www.omdbapi.com', { 'encodedQueryParams': true })
   .persist()
   .get('/')
   .query({'apikey': 'foo', 's': 'Interstellar', 'page': '1', 'r': 'json', 'type': 'series' })
