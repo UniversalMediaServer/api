@@ -23,7 +23,7 @@ const handleError = (err: Error): void => {
   const responseStatus = _.get(err, 'response.status');
   let responseStatusString: string;
   if (responseStatus) {
-    responseStatusString = responseStatus.toString();
+    responseStatusString = String(responseStatus);
   }
   if (responseStatusString && /^5/.exec(responseStatusString)) {
     throw new ExternalAPIError('TMDB API is offline');
