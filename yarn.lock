@@ -5371,10 +5371,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"kareem@npm:2.5.0":
-  version: 2.5.0
-  resolution: "kareem@npm:2.5.0"
-  checksum: 292e80b32fb44e1801c5eb25b150e4b42e6ddf8a9c38ac67f99d4e7164dc7d9e874ea9b6ffaa42d6c3e76c8dd28ae5723643f3b5c8cb5c481af07118ce1475e3
+"kareem@npm:2.4.1":
+  version: 2.4.1
+  resolution: "kareem@npm:2.4.1"
+  checksum: 83c8d8f5ea82e58fa9f43f62f65576ac32fc7c5f817deb2708c68996eb586bf3dc236404a4570c548730a041e29a6553f61f8a744fa96a1093e5dc28b4ce598f
   languageName: node
   linkType: hard
 
@@ -5893,9 +5893,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongodb-memory-server-core@npm:8.10.2":
-  version: 8.10.2
-  resolution: "mongodb-memory-server-core@npm:8.10.2"
+"mongodb-memory-server-core@npm:8.10.0":
+  version: 8.10.0
+  resolution: "mongodb-memory-server-core@npm:8.10.0"
   dependencies:
     "@types/tmp": ^0.2.3
     async-mutex: ^0.3.2
@@ -5913,39 +5913,21 @@ __metadata:
     tslib: ^2.4.1
     uuid: ^8.3.1
     yauzl: ^2.10.0
-  checksum: e55b5187d5dcd10e193b28962a29b363955f1f7b8d1e13824b1df8864d90913950510715aa4b599f8e950686dc05d0fdc29a663aa5a355c6fa57d870934a7d48
+  checksum: fdd281a1480a07fa22d4286d74e70f93d612ba9ad3ab76e6ab4dddbe136d863a2670e6a7aed411fc2ca3eab7f9508790e8f137cc432d16a559fa6f2eadcc379f
   languageName: node
   linkType: hard
 
-"mongodb-memory-server@npm:8.10.2":
-  version: 8.10.2
-  resolution: "mongodb-memory-server@npm:8.10.2"
+"mongodb-memory-server@npm:8.10.0":
+  version: 8.10.0
+  resolution: "mongodb-memory-server@npm:8.10.0"
   dependencies:
-    mongodb-memory-server-core: 8.10.2
+    mongodb-memory-server-core: 8.10.0
     tslib: ^2.4.1
-  checksum: dc69db97799489cf8ec2b8f845ad0bf1649dfccadbe1b40dfbb0b7ba476807b2e313a07ebf1dab5b6b6176b3231f7972d7f12ffb81a1ef609ab5cefb894bf660
+  checksum: 73828a765904ee063502531cd1e45bda2d78525eae026e3ce55f77d097312cd67e86f45e30cea91a90fd39316569aa2c8fb6b74dac84ed193c3d54033dbbaee5
   languageName: node
   linkType: hard
 
-"mongodb@npm:4.12.1":
-  version: 4.12.1
-  resolution: "mongodb@npm:4.12.1"
-  dependencies:
-    "@aws-sdk/credential-providers": ^3.186.0
-    bson: ^4.7.0
-    mongodb-connection-string-url: ^2.5.4
-    saslprep: ^1.0.3
-    socks: ^2.7.1
-  dependenciesMeta:
-    "@aws-sdk/credential-providers":
-      optional: true
-    saslprep:
-      optional: true
-  checksum: 84590484b2c93bce849ec1e334b064e983444ed73942061c91e09556348c80db9d4a40544b927cd795bdfbfc51d1b713a7df5ced4ecf13cd00fab5e3c3e32ada
-  languageName: node
-  linkType: hard
-
-"mongodb@npm:~4.11.0":
+"mongodb@npm:4.11.0, mongodb@npm:~4.11.0":
   version: 4.11.0
   resolution: "mongodb@npm:4.11.0"
   dependencies:
@@ -5964,18 +5946,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongoose@npm:6.8.0":
-  version: 6.8.0
-  resolution: "mongoose@npm:6.8.0"
+"mongoose@npm:6.7.1":
+  version: 6.7.1
+  resolution: "mongoose@npm:6.7.1"
   dependencies:
     bson: ^4.7.0
-    kareem: 2.5.0
-    mongodb: 4.12.1
+    kareem: 2.4.1
+    mongodb: 4.11.0
     mpath: 0.9.0
     mquery: 4.0.3
     ms: 2.1.3
     sift: 16.0.1
-  checksum: 565fbf795cfe9b753fc4cf7787c2d3804cefb3a203705b25d41f7c67d628f96dfc644560a69d97ec0546a279339a703de72d011f5ac82b1369ba73972d5b581f
+  checksum: db1dc3ab881f653ac969e091863a657d928346d4853ee59ba6040776c62fe557108a6887e8990ead16814a23b29ce82d954dd6a966fd6032a9413ffa22ed920b
   languageName: node
   linkType: hard
 
@@ -7825,8 +7807,8 @@ __metadata:
     koa-qs: 3.0.0
     koa-router: 12.0.0
     lodash: 4.17.21
-    mongodb-memory-server: 8.10.2
-    mongoose: 6.8.0
+    mongodb-memory-server: 8.10.0
+    mongoose: 6.7.1
     moviedb-promise: 3.3.1
     natural: 5.2.4
     nock: 13.2.9
