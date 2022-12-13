@@ -5508,6 +5508,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ky@npm:0.33.0":
+  version: 0.33.0
+  resolution: "ky@npm:0.33.0"
+  checksum: 9354833866c723f607ae4b16fb6c5edc018360a7500d35e023bb895d19f0724d5d6c97d42525990bca056ecb439d7ec1b08a0afa0f6596e4e53b386ac359f15a
+  languageName: node
+  linkType: hard
+
 "ky@npm:^0.24.0":
   version: 0.24.0
   resolution: "ky@npm:0.24.0"
@@ -7806,6 +7813,7 @@ __metadata:
     koa-prometheus-adv: 1.0.1
     koa-qs: 3.0.0
     koa-router: 12.0.0
+    ky: 0.33.0
     lodash: 4.17.21
     mongodb-memory-server: 8.10.0
     mongoose: 6.7.1

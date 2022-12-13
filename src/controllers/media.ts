@@ -211,8 +211,6 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
   let tmdbData: MediaMetadataInterface;
   try {
     tmdbData = await externalAPIHelper.getFromTMDBAPI(title, imdbIdToSearch, yearNumber, seasonNumber, episodeNumbers);
-    console.log('title: ', title);
-    console.log('tmdbData: ', tmdbData);
     imdbIdToSearch = imdbIdToSearch || tmdbData?.imdbID;
   } catch (e) {
     // Log the error but continue on to try the next API, OMDb
@@ -226,10 +224,8 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
   // if the client did not pass an imdbID, but we found one on TMDB, see if we have an existing record for the now-known media.
   if (!imdbID && imdbIdToSearch) {
     {
-      console.log('found imdbIdToSearch', imdbIdToSearch);
       const existingResult = await MediaMetadata.findOne({ imdbID: imdbIdToSearch }, null, { lean: true }).exec();
       if (existingResult) {
-        console.log('result exists, updating');
         return ctx.body = await addSearchMatchByIMDbID(imdbIdToSearch, title);
       }
     }
