@@ -63,6 +63,7 @@ describe('get by all', () => {
   beforeAll((done) => {
     require('../mocks');
     require('../opensubtitles-mocks');
+    require('../tmdb-mocks');
     MongoMemoryServer.create()
       .then((value) => {
         mongod = value;
