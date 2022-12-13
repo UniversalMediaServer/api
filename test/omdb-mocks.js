@@ -225,42 +225,6 @@ nock('https://www.omdbapi.com:443', { 'encodedQueryParams': true })
   .query({"apikey":"foo","r":"json","i":"tt4803766","Season":"1"})
   .reply(200, {"Title":"Alone","Season":"1","totalSeasons":"6","Episodes":[{"Title":"And So It Begins","Released":"2015-06-18","Episode":"1","imdbRating":"7.4","imdbID":"tt4847892"},{"Title":"Of Wolf and Man","Released":"2015-06-25","Episode":"2","imdbRating":"7.7","imdbID":"tt4847898"},{"Title":"The Talons of Fear","Released":"2015-07-02","Episode":"3","imdbRating":"7.4","imdbID":"tt4847902"},{"Title":"Stalked","Released":"2015-07-09","Episode":"4","imdbRating":"8.2","imdbID":"tt4847908"},{"Title":"Winds of Hell","Released":"2015-07-16","Episode":"5","imdbRating":"7.6","imdbID":"tt4865852"},{"Title":"Rain of Terror","Released":"2015-07-23","Episode":"6","imdbRating":"7.5","imdbID":"tt4870218"},{"Title":"The Hunger","Released":"2015-07-30","Episode":"7","imdbRating":"8.4","imdbID":"tt4922376"},{"Title":"The Freeze","Released":"2015-08-06","Episode":"8","imdbRating":"8.2","imdbID":"tt4922394"},{"Title":"Brokedown Palace","Released":"2015-08-13","Episode":"9","imdbRating":"8.6","imdbID":"tt4944372"},{"Title":"Triumph","Released":"2015-08-20","Episode":"10","imdbRating":"8.7","imdbID":"tt4944384"},{"Title":"After the Rescue","Released":"2015-08-05","Episode":"11","imdbRating":"N/A","imdbID":"tt4944376"}],"Response":"True"});
 
-nock('https://www.omdbapi.com:443', { 'encodedQueryParams': true })
-  .persist()
-  .get('/')
-  .query({"apikey":"foo","r":"json","i":"tt0411008","Season":"1"})
-  .reply(200, {"Response":"False","Error":"Series or season not found!"});
-
-nock('https://www.omdbapi.com:443', { 'encodedQueryParams': true })
-  .persist()
-  .get('/')
-  .query({"apikey":"foo","r":"json","i":"tt0411008","Season":"2"})
-  .reply(200, {"Title":"Lost","Season":"2","totalSeasons":"3","Episodes":[{"Title":"Live Together, Die Alone: Part 1","Released":"2006-05-24","Episode":"23","imdbRating":"9.4","imdbID":"tt0793130"}],"Response":"True"});
-
-nock('https://www.omdbapi.com:443', { 'encodedQueryParams': true })
-  .persist()
-  .get('/')
-  .query({"apikey":"foo","r":"json","i":"tt0411008","Season":"3"})
-  .reply(200, {"Title":"Lost","Season":"3","totalSeasons":"3","Episodes":[{"Title":"Flashes Before Your Eyes","Released":"2007-02-14","Episode":"8","imdbRating":"N/A","imdbID":"tt0928284"}],"Response":"True"});
-
-nock('https://www.omdbapi.com:443', { 'encodedQueryParams': true })
-  .persist()
-  .get('/')
-  .query({"apikey":"foo","r":"json","i":"tt0417299","Season":"1"})
-  .reply(200, {"Response":"False","Error":"Series or season not found!"});
-
-nock('https://www.omdbapi.com:443', { 'encodedQueryParams': true })
-  .persist()
-  .get('/')
-  .query({"apikey":"foo","r":"json","i":"tt0417299","Season":"2"})
-  .reply(200, {"Response":"False","Error":"Series or season not found!"});
-
-nock('https://www.omdbapi.com:443', { 'encodedQueryParams': true })
-  .persist()
-  .get('/')
-  .query({"apikey":"foo","r":"json","i":"tt0417299","Season":"3"})
-  .reply(200, {"Response":"False","Error":"Series or season not found!"});
-
 // https://www.omdbapi.com/?Season=1&apikey=foo&i=tt0411008&r=json
 
 // Series

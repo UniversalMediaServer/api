@@ -61,7 +61,7 @@ interface UmsApiAxiosResponse  {
 
 describe('get by all', () => {
   beforeAll((done) => {
-    require('../mocks');
+    require('../omdb-mocks');
     require('../opensubtitles-mocks');
     require('../tmdb-mocks');
     MongoMemoryServer.create()

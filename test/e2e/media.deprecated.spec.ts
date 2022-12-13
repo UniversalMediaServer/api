@@ -57,7 +57,7 @@ let server;
 
 describe('Media Metadata endpoints', () => {
   beforeAll((done) => {
-    require('../mocks');
+    require('../omdb-mocks');
     require('../opensubtitles-mocks');
     require('../tmdb-mocks');
     MongoMemoryServer.create()
