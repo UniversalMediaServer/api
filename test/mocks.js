@@ -302,3 +302,9 @@ nock('https://www.omdbapi.com', { 'encodedQueryParams': true })
   .get('/')
   .query({"apikey":"foo","r":"json","s":"areallylongtitlethatsurelywontmatchanymoviename","page":"1","type":"movie"})
   .reply(200, {"Response":"False","Error":"Movie not found!"});
+
+nock('https://www.omdbapi.com', { 'encodedQueryParams': true })
+  .persist()
+  .get('/')
+  .query({"apikey":"foo","plot":"full","r":"json","type":"series","t":"Not A Series Type"})
+  .reply(200, {"Response":"False","Error":"Series not found!"});
