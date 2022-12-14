@@ -23,7 +23,6 @@ const originalModule = new MovieDb(apiKey, baseUrl);
 export const tmdb = _.cloneDeep(originalModule);
 
 const handleError = (err: Error): void => {
-  console.log(err);
   const responseStatus = _.get(err, 'response.status');
   let responseStatusString: string;
   if (responseStatus) {
