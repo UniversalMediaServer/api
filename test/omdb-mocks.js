@@ -226,6 +226,12 @@ nock('https://www.omdbapi.com:443', { 'encodedQueryParams': true })
   .query({"apikey":"foo","r":"json","i":"tt0411008","Season":"1"})
   .reply(200, {"Response":"False","Error":"Series or season not found!"});
 
+nock('https://www.omdbapi.com:443', { 'encodedQueryParams': true })
+  .persist()
+  .get('/')
+  .query({"apikey":"foo","r":"json","i":"tt0411008","Season":"2"})
+  .reply(200, {"Title":"Lost","Season":"2","totalSeasons":"3","Episodes":[{"Title":"Live Together, Die Alone: Part 1","Released":"2006-05-24","Episode":"23","imdbRating":"9.4","imdbID":"tt0793130"}],"Response":"True"});
+
 // Series
 
 nock('https://www.omdbapi.com', { 'encodedQueryParams': true })
