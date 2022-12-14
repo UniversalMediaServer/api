@@ -283,7 +283,6 @@ describe('get by all', () => {
       openSubsSpy.mockReset();
 
       // subsequent calls should return MongoDB result rather than calling external apis
-      // FIXME : try to fetch OMDb with seriesIMDbID as IMDb ID.
       response = await axios.get(url);
       expect(spy).toHaveBeenCalledTimes(0);
       expect(openSubsSpy).toHaveBeenCalledTimes(0);
