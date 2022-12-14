@@ -18,7 +18,7 @@ if (process.env.NODE_ENV === 'production' && !process.env.TMDB_API_KEY) {
 }
 
 const apiKey = process.env.TMDB_API_KEY || 'foo';
-const baseUrl = apiKey === 'foo' ? 'https://local.themoviedb.org/3/' : null;
+const baseUrl = apiKey === 'foo' ? 'https://local.themoviedb.org/3/' : undefined;
 const originalModule = new MovieDb(apiKey, baseUrl);
 export const tmdb = _.cloneDeep(originalModule);
 
