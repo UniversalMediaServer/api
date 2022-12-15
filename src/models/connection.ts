@@ -1,6 +1,8 @@
 import * as mongoose from 'mongoose';
 import { Mongoose } from 'mongoose';
 mongoose.set('bufferCommands', false);
+mongoose.set('strictQuery', true);
+mongoose.set('strict', 'throw')
 
 export default (db: string): void => {
   if (!db) {
@@ -19,7 +21,7 @@ export default (db: string): void => {
   mongoose.connection.on('connected', () => {
     console.log(`Successfully connected to ${new URL(db).hostname}`);
   });
-  
+
   mongoose.connection.on('disconnected', () => {
     console.log(`Disconnected from ${new URL(db).hostname}, reconnecting`);
     connect().catch(error => console.error(error));

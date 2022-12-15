@@ -57,6 +57,9 @@ typings/
 # dotenv environment variables file
 .env
 
+# netbean environment variables file
+nbproject
+
 # next.js build output
 .next
 
@@ -64,8 +67,9 @@ typings/
 
 !jest-mongodb-config.js
 !jest.config.js
-!test/mocks.js
+!test/omdb-mocks.js
 !test/opensubtitles-mocks.js
+!test/tmdb-mocks.js
 !ecosystem.config.js
 
 # yarn 3

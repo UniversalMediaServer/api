@@ -16,14 +16,17 @@ const tvInfoCounter = new client.Counter({ name: 'tmdb_api_tvInfo', help: 'Count
 if (process.env.NODE_ENV === 'production' && !process.env.TMDB_API_KEY) {
   throw new Error('TMDB_API_KEY not set');
 }
-const originalModule = new MovieDb(process.env.TMDB_API_KEY);
+
+const apiKey = process.env.TMDB_API_KEY || 'foo';
+const baseUrl = apiKey === 'foo' ? 'https://local.themoviedb.org/3/' : undefined;
+const originalModule = new MovieDb(apiKey, baseUrl);
 export const tmdb = _.cloneDeep(originalModule);
 
 const handleError = (err: Error): void => {
   const responseStatus = _.get(err, 'response.status');
   let responseStatusString: string;
   if (responseStatus) {
-    responseStatusString = responseStatus.toString();
+    responseStatusString = String(responseStatus);
   }
   if (responseStatusString && /^5/.exec(responseStatusString)) {
     throw new ExternalAPIError('TMDB API is offline');

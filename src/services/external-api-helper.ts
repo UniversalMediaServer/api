@@ -1,7 +1,7 @@
 import { Movie, SearchRequest, TVShow } from '@universalmediaserver/imdb-api';
 import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
-import { Episode, EpisodeRequest, ExternalId, SearchMovieRequest, SearchTvRequest } from 'moviedb-promise/dist/request-types';
+import { Episode, EpisodeRequest, ExternalId, SearchMovieRequest, SearchTvRequest, TvExternalIdsResponse } from 'moviedb-promise/dist/request-types';
 import * as natural from 'natural';
 
 import osAPI from './opensubtitles';
@@ -399,6 +399,11 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, movieOrEpisodeI
       if (tmdbData) {
         if (i === 0) {
           metadata = mapper.parseTMDBAPIEpisodeResponse(tmdbData);
+          //get series IMDbID from tmdb as omdb seems to give wrong value
+          const tmdbSeriesData: TvExternalIdsResponse = await tmdb.tvExternalIds(seriesTMDBID);
+          if (tmdbSeriesData?.imdb_id) {
+            metadata.seriesIMDbID = tmdbSeriesData.imdb_id;
+          }
         } else {
           metadata.title = metadata.title ? metadata.title + ' & ' + tmdbData.name : tmdbData.name;
         }

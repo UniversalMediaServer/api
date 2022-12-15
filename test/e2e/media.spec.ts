@@ -34,8 +34,9 @@ let server;
 
 describe('Media Metadata endpoints', () => {
   beforeAll((done) => {
-    require('../mocks');
+    require('../omdb-mocks');
     require('../opensubtitles-mocks');
+    require('../tmdb-mocks');
     MongoMemoryServer.create()
       .then((value) => {
         mongod = value;
@@ -148,6 +149,7 @@ describe('Media Metadata endpoints', () => {
           'freebase_id': null,
           'tvdb_id': 497727,
           'tvrage_id': null,
+          'wikidata_id': null,
         },
       ]);
       expect(response.data).toHaveProperty('images');
