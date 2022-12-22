@@ -156,7 +156,7 @@ describe('Media Metadata endpoints', () => {
       expect(response.data).toHaveProperty('name', 'Asylum');
       expect(response.data).toHaveProperty('overview', 'From Nazis and serial killers to mutants and aliens, no one is safe inside the walls of the Briarcliff Mental Institution. In a house of healing that is anything but, troubled nun Sister Jude rules with an iron fist and Dr Arden conducts strange experiments on the facility’s patients.');
       expect(response.data).toHaveProperty('seasonNumber', 2);
-      expect(response.data).toHaveProperty('tmdbID', '3702');
+      expect(response.data).toHaveProperty('tmdbID', 3702);
     });
   });
 });
