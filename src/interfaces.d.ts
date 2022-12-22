@@ -40,6 +40,9 @@ interface UmsQueryParams {
   episode?: string;
   season?: string;
   osdbHash?: string;
+  language?: string;
+  mediaType?: string;
+  tmdbID?: number;
 }
 
 interface GetVideoFilter {
@@ -60,4 +63,11 @@ interface CaseInsensitiveSearchQuery {
     $options: string;
   };
   startYear?: string;
+}
+
+interface TmdbIdentifyResponse{
+  mediaType: string;
+  tmdbID: number;
+  seasonNumber?: number;
+  episodeNumber?: number;
 }

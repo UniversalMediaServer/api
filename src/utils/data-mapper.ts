@@ -1,5 +1,6 @@
 import * as objectMapper from 'object-mapper';
 import * as _ from 'lodash';
+import { LocalizeMetadataInterface } from '../models/LocalizeMetadata';
 import { MediaMetadataInterface } from '../models/MediaMetadata';
 import { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import { Genre } from 'moviedb-promise/dist/types';
@@ -98,6 +99,31 @@ const tmdbEpisodeMap = {
     key: 'type',
     transform: (): string => 'episode',
   },
+};
+
+const tmdbIdentifyMap = {
+  'id': 'tmdbID',
+  'media_type': 'mediaType',
+};
+
+const tmdbIdentifyTvChildsMap = {
+  'episode_number': 'episodeNumber',
+  'media_type': 'mediaType',
+  'season_number': 'seasonNumber',
+  'show_id': 'tmdbID',
+};
+
+const tmdbLocalizeMap = {
+  'episode_number': 'episodeNumber',
+  'homepage': 'homepage',
+  'id': 'tmdbID',
+  'external_ids.imdb_id': 'imdbID',
+  'name': 'title',
+  'overview': 'overview',
+  'poster_path': 'posterRelativePath',
+  'season_number': 'seasonNumber',
+  'tagline': 'tagline',
+  'title': 'title',
 };
 
 const tmdbSeasonMap = {
@@ -376,6 +402,15 @@ const filterUnwantedValues = (obj): Partial<MediaMetadataInterface | SeriesMetad
   });
 };
 
+const filterUnwantedLocalizeValues = (obj): Partial<LocalizeMetadataInterface> => {
+  return _.pickBy(obj, (v) => {
+    if (typeof v === 'object') {
+      return _.pull(v, 'N/A');
+    }
+    return v !== 'N/A' && v !== 'NaN' && v !== undefined && v !== null;
+  });
+};
+
 /*
  * Ensures that IMDb IDs have "tt" at the start.
  * This is because APIs sometimes return IMDb IDs with
@@ -432,6 +467,21 @@ class UmsDataMapper {
   parseTMDBAPIMovieResponse(tmdbData): Partial<MediaMetadataInterface> {
     const mappedData = objectMapper.merge(tmdbData, tmdbMovieMap);
     return filterUnwantedValues(mappedData);
+  }
+
+  parseTMDBAPIIdentifyResponse(tmdbData): Partial<TmdbIdentifyResponse> {
+    const mappedData = objectMapper.merge(tmdbData, tmdbIdentifyMap);
+    return filterUnwantedLocalizeValues(mappedData);
+  }
+
+  parseTMDBAPIIdentifyTvChildsResponse(tmdbData): Partial<TmdbIdentifyResponse> {
+    const mappedData = objectMapper.merge(tmdbData, tmdbIdentifyTvChildsMap);
+    return filterUnwantedLocalizeValues(mappedData);
+  }
+
+  parseTMDBAPILocalizeResponse(tmdbData): Partial<LocalizeMetadataInterface> {
+    const mappedData = objectMapper.merge(tmdbData, tmdbLocalizeMap);
+    return filterUnwantedLocalizeValues(mappedData);
   }
 
   parseOMDbAPIEpisodeResponse(omdbData): Partial<MediaMetadataInterface> {

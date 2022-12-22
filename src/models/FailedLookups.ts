@@ -7,10 +7,12 @@ export interface FailedLookupsInterface {
   episode?: string;
   failedValidation?: boolean;
   imdbID?: string;
+  language?: string;
   osdbHash?: string;
   season?: string;
   startYear?: string;
   title?: string;
+  tmdbID?: number;
   type?: string;
   year?: string;
   count?: number;
@@ -28,10 +30,8 @@ const FailedLookupsSchema = new Schema({
     type: Number,
   },
   episode: { index: true, type: String },
-  imdbID: {
-    index: true,
-    type: String,
-  },
+  imdbID: { index: true, type: String },
+  language: { index: true, type: String },
   osdbHash: {
     index: true,
     required: function(): boolean {
@@ -57,6 +57,7 @@ const FailedLookupsSchema = new Schema({
     },
     type: String,
   },
+  tmdbID: { index: true, type: Number },
   year: {
     index: true,
     type: String,

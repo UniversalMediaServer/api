@@ -43,7 +43,7 @@ export interface SeriesMetadataInterface extends Document {
   tagline?: string;
   title: string;
   type: string;
-  tmdbID?: string;
+  tmdbID?: number;
   totalSeasons?: number;
   votes?: string;
   year: string;
@@ -96,7 +96,7 @@ const SeriesMetadataSchema: Schema = new Schema({
   status: { type: String },
   tagline: { type: String },
   title: { type: String, index: true, required: true },
-  tmdbID: { type: String },
+  tmdbID: { type: Number, index: true },
   totalSeasons: {
     type: Number,
     default: 0,

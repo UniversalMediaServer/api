@@ -9,6 +9,7 @@ import omdbAPI from './omdb-api';
 import { tmdb } from './tmdb-api';
 import { ValidationError } from '../helpers/customErrors';
 import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
+import LocalizeMetadata, { LocalizeMetadataInterface } from '../models/LocalizeMetadata';
 import { MediaMetadataInterface } from '../models/MediaMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import { mapper } from '../utils/data-mapper';
@@ -399,6 +400,7 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, movieOrEpisodeI
       if (tmdbData) {
         if (i === 0) {
           metadata = mapper.parseTMDBAPIEpisodeResponse(tmdbData);
+          metadata.tmdbTvID = seriesTMDBID;
           //get series IMDbID from tmdb as omdb seems to give wrong value
           const tmdbSeriesData: TvExternalIdsResponse = await tmdb.tvExternalIds(seriesTMDBID);
           if (tmdbSeriesData?.imdb_id) {
@@ -445,6 +447,144 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, movieOrEpisodeI
   }
 
   return metadata;
+};
+
+/**
+ * Gets media localized metadata.
+ * Performs TMDB API lookups and standardizes the response before returning.
+ *
+ * @param [language] the language.
+ * @param [mediaType] the media type.
+ * @param [imdbID] the IMDb ID of the media.
+ * @param [tmdbId] the TMDB movie ID for movie, the TMDB tv ID for tv series, season, episode.
+ * @param [season] the season if type is season or episode.
+ * @param [episode] the episode if type is episode.
+ * @returns series metadata
+ */
+export const getLocalizedMetadata = async(language?: string, mediaType?: string, imdbID?: string, tmdbID?: number, seasonNumber?: number, episodeNumber?: number): Promise<Partial<LocalizeMetadataInterface> | null> => {
+  if (!language || !mediaType || !(imdbID || tmdbID)) {
+    throw new ValidationError('Language, media type and either IMDb ID or TMDB Id are required');
+  }
+  if (mediaType==='tv_season' && tmdbID && !seasonNumber) {
+    throw new ValidationError('Season number is required for season media');
+  }
+  if (mediaType==='tv_episode' && tmdbID && !(seasonNumber && episodeNumber)) {
+    throw new ValidationError('Episode number and season number are required for episode media');
+  }
+  if (mediaType!=='movie' && mediaType!=='tv' && mediaType!=='tv_season' && mediaType!=='tv_episode') {
+    throw new ValidationError('Media type' + mediaType + ' is not valid');
+  }
+
+  let metadata: Partial<LocalizeMetadataInterface>;
+
+  if (!tmdbID && imdbID) {
+    const identifyResult = await getTmdbIdFromIMDbID(imdbID, mediaType);
+    if (identifyResult != null) {
+      mediaType = identifyResult.mediaType;
+      tmdbID = identifyResult.tmdbID;
+      seasonNumber = identifyResult.seasonNumber;
+      episodeNumber = identifyResult.episodeNumber;
+    }
+  }
+  if (!tmdbID) {
+    return null;
+  }
+  // Start TMDB lookups
+  let tmdbData;
+  switch (mediaType) {
+    case 'movie':
+      tmdbData = await tmdb.movieInfo({
+        id: tmdbID,
+        language: language,
+        append_to_response: 'external_ids',
+      });
+      break;
+    case 'tv':
+      tmdbData = await tmdb.tvInfo({
+        id: tmdbID,
+        language: language,
+        append_to_response: 'external_ids',
+      });
+      break;
+    case 'tv_season':
+      tmdbData = await tmdb.seasonInfo({
+        id: tmdbID,
+        season_number:seasonNumber,
+        language: language,
+        append_to_response: 'external_ids',
+      });
+      break;
+    case 'tv_episode':
+      tmdbData = await tmdb.episodeInfo({
+        id: tmdbID,
+        season_number:seasonNumber,
+        episode_number:episodeNumber,
+        language: language,
+        append_to_response: 'external_ids',
+      });
+      break;
+    default:
+      return null;
+  }
+  if (tmdbData) {
+    metadata = mapper.parseTMDBAPILocalizeResponse(tmdbData);
+  }
+  if (!metadata || _.isEmpty(metadata)) {
+    return null;
+  }
+  //put back tmdb ID for tv show season and episode
+  metadata.tmdbID = tmdbID;
+  metadata.language = language;
+  metadata.mediaType = mediaType;
+  return await LocalizeMetadata.create(metadata);
+};
+
+/**
+ * Gets TMDB media identified from IMDb ID.
+ *
+ * @param [imdbID] the IMDb ID of the media.
+ * @param [mediaType] the media type, if any.
+ * @returns TMDB media identified
+ */
+export const getTmdbIdFromIMDbID = async(imdbID: string, mediaType?: string): Promise<Partial<TmdbIdentifyResponse>> | null => {
+  mediaType = mediaType || '';
+  const findResult = await tmdb.find({ id: imdbID, external_source: ExternalId.ImdbId });
+  switch (mediaType) {
+    case 'movie':
+      if (findResult.movie_results && !_.isEmpty(findResult.movie_results)) {
+        return mapper.parseTMDBAPIIdentifyResponse(findResult.movie_results[0]);
+      }
+      break;
+    case 'tv':
+      if (findResult.tv_results && !_.isEmpty(findResult.tv_results)) {
+        return mapper.parseTMDBAPIIdentifyResponse(findResult.tv_results[0]);
+      }
+      break;
+    case 'tv_season':
+      //should never happend as IMDB do not store season
+      if (findResult.tv_season_results && !_.isEmpty(findResult.tv_season_results)) {
+        return mapper.parseTMDBAPIIdentifyTvChildsResponse(findResult.tv_season_results[0]);
+      }
+      break;
+    case 'tv_episode':
+      if (findResult.tv_episode_results && !_.isEmpty(findResult.tv_episode_results)) {
+        return mapper.parseTMDBAPIIdentifyTvChildsResponse(findResult.tv_episode_results[0]);
+      }
+      break;
+    default:
+      //we don't know the type, let try to find it in order movie, tv, episode, season
+      if (findResult.movie_results && !_.isEmpty(findResult.movie_results)) {
+        return mapper.parseTMDBAPIIdentifyResponse(findResult.movie_results[0]);
+      } else if (findResult.tv_results && !_.isEmpty(findResult.tv_results)) {
+        return mapper.parseTMDBAPIIdentifyResponse(findResult.tv_results[0]);
+      } else if (findResult.tv_episode_results && !_.isEmpty(findResult.tv_episode_results)) {
+        return mapper.parseTMDBAPIIdentifyTvChildsResponse(findResult.tv_episode_results[0]);
+      } else if (findResult.tv_season_results && !_.isEmpty(findResult.tv_season_results)) {
+        return mapper.parseTMDBAPIIdentifyTvChildsResponse(findResult.tv_season_results[0]);
+      }
+      break;
+  }
+  return null;
 };
 
 /**

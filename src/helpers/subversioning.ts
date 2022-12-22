@@ -6,6 +6,7 @@
  */
 export const subversions = {
   'configuration': '1',
+  'localize': '1',
   'season': '1',
   'series': '1',
   'video': '3',
