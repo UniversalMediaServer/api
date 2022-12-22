@@ -5,6 +5,7 @@ import { LeanDocument } from 'mongoose';
 
 import { ExternalAPIError, MediaNotFoundError, ValidationError } from '../helpers/customErrors';
 import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
+import LocalizeMetadata, { LocalizeMetadataInterface } from '../models/LocalizeMetadata';
 import MediaMetadata, { MediaMetadataInterface, MediaMetadataInterfaceDocument } from '../models/MediaMetadata';
 import { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import * as externalAPIHelper from '../services/external-api-helper';
@@ -28,6 +29,74 @@ export const addSearchMatchByIMDbID = async(imdbID: string, title: string): Prom
     { $push: { searchMatches: title } },
     { new: true, lean: true },
   ).exec();
+};
+
+/*
+ * Gets localized information from TMDB since it's the only API
+ * we use that has that functionality.
+ */
+export const getLocalize = async(ctx: ParameterizedContext): Promise<Partial<LocalizeMetadataInterface>> => {
+  const { language, mediaType, imdbID, tmdbID }: UmsQueryParams = ctx.query;
+  const { episode, season }: UmsQueryParams = ctx.query;
+  if (!language || !mediaType || !(imdbID || tmdbID)) {
+    throw new ValidationError('Language, media type and either IMDb ID or TMDB ID are required');
+  }
+  if (!language.match(/^[a-z]{2}(-[A-Z]{2})?$/)) {
+    throw new ValidationError('Language must have a minimum length of 2 and follow the pattern: ([a-z]{2})-([A-Z]{2})');
+  }
+
+  if (mediaType!=='movie' && mediaType!=='tv' && mediaType!=='tv_season' && mediaType!=='tv_episode') {
+    throw new ValidationError('Media type' + mediaType + ' is not valid');
+  }
+  if (mediaType==='tv_season' && tmdbID && !season) {
+    throw new ValidationError('Season number is required for season media');
+  }
+  if (mediaType==='tv_episode' && tmdbID && !(season && episode)) {
+    throw new ValidationError('Episode number and season number are required for episode media');
+  }
+
+  const failedLookupQuery: FailedLookupsInterface = { language, type: mediaType, imdbID, tmdbID, season, episode};
+  if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
+    return null;
+  }
+
+  let seasonNumber = null;
+  if (season) {
+    seasonNumber = Number(season);
+  }
+  let episodeNumber = null;
+  if (episode) {
+    const episodes = episode.split('-');
+    episodeNumber = Number(episodes[0]);
+  }
+  if (tmdbID) {
+    const existingLocalize: LocalizeMetadataInterface = await LocalizeMetadata.findOne({ language, mediaType, tmdbID, seasonNumber, episodeNumber }, null, { lean: true }).exec();
+    if (existingLocalize) {
+      return ctx.body = existingLocalize;
+    }
+  }
+
+  if (imdbID) {
+    const existingLocalize: LocalizeMetadataInterface = await LocalizeMetadata.findOne({ language, mediaType, imdbID }, null, { lean: true }).exec();
+    if (existingLocalize) {
+      return ctx.body = existingLocalize;
+    }
+  }
+
+  try {
+    const findResult = await externalAPIHelper.getLocalizedMetadata(language, mediaType, imdbID, tmdbID, seasonNumber, episodeNumber);
+    if (!findResult) {
+      await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+      throw new MediaNotFoundError();
+    }
+    return ctx.body = findResult;
+  } catch (err) {
+    if (!(err instanceof MediaNotFoundError)) {
+      console.error(err);
+    }
+    throw new MediaNotFoundError();
+  }
 };
 
 export const getSeriesV2 = async(ctx: ParameterizedContext): Promise<Partial<SeriesMetadataInterface> | LeanDocument<MediaMetadataInterfaceDocument>> => {

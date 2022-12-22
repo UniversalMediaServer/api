@@ -42,7 +42,8 @@ export interface MediaMetadataInterface {
   spokenLanguages?: Array<SpokenLanguage>;
   tagline?: string;
   title: string;
-  tmdbID?: string;
+  tmdbID?: number;
+  tmdbTvID?: number;
   trivia?: string;
   type: string;
   votes?: string;
@@ -115,7 +116,8 @@ const MediaMetadataSchema: Schema = new Schema({
   seriesIMDbID: { type: String },
   tagline: { type: String },
   title: { type: String, index: true, required: function(): boolean { return !isTypeEpisode(this); } },
-  tmdbID: { type: String },
+  tmdbID: { type: Number },
+  tmdbTvID: { type: Number },
   trivia: { type: String },
   type: { type: String, required: true },
   votes: { type: String },

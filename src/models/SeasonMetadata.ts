@@ -9,8 +9,9 @@ export interface SeasonMetadataInterface {
   images?: TvSeasonImagesResponse;
   name?: string;
   overview?: string;
+  posterRelativePath?: string;
   seasonNumber: number;
-  tmdbID?: string;
+  tmdbID?: number;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -23,8 +24,9 @@ const SeasonMetadataSchema: Schema = new Schema({
   images: { type: Array },
   name: { type: String },
   overview: { type: String },
+  posterRelativePath: { type: String },
   seasonNumber: { type: Number },
-  tmdbID: { type: String },
+  tmdbID: { type: Number },
 }, {
   collection: 'season_metadata',
   timestamps: true,
