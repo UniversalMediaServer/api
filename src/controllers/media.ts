@@ -100,13 +100,17 @@ export const getLocalize = async(ctx: ParameterizedContext): Promise<Partial<Loc
 };
 
 export const getSeriesV2 = async(ctx: ParameterizedContext): Promise<Partial<SeriesMetadataInterface> | LeanDocument<MediaMetadataInterfaceDocument>> => {
-  const { imdbID, title, year }: UmsQueryParams = ctx.query;
+  const { imdbID, title, year, language }: UmsQueryParams = ctx.query;
   if (!title && !imdbID) {
     throw new ValidationError('Either IMDb ID or title required');
   }
 
+  if (language && !language.match(/^[a-z]{2}(-[A-Z]{2})?$/)) {
+    throw new ValidationError('Language must have a minimum length of 2 and follow the pattern: ([a-z]{2})-([A-Z]{2})');
+  }
+
   try {
-    const dbMeta = await externalAPIHelper.getSeriesMetadata(imdbID, title, year);
+    const dbMeta = await externalAPIHelper.getSeriesMetadata(imdbID, title, language, year);
     if (!dbMeta) {
       throw new MediaNotFoundError();
     }
@@ -126,14 +130,19 @@ export const getSeriesV2 = async(ctx: ParameterizedContext): Promise<Partial<Ser
  * we use that has that functionality.
  */
 export const getSeason = async(ctx: ParameterizedContext): Promise<Partial<SeasonMetadataInterface>> => {
-  const { season, title, year }: UmsQueryParams = ctx.query;
+  const { season, title, year, language }: UmsQueryParams = ctx.query;
   if (!title || !season) {
     throw new ValidationError('title and season are required');
   }
+
+  if (language && !language.match(/^[a-z]{2}(-[A-Z]{2})?$/)) {
+    throw new ValidationError('Language must have a minimum length of 2 and follow the pattern: ([a-z]{2})-([A-Z]{2})');
+  }
+
   const seasonNumber = Number(season);
 
   // Return early for previously-failed lookups
-  const failedLookupQuery: FailedLookupsInterface = { title, season, type: 'season' };
+  const failedLookupQuery: FailedLookupsInterface = { title, language, season, type: 'season' };
   if (year) {
     failedLookupQuery.year = year;
   }
@@ -142,7 +151,7 @@ export const getSeason = async(ctx: ParameterizedContext): Promise<Partial<Seaso
     throw new MediaNotFoundError();
   }
 
-  const seriesMetadata = await externalAPIHelper.getSeriesMetadata(null, title, year);
+  const seriesMetadata = await externalAPIHelper.getSeriesMetadata(null, title, language, year);
   if (!seriesMetadata?.tmdbID) {
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
@@ -169,7 +178,7 @@ export const getSeason = async(ctx: ParameterizedContext): Promise<Partial<Seaso
 };
 
 export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadataInterface> => {
-  const { title, osdbHash, imdbID }: UmsQueryParams = ctx.query;
+  const { title, osdbHash, imdbID, language }: UmsQueryParams = ctx.query;
   const { episode, season, year, filebytesize }: UmsQueryParams = ctx.query;
   const [seasonNumber, yearNumber, filebytesizeNumber] = [season, year, filebytesize].map(param => param ? Number(param) : null);
   let episodeNumbers = null;
@@ -186,6 +195,10 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
     throw new ValidationError('filebytesize is required when passing osdbHash');
   }
 
+  if (language && !language.match(/^[a-z]{2}(-[A-Z]{2})?$/)) {
+    throw new ValidationError('Language must have a minimum length of 2 and follow the pattern: ([a-z]{2})-([A-Z]{2})');
+  }
+
   const query = [];
   const failedQuery = [];
   let imdbIdToSearch = imdbID;
@@ -200,10 +213,15 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
     failedQuery.push({ imdbId: imdbIdToSearch });
   }
 
+  let searchMatch;
   if (title) {
-    const titleQuery: GetVideoFilter = { searchMatches: { $in: [title] } };
+    searchMatch = language ? language + '@' + title : title;
+    const titleQuery: GetVideoFilter = { searchMatches: { $in: [searchMatch] } };
     const titleFailedQuery: FailedLookupsInterface = { title };
 
+    if (language) {
+      titleFailedQuery.language = language;
+    }
     if (year) {
       titleQuery.year = year;
       titleFailedQuery.year = year;
@@ -259,11 +277,9 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
 
   // if the client did not pass an imdbID, but we found one on Open Subtitles, see if we have an existing record for the now-known media.
   if (!imdbID && imdbIdToSearch) {
-    {
-      const existingResult = await MediaMetadata.findOne({ imdbID: imdbIdToSearch }, null, { lean: true }).exec();
-      if (existingResult) {
-        return ctx.body = await addSearchMatchByIMDbID(imdbIdToSearch, title);
-      }
+    const existingResult = await MediaMetadata.findOne({ imdbID: imdbIdToSearch }, null, { lean: true }).exec();
+    if (existingResult) {
+      return ctx.body = await addSearchMatchByIMDbID(imdbIdToSearch, searchMatch);
     }
   }
   // End OpenSubtitles lookups
@@ -279,7 +295,7 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
   // Start TMDB lookups
   let tmdbData: MediaMetadataInterface;
   try {
-    tmdbData = await externalAPIHelper.getFromTMDBAPI(title, imdbIdToSearch, yearNumber, seasonNumber, episodeNumbers);
+    tmdbData = await externalAPIHelper.getFromTMDBAPI(title, language, imdbIdToSearch, yearNumber, seasonNumber, episodeNumbers);
     imdbIdToSearch = imdbIdToSearch || tmdbData?.imdbID;
   } catch (e) {
     // Log the error but continue on to try the next API, OMDb
@@ -292,11 +308,9 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
 
   // if the client did not pass an imdbID, but we found one on TMDB, see if we have an existing record for the now-known media.
   if (!imdbID && imdbIdToSearch) {
-    {
-      const existingResult = await MediaMetadata.findOne({ imdbID: imdbIdToSearch }, null, { lean: true }).exec();
-      if (existingResult) {
-        return ctx.body = await addSearchMatchByIMDbID(imdbIdToSearch, title);
-      }
+    const existingResult = await MediaMetadata.findOne({ imdbID: imdbIdToSearch }, null, { lean: true }).exec();
+    if (existingResult) {
+      return ctx.body = await addSearchMatchByIMDbID(imdbIdToSearch, searchMatch);
     }
   }
   // End TMDB lookups
@@ -329,11 +343,9 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
    * the now-known media.
    */
   if (!imdbID && imdbIdToSearch) {
-    {
-      const existingResult = await MediaMetadata.findOne({ imdbID: imdbIdToSearch }, null, { lean: true }).exec();
-      if (existingResult) {
-        return ctx.body = await addSearchMatchByIMDbID(imdbIdToSearch, title);
-      }
+    const existingResult = await MediaMetadata.findOne({ imdbID: imdbIdToSearch }, null, { lean: true }).exec();
+    if (existingResult) {
+      return ctx.body = await addSearchMatchByIMDbID(imdbIdToSearch, searchMatch);
     }
   }
   // End OMDb lookups
@@ -345,8 +357,8 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
   }
 
   try {
-    if (title) {
-      combinedResponse.searchMatches = [title];
+    if (searchMatch) {
+      combinedResponse.searchMatches = [searchMatch];
     }
 
     if (osdbHash) {
