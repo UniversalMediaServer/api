@@ -13,6 +13,7 @@ import LocalizeMetadata, { LocalizeMetadataInterface } from '../models/LocalizeM
 import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import { mapper } from '../utils/data-mapper';
+import SeasonMetadata, { SeasonMetadataInterface } from '../models/SeasonMetadata';
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
 
@@ -354,6 +355,50 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, language
   }
 
   return response;
+};
+
+/**
+ * Gets season metadata.
+ * Performs API lookups if we don't already have it.
+ *
+ * @param [tmdbTvID] the TMDB ID of the series
+ * @param [seasonNumber] the season number on the series
+ * @returns season metadata
+ */
+export const getSeasonMetadata = async(tmdbTvID?: number, seasonNumber?: number): Promise<Partial<SeasonMetadataInterface> | null> => {
+  if (!tmdbTvID && !seasonNumber) {
+    throw new Error('Either tmdbTvID or seasonNumber required');
+  }
+
+  // Return early for previously-failed lookups
+  const failedLookupQuery: FailedLookupsInterface = { tmdbID: tmdbTvID, season: String(seasonNumber), type: 'season' };
+  if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
+    return null;
+  }
+
+  // Return any previous match
+  const seasonMetadata = await SeasonMetadata.findOne({ tmdbTvID, seasonNumber }, null, { lean: true }).exec();
+  if (seasonMetadata) {
+    return seasonMetadata;
+  }
+
+  // Start TMDB lookups
+  const seasonRequest = {
+    append_to_response: 'images,external_ids,credits',
+    id: tmdbTvID,
+    season_number: seasonNumber,
+  };
+
+  const tmdbResponse = await tmdb.seasonInfo(seasonRequest);
+  if (tmdbResponse) {
+    const metadata = mapper.parseTMDBAPISeasonResponse(tmdbResponse);
+	metadata.tmdbTvID = tmdbTvID;
+    return await SeasonMetadata.create(metadata);
+  } else {
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+  }
+  return null;
 };
 
 /**

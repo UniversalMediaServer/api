@@ -130,51 +130,37 @@ export const getSeriesV2 = async(ctx: ParameterizedContext): Promise<Partial<Ser
  * we use that has that functionality.
  */
 export const getSeason = async(ctx: ParameterizedContext): Promise<Partial<SeasonMetadataInterface>> => {
-  const { season, title, year, language }: UmsQueryParams = ctx.query;
-  if (!title || !season) {
-    throw new ValidationError('title and season are required');
-  }
+  try {
+    const { tmdbID, season, title, language, year }: UmsQueryParams = ctx.query;
+    if (!tmdbID && !title) {
+      throw new ValidationError('title or tmdbID is required');
+    }
+    if (!season) {
+      throw new ValidationError('season is required');
+    }
+    const seasonNumber = Number(season);
+    let tmdbTvID = tmdbID;
 
-  if (language && !language.match(/^[a-z]{2}(-[A-Z]{2})?$/)) {
-    throw new ValidationError('Language must have a minimum length of 2 and follow the pattern: ([a-z]{2})-([A-Z]{2})');
-  }
+    if (!tmdbTvID) {
+      const seriesMetadata = await externalAPIHelper.getSeriesMetadata(null, title, language, year);
+      if (!seriesMetadata?.tmdbID) {
+        throw new MediaNotFoundError();
+      }
+      tmdbTvID = seriesMetadata.tmdbID;
+    }
 
-  const seasonNumber = Number(season);
-
-  // Return early for previously-failed lookups
-  const failedLookupQuery: FailedLookupsInterface = { title, language, season, type: 'season' };
-  if (year) {
-    failedLookupQuery.year = year;
-  }
-  if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
-    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
+    const seasonMetadata = await externalAPIHelper.getSeasonMetadata(tmdbTvID, seasonNumber);
+    if (_.isEmpty(seasonMetadata)) {
+      throw new MediaNotFoundError();
+    }
+    return ctx.body = seasonMetadata;
+  } catch (err) {
+    // log unexpected errors
+    if (!(err instanceof MediaNotFoundError)) {
+      console.error(err);
+    }
     throw new MediaNotFoundError();
   }
-
-  const seriesMetadata = await externalAPIHelper.getSeriesMetadata(null, title, language, year);
-  if (!seriesMetadata?.tmdbID) {
-    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
-    throw new MediaNotFoundError();
-  }
-
-  // Start TMDB lookups
-  const seasonRequest = {
-    append_to_response: 'images,external_ids,credits',
-    id: seriesMetadata.tmdbID,
-    season_number: seasonNumber,
-  };
-
-  const tmdbResponse = await tmdb.seasonInfo(seasonRequest);
-  const tmdbData = mapper.parseTMDBAPISeasonResponse(tmdbResponse);
-  // End TMDB lookups
-
-  if (_.isEmpty(tmdbData)) {
-    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
-    throw new MediaNotFoundError();
-  }
-
-  const seasonMetadata = await SeasonMetadata.create(tmdbData);
-  return ctx.body = seasonMetadata;
 };
 
 export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadataInterface> => {
