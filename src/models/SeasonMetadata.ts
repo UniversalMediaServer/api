@@ -12,6 +12,7 @@ export interface SeasonMetadataInterface {
   posterRelativePath?: string;
   seasonNumber: number;
   tmdbID?: number;
+  tmdbTvID?: number;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -25,8 +26,9 @@ const SeasonMetadataSchema: Schema = new Schema({
   name: { type: String },
   overview: { type: String },
   posterRelativePath: { type: String },
-  seasonNumber: { type: Number },
+  seasonNumber: { type: Number, index: true, required: true },
   tmdbID: { type: Number },
+  tmdbTvID: { type: Number, index: true, required: true },
 }, {
   collection: 'season_metadata',
   timestamps: true,
