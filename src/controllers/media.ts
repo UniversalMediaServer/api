@@ -138,6 +138,10 @@ export const getSeason = async(ctx: ParameterizedContext): Promise<Partial<Seaso
     if (!season) {
       throw new ValidationError('season is required');
     }
+    if (language && !language.match(/^[a-z]{2}(-[A-Z]{2})?$/)) {
+      throw new ValidationError('Language must have a minimum length of 2 and follow the pattern: ([a-z]{2})-([A-Z]{2})');
+    }
+
     const seasonNumber = Number(season);
     let tmdbTvID = tmdbID;
 
