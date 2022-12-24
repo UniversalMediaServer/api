@@ -4,11 +4,12 @@ import * as episodeParser from 'episode-parser';
 import * as natural from 'natural';
 
 import { getTMDBImageBaseURL } from '../../controllers/info';
-import { IMDbIDNotFoundError } from '../../helpers/customErrors';
+import { IMDbIDNotFoundError, ValidationError } from '../../helpers/customErrors';
 import { MediaMetadataInterface } from '../../models/MediaMetadata';
 import omdbAPI from '../omdb-api';
 import { mapper } from '../../utils/data-mapper';
 import { SeriesMetadataInterface } from '../../models/SeriesMetadata';
+import osAPI, { OpenSubtitlesQuery, OpenSubtitlesValidation } from './opensubtitles-xml-rpc';
 
 /**
  * @deprecated see getFromOMDbAPIV2
@@ -135,4 +136,49 @@ export const addPosterFromImages = async(metadata: any): Promise<SeriesMetadataI
   }
 
   return metadata;
+};
+
+export const getFromOpenSubtitles = async(osQuery: OpenSubtitlesQuery, validationData: OpenSubtitlesValidation): Promise<Partial<MediaMetadataInterface>> => {
+  const validateMovieByYear = Boolean(validationData.year);
+  const validateEpisodeBySeasonAndEpisode = Boolean(validationData.season && validationData.episode);
+  let passedValidation = true;
+
+  if (!osQuery.moviehash || !osQuery.moviebytesize) {
+    throw new ValidationError('moviehash and moviebytesize are required');
+  }
+
+  const openSubtitlesResponse = await osAPI.identify({ ...osQuery });
+
+  if (!openSubtitlesResponse.metadata) {
+    return null;
+  }
+  
+  if (validateMovieByYear || validateEpisodeBySeasonAndEpisode) {
+    passedValidation = false;
+    if (validateMovieByYear) {
+      if (validationData.year === openSubtitlesResponse.metadata?.year) {
+        passedValidation = true;
+      }
+    }
+
+    if (validateEpisodeBySeasonAndEpisode) {
+      if (
+        validationData.season === openSubtitlesResponse.metadata.season &&
+        validationData.episode === openSubtitlesResponse.metadata.episode
+      ) {
+        passedValidation = true;
+      }
+    }
+  }
+
+  // If the data from Open Subtitles did not match the search, treat it as a non-result.
+  if (!passedValidation) {
+    return null;
+  }
+
+  if (openSubtitlesResponse.type === 'episode') {
+    return mapper.parseOpenSubtitlesEpisodeResponse(openSubtitlesResponse);
+  }
+
+  return mapper.parseOpenSubtitlesResponse(openSubtitlesResponse);
 };

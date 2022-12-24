@@ -7,11 +7,10 @@ import { ExternalAPIError, MediaNotFoundError, ValidationError } from '../../hel
 import FailedLookups, { FailedLookupsInterface } from '../../models/FailedLookups';
 import MediaMetadata, { MediaMetadataInterface, MediaMetadataInterfaceDocument } from '../../models/MediaMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../../models/SeriesMetadata';
-import osAPI from '../../services/opensubtitles';
+import osAPI, { OpenSubtitlesQuery } from '../../services/deprecated/opensubtitles-xml-rpc';
 import * as externalAPIHelper from '../../services/external-api-helper';
 import * as deprecatedExternalAPIHelper from '../../services/deprecated/external-api-helper';
 import { mapper } from '../../utils/data-mapper';
-import { OpenSubtitlesQuery } from '../../services/external-api-helper';
 import { addSearchMatchByIMDbID } from '../media';
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
@@ -399,7 +398,7 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
     };
 
     try {
-      openSubtitlesMetadata = await externalAPIHelper.getFromOpenSubtitles(osQuery, validation);
+      openSubtitlesMetadata = await deprecatedExternalAPIHelper.getFromOpenSubtitles(osQuery, validation);
       imdbIdToSearch = imdbIdToSearch || openSubtitlesMetadata?.imdbID;
     } catch (e) {
       // Rethrow errors except if they are about Open Subtitles being offline. as that happens a lot

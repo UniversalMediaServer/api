@@ -74,6 +74,17 @@ const openSubtitlesEpisodeMap = {
   'metadata.episode': 'episode',
 };
 
+const openSubtitlesAttributesMap = {
+  'title': 'title',
+  'original_title': 'originalTitle',
+  'year': 'year',
+  'imdb_id': 'imdbID',
+  'tmdb_id': 'tmdbID',
+  'season_number': 'season',
+  'episode_number': 'episodeNumber',
+  'parent_imdb_id': 'seriesIMDbID',
+};
+
 const tmdbEpisodeMap = {
   'air_date': [
     { key: 'released' },
@@ -447,6 +458,13 @@ class UmsDataMapper {
     let mappedData = objectMapper.merge(openSubtitlesData, openSubtitlesEpisodeMap);
     mappedData = filterUnwantedValues(mappedData);
     return ensureIMDbIDFormat(mappedData);
+  }
+
+  parseOpenSubtitlesAttributesResponse(openSubtitlesData): Partial<MediaMetadataInterface> {
+    let mappedData = objectMapper.merge(openSubtitlesData, openSubtitlesAttributesMap);
+    mappedData = filterUnwantedValues(mappedData);
+    mappedData = ensureIMDbIDFormat(mappedData);
+    return ensureIMDbIDFormat(mappedData, 'seriesIMDbID');
   }
 
   parseTMDBAPIEpisodeResponse(tmdbData): Partial<MediaMetadataInterface> {

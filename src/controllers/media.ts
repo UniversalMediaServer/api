@@ -10,9 +10,9 @@ import MediaMetadata, { MediaMetadataInterface, MediaMetadataInterfaceDocument }
 import { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import * as externalAPIHelper from '../services/external-api-helper';
 import { mapper } from '../utils/data-mapper';
-import { OpenSubtitlesQuery } from '../services/external-api-helper';
 import SeasonMetadata, { SeasonMetadataInterface } from '../models/SeasonMetadata';
 import { tmdb } from '../services/tmdb-api';
+import { SubtitlesRequestParams } from '../services/opensubtitles';
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
 
@@ -172,10 +172,12 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
   const { title, osdbHash, imdbID }: UmsQueryParams = ctx.query;
   const { episode, season, year, filebytesize }: UmsQueryParams = ctx.query;
   const [seasonNumber, yearNumber, filebytesizeNumber] = [season, year, filebytesize].map(param => param ? Number(param) : null);
+  let episodeNumber = null;
   let episodeNumbers = null;
   if (episode) {
     const episodes = episode.split('-');
     episodeNumbers = episodes.map(Number);
+    episodeNumber = episodeNumbers[0];
   }
 
   if (!title && !osdbHash && !imdbID) {
@@ -238,15 +240,10 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
   // Start OpenSubtitles lookups
   let openSubtitlesMetadata: Partial<MediaMetadataInterface>;
   if (osdbHash && filebytesize) {
-    const osQuery: OpenSubtitlesQuery = { moviehash: osdbHash, moviebytesize: filebytesizeNumber, extend: true, remote: true };
-    const validation = {
-      year: year ? year : null,
-      season: season ? season : null,
-      episode: episode ? episode : null,
-    };
+    const osQuery: SubtitlesRequestParams = { moviehash: osdbHash, season_number: seasonNumber, episode_number: episodeNumber, year: yearNumber };
 
     try {
-      openSubtitlesMetadata = await externalAPIHelper.getFromOpenSubtitles(osQuery, validation);
+      openSubtitlesMetadata = await externalAPIHelper.getFromOpenSubtitles(osQuery);
       imdbIdToSearch = imdbIdToSearch || openSubtitlesMetadata?.imdbID;
     } catch (e) {
       // Rethrow errors except if they are about Open Subtitles being offline. as that happens a lot
