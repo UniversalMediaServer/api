@@ -501,9 +501,9 @@ export const getLocalizedMetadata = async(language?: string, mediaType?: string,
       //if we are here, that mean the request was made without tmdbId.
       //udpate tmdbId as we do not saved it before.
       if (mediaType==='movie') {
-        MediaMetadata.findOneAndUpdate({ imdbID }, { tmdbID:tmdbID }, { lean: true },).exec();
+        MediaMetadata.updateOne({ imdbID }, { tmdbID:tmdbID }).exec();
       } else if (mediaType==='tv_episode') {
-        MediaMetadata.findOneAndUpdate({ imdbID }, { tmdbTvID:tmdbID }, { lean: true },).exec();
+        MediaMetadata.updateOne({ imdbID }, { tmdbTvID:tmdbID }).exec();
       }
     }
   }
