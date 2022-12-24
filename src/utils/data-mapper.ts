@@ -145,7 +145,6 @@ const tmdbSeasonMap = {
   'images': 'images',
   'name': 'name',
   'overview': 'overview',
-  'poster_path': 'posterRelativePath',
   'season_number': 'seasonNumber',
 };
 
