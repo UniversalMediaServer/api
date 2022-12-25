@@ -7,12 +7,10 @@ import { ExternalAPIError, MediaNotFoundError, ValidationError } from '../helper
 import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
 import LocalizeMetadata, { LocalizeMetadataInterface } from '../models/LocalizeMetadata';
 import MediaMetadata, { MediaMetadataInterface, MediaMetadataInterfaceDocument } from '../models/MediaMetadata';
+import { SeasonMetadataInterface } from '../models/SeasonMetadata';
 import { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import * as externalAPIHelper from '../services/external-api-helper';
-import { mapper } from '../utils/data-mapper';
 import { OpenSubtitlesQuery } from '../services/external-api-helper';
-import SeasonMetadata, { SeasonMetadataInterface } from '../models/SeasonMetadata';
-import { tmdb } from '../services/tmdb-api';
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
 
@@ -259,9 +257,9 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
       imdbIdToSearch = imdbIdToSearch || openSubtitlesMetadata?.imdbID;
       if (!title && !imdbID && !episodeNumbers && openSubtitlesMetadata?.type === 'episode') {
         //here we now the osdbHash is for an episode and episode is not set
-		episodeNumbers = [ Number(openSubtitlesMetadata.episode) ];
-		seasonNumber = Number(openSubtitlesMetadata.season);
-	  }
+        episodeNumbers = [ Number(openSubtitlesMetadata.episode) ];
+        seasonNumber = Number(openSubtitlesMetadata.season);
+      }
     } catch (e) {
       // Rethrow errors except if they are about Open Subtitles being offline. as that happens a lot
       if (!(e instanceof ExternalAPIError)) {
@@ -362,7 +360,7 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
     }
 
     // Ensure that we return and cache the same episode number that was searched for
-    if (episodeNumbers && episodeNumbers.length > 1 && episodeNumbers[0] === combinedResponse.episode) {
+    if (episode && episodeNumbers && episodeNumbers.length > 1 && episodeNumbers[0] === combinedResponse.episode) {
       combinedResponse.episode = episode;
     }
 
