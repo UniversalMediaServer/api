@@ -107,6 +107,7 @@ export enum HttpMethod {
 
 export interface QueueItem {
   promiseGenerator: () => Promise<AxiosResponse>
+  // eslint-disable-next-line
   resolve: (value: any) => void
   reject: (value: any) => void
 }

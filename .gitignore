@@ -69,6 +69,7 @@ nbproject
 !jest.config.js
 !test/omdb-mocks.js
 !test/opensubtitles-mocks.js
+!test/opensubtitles-xml-mocks.js
 !test/tmdb-mocks.js
 !ecosystem.config.js
 
