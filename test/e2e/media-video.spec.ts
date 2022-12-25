@@ -372,15 +372,5 @@ describe('get by all', () => {
       }
       expect(error.message).toEqual('Request failed with status code 422');
     });
-
-    test('should require filebytesize if attempting osbdHash search', async() => {
-      let error;
-      try {
-        await axios.get(`${appUrl}/api/media/video/v2?osbdHash=fsd`);
-      } catch (e) {
-        error = e;
-      }
-      expect(error.message).toEqual('Request failed with status code 422');
-    });
   });
 });

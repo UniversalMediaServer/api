@@ -23,10 +23,10 @@ import axios, { AxiosRequestConfig } from 'axios';
 export class OpensubtitlesApi {
   private apiKey: string;
   private requests: Array<QueueItem> = [];
-  private requesting: boolean = false;
+  private requesting = false;
   public baseUrl: string;
 
-  constructor(apiKey: string, baseUrl: string = 'https://api.opensubtitles.com/api/v1/') {
+  constructor(apiKey: string, baseUrl = 'https://api.opensubtitles.com/api/v1/') {
     this.apiKey = apiKey;
     this.baseUrl = baseUrl;
   }
@@ -63,7 +63,7 @@ export class OpensubtitlesApi {
   private makeRequest(
     method: HttpMethod,
     endpoint: string,
-    params: RequestParams = {},
+    params = {},
     axiosConfig: AxiosRequestConfig = {},
   ): Promise<any> {
 
@@ -96,7 +96,7 @@ export class OpensubtitlesApi {
     return this.makeRequest(HttpMethod.Get, 'features', params, axiosConfig);
   }
 
-};
+}
 
 export enum HttpMethod {
   Get = 'get',
@@ -111,9 +111,7 @@ export interface QueueItem {
   reject: Function
 }
 
-export interface RequestParams {}
-export interface Response {}
-export interface SubtitlesRequestParams extends RequestParams {
+export interface SubtitlesRequestParams {
   /**
    * exclude, include (default: exclude)
    */
@@ -263,7 +261,7 @@ export interface File {
   cd_number: number;
   file_name: string;
 }
-export interface FeaturesRequestParams extends RequestParams {
+export interface FeaturesRequestParams {
   /**
    * opensubtitles feature_id
    */

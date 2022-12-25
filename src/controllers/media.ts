@@ -7,11 +7,9 @@ import { ExternalAPIError, MediaNotFoundError, ValidationError } from '../helper
 import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
 import LocalizeMetadata, { LocalizeMetadataInterface } from '../models/LocalizeMetadata';
 import MediaMetadata, { MediaMetadataInterface, MediaMetadataInterfaceDocument } from '../models/MediaMetadata';
+import { SeasonMetadataInterface } from '../models/SeasonMetadata';
 import { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import * as externalAPIHelper from '../services/external-api-helper';
-import { mapper } from '../utils/data-mapper';
-import SeasonMetadata, { SeasonMetadataInterface } from '../models/SeasonMetadata';
-import { tmdb } from '../services/tmdb-api';
 import { SubtitlesRequestParams } from '../services/opensubtitles';
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
@@ -169,8 +167,8 @@ export const getSeason = async(ctx: ParameterizedContext): Promise<Partial<Seaso
 
 export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadataInterface> => {
   const { title, osdbHash, imdbID, language }: UmsQueryParams = ctx.query;
-  const { episode, season, year, filebytesize }: UmsQueryParams = ctx.query;
-  const [seasonNumber, yearNumber, filebytesizeNumber] = [season, year, filebytesize].map(param => param ? Number(param) : null);
+  const { episode, season, year }: UmsQueryParams = ctx.query;
+  const [seasonNumber, yearNumber] = [season, year].map(param => param ? Number(param) : null);
   let episodeNumbers = null;
   if (episode) {
     const episodes = episode.split('-');
@@ -179,10 +177,6 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
 
   if (!title && !osdbHash && !imdbID) {
     throw new ValidationError('title, osdbHash or imdbId is a required parameter');
-  }
-
-  if (osdbHash && !filebytesize) {
-    throw new ValidationError('filebytesize is required when passing osdbHash');
   }
 
   if (language && !language.match(/^[a-z]{2}(-[A-Z]{2})?$/)) {
@@ -245,7 +239,7 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
 
   // Start OpenSubtitles lookups
   let openSubtitlesMetadata: Partial<MediaMetadataInterface>;
-  if (osdbHash && filebytesize) {
+  if (osdbHash) {
     const episodeNumber = episodeNumbers && episodeNumbers.length === 1 ? episodeNumbers[0] : undefined;
     const osQuery: SubtitlesRequestParams = { moviehash: osdbHash, moviehash_match: 'only', query: title, season_number: seasonNumber, episode_number: episodeNumber, year: yearNumber };
 
