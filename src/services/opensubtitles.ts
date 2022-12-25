@@ -14,7 +14,7 @@
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 
 /*
  * Opensubtitles REST API.
@@ -60,12 +60,12 @@ export class OpensubtitlesApi {
   /**
    * Performs the request to the server
    */
-  private makeRequest(
+  private makeRequest<T>(
     method: HttpMethod,
     endpoint: string,
     params = {},
     axiosConfig: AxiosRequestConfig = {},
-  ): Promise<any> {
+  ): Promise<T> {
 
     const request: AxiosRequestConfig = {
       method,
@@ -89,11 +89,11 @@ export class OpensubtitlesApi {
   }
 
   subtitles(params?: SubtitlesRequestParams, axiosConfig?: AxiosRequestConfig): Promise<SubtitlesResponse> {
-    return this.makeRequest(HttpMethod.Get, 'subtitles', params, axiosConfig);
+    return this.makeRequest<SubtitlesResponse>(HttpMethod.Get, 'subtitles', params, axiosConfig);
   }
 
   features(params?: FeaturesRequestParams, axiosConfig?: AxiosRequestConfig): Promise<FeaturesResponse> {
-    return this.makeRequest(HttpMethod.Get, 'features', params, axiosConfig);
+    return this.makeRequest<FeaturesResponse>(HttpMethod.Get, 'features', params, axiosConfig);
   }
 
 }
@@ -106,9 +106,9 @@ export enum HttpMethod {
 }
 
 export interface QueueItem {
-  promiseGenerator: Function
-  resolve: Function
-  reject: Function
+  promiseGenerator: () => Promise<AxiosResponse>
+  resolve: (value: any) => void
+  reject: (value: any) => void
 }
 
 export interface SubtitlesRequestParams {
@@ -316,7 +316,7 @@ export interface FeaturesResponseDataAttributes {
   parent_imdb_id?: number|null;
   feature_type?: string;
   //for tv show
-  seasons?: Array<object>;
+  seasons?: Array<Season>;
 }
 export interface SubtitlesCounts {
   ar?: number;
@@ -357,4 +357,14 @@ export interface SubtitlesCounts {
   vi?: number;
   'zh-CN'?: number;
   'zh-TW'?: number;
+}
+export interface Season {
+  season_number?: number;
+  episodes?: Array<Episode>;
+}
+export interface Episode {
+  episode_number?: number;
+  title?: string;
+  feature_id?: number;
+  feature_imdb_id?: number;
 }
