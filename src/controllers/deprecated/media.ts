@@ -301,7 +301,7 @@ export const getSeries = async(ctx: ParameterizedContext): Promise<SeriesMetadat
   }
 
   try {
-    const dbMeta = await externalAPIHelper.getSeriesMetadata(imdbID, title, year);
+    const dbMeta = await externalAPIHelper.getSeriesMetadata(imdbID, title, null, year);
     if (!dbMeta) {
       throw new MediaNotFoundError();
     }
@@ -431,7 +431,7 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
   // Start TMDB lookups
   let tmdbData: MediaMetadataInterface;
   try {
-    tmdbData = await externalAPIHelper.getFromTMDBAPI(title, imdbIdToSearch, yearNumber, seasonNumber, episodeNumbers);
+    tmdbData = await externalAPIHelper.getFromTMDBAPI(title, null, imdbIdToSearch, yearNumber, seasonNumber, episodeNumbers);
     imdbIdToSearch = imdbIdToSearch || tmdbData?.imdbID;
   } catch (e) {
     // Log the error but continue on to try the next API, OMDb
