@@ -19,6 +19,7 @@ const MOVIE_INTERSTELLAR = {
   'title': 'Interstellar',
   'osdbHash': '0f0f4c9f3416e24f',
   'filebytesize': '2431697820',
+  'plot': 'The adventures of a group of explorers who make use of a newly discovered wormhole to surpass the limitations on human space travel and conquer the vast distances involved in an interstellar voyage.'
 };
 
 const EPISODE_LOST = {
@@ -167,6 +168,23 @@ describe('get by all', () => {
       expect(omdbSpy).toHaveBeenCalledTimes(0);
       expect(openSubsSpy).toHaveBeenCalledTimes(0);
     });
+
+    test('should return a movie (en-US) by title AND language, from source APIs then store', async() => {
+      const spy = jest.spyOn(apihelper, 'getFromTMDBAPI');
+      let response = await axios.get(`${appUrl}/api/media/video/v2?title=${MOVIE_INTERSTELLAR.title}&language=fr`) as UmsApiAxiosResponse;
+      expect(response.data.title).toEqual(MOVIE_INTERSTELLAR.title);
+      expect(response.data.plot).toEqual(MOVIE_INTERSTELLAR.plot);
+      expect(response.data.type).toEqual('movie');
+      expect(spy).toHaveBeenCalledTimes(1);
+      spy.mockReset();
+
+      // subsequent calls should return MongoDB result rather than calling external apis
+      response = await axios.get(`${appUrl}/api/media/video/v2?title=${MOVIE_INTERSTELLAR.title}&language=fr`) as UmsApiAxiosResponse;
+      expect(response.data.title).toEqual(MOVIE_INTERSTELLAR.title);
+      expect(response.data.plot).toEqual(MOVIE_INTERSTELLAR.plot);
+      expect(spy).toHaveBeenCalledTimes(0);
+    });
+
   });
 
   describe('Episodes', () => {
