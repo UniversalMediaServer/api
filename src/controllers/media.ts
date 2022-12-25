@@ -170,7 +170,8 @@ export const getSeason = async(ctx: ParameterizedContext): Promise<Partial<Seaso
 export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadataInterface> => {
   const { title, osdbHash, imdbID, language }: UmsQueryParams = ctx.query;
   const { episode, season, year, filebytesize }: UmsQueryParams = ctx.query;
-  const [seasonNumber, yearNumber, filebytesizeNumber] = [season, year, filebytesize].map(param => param ? Number(param) : null);
+  const [yearNumber, filebytesizeNumber] = [year, filebytesize].map(param => param ? Number(param) : null);
+  let seasonNumber = Number(season);
   let episodeNumbers = null;
   if (episode) {
     const episodes = episode.split('-');
@@ -256,6 +257,11 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
     try {
       openSubtitlesMetadata = await externalAPIHelper.getFromOpenSubtitles(osQuery, validation);
       imdbIdToSearch = imdbIdToSearch || openSubtitlesMetadata?.imdbID;
+      if (!title && !imdbID && !episodeNumbers && openSubtitlesMetadata?.type === 'episode') {
+        //here we now the osdbHash is for an episode and episode is not set
+		episodeNumbers = [ Number(openSubtitlesMetadata.episode) ];
+		seasonNumber = Number(openSubtitlesMetadata.season);
+	  }
     } catch (e) {
       // Rethrow errors except if they are about Open Subtitles being offline. as that happens a lot
       if (!(e instanceof ExternalAPIError)) {
