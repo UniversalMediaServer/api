@@ -78,11 +78,17 @@ const openSubtitlesAttributesMap = {
   'title': 'title',
   'original_title': 'originalTitle',
   'year': 'year',
-  'imdb_id': 'imdbID',
+  'imdb_id': {
+    key: 'imdbID',
+    transform: (val: number): string => val ? 'tt' + (('0000000' + val.toString()).slice(-7)) : undefined,
+  },
   'tmdb_id': 'tmdbID',
   'season_number': 'season',
   'episode_number': 'episodeNumber',
-  'parent_imdb_id': 'seriesIMDbID',
+  'parent_imdb_id': {
+    key: 'seriesIMDbID',
+     transform: (val: number): string => val ? 'tt' + (('0000000' + val.toString()).slice(-7)) : undefined,
+  },
 };
 
 const tmdbEpisodeMap = {
@@ -281,7 +287,6 @@ const omdbEpisodeMap = {
   'released': 'released',
   'runtime': 'runtime',
   'season': 'season',
-  'seriesid': 'seriesIMDbID',
   'title': 'title',
   'type': 'type',
   'votes': 'votes',

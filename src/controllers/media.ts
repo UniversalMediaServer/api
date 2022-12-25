@@ -171,12 +171,10 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
   const { title, osdbHash, imdbID, language }: UmsQueryParams = ctx.query;
   const { episode, season, year, filebytesize }: UmsQueryParams = ctx.query;
   const [seasonNumber, yearNumber, filebytesizeNumber] = [season, year, filebytesize].map(param => param ? Number(param) : null);
-  let episodeNumber = null;
   let episodeNumbers = null;
   if (episode) {
     const episodes = episode.split('-');
     episodeNumbers = episodes.map(Number);
-    episodeNumber = episodeNumbers[0];
   }
 
   if (!title && !osdbHash && !imdbID) {
@@ -248,7 +246,8 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
   // Start OpenSubtitles lookups
   let openSubtitlesMetadata: Partial<MediaMetadataInterface>;
   if (osdbHash && filebytesize) {
-    const osQuery: SubtitlesRequestParams = { moviehash: osdbHash, season_number: seasonNumber, episode_number: episodeNumber, year: yearNumber };
+    const episodeNumber = episodeNumbers && episodeNumbers.length === 1 ? episodeNumbers[0] : undefined;
+    const osQuery: SubtitlesRequestParams = { moviehash: osdbHash, moviehash_match: 'only', query: title, season_number: seasonNumber, episode_number: episodeNumber, year: yearNumber };
 
     try {
       openSubtitlesMetadata = await externalAPIHelper.getFromOpenSubtitles(osQuery);

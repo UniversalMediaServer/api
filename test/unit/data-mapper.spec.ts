@@ -65,8 +65,7 @@ const omdbApiEpisode = {
   metascore: 'N/A',
   rating: 8.6,
   votes: '2211',
-  imdbid: 'tt2916312',
-  seriesid: 't1796960', // intentionally missing a "t"
+  imdbid: 't2916312', // intentionally missing a "t"
   type: 'episode',
   response: 'True',
   series: true,
@@ -457,7 +456,7 @@ describe('Data mapper', () => {
         expect(parsed.episode).toEqual(9);
         expect(parsed.genres).toEqual(['Crime', 'Drama', 'Mystery', 'Thriller']);
         expect(parsed.plot).toEqual(omdbApiEpisode.plot);
-        expect(parsed.imdbID).toEqual(omdbApiEpisode.imdbid);
+        expect(parsed.imdbID).toEqual('t' + omdbApiEpisode.imdbid);
         expect(parsed.poster).toEqual('https://m.media-amazon.com/images/M/MV5BMTc0NDc2Nzg0MV5BMl5BanBnXkFtZTgwMzA2MzM2MDE@._V1_SX300.jpg');
         expect(parsed.rated).toEqual('TV-MA');
         expect(parsed.rating).toEqual(8.6);
@@ -465,7 +464,6 @@ describe('Data mapper', () => {
         expect(parsed.released).toEqual('2013-11-23T11:00:00.000Z');
         expect(parsed.runtime).toEqual('57 min');
         expect(parsed.season).toEqual(omdbApiEpisode.season);
-        expect(parsed.seriesIMDbID).toEqual('t' + omdbApiEpisode.seriesid);
         expect(parsed.title).toEqual(omdbApiEpisode.title);
         expect(parsed.type).toEqual('episode');
         expect(parsed.votes).toEqual('2211');
