@@ -65,7 +65,7 @@ interface CaseInsensitiveSearchQuery {
   startYear?: string;
 }
 
-interface TmdbIdentifyResponse{
+interface TmdbIdentifyResponse {
   mediaType: string;
   tmdbID: number;
   seasonNumber?: number;

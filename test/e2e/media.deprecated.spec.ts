@@ -47,7 +47,6 @@ const theSimpsonsMetaData = {
 };
 const prisonBreakEpisodeMetadata = {
   osdbHash: 'aad16027e51ff49f',
-  seriesIMDbID: 'tt0455275',
   episode: '4',
   title: 'Cute Poison',
 };
@@ -323,7 +322,6 @@ describe('Media Metadata endpoints', () => {
       expect(episode).toHaveProperty('episode', '5');
       expect(episode).toHaveProperty('imdbID', 'tt2325080');
       expect(episode).toHaveProperty('season', '2');
-      expect(episode).toHaveProperty('seriesIMDbID', 'tt1796960');
       expect(episode).toHaveProperty('title', 'Q&A');
       expect(episode).toHaveProperty('type', 'episode');
       expect(episode).toHaveProperty('year', '2012');
@@ -379,7 +377,6 @@ describe('Media Metadata endpoints', () => {
       expect(episode).toHaveProperty('episode', '5');
       expect(episode).toHaveProperty('imdbID', 'tt2325080');
       expect(episode).toHaveProperty('season', '2');
-      expect(episode).toHaveProperty('seriesIMDbID', 'tt1796960');
       expect(episode).toHaveProperty('title', 'Q&A');
       expect(episode).toHaveProperty('type', 'episode');
       expect(episode).toHaveProperty('year', '2012');

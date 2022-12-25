@@ -270,7 +270,6 @@ const omdbEpisodeMap = {
   'released': 'released',
   'runtime': 'runtime',
   'season': 'season',
-  'seriesid': 'seriesIMDbID',
   'title': 'title',
   'type': 'type',
   'votes': 'votes',
