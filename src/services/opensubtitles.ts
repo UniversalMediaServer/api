@@ -109,6 +109,7 @@ export interface QueueItem {
   promiseGenerator: () => Promise<AxiosResponse>
   // eslint-disable-next-line
   resolve: (value: any) => void
+  // eslint-disable-next-line
   reject: (value: any) => void
 }
 
