@@ -256,7 +256,7 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
       openSubtitlesMetadata = await externalAPIHelper.getFromOpenSubtitles(osQuery, validation);
       imdbIdToSearch = imdbIdToSearch || openSubtitlesMetadata?.imdbID;
       if (!title && !imdbID && !episodeNumbers && openSubtitlesMetadata?.type === 'episode') {
-        //here we now the osdbHash is for an episode and episode is not set
+        //here we know the osdbHash is for an episode and episode is not set
         episodeNumbers = [ Number(openSubtitlesMetadata.episode) ];
         seasonNumber = Number(openSubtitlesMetadata.season);
       }
