@@ -270,8 +270,13 @@ nock('https://www.omdbapi.com', { 'encodedQueryParams': true })
   .query({"apikey":"foo","r":"json","plot":"full","i":"tt1176477"})
   .reply(200, {"Title":"The Boiling Rock: Part 1","Year":"2008","Rated":"TV-Y7","Released":"16 Jul 2008","Season":"3","Episode":"14","Runtime":"23 min","Genre":"Animation, Action, Adventure","Director":"Joaquim Dos Santos","Writer":"Michael Dante DiMartino, Bryan Konietzko, May Chan","Actors":"Zach Tyler Eisen, Mae Whitman, Jack De Sena","Plot":"Sokka and Zuko head to the Fire Nation's most heavily guarded prison, the Boiling Rock, in hopes of finding and breaking out the captured invasion force.","Language":"N/A","Country":"N/A","Awards":"N/A","Poster":"https://m.media-amazon.com/images/M/MV5BNGQwMDNiNDMtMmJmNC00NWJjLThhN2EtYjAxNTczZDQ1Nzc1XkEyXkFqcGdeQXVyNTkyMjE3NDU@._V1_SX300.jpg","Ratings":[{"Source":"Internet Movie Database","Value":"8.6/10"}],"Metascore":"N/A","imdbRating":"8.6","imdbVotes":"3592","imdbID":"tt1176477","seriesID":"tt1176477","Type":"episode","Response":"True"});
 
-// Missing info
+nock('https://www.omdbapi.com', { 'encodedQueryParams': true })
+  .persist()
+  .get('/')
+  .query({"apikey":"foo","r":"json","plot":"full","i":"tt1856101"})
+  .reply(200, {"Title":"Blade Runner 2049","Year":"2017","Rated":"R","Released":"06 Oct 2017","Runtime":"164 min","Genre":"Action, Drama, Mystery","Director":"Denis Villeneuve","Writer":"Hampton Fancher, Michael Green, Philip K. Dick","Actors":"Harrison Ford, Ryan Gosling, Ana de Armas","Plot":"Thirty years after the events of Blade Runner (1982), a new Blade Runner, L.A.P.D. Officer \"K\" (Ryan Gosling), unearths a long-buried secret that has the potential to plunge what's left of society into chaos. K's discovery leads him on a quest to find Rick Deckard (Harrison Ford), a former L.A.P.D. Blade Runner, who has been missing for thirty years.","Language":"English, Finnish, Japanese, Hungarian, Russian, Somali, Spanish","Country":"United States, United Kingdom, Canada, Spain","Awards":"Won 2 Oscars. 100 wins & 165 nominations total","Poster":"https://m.media-amazon.com/images/M/MV5BNzA1Njg4NzYxOV5BMl5BanBnXkFtZTgwODk5NjU3MzI@._V1_SX300.jpg","Ratings":[{"Source":"Internet Movie Database","Value":"8.0/10"},{"Source":"Rotten Tomatoes","Value":"88%"},{"Source":"Metacritic","Value":"81/100"}],"Metascore":"81","imdbRating":"8.0","imdbVotes":"575,480","imdbID":"tt1856101","Type":"movie","DVD":"16 Jan 2018","BoxOffice":"$92,071,675","Production":"N/A","Website":"N/A","Response":"True"});
 
+// Missing info
 nock('https://www.omdbapi.com', { 'encodedQueryParams': true })
   .persist()
   .get('/')
