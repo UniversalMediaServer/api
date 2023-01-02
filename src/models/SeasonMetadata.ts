@@ -1,28 +1,10 @@
-import * as mongoose from 'mongoose';
-import { Schema, Model } from 'mongoose';
-import { CreditsResponse, TvSeasonImagesResponse, TvSeasonExternalIdsResponse } from 'moviedb-promise/dist/request-types';
-
-export interface SeasonMetadataInterface {
-  airDate?: string;
-  credits?: CreditsResponse;
-  externalIDs?: TvSeasonExternalIdsResponse;
-  images?: TvSeasonImagesResponse;
-  name?: string;
-  overview?: string;
-  posterRelativePath?: string;
-  seasonNumber: number;
-  tmdbID?: number;
-  tmdbTvID?: number;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface SeasonMetadataModel extends Model<SeasonMetadataInterface> {}
+import mongoose, { Schema, InferSchemaType } from 'mongoose';
 
 const SeasonMetadataSchema: Schema = new Schema({
   airDate: { type: String },
-  credits: { type: Array },
-  externalIDs: { type: Array },
-  images: { type: Array },
+  credits: { type: Object },
+  externalIDs: { type: Object },
+  images: { type: Object },
   name: { type: String },
   overview: { type: String },
   posterRelativePath: { type: String },
@@ -35,14 +17,9 @@ const SeasonMetadataSchema: Schema = new Schema({
   versionKey: false,
 });
 
-SeasonMetadataSchema.virtual('imdburl').get(function() {
-  return `https://www.imdb.com/title/${this.imdbID}`;
-});
+export type SeasonMetadataInterface = InferSchemaType<typeof SeasonMetadataSchema>;
 
-// this allows us to use MongoDB Full text search https://docs.mongodb.com/manual/reference/operator/query/text/#op._S_text
-SeasonMetadataSchema.index({ 'title': 'text' });
-
-const SeasonMetadata = mongoose.model<SeasonMetadataInterface, SeasonMetadataModel>('SeasonMetadata', SeasonMetadataSchema);
+const SeasonMetadata = mongoose.model('SeasonMetadata', SeasonMetadataSchema);
 
 SeasonMetadata.on('index', function(err) {
   if (err) {

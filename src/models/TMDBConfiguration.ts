@@ -1,14 +1,6 @@
-import * as mongoose from 'mongoose';
-import { Schema } from 'mongoose';
+import mongoose, { InferSchemaType, Schema } from 'mongoose';
 
 const THREE_DAYS_IN_SECONDS = 259200;
-
-export interface TMDBConfigurationInterface {
-  imageBaseURL: string;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface TMDBConfigurationModel extends mongoose.Model<TMDBConfigurationInterface> {}
 
 const TMDBConfigurationSchema: Schema = new Schema({
   imageBaseURL: { type: String, required: true },
@@ -23,5 +15,8 @@ const TMDBConfigurationSchema: Schema = new Schema({
   versionKey: false,
 });
 
-const TMDBConfiguration = mongoose.model<TMDBConfigurationInterface, TMDBConfigurationModel>('TMDBConfiguration', TMDBConfigurationSchema);
+export type TMDBConfigurationInterface = InferSchemaType<typeof TMDBConfigurationSchema>;
+
+const TMDBConfiguration = mongoose.model('TMDBConfiguration', TMDBConfigurationSchema);
+
 export default TMDBConfiguration;

@@ -2,10 +2,13 @@
 import * as inquirer from 'inquirer';
 import axios from 'axios';
 import connect from '../src/models/connection';
-import MediaMetadata from '../src/models/MediaMetadata';
-import SeriesMetadata from '../src/models/SeriesMetadata';
-import FailedLookups from '../src/models/FailedLookups';
+import CollectionMetadata from '../src/models/CollectionMetadata';
 import EpisodeProcessing from '../src/models/EpisodeProcessing';
+import FailedLookups from '../src/models/FailedLookups';
+import LocalizeMetadata from '../src/models/LocalizeMetadata';
+import MediaMetadata from '../src/models/MediaMetadata';
+import SeasonMetadata from '../src/models/SeasonMetadata';
+import SeriesMetadata from '../src/models/SeriesMetadata';
 
 const db = process.env.MONGO_URL;
 
@@ -16,7 +19,7 @@ const client = axios.create({
     'X-Auth-Key': process.env.CF_API_KEY,
   },
 });
- 
+
 inquirer
   .prompt([
     {
@@ -26,12 +29,24 @@ inquirer
       choices: [
         new inquirer.Separator('MongoDB Collections'),
         {
-          name: 'Series Metadata',
-          value: 'series_metadata',
+          name: 'Collection Metadata',
+          value: 'collection_metadata',
         },
         {
           name: 'Media Metadata',
           value: 'media_metadata',
+        },
+        {
+          name: 'Series Metadata',
+          value: 'series_metadata',
+        },
+        {
+          name: 'Season Metadata',
+          value: 'season_metadata',
+        },
+        {
+          name: 'Localize Metadata',
+          value: 'localize_metadata',
         },
         {
           name: 'Failed Lookups',
@@ -55,11 +70,20 @@ inquirer
     const purgeItems = answers['purge_items'];
     const promises = [];
 
-    if (purgeItems.includes('series_metadata')) {
-      promises.push(SeriesMetadata.deleteMany());
+    if (purgeItems.includes('collection_metadata')) {
+      promises.push(CollectionMetadata.deleteMany());
     }
     if (purgeItems.includes('media_metadata')) {
       promises.push(MediaMetadata.deleteMany());
+    }
+    if (purgeItems.includes('series_metadata')) {
+      promises.push(SeriesMetadata.deleteMany());
+    }
+    if (purgeItems.includes('season_metadata')) {
+      promises.push(SeasonMetadata.deleteMany());
+    }
+    if (purgeItems.includes('localize_metadata')) {
+      promises.push(LocalizeMetadata.deleteMany());
     }
     if (purgeItems.includes('failed_lookups')) {
       promises.push(FailedLookups.deleteMany());

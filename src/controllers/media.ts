@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { LeanDocument } from 'mongoose';
 
 import { ExternalAPIError, MediaNotFoundError, ValidationError } from '../helpers/customErrors';
+import { CollectionMetadataInterface } from '../models/CollectionMetadata';
 import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
 import LocalizeMetadata, { LocalizeMetadataInterface } from '../models/LocalizeMetadata';
 import MediaMetadata, { MediaMetadataInterface, MediaMetadataInterfaceDocument } from '../models/MediaMetadata';
@@ -36,6 +37,11 @@ export const addSearchMatchByIMDbID = async(imdbID: string, title: string): Prom
 export const getLocalize = async(ctx: ParameterizedContext): Promise<Partial<LocalizeMetadataInterface>> => {
   const { language, mediaType, imdbID, tmdbID }: UmsQueryParams = ctx.query;
   const { episode, season }: UmsQueryParams = ctx.query;
+  let seasonNumber: number|undefined;
+  if (season) {
+    seasonNumber = Number(season);
+  }
+
   if (!language || !mediaType || !(imdbID || tmdbID)) {
     throw new ValidationError('Language, media type and either IMDb ID or TMDB ID are required');
   }
@@ -43,13 +49,16 @@ export const getLocalize = async(ctx: ParameterizedContext): Promise<Partial<Loc
     throw new ValidationError('Language must have a minimum length of 2 and follow the pattern: ([a-z]{2})-([A-Z]{2})');
   }
 
-  if (mediaType!=='movie' && mediaType!=='tv' && mediaType!=='tv_season' && mediaType!=='tv_episode') {
+  if (mediaType!=='collection' && mediaType!=='movie' && mediaType!=='tv' && mediaType!=='tv_season' && mediaType!=='tv_episode') {
     throw new ValidationError('Media type' + mediaType + ' is not valid');
   }
-  if (mediaType==='tv_season' && tmdbID && !season) {
+  if (mediaType==='collection' && !tmdbID) {
+    throw new ValidationError('TMDB Id is required for collection media');
+  }
+  if (mediaType==='tv_season' && tmdbID && (!seasonNumber || isNaN(seasonNumber))) {
     throw new ValidationError('Season number is required for season media');
   }
-  if (mediaType==='tv_episode' && tmdbID && !(season && episode)) {
+  if (mediaType==='tv_episode' && tmdbID && (!seasonNumber || isNaN(seasonNumber)|| !episode)) {
     throw new ValidationError('Episode number and season number are required for episode media');
   }
 
@@ -59,10 +68,6 @@ export const getLocalize = async(ctx: ParameterizedContext): Promise<Partial<Loc
     return null;
   }
 
-  let seasonNumber = null;
-  if (season) {
-    seasonNumber = Number(season);
-  }
   let episodeNumber = null;
   if (episode) {
     const episodes = episode.split('-');
@@ -98,13 +103,14 @@ export const getLocalize = async(ctx: ParameterizedContext): Promise<Partial<Loc
 };
 
 export const getSeriesV2 = async(ctx: ParameterizedContext): Promise<Partial<SeriesMetadataInterface> | LeanDocument<MediaMetadataInterfaceDocument>> => {
-  const { imdbID, title, year, language }: UmsQueryParams = ctx.query;
+  const { imdbID, title, year }: UmsQueryParams = ctx.query;
+  let { language }: UmsQueryParams = ctx.query;
   if (!title && !imdbID) {
     throw new ValidationError('Either IMDb ID or title required');
   }
 
   if (language && !language.match(/^[a-z]{2}(-[A-Z]{2})?$/)) {
-    throw new ValidationError('Language must have a minimum length of 2 and follow the pattern: ([a-z]{2})-([A-Z]{2})');
+    language = undefined;
   }
 
   try {
@@ -128,30 +134,32 @@ export const getSeriesV2 = async(ctx: ParameterizedContext): Promise<Partial<Ser
  * we use that has that functionality.
  */
 export const getSeason = async(ctx: ParameterizedContext): Promise<Partial<SeasonMetadataInterface>> => {
+  const { season, title, year }: UmsQueryParams = ctx.query;
+  let { tmdbID, language }: UmsQueryParams = ctx.query
+  if (!tmdbID && !title) {
+    throw new ValidationError('title or tmdbID is required');
+  }
+  if (!season) {
+    throw new ValidationError('season is required');
+  }
+  const seasonNumber = Number(season);
+  if (isNaN(seasonNumber)) {
+    throw new ValidationError('season as a number is required');
+  }
+  if (language && !language.match(/^[a-z]{2}(-[A-Z]{2})?$/)) {
+    language = undefined;
+  }
+
   try {
-    const { tmdbID, season, title, language, year }: UmsQueryParams = ctx.query;
-    if (!tmdbID && !title) {
-      throw new ValidationError('title or tmdbID is required');
-    }
-    if (!season) {
-      throw new ValidationError('season is required');
-    }
-    if (language && !language.match(/^[a-z]{2}(-[A-Z]{2})?$/)) {
-      throw new ValidationError('Language must have a minimum length of 2 and follow the pattern: ([a-z]{2})-([A-Z]{2})');
-    }
-
-    const seasonNumber = Number(season);
-    let tmdbTvID = tmdbID;
-
-    if (!tmdbTvID) {
+    if (!tmdbID) {
       const seriesMetadata = await externalAPIHelper.getSeriesMetadata(null, title, language, year);
       if (!seriesMetadata?.tmdbID) {
         throw new MediaNotFoundError();
       }
-      tmdbTvID = seriesMetadata.tmdbID;
+      tmdbID = seriesMetadata.tmdbID;
     }
 
-    const seasonMetadata = await externalAPIHelper.getSeasonMetadata(tmdbTvID, seasonNumber);
+    const seasonMetadata = await externalAPIHelper.getSeasonMetadata(tmdbID, seasonNumber);
     if (_.isEmpty(seasonMetadata)) {
       throw new MediaNotFoundError();
     }
@@ -165,9 +173,35 @@ export const getSeason = async(ctx: ParameterizedContext): Promise<Partial<Seaso
   }
 };
 
+/*
+ * Gets collection information from TMDB since it's the only API
+ * we use that has that functionality.
+ */
+export const getCollection = async(ctx: ParameterizedContext): Promise<Partial<CollectionMetadataInterface>> => {
+  const { tmdbID }: UmsQueryParams = ctx.query;
+  if (!tmdbID) {
+    throw new ValidationError('tmdbID is required');
+  }
+
+  try {
+    const collectionMetadata = await externalAPIHelper.getCollectionMetadata(tmdbID);
+    if (_.isEmpty(collectionMetadata)) {
+      throw new MediaNotFoundError();
+    }
+    return ctx.body = collectionMetadata;
+  } catch (err) {
+    // log unexpected errors
+    if (!(err instanceof MediaNotFoundError)) {
+      console.error(err);
+    }
+    throw new MediaNotFoundError();
+  }
+};
+
 export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadataInterface> => {
-  const { title, osdbHash, imdbID, language }: UmsQueryParams = ctx.query;
+  const { title, osdbHash, imdbID }: UmsQueryParams = ctx.query;
   const { episode, season, year, filebytesize }: UmsQueryParams = ctx.query;
+  let { language }: UmsQueryParams = ctx.query;
   const [yearNumber, filebytesizeNumber] = [year, filebytesize].map(param => param ? Number(param) : null);
   let seasonNumber = Number(season);
   let episodeNumbers = null;
@@ -185,7 +219,7 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
   }
 
   if (language && !language.match(/^[a-z]{2}(-[A-Z]{2})?$/)) {
-    throw new ValidationError('Language must have a minimum length of 2 and follow the pattern: ([a-z]{2})-([A-Z]{2})');
+    language = undefined;
   }
 
   const query = [];
@@ -202,7 +236,7 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
     failedQuery.push({ imdbId: imdbIdToSearch });
   }
 
-  let searchMatch;
+  let searchMatch: string;
   if (title) {
     searchMatch = language ? language + '@' + title : title;
     const titleQuery: GetVideoFilter = { searchMatches: { $in: [searchMatch] } };

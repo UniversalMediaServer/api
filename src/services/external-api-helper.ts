@@ -8,12 +8,13 @@ import osAPI from './opensubtitles';
 import omdbAPI from './omdb-api';
 import { tmdb } from './tmdb-api';
 import { ValidationError } from '../helpers/customErrors';
+import CollectionMetadata, { CollectionMetadataInterface } from '../models/CollectionMetadata';
 import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
 import LocalizeMetadata, { LocalizeMetadataInterface } from '../models/LocalizeMetadata';
 import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
+import SeasonMetadata, { SeasonMetadataInterface } from '../models/SeasonMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import { mapper } from '../utils/data-mapper';
-import SeasonMetadata, { SeasonMetadataInterface } from '../models/SeasonMetadata';
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
 
@@ -118,7 +119,7 @@ export const getFromOMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
     return null;
   }
 
-  let metadata;
+  let metadata: any;
   if (isExpectingTVEpisode || imdbData.type === 'episode') {
     if (imdbData.type === 'episode') {
       metadata = mapper.parseOMDbAPIEpisodeResponse(imdbData);
@@ -176,7 +177,7 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, language
   if (!imdbID && !title) {
     throw new Error('Either IMDb ID or title required');
   }
-  let searchMatch;
+  let searchMatch: string;
   if (title) {
     searchMatch = language ? language + '@' + title : title;
   }
@@ -402,6 +403,47 @@ export const getSeasonMetadata = async(tmdbTvID?: number, seasonNumber?: number)
 };
 
 /**
+ * Gets collection metadata.
+ * Performs API lookups if we don't already have it.
+ *
+ * @param [tmdbID] the TMDB ID of the collection
+ * @returns collection metadata
+ */
+export const getCollectionMetadata = async(tmdbID?: number): Promise<Partial<CollectionMetadataInterface> | null> => {
+  if (!tmdbID) {
+    throw new Error('tmdbID is required');
+  }
+
+  // Return early for previously-failed lookups
+  const failedLookupQuery: FailedLookupsInterface = { tmdbID: tmdbID, type: 'collection' };
+  if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
+    return null;
+  }
+
+  // Return any previous match
+  const collectionMetadata = await CollectionMetadata.findOne({ tmdbID }, null, { lean: true }).exec();
+  if (collectionMetadata) {
+    return collectionMetadata;
+  }
+
+  // Start TMDB lookups
+  const collectionRequest = {
+    append_to_response: 'images',
+    id: tmdbID,
+  };
+
+  const tmdbResponse = await tmdb.collectionInfo(collectionRequest);
+  if (tmdbResponse) {
+    const metadata = mapper.parseTMDBAPICollectionResponse(tmdbResponse);
+    return await CollectionMetadata.create(metadata);
+  } else {
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+  }
+  return null;
+};
+
+/**
  * Attempts a query to the TMDB API and standardizes the response
  * before returning.
  *
@@ -420,7 +462,7 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, language?: stri
   const isExpectingTVEpisode = Boolean(episodeNumbers);
   const yearString = year ? year.toString() : null;
 
-  let metadata;
+  let metadata: any;
   if (isExpectingTVEpisode) {
     const episodeIMDbID = movieOrEpisodeIMDbID;
     let seriesTMDBID: string | number;
@@ -524,13 +566,19 @@ export const getLocalizedMetadata = async(language?: string, mediaType?: string,
   if (!language || !mediaType || !(imdbID || tmdbID)) {
     throw new ValidationError('Language, media type and either IMDb ID or TMDB Id are required');
   }
+  if (!language.match(/^[a-z]{2}(-[A-Z]{2})?$/)) {
+    throw new ValidationError('Language must have a minimum length of 2 and follow the pattern: ([a-z]{2})-([A-Z]{2})');
+  }
   if (mediaType==='tv_season' && tmdbID && !seasonNumber) {
     throw new ValidationError('Season number is required for season media');
   }
   if (mediaType==='tv_episode' && tmdbID && !(seasonNumber && episodeNumber)) {
     throw new ValidationError('Episode number and season number are required for episode media');
   }
-  if (mediaType!=='movie' && mediaType!=='tv' && mediaType!=='tv_season' && mediaType!=='tv_episode') {
+  if (mediaType==='collection' && !tmdbID) {
+    throw new ValidationError('TMDB Id is required for collection media');
+  }
+  if (mediaType!=='movie' && mediaType!=='tv' && mediaType!=='tv_season' && mediaType!=='tv_episode' && mediaType!=='collection') {
     throw new ValidationError('Media type' + mediaType + ' is not valid');
   }
 
@@ -558,8 +606,14 @@ export const getLocalizedMetadata = async(language?: string, mediaType?: string,
     return null;
   }
   // Start TMDB lookups
-  let tmdbData;
+  let tmdbData: any;
   switch (mediaType) {
+    case 'collection':
+      tmdbData = await tmdb.collectionInfo({
+        id: tmdbID,
+        language: language,
+      });
+      break;
     case 'movie':
       tmdbData = await tmdb.movieInfo({
         id: tmdbID,

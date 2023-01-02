@@ -1,7 +1,10 @@
-import * as  mongoose from 'mongoose';
 import * as _ from 'lodash';
+import * as  mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import MediaMetadataModel from '../../src/models/MediaMetadata';
+
+import MediaMetadata from '../../src/models/MediaMetadata';
+
+let mongod: MongoMemoryServer;
 
 const interstellarMetaData = {
   actors: ['Matthew McConaughey', 'Anne Hathaway', 'Jessica Chastain'],
@@ -17,8 +20,6 @@ const interstellarMetaData = {
   year: '2014',
 };
 
-let mongod;
-
 describe('Media Metadata Model', () => {
   beforeAll(async() => {
     mongod = await MongoMemoryServer.create();
@@ -28,7 +29,7 @@ describe('Media Metadata Model', () => {
   });
 
   beforeEach(async() => {
-    await MediaMetadataModel.deleteMany({});
+    await MediaMetadata.deleteMany({});
   });
 
   afterAll(async() => {
@@ -36,7 +37,7 @@ describe('Media Metadata Model', () => {
   });
 
   it('should create Media Metadata record successfully', async() => {
-    const savedMedia = await MediaMetadataModel.create(interstellarMetaData);
+    const savedMedia = await MediaMetadata.create(interstellarMetaData);
     expect(savedMedia._id).toBeDefined();
     expect(savedMedia.title).toBe('Interstellar');
     expect(savedMedia.osdbHash).toBe('8e245d9679d31e12');
@@ -49,7 +50,7 @@ describe('Media Metadata Model', () => {
     doc.type = 'movie';
     let err: Error;
     try {
-      await MediaMetadataModel.create(doc);
+      await MediaMetadata.create(doc);
     } catch (e) {
       err = e;
     }
@@ -59,7 +60,7 @@ describe('Media Metadata Model', () => {
   it('should allow empty title in an episode', async() => {
     const doc = _.cloneDeep(interstellarMetaData);
     delete doc.title;
-    const response = await MediaMetadataModel.create(doc);
+    const response = await MediaMetadata.create(doc);
     expect(response.year).toBe('2014');
   });
 
@@ -68,7 +69,7 @@ describe('Media Metadata Model', () => {
     delete doc.season;
     let err: Error;
     try {
-      await MediaMetadataModel.create(doc);
+      await MediaMetadata.create(doc);
     } catch (e) {
       err = e;
     }
@@ -77,7 +78,7 @@ describe('Media Metadata Model', () => {
     let err2: Error;
     doc.type = 'movie';
     try {
-      await MediaMetadataModel.create(doc);
+      await MediaMetadata.create(doc);
     } catch (e) {
       err2 = e;
     }
@@ -89,7 +90,7 @@ describe('Media Metadata Model', () => {
     doc.osdbHash = 'a3e8hm1';
     let err: Error;
     try {
-      await MediaMetadataModel.create(doc);
+      await MediaMetadata.create(doc);
     } catch (e) {
       err = e;
     }
@@ -99,44 +100,44 @@ describe('Media Metadata Model', () => {
   it('should not store dummy episode titles', async() => {
     const doc = _.cloneDeep(interstellarMetaData);
     doc.title = 'Episode #51';
-    const record = await MediaMetadataModel.create(doc);
+    const record = await MediaMetadata.create(doc);
     expect(record.title).toBeUndefined();
   });
 
   it('should store real episode titles', async() => {
     const doc = _.cloneDeep(interstellarMetaData);
-    const record = await MediaMetadataModel.create(doc);
+    const record = await MediaMetadata.create(doc);
     expect(record).toHaveProperty('title', 'Interstellar');
   });
 
   describe('Virtuals', () => {
     it('should return imdburl', async() => {
       const doc = Object.assign({}, interstellarMetaData);
-      const record = await MediaMetadataModel.create(doc);
+      const record = await MediaMetadata.create(doc);
       expect(record).toHaveProperty('imdburl', 'https://www.imdb.com/title/tt0816692');
     });
   });
 
   describe('Indexes', () => {
     it('should use index when find by osdbHash', async() => {
-      await MediaMetadataModel.create(interstellarMetaData);
-      const response = await MediaMetadataModel.findOne({ osdbHash: interstellarMetaData.osdbHash }, null, { explain: true }).exec();
+      await MediaMetadata.create(interstellarMetaData);
+      const response = await MediaMetadata.findOne({ osdbHash: interstellarMetaData.osdbHash }, null, { explain: true }).exec();
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'inputStage', 'stage'])).toEqual('IXSCAN');
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'stage'])).toEqual('FETCH');
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'stage'])).toEqual('PROJECTION_DEFAULT');
     });
 
     it('should use index when find by title', async() => {
-      await MediaMetadataModel.create(interstellarMetaData);
-      const response = await MediaMetadataModel.findOne({ title: interstellarMetaData.title }, null, { explain: true }).exec();
+      await MediaMetadata.create(interstellarMetaData);
+      const response = await MediaMetadata.findOne({ title: interstellarMetaData.title }, null, { explain: true }).exec();
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'inputStage', 'stage'])).toEqual('IXSCAN');
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'stage'])).toEqual('FETCH');
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'stage'])).toEqual('PROJECTION_DEFAULT');
     });
 
     it('should use index when find by searchMatches', async() => {
-      await MediaMetadataModel.create(interstellarMetaData);
-      const response = await MediaMetadataModel.findOne({ searchMatches: { $in: [interstellarMetaData.searchMatches[0]] } }, null, { explain: true }).exec();
+      await MediaMetadata.create(interstellarMetaData);
+      const response = await MediaMetadata.findOne({ searchMatches: { $in: [interstellarMetaData.searchMatches[0]] } }, null, { explain: true }).exec();
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'inputStage', 'stage'])).toEqual('IXSCAN');
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'stage'])).toEqual('FETCH');
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'stage'])).toEqual('PROJECTION_DEFAULT');

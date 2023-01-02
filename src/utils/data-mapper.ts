@@ -1,10 +1,12 @@
-import * as objectMapper from 'object-mapper';
 import * as _ from 'lodash';
+import { CollectionInfoResponse, Genre } from 'moviedb-promise';
+import * as objectMapper from 'object-mapper';
+
+import { CollectionMetadataInterface } from '../models/CollectionMetadata';
 import { LocalizeMetadataInterface } from '../models/LocalizeMetadata';
 import { MediaMetadataInterface } from '../models/MediaMetadata';
-import { SeriesMetadataInterface } from '../models/SeriesMetadata';
-import { Genre } from 'moviedb-promise/dist/types';
 import { SeasonMetadataInterface } from '../models/SeasonMetadata';
+import { SeriesMetadataInterface } from '../models/SeriesMetadata';
 
 const openSubtitlesMovieMap = {
   'metadata.cast': [
@@ -81,7 +83,7 @@ const tmdbEpisodeMap = {
       key: 'year',
       transform: (releaseDate: string): string => {
         // Store the year part of the date
-        return releaseDate ? releaseDate.substr(0, 4) : null;
+        return releaseDate ? releaseDate.substring(0, 4) : null;
       },
     },
   ],
@@ -149,7 +151,7 @@ const tmdbSeriesMap = {
       key: 'year',
       transform: (releaseDate: string): string => {
         // Store the year part of the date
-        return releaseDate ? releaseDate.substr(0, 4) : null;
+        return releaseDate ? releaseDate.substring(0, 4) : null;
       },
     },
     { key: 'startYear' },
@@ -190,7 +192,22 @@ const tmdbSeriesMap = {
   ],
 };
 
+const tmdbCollectionMap = {
+  'id': 'tmdbID',
+  'images': 'images',
+  'name': 'name',
+  'overview': 'overview',
+  'poster_path': 'posterRelativePath',
+  'parts': {
+    key: 'movieTmdbIds?',
+    transform: (parts: Array<{id?: number}>): Array<number> => {
+      return parts.map(part => part.id);
+    },
+  },
+}
+
 const tmdbMovieMap = {
+  'belongs_to_collection.id': 'collectionTmdbID',
   'budget': 'budget',
   'credits': 'credits',
   'external_ids': 'externalIDs',
@@ -214,7 +231,7 @@ const tmdbMovieMap = {
       key: 'year',
       transform: (releaseDate: string): string => {
         // Store the year part of the date
-        return releaseDate ? releaseDate.substr(0, 4) : null;
+        return releaseDate ? releaseDate.substring(0, 4) : null;
       },
     },
   ],
@@ -461,6 +478,11 @@ class UmsDataMapper {
 
   parseTMDBAPISeriesResponse(tmdbData): Partial<SeriesMetadataInterface> {
     const mappedData = objectMapper.merge(tmdbData, tmdbSeriesMap);
+    return filterUnwantedValues(mappedData);
+  }
+
+  parseTMDBAPICollectionResponse(tmdbData: CollectionInfoResponse): Partial<CollectionMetadataInterface> {
+    const mappedData = objectMapper.merge(tmdbData, tmdbCollectionMap);
     return filterUnwantedValues(mappedData);
   }
 

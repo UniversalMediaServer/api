@@ -10,6 +10,7 @@ export interface MediaMetadataInterface {
   awards?: string;
   boxoffice?: string;
   budget?: number;
+  collectionTmdbID?: number;
   country?: string;
   credits?: CreditsResponse | EpisodeCreditsResponse;
   directors?: Array<string>;
@@ -61,6 +62,7 @@ const MediaMetadataSchema: Schema = new Schema({
   awards: { type: String },
   boxoffice: { type: String },
   budget: { type: Number },
+  collectionTmdbID: { type: Number },
   country: { type: String },
   createdAt: {
     type: Date,

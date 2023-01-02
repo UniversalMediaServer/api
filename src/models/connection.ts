@@ -1,5 +1,5 @@
-import * as mongoose from 'mongoose';
-import { Mongoose } from 'mongoose';
+import mongoose, { Mongoose } from 'mongoose';
+
 mongoose.set('bufferCommands', false);
 mongoose.set('strictQuery', true);
 mongoose.set('strict', 'throw')

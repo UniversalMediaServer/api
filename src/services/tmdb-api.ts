@@ -1,9 +1,10 @@
 import * as _ from 'lodash';
 import { MovieDb } from 'moviedb-promise';
-import { ConfigurationResponse, Episode, EpisodeRequest, FindRequest, FindResponse, IdAppendToResponseRequest, MovieResultsResponse, SearchMovieRequest, SearchTvRequest, ShowResponse, TvResultsResponse, TvSeasonRequest, TvSeasonResponse } from 'moviedb-promise/dist/request-types';
+import { CollectionInfoResponse, CollectionRequest, ConfigurationResponse, Episode, EpisodeRequest, FindRequest, FindResponse, IdAppendToResponseRequest, MovieResultsResponse, SearchMovieRequest, SearchTvRequest, ShowResponse, TvResultsResponse, TvSeasonRequest, TvSeasonResponse } from 'moviedb-promise/dist/request-types';
 import { ExternalAPIError } from '../helpers/customErrors';
 import * as client from 'prom-client';
 
+const collectionInfoCounter = new client.Counter({ name: 'tmdb_api_collectionInfo', help: 'Counter of collectionInfo requests to tmdb api' });
 const configCounter = new client.Counter({ name: 'tmdb_api_config', help: 'Counter of configuration requests to tmdb api' });
 const episodeInfoCounter = new client.Counter({ name: 'tmdb_api_episodeInfo', help: 'Counter of episodeInfo requests to tmdb api' });
 const findCounter = new client.Counter({ name: 'tmdb_api_find', help: 'Counter of find requests to tmdb api' });
@@ -30,6 +31,15 @@ const handleError = (err: Error): void => {
   }
   if (responseStatusString && /^5/.exec(responseStatusString)) {
     throw new ExternalAPIError('TMDB API is offline');
+  }
+};
+
+tmdb.collectionInfo = async(params?: CollectionRequest): Promise<CollectionInfoResponse> => {
+  collectionInfoCounter.inc();
+  try {
+    return await originalModule.collectionInfo(params);
+  } catch (err) {
+    handleError(err);
   }
 };
 
