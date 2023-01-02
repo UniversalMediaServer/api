@@ -4,7 +4,7 @@ const CollectionMetadataSchema: Schema = new Schema({
   images: { type: Array },
   name: { type: String },
   overview: { type: String },
-  movieTmdbIds: { type: Array<Number> },
+  movieTmdbIds: { type: Array<number> },
   posterRelativePath: { type: String },
   tmdbID: { type: Number, index: true, required: true },
 }, {
