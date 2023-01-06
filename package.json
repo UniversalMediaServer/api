@@ -59,7 +59,7 @@
     "opensubtitles-api": "https://github.com/UniversalMediaServer/opensubtitles-api#94e2339b2e38533e518e6556f49b65e541bbe9e3",
     "pm2": "5.2.2",
     "pm2-cluster-prom": "2.1.0",
-    "prom-client": "14.1.0",
+    "prom-client": "14.1.1",
     "ts-node": "10.9.1"
   },
   "devDependencies": {
