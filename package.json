@@ -38,6 +38,21 @@
       "ecmaVersion": 2021,
       "project": "./tsconfig.json",
       "sourceType": "module"
+    },
+    "rules": {
+      "array-bracket-spacing": "error",
+      "arrow-spacing": "error",
+      "block-spacing": "error",
+      "computed-property-spacing": "error",
+      "key-spacing": "error",
+      "keyword-spacing": "error",
+      "no-trailing-spaces": "error",
+      "no-whitespace-before-property": "error",
+      "object-curly-spacing": [ "error", "always" ],
+      "rest-spread-spacing": "error",
+      "semi-spacing": "error",
+      "space-before-blocks": "error",
+      "space-infix-ops": "error"
     }
   },
   "dependencies": {
