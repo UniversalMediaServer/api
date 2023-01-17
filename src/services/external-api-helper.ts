@@ -524,13 +524,13 @@ export const getLocalizedMetadata = async(language?: string, mediaType?: string,
   if (!language || !mediaType || !(imdbID || tmdbID)) {
     throw new ValidationError('Language, media type and either IMDb ID or TMDB Id are required');
   }
-  if (mediaType==='tv_season' && tmdbID && !seasonNumber) {
+  if (mediaType === 'tv_season' && tmdbID && !seasonNumber) {
     throw new ValidationError('Season number is required for season media');
   }
-  if (mediaType==='tv_episode' && tmdbID && !(seasonNumber && episodeNumber)) {
+  if (mediaType === 'tv_episode' && tmdbID && !(seasonNumber && episodeNumber)) {
     throw new ValidationError('Episode number and season number are required for episode media');
   }
-  if (mediaType!=='movie' && mediaType!=='tv' && mediaType!=='tv_season' && mediaType!=='tv_episode') {
+  if (mediaType !== 'movie' && mediaType !== 'tv' && mediaType !== 'tv_season' && mediaType !== 'tv_episode') {
     throw new ValidationError('Media type' + mediaType + ' is not valid');
   }
 
@@ -546,10 +546,10 @@ export const getLocalizedMetadata = async(language?: string, mediaType?: string,
       //if we are here, that mean the request was made without tmdbId.
       //udpate tmdbId as we do not saved it before.
       if (tmdbID) {
-        if (mediaType==='movie') {
-          MediaMetadata.updateOne({ imdbID }, { tmdbID:tmdbID }).exec();
-        } else if (mediaType==='tv_episode') {
-          MediaMetadata.updateOne({ imdbID }, { tmdbTvID:tmdbID }).exec();
+        if (mediaType === 'movie') {
+          MediaMetadata.updateOne({ imdbID }, { tmdbID: tmdbID }).exec();
+        } else if (mediaType === 'tv_episode') {
+          MediaMetadata.updateOne({ imdbID }, { tmdbTvID: tmdbID }).exec();
         }
       }
     }
@@ -577,7 +577,7 @@ export const getLocalizedMetadata = async(language?: string, mediaType?: string,
     case 'tv_season':
       tmdbData = await tmdb.seasonInfo({
         id: tmdbID,
-        season_number:seasonNumber,
+        season_number: seasonNumber,
         language: language,
         append_to_response: 'external_ids',
       });
@@ -585,8 +585,8 @@ export const getLocalizedMetadata = async(language?: string, mediaType?: string,
     case 'tv_episode':
       tmdbData = await tmdb.episodeInfo({
         id: tmdbID,
-        season_number:seasonNumber,
-        episode_number:episodeNumber,
+        season_number: seasonNumber,
+        episode_number: episodeNumber,
         language: language,
         append_to_response: 'external_ids',
       });
@@ -672,7 +672,7 @@ export const getFromOpenSubtitles = async(osQuery: OpenSubtitlesQuery, validatio
   if (!openSubtitlesResponse.metadata) {
     return null;
   }
-  
+
   if (validateMovieByYear || validateEpisodeBySeasonAndEpisode) {
     passedValidation = false;
     if (validateMovieByYear) {
