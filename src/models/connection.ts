@@ -27,10 +27,10 @@ export default (db: string): void => {
     connect().catch(error => console.error(error));
   });
 
-  process.on('SIGINT', function() {   
-    mongoose.connection.close(function() { 
-      console.log('Mongoose default connection disconnected through app termination'); 
-      process.exit(0); 
-    }); 
-  }); 
+  process.on('SIGINT', function() {
+    mongoose.connection.close(function() {
+      console.log('Mongoose default connection disconnected through app termination');
+      process.exit(0);
+    });
+  });
 };

@@ -49,20 +49,20 @@ export const getLocalize = async(ctx: ParameterizedContext): Promise<Partial<Loc
     throw new ValidationError('Language must have a minimum length of 2 and follow the pattern: ([a-z]{2})-([A-Z]{2})');
   }
 
-  if (mediaType!=='collection' && mediaType!=='movie' && mediaType!=='tv' && mediaType!=='tv_season' && mediaType!=='tv_episode') {
+  if (mediaType !== 'collection' && mediaType !== 'movie' && mediaType !== 'tv' && mediaType !== 'tv_season' && mediaType !== 'tv_episode') {
     throw new ValidationError('Media type' + mediaType + ' is not valid');
   }
-  if (mediaType==='collection' && !tmdbID) {
+  if (mediaType === 'collection' && !tmdbID) {
     throw new ValidationError('TMDB Id is required for collection media');
   }
-  if (mediaType==='tv_season' && tmdbID && (!seasonNumber || isNaN(seasonNumber))) {
+  if (mediaType === 'tv_season' && tmdbID && (!seasonNumber || isNaN(seasonNumber))) {
     throw new ValidationError('Season number is required for season media');
   }
-  if (mediaType==='tv_episode' && tmdbID && (!seasonNumber || isNaN(seasonNumber)|| !episode)) {
+  if (mediaType === 'tv_episode' && tmdbID && (!seasonNumber || isNaN(seasonNumber) || !episode)) {
     throw new ValidationError('Episode number and season number are required for episode media');
   }
 
-  const failedLookupQuery: FailedLookupsInterface = { language, type: mediaType, imdbID, tmdbID, season, episode};
+  const failedLookupQuery: FailedLookupsInterface = { language, type: mediaType, imdbID, tmdbID, season, episode };
   if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
     return null;
@@ -291,7 +291,7 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
       imdbIdToSearch = imdbIdToSearch || openSubtitlesMetadata?.imdbID;
       if (!title && !imdbID && !episodeNumbers && openSubtitlesMetadata?.type === 'episode') {
         //here we know the osdbHash is for an episode and episode is not set
-        episodeNumbers = [ Number(openSubtitlesMetadata.episode) ];
+        episodeNumbers = [Number(openSubtitlesMetadata.episode)];
         seasonNumber = Number(openSubtitlesMetadata.season);
       }
     } catch (e) {

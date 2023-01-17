@@ -569,16 +569,16 @@ export const getLocalizedMetadata = async(language?: string, mediaType?: string,
   if (!language.match(/^[a-z]{2}(-[A-Z]{2})?$/)) {
     throw new ValidationError('Language must have a minimum length of 2 and follow the pattern: ([a-z]{2})-([A-Z]{2})');
   }
-  if (mediaType==='tv_season' && tmdbID && !seasonNumber) {
+  if (mediaType === 'tv_season' && tmdbID && !seasonNumber) {
     throw new ValidationError('Season number is required for season media');
   }
-  if (mediaType==='tv_episode' && tmdbID && !(seasonNumber && episodeNumber)) {
+  if (mediaType === 'tv_episode' && tmdbID && !(seasonNumber && episodeNumber)) {
     throw new ValidationError('Episode number and season number are required for episode media');
   }
   if (mediaType==='collection' && !tmdbID) {
     throw new ValidationError('TMDB Id is required for collection media');
   }
-  if (mediaType!=='movie' && mediaType!=='tv' && mediaType!=='tv_season' && mediaType!=='tv_episode' && mediaType!=='collection') {
+  if (mediaType !== 'movie' && mediaType !== 'tv' && mediaType !== 'tv_season' && mediaType !== 'tv_episode' && mediaType !== 'collection') {
     throw new ValidationError('Media type' + mediaType + ' is not valid');
   }
 
@@ -594,10 +594,10 @@ export const getLocalizedMetadata = async(language?: string, mediaType?: string,
       //if we are here, that mean the request was made without tmdbId.
       //udpate tmdbId as we do not saved it before.
       if (tmdbID) {
-        if (mediaType==='movie') {
-          MediaMetadata.updateOne({ imdbID }, { tmdbID:tmdbID }).exec();
-        } else if (mediaType==='tv_episode') {
-          MediaMetadata.updateOne({ imdbID }, { tmdbTvID:tmdbID }).exec();
+        if (mediaType === 'movie') {
+          MediaMetadata.updateOne({ imdbID }, { tmdbID: tmdbID }).exec();
+        } else if (mediaType === 'tv_episode') {
+          MediaMetadata.updateOne({ imdbID }, { tmdbTvID: tmdbID }).exec();
         }
       }
     }
@@ -631,7 +631,7 @@ export const getLocalizedMetadata = async(language?: string, mediaType?: string,
     case 'tv_season':
       tmdbData = await tmdb.seasonInfo({
         id: tmdbID,
-        season_number:seasonNumber,
+        season_number: seasonNumber,
         language: language,
         append_to_response: 'external_ids',
       });
@@ -639,8 +639,8 @@ export const getLocalizedMetadata = async(language?: string, mediaType?: string,
     case 'tv_episode':
       tmdbData = await tmdb.episodeInfo({
         id: tmdbID,
-        season_number:seasonNumber,
-        episode_number:episodeNumber,
+        season_number: seasonNumber,
+        episode_number: episodeNumber,
         language: language,
         append_to_response: 'external_ids',
       });
@@ -726,7 +726,7 @@ export const getFromOpenSubtitles = async(osQuery: OpenSubtitlesQuery, validatio
   if (!openSubtitlesResponse.metadata) {
     return null;
   }
-  
+
   if (validateMovieByYear || validateEpisodeBySeasonAndEpisode) {
     passedValidation = false;
     if (validateMovieByYear) {
