@@ -575,7 +575,7 @@ export const getLocalizedMetadata = async(language?: string, mediaType?: string,
   if (mediaType === 'tv_episode' && tmdbID && !(seasonNumber && episodeNumber)) {
     throw new ValidationError('Episode number and season number are required for episode media');
   }
-  if (mediaType==='collection' && !tmdbID) {
+  if (mediaType === 'collection' && !tmdbID) {
     throw new ValidationError('TMDB Id is required for collection media');
   }
   if (mediaType !== 'movie' && mediaType !== 'tv' && mediaType !== 'tv_season' && mediaType !== 'tv_episode' && mediaType !== 'collection') {
