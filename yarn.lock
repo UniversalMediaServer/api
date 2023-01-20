@@ -5969,9 +5969,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongodb-memory-server-core@npm:8.11.1":
-  version: 8.11.1
-  resolution: "mongodb-memory-server-core@npm:8.11.1"
+"mongodb-memory-server-core@npm:8.11.3":
+  version: 8.11.3
+  resolution: "mongodb-memory-server-core@npm:8.11.3"
   dependencies:
     "@types/tmp": ^0.2.3
     async-mutex: ^0.3.2
@@ -5989,17 +5989,17 @@ __metadata:
     tslib: ^2.4.1
     uuid: ^9.0.0
     yauzl: ^2.10.0
-  checksum: 41913c78e402705fcd47d1f563b41f70e840845893facc0c7d989672f6dad161d4c90e312e14f6e109eb67bbb4966241bc673bd102db3387b6ab6b572a2a4b21
+  checksum: 4d54be5f284f47e1f06fa8d19c585e9e938933e7cffe032ae9dd58c5128e4ef68fb2ebb71151ed2e05bee1376a85eb47cd2d24a1138e9755d51a2364ccb912c0
   languageName: node
   linkType: hard
 
-"mongodb-memory-server@npm:8.11.1":
-  version: 8.11.1
-  resolution: "mongodb-memory-server@npm:8.11.1"
+"mongodb-memory-server@npm:8.11.3":
+  version: 8.11.3
+  resolution: "mongodb-memory-server@npm:8.11.3"
   dependencies:
-    mongodb-memory-server-core: 8.11.1
+    mongodb-memory-server-core: 8.11.3
     tslib: ^2.4.1
-  checksum: 97334e6022ad3be13763a79efc063d6ca6b95d7cea76961afe3736bd72c84f2bca2bed7510de0cd878811c30f99d1a3efb814ee49267c9d3639f3eb175428e69
+  checksum: 8d0ff3ce371e53efdaccd97d33874c4bcc110c65db3890e3b3fbad4f0242453dc0b990383dcce1099d94741c94307bae5ca4d4889bead3f60c65aafdf7bf51e6
   languageName: node
   linkType: hard
 
@@ -7928,7 +7928,7 @@ __metadata:
     koa-router: 12.0.0
     ky: 0.33.2
     lodash: 4.17.21
-    mongodb-memory-server: 8.11.1
+    mongodb-memory-server: 8.11.3
     mongoose: 6.8.4
     moviedb-promise: 3.3.1
     natural: 5.2.4
