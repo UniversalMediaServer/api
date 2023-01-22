@@ -40,6 +40,7 @@ const externalIdsSubdocument = new Schema({
   freebase_id: { type: String },
   tvdb_id: { type: Number },
   tvrage_id: { type: Number },
+  wikidata_id: { type: Number },
 });
 const posterSubdocument = new Schema({
   aspect_ratio: { type: Number },

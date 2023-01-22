@@ -20,7 +20,7 @@ let server : stoppable;
 let mongod: MongoMemoryServer;
 
 const SEASON_AVATAR = {
-  airDate:"2007-09-21",
+  airDate: '2007-09-21',
   externalIDs: {
     'freebase_mid': '/m/05dh3gn',
     'freebase_id': null,
@@ -70,7 +70,12 @@ describe('Season Metadata endpoint', () => {
       const response = await axios.get(`${appUrl}/api/media/season?title=${SEASON_AVATAR.seriesTitle}&season=${SEASON_AVATAR.seasonNumber}&year=${SEASON_AVATAR.year}`) as UmsApiSeasonAxiosResponse;
       expect(response.data.airDate).toBe(SEASON_AVATAR.airDate);
       expect(response.data).toHaveProperty('credits');
-      expect(response.data).toHaveProperty('externalIDs', SEASON_AVATAR.externalIDs);
+      expect(response.data).toHaveProperty('externalIDs');
+      expect(response.data.externalIDs).toHaveProperty('freebase_id', SEASON_AVATAR.externalIDs.freebase_id);
+      expect(response.data.externalIDs).toHaveProperty('freebase_mid', SEASON_AVATAR.externalIDs.freebase_mid);
+      expect(response.data.externalIDs).toHaveProperty('tvdb_id', SEASON_AVATAR.externalIDs.tvdb_id);
+      expect(response.data.externalIDs).toHaveProperty('tvrage_id', SEASON_AVATAR.externalIDs.tvrage_id);
+      expect(response.data.externalIDs).toHaveProperty('wikidata_id', SEASON_AVATAR.externalIDs.wikidata_id);
       expect(response.data).toHaveProperty('images');
       expect(response.data.name).toBe(SEASON_AVATAR.name);
       expect(response.data.tmdbTvID).toBe(SEASON_AVATAR.tmdbTvID);
@@ -79,7 +84,7 @@ describe('Season Metadata endpoint', () => {
       expect(response.data.overview).toContain(SEASON_AVATAR.overview);
     });
     it('should return season metadata by TMDb ID', async() => {
-      let response = await axios.get(`${appUrl}/api/media/season?tmdbID=${SEASON_AVATAR.tmdbTvID}&season=${SEASON_AVATAR.seasonNumber}`) as UmsApiSeasonAxiosResponse;
+      const response = await axios.get(`${appUrl}/api/media/season?tmdbID=${SEASON_AVATAR.tmdbTvID}&season=${SEASON_AVATAR.seasonNumber}`) as UmsApiSeasonAxiosResponse;
       expect(response.data.airDate).toBe(SEASON_AVATAR.airDate);
       expect(response.data).toHaveProperty('credits');
       expect(response.data).toHaveProperty('externalIDs');
@@ -111,7 +116,7 @@ describe('Season Metadata endpoint', () => {
   describe('Indexes', () => {
     test('Indexes should succed and log to console', async() => {
       console.info = jest.fn();
-	  await SeasonMetadata.ensureIndexes();
+      await SeasonMetadata.ensureIndexes();
       expect(console.info).toHaveBeenCalledWith('SeasonMetadata indexing complete');
     });
     test('should show error messages to console on fail', async() => {
