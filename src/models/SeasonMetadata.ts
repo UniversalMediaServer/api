@@ -29,7 +29,7 @@ const crewSubdocument = new Schema({
   profile_path: { type: String },
 });
 
-const creditsSubdocument = new Schema({ 
+const creditsSubdocument = new Schema({
   id: Number,
   cast: [castSubdocument],
   crew: [crewSubdocument],
