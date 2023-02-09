@@ -1,5 +1,6 @@
 import * as Router from 'koa-router';
 import * as client from 'prom-client';
+
 import * as MediaController from '../controllers/media';
 import { subversions } from '../helpers/subversioning';
 
@@ -7,6 +8,7 @@ const seriesV2Counter = new client.Counter({ name: 'series_v2_endpoint', help: '
 const videoV2Counter = new client.Counter({ name: 'video_v2_endpoint', help: 'Counter of get requests to /video/v2' });
 const seasonCounter = new client.Counter({ name: 'season_endpoint', help: 'Counter of get requests to /season' });
 const localizeCounter = new client.Counter({ name: 'localize_endpoint', help: 'Counter of get requests to /localize' });
+const collectionCounter = new client.Counter({ name: 'collection_endpoint', help: 'Counter of get requests to /collection' });
 
 const router = new Router({ prefix: '/api/media' });
 
@@ -32,6 +34,12 @@ router.get('/localize', async(ctx) => {
   localizeCounter.inc();
   ctx.set('X-Api-Subversion', subversions['localize']);
   await MediaController.getLocalize(ctx);
+});
+
+router.get('/collection', async(ctx) => {
+  collectionCounter.inc();
+  ctx.set('X-Api-Subversion', subversions['collection']);
+  await MediaController.getCollection(ctx);
 });
 
 export default router;

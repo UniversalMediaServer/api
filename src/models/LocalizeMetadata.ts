@@ -1,22 +1,4 @@
-import * as mongoose from 'mongoose';
-import { Schema, Model } from 'mongoose';
-
-export interface LocalizeMetadataInterface {
-  episodeNumber?: number;
-  homepage?: string;
-  imdbID?: string;
-  language: string;
-  mediaType: string;
-  overview?: string;
-  posterRelativePath?: string;
-  seasonNumber?: number;
-  tagline?: string;
-  title?: string;
-  tmdbID?: number;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface LocalizeMetadataModel extends Model<LocalizeMetadataInterface> {}
+import mongoose, { Schema, InferSchemaType } from 'mongoose';
 
 const LocalizeMetadataSchema: Schema = new Schema({
   episodeNumber: { index: true, type: Number },
@@ -36,7 +18,9 @@ const LocalizeMetadataSchema: Schema = new Schema({
   versionKey: false,
 });
 
-const LocalizeMetadata = mongoose.model<LocalizeMetadataInterface, LocalizeMetadataModel>('LocalizeMetadata', LocalizeMetadataSchema);
+export type LocalizeMetadataInterface = InferSchemaType<typeof LocalizeMetadataSchema>;
+
+const LocalizeMetadata = mongoose.model('LocalizeMetadata', LocalizeMetadataSchema);
 
 LocalizeMetadata.on('index', function(err) {
   if (err) {

@@ -1,7 +1,8 @@
 import * as imdb from '@universalmediaserver/imdb-api';
 import * as _ from 'lodash';
-import { ExternalAPIError } from '../helpers/customErrors';
 import * as client from 'prom-client';
+
+import { ExternalAPIError } from '../helpers/customErrors';
 
 const getCounter = new client.Counter({ name: 'omdb_api_lookup_get', help: 'Counter of get requests to imdb api' });
 const searchCounter = new client.Counter({ name: 'omdb_api_lookup_search', help: 'Counter of search requests to imdb api' });

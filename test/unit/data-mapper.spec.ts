@@ -109,7 +109,12 @@ const omdbApiSeries = {
 const tmdbApiMovieResponse = {
   'adult': false,
   'backdrop_path': '/2KjPXUYDoSbAtIQGjbEIcX6b7x5.jpg',
-  'belongs_to_collection': null,
+  'belongs_to_collection': {
+    'id':422837,
+    'name':'Blade Runner Collection',
+    'poster_path':'/qTcATCpiFDcgY8snQIfS2j0bFP7.jpg',
+    'backdrop_path':'/bSHZIvLoPBWyGLeiAudN1mXdvQX.jpg'
+   },
   'budget': 15000000,
   'genres': [
     {
@@ -639,6 +644,7 @@ describe('Data mapper', () => {
         const parsed = mapper.parseTMDBAPIMovieResponse(tmdbApiMovieResponse);
 
         expect(parsed.budget).toBe(15000000);
+        expect(parsed.collectionTmdbID).toBe(422837);
         expect(parsed.credits).toEqual({
           cast: [{
             'adult': false,

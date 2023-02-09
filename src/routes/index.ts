@@ -1,9 +1,11 @@
 import * as Router from 'koa-router';
 import { getAggregateMetrics } from 'pm2-cluster-prom';
-import { getConfig } from '../controllers/info';
+
+import { getConfiguration } from '../controllers/configuration';
 import { subversions } from '../helpers/subversioning';
 
 const router = new Router();
+
 router.get('/', (ctx) => {
   ctx.body = { status: 'OK' };
 });
@@ -23,7 +25,7 @@ router.get('/api/subversions', (ctx) => {
 
 router.get('/api/configuration', async(ctx) => {
   ctx.set('X-Api-Subversion', subversions['configuration']);
-  await getConfig(ctx);
+  await getConfiguration(ctx);
 });
 
 export default router;

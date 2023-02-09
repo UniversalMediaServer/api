@@ -1,28 +1,66 @@
-import * as mongoose from 'mongoose';
-import { Schema, Model } from 'mongoose';
-import { CreditsResponse, TvSeasonImagesResponse, TvSeasonExternalIdsResponse } from 'moviedb-promise/dist/request-types';
+import mongoose, { Schema, InferSchemaType } from 'mongoose';
 
-export interface SeasonMetadataInterface {
-  airDate?: string;
-  credits?: CreditsResponse;
-  externalIDs?: TvSeasonExternalIdsResponse;
-  images?: TvSeasonImagesResponse;
-  name?: string;
-  overview?: string;
-  posterRelativePath?: string;
-  seasonNumber: number;
-  tmdbID?: number;
-  tmdbTvID?: number;
-}
+const castSubdocument = new Schema({
+  adult: { type: Boolean },
+  cast_id: { type: Number },
+  character: { type: String },
+  credit_id: { type: String },
+  gender: { type: Number },
+  id: { type: Number },
+  known_for_department: { type: String },
+  name: { type: String },
+  order: { type: Number },
+  original_name: { type: String },
+  popularity: { type: Number },
+  profile_path: { type: String },
+});
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface SeasonMetadataModel extends Model<SeasonMetadataInterface> {}
+const crewSubdocument = new Schema({
+  adult: { type: Boolean },
+  credit_id: { type: String },
+  department: { type: String },
+  gender: { type: Number },
+  id: { type: Number },
+  known_for_department: { type: String },
+  job: { type: String },
+  name: { type: String },
+  original_name: { type: String },
+  popularity: { type: Number },
+  profile_path: { type: String },
+});
+
+const creditsSubdocument = new Schema({
+  id: Number,
+  cast: [castSubdocument],
+  crew: [crewSubdocument],
+});
+const externalIdsSubdocument = new Schema({
+  id: { type: Number },
+  freebase_mid: { type: String },
+  freebase_id: { type: String },
+  tvdb_id: { type: Number },
+  tvrage_id: { type: Number },
+  wikidata_id: { type: Number },
+});
+const posterSubdocument = new Schema({
+  aspect_ratio: { type: Number },
+  file_path: { type: String },
+  height: { type: Number },
+  iso_639_1: { type: String },
+  vote_average: { type: Number },
+  vote_count: { type: Number },
+  width: { type: Number },
+});
+const imagesSubdocument = new Schema({
+  id: { type: Number },
+  posters: [posterSubdocument],
+});
 
 const SeasonMetadataSchema: Schema = new Schema({
   airDate: { type: String },
-  credits: { type: Array },
-  externalIDs: { type: Array },
-  images: { type: Array },
+  credits: creditsSubdocument,
+  externalIDs: externalIdsSubdocument,
+  images: imagesSubdocument,
   name: { type: String },
   overview: { type: String },
   posterRelativePath: { type: String },
@@ -35,14 +73,9 @@ const SeasonMetadataSchema: Schema = new Schema({
   versionKey: false,
 });
 
-SeasonMetadataSchema.virtual('imdburl').get(function() {
-  return `https://www.imdb.com/title/${this.imdbID}`;
-});
+export type SeasonMetadataInterface = InferSchemaType<typeof SeasonMetadataSchema>;
 
-// this allows us to use MongoDB Full text search https://docs.mongodb.com/manual/reference/operator/query/text/#op._S_text
-SeasonMetadataSchema.index({ 'title': 'text' });
-
-const SeasonMetadata = mongoose.model<SeasonMetadataInterface, SeasonMetadataModel>('SeasonMetadata', SeasonMetadataSchema);
+const SeasonMetadata = mongoose.model('SeasonMetadata', SeasonMetadataSchema);
 
 SeasonMetadata.on('index', function(err) {
   if (err) {

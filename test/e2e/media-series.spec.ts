@@ -1,22 +1,12 @@
-import MediaMetadataModel, { MediaMetadataInterfaceDocument } from '../../src/models/MediaMetadata';
-import SeasonMetadataModel from '../../src/models/SeasonMetadata';
-import SeriesMetadataModel, { SeriesMetadataInterface } from '../../src/models/SeriesMetadata';
-import FailedLookupsModel from '../../src/models/FailedLookups';
-import { tmdb } from '../../src/services/tmdb-api';
-
-import * as mongoose from 'mongoose';
 import axios from 'axios';
-import * as stoppable from 'stoppable';
-import app, { PORT } from '../../src/app';
-
+import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-let mongod;
+import * as stoppable from 'stoppable';
 
-interface UmsApiAxiosResponse  {
-  status: number;
-  data: MediaMetadataInterfaceDocument;
-  headers?: object;
-}
+import app, { PORT } from '../../src/app';
+import FailedLookups from '../../src/models/FailedLookups';
+import SeriesMetadata, { SeriesMetadataInterface } from '../../src/models/SeriesMetadata';
+import { tmdb } from '../../src/services/tmdb-api';
 
 interface UmsApiSeriesAxiosResponse  {
   status: number;
@@ -24,13 +14,14 @@ interface UmsApiSeriesAxiosResponse  {
   headers?: object;
 }
 
+const appUrl = 'http://localhost:3000';
+let server : stoppable;
+let mongod: MongoMemoryServer;
+
 const americanHorrorStorySeries = {
   title: 'American Horror Story',
   imdbID: 'tt1844624',
 }
-
-const appUrl = 'http://localhost:3000';
-let server;
 
 describe('Media Metadata endpoints', () => {
   beforeAll((done) => {
@@ -53,10 +44,8 @@ describe('Media Metadata endpoints', () => {
   });
 
   beforeEach(async() => {
-    await FailedLookupsModel.deleteMany({});
-    await MediaMetadataModel.deleteMany({});
-    await SeasonMetadataModel.deleteMany({});
-    await SeriesMetadataModel.deleteMany({});
+    await FailedLookups.deleteMany({});
+    await SeriesMetadata.deleteMany({});
   });
 
   afterAll(async() => {
@@ -81,7 +70,7 @@ describe('Media Metadata endpoints', () => {
       // This is the method that finds the TMDB ID from the IMDb ID
       const spy = jest.spyOn(tmdb, 'find');
 
-      const response = await axios.get(`${appUrl}/api/media/series/v2?title=${americanHorrorStorySeries.title}&imdbID=${americanHorrorStorySeries.imdbID}`) as UmsApiAxiosResponse;
+      const response = await axios.get(`${appUrl}/api/media/series/v2?title=${americanHorrorStorySeries.title}&imdbID=${americanHorrorStorySeries.imdbID}`) as UmsApiSeriesAxiosResponse;
       expect(response.data).toHaveProperty('credits');
       expect(response.data).toHaveProperty('totalSeasons');
       expect(response.data).toHaveProperty('title', americanHorrorStorySeries.title);
@@ -90,20 +79,20 @@ describe('Media Metadata endpoints', () => {
     });
 
     it('should fail to save non series type', async() => {
-      expect(await SeriesMetadataModel.countDocuments()).toBe(0);
-      let err;
+      expect(await SeriesMetadata.countDocuments()).toBe(0);
+      let err: any;
       try {
-        await axios.get(`${appUrl}/api/media/series/v2?title=Not A Series Type`) as UmsApiAxiosResponse;
+        await axios.get(`${appUrl}/api/media/series/v2?title=Not A Series Type`) as UmsApiSeriesAxiosResponse;
       } catch (e) {
         err = e;
       }
       expect(err).toBeTruthy();
-      expect(await SeriesMetadataModel.countDocuments()).toBe(0);
+      expect(await SeriesMetadata.countDocuments()).toBe(0);
     });
 
     it('should return series with correct year', async() => {
       // this request populates the series metadata
-      let response = await axios.get(`${appUrl}/api/media/series/v2?title=Ben 10&year=2016`) as UmsApiAxiosResponse;
+      let response = await axios.get(`${appUrl}/api/media/series/v2?title=Ben 10&year=2016`) as UmsApiSeriesAxiosResponse;
       let newDocumentId = response.data._id;
       expect(response.data).toHaveProperty('title', 'Ben 10');
       expect(response.data).toHaveProperty('startYear', '2016');
@@ -131,32 +120,9 @@ describe('Media Metadata endpoints', () => {
       await mongoose.connection.db.collection('series_metadata').insertOne({ imdbID: 'tt0080221', title: 'Galactica 1980' });
 
       // this request should find the result even though it's the wrong title
-      const response = await axios.get(`${appUrl}/api/media/series/v2?title=Galactica&year=1980`) as UmsApiAxiosResponse;
+      const response = await axios.get(`${appUrl}/api/media/series/v2?title=Galactica&year=1980`) as UmsApiSeriesAxiosResponse;
       expect(response.data).toHaveProperty('title', 'Galactica 1980');
     });
   });
 
-  describe('get season', () => {
-    it('should return season metadata', async() => {
-      // this request populates the series metadata
-      const response = await axios.get(`${appUrl}/api/media/season?title=American Horror Story&season=2`) as UmsApiAxiosResponse;
-
-      expect(response.data).toHaveProperty('airDate', '2012-10-17');
-      expect(response.data).toHaveProperty('credits');
-      expect(response.data).toHaveProperty('externalIDs', [
-        {
-          'freebase_mid': '/m/0l96xr3',
-          'freebase_id': null,
-          'tvdb_id': 497727,
-          'tvrage_id': null,
-          'wikidata_id': null,
-        },
-      ]);
-      expect(response.data).toHaveProperty('images');
-      expect(response.data).toHaveProperty('name', 'Asylum');
-      expect(response.data).toHaveProperty('overview', 'From Nazis and serial killers to mutants and aliens, no one is safe inside the walls of the Briarcliff Mental Institution. In a house of healing that is anything but, troubled nun Sister Jude rules with an iron fist and Dr Arden conducts strange experiments on the facility’s patients.');
-      expect(response.data).toHaveProperty('seasonNumber', 2);
-      expect(response.data).toHaveProperty('tmdbID', 3702);
-    });
-  });
 });

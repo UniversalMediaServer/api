@@ -5,6 +5,7 @@
  * for videos in any way, we should bump that version by 1.
  */
 export const subversions = {
+  'collection': '1',
   'configuration': '1',
   'localize': '1',
   'season': '1',

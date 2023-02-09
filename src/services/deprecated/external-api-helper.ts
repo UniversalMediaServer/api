@@ -1,9 +1,9 @@
-import { Movie, SearchRequest, TVShow } from '@universalmediaserver/imdb-api';
+import { Movie, SearchRequest, SearchResults, TVShow } from '@universalmediaserver/imdb-api';
 import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
 import * as natural from 'natural';
 
-import { getTMDBImageBaseURL } from '../../controllers/info';
+import { getTMDBImageBaseURL } from '../../controllers/configuration';
 import { IMDbIDNotFoundError } from '../../helpers/customErrors';
 import { MediaMetadataInterface } from '../../models/MediaMetadata';
 import omdbAPI from '../omdb-api';
@@ -45,7 +45,7 @@ export const getFromOMDbAPI = async(imdbId?: string, searchRequest?: SearchReque
 
     if (!imdbId) {
       searchRequest.reqtype = 'movie';
-      let searchResults;
+      let searchResults: SearchResults;
       try {
         searchResults = await omdbAPI.search(searchRequest);
       } catch (e) {
@@ -74,7 +74,7 @@ export const getFromOMDbAPI = async(imdbId?: string, searchRequest?: SearchReque
     return null;
   }
 
-  let metadata;
+  let metadata: any;
   if (imdbData.type === 'movie') {
     metadata = mapper.parseOMDbAPIMovieResponse(imdbData);
   } else if (imdbData.type === 'series') {
