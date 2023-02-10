@@ -9,10 +9,8 @@ module.exports = {
       script: 'node_modules/.bin/ts-node',
       args: '--files ./src/app.ts',
       env: { NODE_ENV: 'production' },
-      instances: 4,
+      instances: 0,
       exec_mode: 'cluster',
-      watch: true,
-      autorestart: true,
     },
   ],
 };
