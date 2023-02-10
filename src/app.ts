@@ -60,7 +60,10 @@ app.use(async(ctx, next) => {
         // Stop logging errors for the deprecated routes getBySanitizedTitle and getBySanitizedTitleV2
         !(
           err.stack &&
-          err.stack.includes('getBySanitizedTitle')
+          (
+            err.stack.includes('getBySanitizedTitle') ||
+            err.stack.includes('controllers/deprecated')
+          )
         )
       )
     ) {
