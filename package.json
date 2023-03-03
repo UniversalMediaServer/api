@@ -86,7 +86,7 @@
     "@types/koa-router": "7.4.4",
     "@types/lodash": "4.14.191",
     "@types/natural": "5.1.2",
-    "@types/node": "18.14.4",
+    "@types/node": "18.14.5",
     "@types/object-mapper": "6.2.0",
     "@typescript-eslint/eslint-plugin": "5.54.0",
     "@typescript-eslint/parser": "5.54.0",
