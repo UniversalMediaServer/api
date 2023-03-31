@@ -84,7 +84,7 @@
     "@types/koa-bodyparser": "4.3.10",
     "@types/koa-helmet": "6.0.4",
     "@types/koa-router": "7.4.4",
-    "@types/lodash": "4.14.191",
+    "@types/lodash": "4.14.192",
     "@types/natural": "5.1.2",
     "@types/node": "18.15.7",
     "@types/object-mapper": "6.2.0",
