@@ -2152,10 +2152,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:18.15.7":
-  version: 18.15.7
-  resolution: "@types/node@npm:18.15.7"
-  checksum: 08d1dd1898be10cd274955ed7f491bcab5b7e70ce66b6a1e996a582d5467f7517046b0d9c5f4e15871df94dd72d1ad9e7be236d2cff1a1450ec906d7fa3062d2
+"@types/node@npm:18.15.11":
+  version: 18.15.11
+  resolution: "@types/node@npm:18.15.11"
+  checksum: 977b4ad04708897ff0eb049ecf82246d210939c82461922d20f7d2dcfd81bbc661582ba3af28869210f7e8b1934529dcd46bff7d448551400f9d48b9d3bddec3
   languageName: node
   linkType: hard
 
@@ -7906,7 +7906,7 @@ __metadata:
     "@types/koa-router": 7.4.4
     "@types/lodash": 4.14.192
     "@types/natural": 5.1.2
-    "@types/node": 18.15.7
+    "@types/node": 18.15.11
     "@types/object-mapper": 6.2.0
     "@typescript-eslint/eslint-plugin": 5.54.1
     "@typescript-eslint/parser": 5.54.1
