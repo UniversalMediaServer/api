@@ -5956,6 +5956,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pm2-cluster-prom@npm:2.1.0":
+  version: 2.1.0
+  resolution: "pm2-cluster-prom@npm:2.1.0"
+  peerDependencies:
+    pm2: ">= 3.5.1 <= 4"
+    prom-client: ">=11 <=14"
+  checksum: d9e937d1cabce1fd6e9ebe816ffe2c21472f9338d70d400736f1fc6b76e068d60b44e1008df57f14f05212a0220a272e188b159332314979d858d98c6e7ec8d2
+  languageName: node
+  linkType: hard
+
 "pm2-deploy@npm:~1.0.2":
   version: 1.0.2
   resolution: "pm2-deploy@npm:1.0.2"
@@ -6067,6 +6077,15 @@ __metadata:
     ansi-styles: ^5.0.0
     react-is: ^18.0.0
   checksum: b2c6e77666716e55094f29dcbd92e431a1b8cc0a06cd41ec1a3c8a10e5e56bb1f2d7b5942f1d8f6a0f69912712f3edb4c41713926d60cbb89f2a41355d49e7a4
+  languageName: node
+  linkType: hard
+
+"prom-client@npm:14.1.0":
+  version: 14.1.0
+  resolution: "prom-client@npm:14.1.0"
+  dependencies:
+    tdigest: ^0.1.1
+  checksum: 88f8e67020c0af07d09ab8f15caaa2a3d0810b01d903d0977d82947d3b0100a539db77bcccfde0bf2449a85060475f7fb05b64e7c34951c8a54b84240ae7ae81
   languageName: node
   linkType: hard
 
@@ -7257,6 +7276,8 @@ __metadata:
     object-mapper: 6.2.0
     opensubtitles-api: "https://github.com/UniversalMediaServer/opensubtitles-api#adb9ec61036887a2aaa7dbd58535e2a6cb8c0116"
     pm2: 5.2.0
+    pm2-cluster-prom: 2.1.0
+    prom-client: 14.1.0
     stoppable: 1.1.0
     ts-jest: 29.0.3
     ts-node: 10.9.1
