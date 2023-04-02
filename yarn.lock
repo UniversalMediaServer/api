@@ -2813,13 +2813,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bintrees@npm:1.0.2":
-  version: 1.0.2
-  resolution: "bintrees@npm:1.0.2"
-  checksum: 56a52b7d3634e30002b1eda740d2517a22fa8e9e2eb088e919f37c030a0ed86e364ab59e472fc770fc8751308054bb1c892979d150e11d9e11ac33bcc1b5d16e
-  languageName: node
-  linkType: hard
-
 "bl@npm:^4.0.3":
   version: 4.1.0
   resolution: "bl@npm:4.1.0"
@@ -5514,15 +5507,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"koa-prometheus-adv@npm:1.0.1":
-  version: 1.0.1
-  resolution: "koa-prometheus-adv@npm:1.0.1"
-  dependencies:
-    prom-client: ^11.0.0
-  checksum: 31402a534275ba1cd913ff926ee615922a6e986ac00d413561627309dca1c83d3fbfa06cb5c91da7da9f0acc1192bfd7e781e636c24139953838161d80912883
-  languageName: node
-  linkType: hard
-
 "koa-qs@npm:3.0.0":
   version: 3.0.0
   resolution: "koa-qs@npm:3.0.0"
@@ -6644,16 +6628,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pm2-cluster-prom@npm:2.1.0":
-  version: 2.1.0
-  resolution: "pm2-cluster-prom@npm:2.1.0"
-  peerDependencies:
-    pm2: ">= 3.5.1 <= 4"
-    prom-client: ">=11 <=14"
-  checksum: d9e937d1cabce1fd6e9ebe816ffe2c21472f9338d70d400736f1fc6b76e068d60b44e1008df57f14f05212a0220a272e188b159332314979d858d98c6e7ec8d2
-  languageName: node
-  linkType: hard
-
 "pm2-deploy@npm:~1.0.2":
   version: 1.0.2
   resolution: "pm2-deploy@npm:1.0.2"
@@ -6754,24 +6728,6 @@ __metadata:
     ansi-styles: ^5.0.0
     react-is: ^18.0.0
   checksum: 4065356b558e6db25b4d41a01efb386935a6c06a0c9c104ef5ce59f2f476b8210edb8b3949b386e60ada0a6dc5ebcb2e6ccddc8c64dfd1a9943c3c3a9e7eaf89
-  languageName: node
-  linkType: hard
-
-"prom-client@npm:14.2.0":
-  version: 14.2.0
-  resolution: "prom-client@npm:14.2.0"
-  dependencies:
-    tdigest: ^0.1.1
-  checksum: d4c04e57616c72643dd02862d0d4bde09cf8869a19d0aef5e7b785e6e27d02439b66cdc165e3492f62d579fa91579183820870cc757a09b99399d2d02f46b9f1
-  languageName: node
-  linkType: hard
-
-"prom-client@npm:^11.0.0":
-  version: 11.5.3
-  resolution: "prom-client@npm:11.5.3"
-  dependencies:
-    tdigest: ^0.1.1
-  checksum: 9ed7ffc880a525aec05de940268cc50df9393a7c077fbf0e4a1607369821f65bcd439bd5b9e0adf9d7a2041a64c6aa98281492eea0e0aaf07b2f854627eee8f3
   languageName: node
   linkType: hard
 
@@ -7561,15 +7517,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tdigest@npm:^0.1.1":
-  version: 0.1.2
-  resolution: "tdigest@npm:0.1.2"
-  dependencies:
-    bintrees: 1.0.2
-  checksum: 44de8246752b6f8c2924685f969fd3d94c36949f22b0907e99bef2b2220726dd8467f4730ea96b06040b9aa2587c0866049640039d1b956952dfa962bc2075a3
-  languageName: node
-  linkType: hard
-
 "test-exclude@npm:^6.0.0":
   version: 6.0.0
   resolution: "test-exclude@npm:6.0.0"
@@ -7921,7 +7868,6 @@ __metadata:
     koa: 2.14.1
     koa-bodyparser: 4.4.0
     koa-helmet: 6.1.0
-    koa-prometheus-adv: 1.0.1
     koa-qs: 3.0.0
     koa-router: 12.0.0
     ky: 0.33.3
@@ -7935,8 +7881,6 @@ __metadata:
     object-mapper: 6.2.0
     opensubtitles-api: "https://github.com/UniversalMediaServer/opensubtitles-api#94e2339b2e38533e518e6556f49b65e541bbe9e3"
     pm2: 5.2.2
-    pm2-cluster-prom: 2.1.0
-    prom-client: 14.2.0
     stoppable: 1.1.0
     ts-jest: 29.0.5
     ts-node: 10.9.1

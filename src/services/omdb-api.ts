@@ -1,11 +1,7 @@
 import * as imdb from '@universalmediaserver/imdb-api';
 import * as _ from 'lodash';
-import * as client from 'prom-client';
 
 import { ExternalAPIError } from '../helpers/customErrors';
-
-const getCounter = new client.Counter({ name: 'omdb_api_lookup_get', help: 'Counter of get requests to imdb api' });
-const searchCounter = new client.Counter({ name: 'omdb_api_lookup_search', help: 'Counter of search requests to imdb api' });
 
 let baseURL = 'https://www.omdbapi.com';
 if (process.env.NODE_ENV === 'production') {
@@ -18,7 +14,6 @@ const originalModule = new imdb.Client({ apiKey: process.env.IMDB_API_KEY || 'fo
 const omdbAPI = _.cloneDeep(originalModule);
 
 omdbAPI.get = async(params): Promise<imdb.Movie | imdb.Episode | imdb.TVShow> => {
-  getCounter.inc();
   try {
     return await originalModule.get(params);
   } catch (err) {
@@ -27,7 +22,6 @@ omdbAPI.get = async(params): Promise<imdb.Movie | imdb.Episode | imdb.TVShow> =>
 };
 
 omdbAPI.search = async(params): Promise<imdb.SearchResults> => {
-  searchCounter.inc();
   try {
     return await originalModule.search(params);
   } catch (err) {

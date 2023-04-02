@@ -9,16 +9,12 @@ import * as fs from 'fs';
 import * as http from 'http';
 import * as https from 'https';
 const debug = Debug('universalmediaserver-api:server');
-import * as koaPrometheus from 'koa-prometheus-adv';
-import * as client from 'prom-client';
 import indexRouter from './routes/index';
 import mediaRouter  from './routes/media';
 import deprecatedMediaRouter  from './routes/deprecated/media';
 import { ExternalAPIError, IMDbIDNotFoundError, MediaNotFoundError, ValidationError } from './helpers/customErrors';
 
-client.collectDefaultMetrics({ register: client.register });
-// @ts-expect-error there is an incompatible type error because koa-prometheus-adv is abandoned
-const app = new Koa().use(koaPrometheus.DefaultHTTPMetricsInjector(client.register));
+const app = new Koa();
 
 koaQs(app, 'first');
 
