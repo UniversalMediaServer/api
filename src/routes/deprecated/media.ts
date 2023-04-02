@@ -1,46 +1,32 @@
-import * as Router from 'koa-router';
-import * as client from 'prom-client';
-import * as DeprecatedMediaController from '../../controllers/deprecated/media';
-import { subversions } from '../../helpers/subversioning';
+import * as Router from "koa-router";
+import * as DeprecatedMediaController from "../../controllers/deprecated/media";
+import { subversions } from "../../helpers/subversioning";
 
-const osdbCounter = new client.Counter({ name: 'osdb_endpoint', help: 'Counter of get requests to /osdbhash/:osdbhash/:filebytesize (deprecated)' });
-const seriesTitleCounter = new client.Counter({ name: 'seriestitle_endpoint', help: 'Counter of get requests to /seriestitle (deprecated)' });
-const videoCounter = new client.Counter({ name: 'video_endpoint', help: 'Counter of get requests to /video' });
-const titleCounter = new client.Counter({ name: 'title_endpoint', help: 'Counter of get requests to /title (deprecated)' });
-const titlev2Counter = new client.Counter({ name: 'titlev2_endpoint', help: 'Counter of get requests to /v2/title (deprecated)' });
-const imdbCounter = new client.Counter({ name: 'imdbid_endpoint', help: 'Counter of get requests to /imdbid (deprecated)' });
+const router = new Router({ prefix: "/api/media" });
 
-const router = new Router({ prefix: '/api/media' });
-
-router.get('/osdbhash/:osdbhash/:filebytesize', async(ctx) => {
-  osdbCounter.inc();
+router.get("/osdbhash/:osdbhash/:filebytesize", async (ctx) => {
   await DeprecatedMediaController.getByOsdbHash(ctx);
 });
 
-router.get('/title', async(ctx) => {
-  titleCounter.inc();
+router.get("/title", async (ctx) => {
   await DeprecatedMediaController.getBySanitizedTitle(ctx);
 });
 
-router.get('/v2/title', async(ctx) => {
-  titlev2Counter.inc();
+router.get("/v2/title", async (ctx) => {
   await DeprecatedMediaController.getBySanitizedTitleV2(ctx);
 });
 
-router.get('/imdbid', async(ctx) => {
-  imdbCounter.inc();
+router.get("/imdbid", async (ctx) => {
   await DeprecatedMediaController.getByImdbID(ctx);
 });
 
-router.get('/seriestitle', async(ctx) => {
-  seriesTitleCounter.inc();
-  ctx.set('X-Api-Subversion', subversions['series']);
+router.get("/seriestitle", async (ctx) => {
+  ctx.set("X-Api-Subversion", subversions["series"]);
   await DeprecatedMediaController.getSeries(ctx);
 });
 
-router.get('/video', async(ctx) => {
-  videoCounter.inc();
-  ctx.set('X-Api-Subversion', subversions['video']);
+router.get("/video", async (ctx) => {
+  ctx.set("X-Api-Subversion", subversions["video"]);
   await DeprecatedMediaController.getVideo(ctx);
 });
 

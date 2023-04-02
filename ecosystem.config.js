@@ -5,12 +5,13 @@ module.exports = {
    */
   apps: [
     {
-      name: 'API',
-      script: 'node_modules/.bin/ts-node',
-      args: '--files ./src/app.ts',
-      env: { NODE_ENV: 'production' },
+      name: "API",
+      script: "node_modules/.bin/ts-node",
+      args: "--files ./src/app.ts",
+      max_memory_restart: "750M",
+      env: { NODE_ENV: "production" },
       instances: 4,
-      exec_mode: 'cluster',
+      exec_mode: "cluster",
       watch: true,
       autorestart: true,
     },
