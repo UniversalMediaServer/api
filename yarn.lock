@@ -4847,15 +4847,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"koa-prometheus-adv@npm:1.0.1":
-  version: 1.0.1
-  resolution: "koa-prometheus-adv@npm:1.0.1"
-  dependencies:
-    prom-client: ^11.0.0
-  checksum: 31402a534275ba1cd913ff926ee615922a6e986ac00d413561627309dca1c83d3fbfa06cb5c91da7da9f0acc1192bfd7e781e636c24139953838161d80912883
-  languageName: node
-  linkType: hard
-
 "koa-qs@npm:3.0.0":
   version: 3.0.0
   resolution: "koa-qs@npm:3.0.0"
@@ -6089,15 +6080,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prom-client@npm:^11.0.0":
-  version: 11.5.3
-  resolution: "prom-client@npm:11.5.3"
-  dependencies:
-    tdigest: ^0.1.1
-  checksum: 9ed7ffc880a525aec05de940268cc50df9393a7c077fbf0e4a1607369821f65bcd439bd5b9e0adf9d7a2041a64c6aa98281492eea0e0aaf07b2f854627eee8f3
-  languageName: node
-  linkType: hard
-
 "promise-inflight@npm:^1.0.1":
   version: 1.0.1
   resolution: "promise-inflight@npm:1.0.1"
@@ -7263,7 +7245,6 @@ __metadata:
     koa: 2.13.4
     koa-bodyparser: 4.3.0
     koa-helmet: 6.1.0
-    koa-prometheus-adv: 1.0.1
     koa-qs: 3.0.0
     koa-router: 11.0.1
     lodash: 4.17.21
