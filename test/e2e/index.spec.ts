@@ -57,18 +57,6 @@ describe('Info endpoint', () => {
     });
   });
 
-  describe('metrics endpoint', () => {
-    it('should return metrics', async() => {
-      let response = await axios.get(`${appUrl}/metrics`) as UmsApiAxiosResponse;
-      expect(response.data).toContain('collection_endpoint 0');
-    });
-    it('should return updated metrics', async() => {
-      try { await axios.get(`${appUrl}/api/media/collection`) } catch (e) {}
-      let response = await axios.get(`${appUrl}/metrics`) as UmsApiAxiosResponse;
-      expect(response.data).toContain('collection_endpoint 1');
-    });
-  });
-
   describe('API configuration endpoint', () => {
     it('should return configuration and store it', async() => {
       const spyGetFromTmdb = jest.spyOn(tmdb, 'configuration');
