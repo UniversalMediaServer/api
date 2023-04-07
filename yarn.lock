@@ -6005,9 +6005,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongoose@npm:6.10.4":
-  version: 6.10.4
-  resolution: "mongoose@npm:6.10.4"
+"mongoose@npm:6.10.5":
+  version: 6.10.5
+  resolution: "mongoose@npm:6.10.5"
   dependencies:
     bson: ^4.7.0
     kareem: 2.5.1
@@ -6016,7 +6016,7 @@ __metadata:
     mquery: 4.0.3
     ms: 2.1.3
     sift: 16.0.1
-  checksum: 1629b92d809b57ab7e8b0d97d5ddc3d01ce36ecd2ba4adb7bd0a4b59ca2e77c7c90ec31bbb8b3541f598de20f2d1616e6e4938bdc2020821d05ea00f025d189f
+  checksum: 66269bf71aa22fd8435bb1629ff39d224c5831b8c541d6efd7a4c1add2cad9cdb7f0de0f73ed86ba364c58bcbe0c5d30da0b59f00b86fc144d91f30c211d8872
   languageName: node
   linkType: hard
 
@@ -7855,7 +7855,7 @@ __metadata:
     ky: 0.33.3
     lodash: 4.17.21
     mongodb-memory-server: 8.12.2
-    mongoose: 6.10.4
+    mongoose: 6.10.5
     moviedb-promise: 3.3.1
     natural: 5.2.4
     nock: 13.3.0
