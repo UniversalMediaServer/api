@@ -7,7 +7,7 @@
     "yarn": ">=1.22.10"
   },
   "scripts": {
-    "dev": "DEBUG=*universalmediaserver-api:server nodemon",
+    "dev": "DEBUG=\"*universalmediaserver-api:server\" nodemon",
     "purge": "TS_NODE_FILES=true ts-node --files scripts/purge",
     "reload:prod": "./node_modules/.bin/pm2 reload ecosystem.config.js --update-env",
     "start": "ts-node --files src/app.ts",
@@ -64,6 +64,7 @@
     "debug": "4.3.4",
     "episode-parser": "2.0.2",
     "escape-string-regexp": "5.0.0",
+    "heapdump": "^0.3.15",
     "koa": "2.14.1",
     "koa-bodyparser": "4.4.0",
     "koa-helmet": "6.1.0",
