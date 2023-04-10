@@ -2434,6 +2434,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"afinn-165-financialmarketnews@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "afinn-165-financialmarketnews@npm:3.0.0"
+  checksum: 1b6d1aa69fa868cbcd0f25275e3a6b808d6ab21e2f7104fac997baaf81683497a78cd341f4a7dcd9115394cb9c0f82dff9bb8accc9d52f46252f558670453d2f
+  languageName: node
+  linkType: hard
+
 "afinn-165@npm:^1.0.2":
   version: 1.0.4
   resolution: "afinn-165@npm:1.0.4"
@@ -6088,17 +6095,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"natural@npm:5.2.4":
-  version: 5.2.4
-  resolution: "natural@npm:5.2.4"
+"natural@npm:6.2.0":
+  version: 6.2.0
+  resolution: "natural@npm:6.2.0"
   dependencies:
     afinn-165: ^1.0.2
+    afinn-165-financialmarketnews: ^3.0.0
     apparatus: ^0.0.10
     safe-stable-stringify: ^2.2.0
+    stopwords-iso: ^1.1.0
     sylvester: ^0.0.12
     underscore: ^1.9.1
     wordnet-db: ^3.1.11
-  checksum: a50f788a3a41ade75590ccfc0d1d2657eb5b57f0b9e8ffad51ffef80d9929bd7f313d7b73713d2e3423b91338c383d1d6719f559cf7ff45b5a4694c673e072c3
+  checksum: b14bd13fb8adb5bc5cb3772919f148bf2e631b5ed71b17240805b5d8770f7d4ae7bcbf8965b8b7c2d0d335bf0eebf3bfd3d92fff5dc751a48fefaf5ba480b136
   languageName: node
   linkType: hard
 
@@ -7321,6 +7330,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"stopwords-iso@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "stopwords-iso@npm:1.1.0"
+  checksum: 6825e6041dbb6f318bb5391ff9ee1330b68a1b26d29164ea2d2f11a08b41614a21d232a347dde0d60665f7d1891cf2fd66e31f435c35808caafbd2b797734666
+  languageName: node
+  linkType: hard
+
 "string-length@npm:^4.0.1":
   version: 4.0.2
   resolution: "string-length@npm:4.0.2"
@@ -7857,7 +7873,7 @@ __metadata:
     mongodb-memory-server: 8.12.2
     mongoose: 6.10.5
     moviedb-promise: 3.3.1
-    natural: 5.2.4
+    natural: 6.2.0
     nock: 13.3.0
     nodemon: 2.0.22
     object-mapper: 6.2.0
