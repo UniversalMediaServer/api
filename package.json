@@ -7,7 +7,7 @@
     "yarn": ">=1.22.10"
   },
   "scripts": {
-    "dev": "DEBUG=*universalmediaserver-api:server nodemon",
+    "dev": "DEBUG=\"*universalmediaserver-api:server\" nodemon",
     "purge": "TS_NODE_FILES=true ts-node --files scripts/purge",
     "reload:prod": "./node_modules/.bin/pm2 reload ecosystem.config.js --update-env",
     "start": "ts-node --files src/app.ts",
