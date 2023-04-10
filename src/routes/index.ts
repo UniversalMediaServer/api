@@ -1,5 +1,5 @@
 import * as Router from 'koa-router';
-import * as heapdump from 'heapdump';
+import * as v8 from 'v8';
 
 import { getConfiguration } from '../controllers/configuration';
 import { subversions } from '../helpers/subversioning';
@@ -26,7 +26,7 @@ if (NODE_APP_INSTANCE === '0') {
   router.get('/_system/heapdump', async (ctx) => {
     const { key } = ctx.query;
     if (SYSTEM_ADMIN_KEY && (key === SYSTEM_ADMIN_KEY)) {
-      heapdump.writeSnapshot(process.cwd() + Date.now() + '.heapsnapshot');
+      v8.writeHeapSnapshot(`/tmp/${Date.now()}.heapsnapshot`);
       ctx.status = 201;
       return;
     }
