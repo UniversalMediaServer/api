@@ -2,7 +2,7 @@ import { Movie, SearchRequest, TVShow } from '@universalmediaserver/imdb-api';
 import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
 import { Episode, EpisodeRequest, ExternalId, SearchMovieRequest, SearchTvRequest, TvExternalIdsResponse } from 'moviedb-promise/dist/request-types';
-import * as natural from 'natural';
+import { JaroWinklerDistance } from 'natural';
 
 import osAPI from './opensubtitles';
 import omdbAPI from './omdb-api';
@@ -97,7 +97,7 @@ export const getFromOMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
       }
 
       // find the best search results utilising the Jaro-Winkler distance metric
-      const searchResultStringDistance = searchResults.results.map(result => natural.JaroWinklerDistance(searchRequest.name, result.title));
+      const searchResultStringDistance = searchResults.results.map(result => JaroWinklerDistance(searchRequest.name, result.title));
       const bestSearchResultKey = _.indexOf(searchResultStringDistance, _.max(searchResultStringDistance));
 
       const searchResult = searchResults.results[bestSearchResultKey] as Movie;
