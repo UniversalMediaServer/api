@@ -60,6 +60,7 @@
     }
   },
   "dependencies": {
+    "@skyra/jaro-winkler": "^1.1.0",
     "@universalmediaserver/imdb-api": "https://github.com/UniversalMediaServer/node-imdb-api#8bdef69c6d5d6663b7e3f3d7b61b24794be2c38e",
     "debug": "4.3.4",
     "episode-parser": "2.0.2",
@@ -72,7 +73,6 @@
     "lodash": "4.17.21",
     "mongoose": "6.10.5",
     "moviedb-promise": "3.3.1",
-    "natural": "5.2.4",
     "object-mapper": "6.2.0",
     "opensubtitles-api": "https://github.com/UniversalMediaServer/opensubtitles-api#94e2339b2e38533e518e6556f49b65e541bbe9e3",
     "pm2": "5.3.0",
