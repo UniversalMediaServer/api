@@ -1844,6 +1844,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@skyra/jaro-winkler@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@skyra/jaro-winkler@npm:1.1.0"
+  checksum: f46641f73363f19d2bc7f27534385d885d3c9dc4f7df81866860fcd549ec4f90de6249f078a49da33e4cc6a0ba5e4f2d687f63df9ccd14de70bd745e6927b29a
+  languageName: node
+  linkType: hard
+
 "@tootallnate/once@npm:1":
   version: 1.1.2
   resolution: "@tootallnate/once@npm:1.1.2"
@@ -2434,13 +2441,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"afinn-165@npm:^1.0.2":
-  version: 1.0.4
-  resolution: "afinn-165@npm:1.0.4"
-  checksum: f2843dfd6e8c77f0e1849afcfcb60092db49653f669369c3263b8202ebe0cc38c37bc490acb41b49b96968e8b8628bd788bc5f456c8ece270d82d9b304fceda1
-  languageName: node
-  linkType: hard
-
 "agent-base@npm:6, agent-base@npm:^6.0.0, agent-base@npm:^6.0.2":
   version: 6.0.2
   resolution: "agent-base@npm:6.0.2"
@@ -2577,15 +2577,6 @@ __metadata:
     normalize-path: ^3.0.0
     picomatch: ^2.0.4
   checksum: 3e044fd6d1d26545f235a9fe4d7a534e2029d8e59fa7fd9f2a6eb21230f6b5380ea1eaf55136e60cbf8e613544b3b766e7a6fa2102e2a3a117505466e3025dc2
-  languageName: node
-  linkType: hard
-
-"apparatus@npm:^0.0.10":
-  version: 0.0.10
-  resolution: "apparatus@npm:0.0.10"
-  dependencies:
-    sylvester: ">= 0.0.8"
-  checksum: ab0bf678890a4840dff47b5133f9c04beec618627ec7783ad8a7f379ecfed84676049b6e6aac567ecb660d5f27db06e420e5637ceed2325542b2f2e5ffe9dc90
   languageName: node
   linkType: hard
 
@@ -6088,20 +6079,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"natural@npm:5.2.4":
-  version: 5.2.4
-  resolution: "natural@npm:5.2.4"
-  dependencies:
-    afinn-165: ^1.0.2
-    apparatus: ^0.0.10
-    safe-stable-stringify: ^2.2.0
-    sylvester: ^0.0.12
-    underscore: ^1.9.1
-    wordnet-db: ^3.1.11
-  checksum: a50f788a3a41ade75590ccfc0d1d2657eb5b57f0b9e8ffad51ffef80d9929bd7f313d7b73713d2e3423b91338c383d1d6719f559cf7ff45b5a4694c673e072c3
-  languageName: node
-  linkType: hard
-
 "needle@npm:2.4.0":
   version: 2.4.0
   resolution: "needle@npm:2.4.0"
@@ -7031,13 +7008,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"safe-stable-stringify@npm:^2.2.0":
-  version: 2.4.2
-  resolution: "safe-stable-stringify@npm:2.4.2"
-  checksum: 0324ba2e40f78cae63e31a02b1c9bdf1b786621f9e8760845608eb9e81aef401944ac2078e5c9c1533cf516aea34d08fa8052ca853637ced84b791caaf1e394e
-  languageName: node
-  linkType: hard
-
 "safer-buffer@npm:>= 2.1.2 < 3, safer-buffer@npm:>= 2.1.2 < 3.0.0":
   version: 2.1.2
   resolution: "safer-buffer@npm:2.1.2"
@@ -7449,20 +7419,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sylvester@npm:>= 0.0.8":
-  version: 0.0.21
-  resolution: "sylvester@npm:0.0.21"
-  checksum: 7a5f05ab310cc46081fda871e3910a8c229dbb5410ea679dc22a0f2f2287f2b35096025111e6e4085d509a612676bf77abfae453c61d1872ad84a0718064a92e
-  languageName: node
-  linkType: hard
-
-"sylvester@npm:^0.0.12":
-  version: 0.0.12
-  resolution: "sylvester@npm:0.0.12"
-  checksum: 8041377c7cc470b434daf00ca8fa8fe9aa77c82d107ee70fc1d6643b550282c6bb93a2f7a935d0fbf7d319a3094393eb81233618399c456a694106ff015a743f
-  languageName: node
-  linkType: hard
-
 "systeminformation@npm:^5.7":
   version: 5.17.12
   resolution: "systeminformation@npm:5.17.12"
@@ -7792,13 +7748,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"underscore@npm:^1.9.1":
-  version: 1.13.6
-  resolution: "underscore@npm:1.13.6"
-  checksum: d5cedd14a9d0d91dd38c1ce6169e4455bb931f0aaf354108e47bd46d3f2da7464d49b2171a5cf786d61963204a42d01ea1332a903b7342ad428deaafaf70ec36
-  languageName: node
-  linkType: hard
-
 "unique-filename@npm:^2.0.0":
   version: 2.0.1
   resolution: "unique-filename@npm:2.0.1"
@@ -7828,6 +7777,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "universalmediaserver-api@workspace:."
   dependencies:
+    "@skyra/jaro-winkler": ^1.1.0
     "@types/jest": 29.5.0
     "@types/koa": 2.13.5
     "@types/koa-bodyparser": 4.3.10
@@ -7857,7 +7807,6 @@ __metadata:
     mongodb-memory-server: 8.12.2
     mongoose: 6.10.5
     moviedb-promise: 3.3.1
-    natural: 5.2.4
     nock: 13.3.0
     nodemon: 2.0.22
     object-mapper: 6.2.0
@@ -8049,13 +7998,6 @@ __metadata:
   version: 1.2.3
   resolution: "word-wrap@npm:1.2.3"
   checksum: 30b48f91fcf12106ed3186ae4fa86a6a1842416df425be7b60485de14bec665a54a68e4b5156647dec3a70f25e84d270ca8bc8cd23182ed095f5c7206a938c1f
-  languageName: node
-  linkType: hard
-
-"wordnet-db@npm:^3.1.11":
-  version: 3.1.14
-  resolution: "wordnet-db@npm:3.1.14"
-  checksum: 7203027afb210ec372010c2dded87b6f73a4cfb54dfcdd4e5acdabc64bec88eab57ffd65b06e02f4c506feb3adbe40351a43e25bf62a95adf9fb02fa479c1534
   languageName: node
   linkType: hard
 
