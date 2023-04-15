@@ -38,6 +38,7 @@ describe('Collection Metadata endpoint', () => {
         return mongoose.connect(mongoUrl);
       })
       .then(() => {
+        mongoose.set('strictQuery', true);
         server = app.listen(PORT, () => {
           stoppable(server, 0);
           done();

@@ -12,6 +12,7 @@ describe('Failed Lookups Model', () => {
     const mongoUrl = mongod.getUri();
     process.env.MONGO_URL = mongoUrl;
     await mongoose.connect(mongoUrl);
+    mongoose.set('strictQuery', true);
   });
 
   afterAll(async() => {
