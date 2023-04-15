@@ -671,7 +671,7 @@ export const getLocalizedMetadata = async(language?: string, mediaType?: string,
 export const getTmdbIdFromIMDbID = async(imdbID: string, mediaType?: string): Promise<Partial<TmdbIdentifyResponse>> | null => {
   mediaType = mediaType || '';
   const findResult = await tmdb.find({ id: imdbID, external_source: ExternalId.ImdbId });
-  
+
   /**
    * this logging is here temporarily to fix a specific flaky test.
    * If you are reading this and don't recognize it, you can remove it.
