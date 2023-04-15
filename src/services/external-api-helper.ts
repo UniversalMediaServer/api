@@ -671,6 +671,7 @@ export const getLocalizedMetadata = async(language?: string, mediaType?: string,
 export const getTmdbIdFromIMDbID = async(imdbID: string, mediaType?: string): Promise<Partial<TmdbIdentifyResponse>> | null => {
   mediaType = mediaType || '';
   const findResult = await tmdb.find({ id: imdbID, external_source: ExternalId.ImdbId });
+  console.log('rawTmdbResult', findResult, mediaType, imdbID);
   switch (mediaType) {
     case 'movie':
       if (findResult.movie_results && !_.isEmpty(findResult.movie_results)) {
