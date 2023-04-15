@@ -15,7 +15,6 @@
     "test": "IMDB_API_KEY=foo NODE_ENV=test OS_API_USERAGENT=OS_API_MOCK_KEY jest test/e2e/media-video.spec.ts --coverage --forceExit --detectOpenHandles && npm run test:mocks",
     "test:mocks": "IMDB_API_KEY=foo NODE_ENV=test OS_API_USERAGENT=OS_API_MOCK_KEY jest test/**/*.spec.ts  --testPathIgnorePatterns test/e2e/media-video.spec.ts --coverage --forceExit --detectOpenHandles",
     "test:models": "jest test/models/*.spec.ts --coverage --forceExit --detectOpenHandles",
-    "test:stress:localize": "IMDB_API_KEY=foo NODE_ENV=test OS_API_USERAGENT=OS_API_MOCK_KEY ./node_modules/.bin/jest test/e2e/media-localize.spec.ts --coverage --forceExit --detectOpenHandles",
     "tsc:ci": "tsc && rm -rf dist",
     "watch": "tsc --watch"
   },
