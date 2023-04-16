@@ -67,10 +67,11 @@ describe('Media Metadata endpoints', () => {
         return mongoose.connect(mongoUrl);
       })
       .then(() => {
+        mongoose.set('strictQuery', true);
         server = app.listen(PORT, () => {
           stoppable(server, 0);
           done();
-        })
+        });
       });
   });
 

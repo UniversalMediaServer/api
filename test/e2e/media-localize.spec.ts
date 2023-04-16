@@ -77,6 +77,7 @@ describe('Localize Metadata endpoint', () => {
         return mongoose.connect(mongoUrl);
       })
       .then(() => {
+        mongoose.set('strictQuery', true);
         server = app.listen(PORT, () => {
           stoppable(server, 0);
           done();
@@ -100,13 +101,13 @@ describe('Localize Metadata endpoint', () => {
       const spyIdentifyTmdb = jest.spyOn(apihelper, 'getTmdbIdFromIMDbID');
       let response = await axios.get(`${appUrl}/api/media/localize?language=${MOVIE_BLADE_RUNNER_FRENCH.language}&mediaType=${MOVIE_BLADE_RUNNER_FRENCH.mediaType}&imdbID=${MOVIE_BLADE_RUNNER_FRENCH.imdbID}`) as UmsApiLocalizeAxiosResponse;
 
+      expect(spyGetFromApi).toHaveBeenCalledTimes(1);
+      expect(spyIdentifyTmdb).toHaveBeenCalledTimes(1);
       expect(response.data.imdbID).toBe(MOVIE_BLADE_RUNNER_FRENCH.imdbID);
       expect(response.data.tmdbID).toBe(MOVIE_BLADE_RUNNER_FRENCH.tmdbID);
       expect(response.data.title).toBe(MOVIE_BLADE_RUNNER_FRENCH.title);
       expect(response.data.tagline).toBe(MOVIE_BLADE_RUNNER_FRENCH.tagline);
       expect(response.data.overview).toContain(MOVIE_BLADE_RUNNER_FRENCH.overview);
-      expect(spyGetFromApi).toHaveBeenCalledTimes(1);
-      expect(spyIdentifyTmdb).toHaveBeenCalledTimes(1);
       spyGetFromApi.mockReset();
       spyIdentifyTmdb.mockReset();
 
