@@ -1,9 +1,9 @@
 import * as mongoose from 'mongoose';
-import { Schema, Document, Model } from 'mongoose';
+import { Schema, Model } from 'mongoose';
 import { Network, SimplePerson, SimpleSeason, TvImagesResponse, TvExternalIdsResponse, CreditsResponse } from 'moviedb-promise/dist/request-types';
 import { ProductionCompany, ProductionCountry, SpokenLanguage } from 'moviedb-promise/dist/types';
 
-export interface SeriesMetadataInterface extends Document {
+export interface SeriesMetadataInterface {
   actors?: Array<string>;
   awards?: string;
   country?: string;

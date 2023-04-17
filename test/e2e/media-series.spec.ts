@@ -1,5 +1,5 @@
 import axios from 'axios';
-import mongoose from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import * as stoppable from 'stoppable';
 
@@ -10,7 +10,7 @@ import { tmdb } from '../../src/services/tmdb-api';
 
 interface UmsApiSeriesAxiosResponse  {
   status: number;
-  data: SeriesMetadataInterface;
+  data: HydratedDocument<SeriesMetadataInterface>;
   headers?: object;
 }
 
@@ -21,7 +21,7 @@ let mongod: MongoMemoryServer;
 const americanHorrorStorySeries = {
   title: 'American Horror Story',
   imdbID: 'tt1844624',
-}
+};
 
 describe('Media Metadata endpoints', () => {
   beforeAll((done) => {

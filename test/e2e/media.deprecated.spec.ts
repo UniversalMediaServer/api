@@ -1,4 +1,4 @@
-import MediaMetadataModel, { MediaMetadataInterfaceDocument } from '../../src/models/MediaMetadata';
+import MediaMetadataModel, { MediaMetadataInterface } from '../../src/models/MediaMetadata';
 import FailedLookupsModel from '../../src/models/FailedLookups';
 
 import * as mongoose from 'mongoose';
@@ -11,7 +11,7 @@ let mongod;
 
 interface UmsApiAxiosResponse  {
   status: number;
-  data: MediaMetadataInterfaceDocument;
+  data: MediaMetadataInterface;
   headers?: object;
 }
 

@@ -1,13 +1,12 @@
 import { SearchRequest } from '@universalmediaserver/imdb-api';
 import { ParameterizedContext } from 'koa';
 import * as _ from 'lodash';
-import { LeanDocument } from 'mongoose';
 
 import { ExternalAPIError, MediaNotFoundError, ValidationError } from '../helpers/customErrors';
 import { CollectionMetadataInterface } from '../models/CollectionMetadata';
 import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
 import LocalizeMetadata, { LocalizeMetadataInterface } from '../models/LocalizeMetadata';
-import MediaMetadata, { MediaMetadataInterface, MediaMetadataInterfaceDocument } from '../models/MediaMetadata';
+import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
 import { SeasonMetadataInterface } from '../models/SeasonMetadata';
 import { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import * as externalAPIHelper from '../services/external-api-helper';
@@ -102,7 +101,7 @@ export const getLocalize = async(ctx: ParameterizedContext): Promise<Partial<Loc
   }
 };
 
-export const getSeriesV2 = async(ctx: ParameterizedContext): Promise<Partial<SeriesMetadataInterface> | LeanDocument<MediaMetadataInterfaceDocument>> => {
+export const getSeriesV2 = async(ctx: ParameterizedContext): Promise<Partial<SeriesMetadataInterface> | MediaMetadataInterface> => {
   const { imdbID, title, year }: UmsQueryParams = ctx.query;
   let { language }: UmsQueryParams = ctx.query;
   if (!title && !imdbID) {
@@ -135,7 +134,7 @@ export const getSeriesV2 = async(ctx: ParameterizedContext): Promise<Partial<Ser
  */
 export const getSeason = async(ctx: ParameterizedContext): Promise<Partial<SeasonMetadataInterface>> => {
   const { season, title, year }: UmsQueryParams = ctx.query;
-  let { tmdbID, language }: UmsQueryParams = ctx.query
+  let { tmdbID, language }: UmsQueryParams = ctx.query;
   if (!tmdbID && !title) {
     throw new ValidationError('title or tmdbID is required');
   }
