@@ -62,6 +62,7 @@ export const getLocalize = async(ctx: ParameterizedContext): Promise<Partial<Loc
   }
 
   const failedLookupQuery: FailedLookupsInterface = { language, type: mediaType, imdbID, tmdbID, season, episode };
+  // TODO: can this be one query instead of two?
   if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
     return null;
@@ -75,6 +76,9 @@ export const getLocalize = async(ctx: ParameterizedContext): Promise<Partial<Loc
   if (tmdbID) {
     const existingLocalize: LocalizeMetadataInterface = await LocalizeMetadata.findOne({ language, mediaType, tmdbID, seasonNumber, episodeNumber }, null, { lean: true }).exec();
     if (existingLocalize) {
+      if (process.env.NODE_ENV === 'test') {
+        console.log('existingLocalize 1', existingLocalize);
+      }
       return ctx.body = existingLocalize;
     }
   }
@@ -82,6 +86,9 @@ export const getLocalize = async(ctx: ParameterizedContext): Promise<Partial<Loc
   if (imdbID) {
     const existingLocalize: LocalizeMetadataInterface = await LocalizeMetadata.findOne({ language, mediaType, imdbID }, null, { lean: true }).exec();
     if (existingLocalize) {
+      if (process.env.NODE_ENV === 'test') {
+        console.log('existingLocalize 2', existingLocalize);
+      }
       return ctx.body = existingLocalize;
     }
   }
@@ -91,6 +98,9 @@ export const getLocalize = async(ctx: ParameterizedContext): Promise<Partial<Loc
     if (!findResult) {
       await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
       throw new MediaNotFoundError();
+    }
+    if (process.env.NODE_ENV === 'test') {
+      console.log('findResult', findResult);
     }
     return ctx.body = findResult;
   } catch (err) {
