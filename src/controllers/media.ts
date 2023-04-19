@@ -359,9 +359,8 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
     omdbData = await externalAPIHelper.getFromOMDbAPIV2(imdbIdToSearch, omdbSearchRequest, seasonNumber, episodeNumbers);
     imdbIdToSearch = imdbIdToSearch || omdbData?.imdbID;
   } catch (e) {
-    console.error(e);
-    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
-    throw new MediaNotFoundError();
+    // Log errors thrown from OMDb but continue on to TMDB
+    console.log(e);
   }
 
   /*

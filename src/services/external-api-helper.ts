@@ -80,13 +80,21 @@ export const getFromOMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchReq
       const tvSeriesInfo = await omdbAPI.get(searchRequest);
 
       if (tvSeriesInfo && tvSeriesInfo instanceof TVShow) {
-        const allEpisodes = await tvSeriesInfo.episodes();
-        const currentEpisode = _.find(allEpisodes, { season, episode: episodeNumbers[0] });
-        if (!currentEpisode) {
-          return null;
+        try {
+          const allEpisodes = await tvSeriesInfo.episodes();
+          const currentEpisode = _.find(allEpisodes, { season, episode: episodeNumbers[0] });
+          if (!currentEpisode) {
+            return null;
+          }
+          imdbId = currentEpisode.imdbid;
+        } catch (err) {
+          // stop throwing for an empty array
+          if (err && err.message && err.message.includes('Invalid response from server: []')) {
+            console.trace(err);
+            return null;
+          }
+          throw err;
         }
-
-        imdbId = currentEpisode.imdbid;
       }
     } else {
       searchRequest.reqtype = 'movie';
@@ -217,7 +225,12 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, language
     }
     // End TMDB lookups
 
-    omdbData = await getFromOMDbAPIV2(imdbID);
+    try {
+      omdbData = await getFromOMDbAPIV2(imdbID);
+    } catch (err) {
+      // Log errors thrown from OMDb without discarding the results
+      console.log(err);
+    }
 
     // discard non-series results
     if (omdbData.type && omdbData.type !== 'series') {
@@ -299,7 +312,19 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, language
     if (year) {
       searchRequest.year = Number(year);
     }
-    const omdbResponse = await omdbAPI.get(searchRequest);
+
+    let omdbResponse;
+    try {
+      omdbResponse = await omdbAPI.get(searchRequest);
+    } catch (err) {
+      // stop throwing for an empty array
+      if (err && err.message && err.message.includes('Invalid response from server: []')) {
+        console.trace(err);
+        return null;
+      }
+      // log errors for OMDb but don't let it crash the rest of the method
+      console.log(err);
+    }
 
     if (!tmdbData && !omdbResponse && year) {
       /**
