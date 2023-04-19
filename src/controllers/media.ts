@@ -15,6 +15,23 @@ import { OpenSubtitlesQuery } from '../services/external-api-helper';
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
 
 /**
+ * Increment the count of any matching failed lookup.
+ *
+ * @returns whether existing failure was found, optionally
+ * throwing a MediaNotFoundError if it was
+ */
+const incrementFailedCount = async(query, shouldThrowError = false): Promise<boolean> => {
+  const failedLookupRecord = await FailedLookups.findOneAndUpdate(query, { $inc: { count: 1 } }, { lean: true, rawResult: true }).exec();
+  if (_.get(failedLookupRecord, 'lastErrorObject.updatedExisting')) {
+    if (shouldThrowError) {
+      throw new MediaNotFoundError();
+    }
+    return true;
+  }
+  return false;
+};
+
+/**
  * Adds a searchMatch to an existing result by IMDb ID, and returns the result.
  *
  * @param imdbID the IMDb ID
@@ -62,10 +79,7 @@ export const getLocalize = async(ctx: ParameterizedContext): Promise<Partial<Loc
   }
 
   const failedLookupQuery: FailedLookupsInterface = { language, type: mediaType, imdbID, tmdbID, season, episode };
-
-  // increment the count of any matching failed lookup, otherwise continue
-  const failedLookupRecord = await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
-  if (failedLookupRecord && failedLookupRecord.modifiedCount === 1) {
+  if (await incrementFailedCount(failedLookupQuery)) {
     return null;
   }
 
@@ -268,11 +282,7 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
     return ctx.body = existingResult;
   }
 
-  // increment the count of any matching failed lookup, otherwise continue
-  const failedLookupRecord = await FailedLookups.updateOne({ $or: failedQuery }, { $inc: { count: 1 } }).exec();
-  if (failedLookupRecord && failedLookupRecord.modifiedCount === 1) {
-    throw new MediaNotFoundError();
-  }
+  await incrementFailedCount({ $or: failedQuery }, true);
 
   // the database does not have a record of this file, so begin search for metadata on external apis.
 
