@@ -627,13 +627,6 @@ export const getLocalizedMetadata = async(language?: string, mediaType?: string,
         language: language,
         append_to_response: 'external_ids',
       });
-      /**
-       * this logging is here temporarily to fix a specific flaky test.
-       * If you are reading this and don't recognize it, you can remove it.
-       */
-      if (process.env.NODE_ENV === 'test') {
-        console.log('tv tmdbData 1', tmdbData, language);
-      }
       break;
     case 'tv_season':
       tmdbData = await tmdb.seasonInfo({
@@ -678,14 +671,6 @@ export const getLocalizedMetadata = async(language?: string, mediaType?: string,
 export const getTmdbIdFromIMDbID = async(imdbID: string, mediaType?: string): Promise<Partial<TmdbIdentifyResponse>> | null => {
   mediaType = mediaType || '';
   const findResult = await tmdb.find({ id: imdbID, external_source: ExternalId.ImdbId });
-
-  /**
-   * this logging is here temporarily to fix a specific flaky test.
-   * If you are reading this and don't recognize it, you can remove it.
-   */
-  if (process.env.NODE_ENV === 'test') {
-    console.log('rawTmdbResult', findResult, mediaType, imdbID);
-  }
 
   switch (mediaType) {
     case 'movie':
