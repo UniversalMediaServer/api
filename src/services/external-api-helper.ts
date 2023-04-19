@@ -229,7 +229,7 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, language
     failedLookupQuery = { title: title, type: 'series' };
     if (language) {
       failedLookupQuery.language = language;
-	}
+    }
     if (year) {
       failedLookupQuery.startYear = year;
       titleQuery.startYear = year;
@@ -394,7 +394,7 @@ export const getSeasonMetadata = async(tmdbTvID?: number, seasonNumber?: number)
   const tmdbResponse = await tmdb.seasonInfo(seasonRequest);
   if (tmdbResponse) {
     const metadata = mapper.parseTMDBAPISeasonResponse(tmdbResponse);
-	metadata.tmdbTvID = tmdbTvID;
+    metadata.tmdbTvID = tmdbTvID;
     return await SeasonMetadata.create(metadata);
   } else {
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
@@ -586,13 +586,13 @@ export const getLocalizedMetadata = async(language?: string, mediaType?: string,
 
   if (!tmdbID && imdbID) {
     const identifyResult = await getTmdbIdFromIMDbID(imdbID, mediaType);
-    if (identifyResult != null) {
+    if (identifyResult !== null) {
       mediaType = identifyResult.mediaType;
       tmdbID = identifyResult.tmdbID;
       seasonNumber = identifyResult.seasonNumber;
       episodeNumber = identifyResult.episodeNumber;
-      //if we are here, that mean the request was made without tmdbId.
-      //udpate tmdbId as we do not saved it before.
+      // if we are here, that means the request was made without tmdbId.
+      // update tmdbId as we do not saved it before.
       if (tmdbID) {
         if (mediaType === 'movie') {
           MediaMetadata.updateOne({ imdbID }, { tmdbID: tmdbID }).exec();
@@ -672,14 +672,6 @@ export const getTmdbIdFromIMDbID = async(imdbID: string, mediaType?: string): Pr
   mediaType = mediaType || '';
   const findResult = await tmdb.find({ id: imdbID, external_source: ExternalId.ImdbId });
 
-  /**
-   * this logging is here temporarily to fix a specific flaky test.
-   * If you are reading this and don't recognize it, you can remove it.
-   */
-  if (process.env.NODE_ENV === 'test') {
-    console.log('rawTmdbResult', findResult, mediaType, imdbID);
-  }
-
   switch (mediaType) {
     case 'movie':
       if (findResult.movie_results && !_.isEmpty(findResult.movie_results)) {
@@ -692,7 +684,7 @@ export const getTmdbIdFromIMDbID = async(imdbID: string, mediaType?: string): Pr
       }
       break;
     case 'tv_season':
-      //should never happend as IMDB do not store season
+      // should never happen as IMDb do not store season
       if (findResult.tv_season_results && !_.isEmpty(findResult.tv_season_results)) {
         return mapper.parseTMDBAPIIdentifyTvChildsResponse(findResult.tv_season_results[0]);
       }
@@ -703,7 +695,7 @@ export const getTmdbIdFromIMDbID = async(imdbID: string, mediaType?: string): Pr
       }
       break;
     default:
-      //we don't know the type, let try to find it in order movie, tv, episode, season
+      // we don't know the type, let try to find it in order movie, tv, episode, season
       if (findResult.movie_results && !_.isEmpty(findResult.movie_results)) {
         return mapper.parseTMDBAPIIdentifyResponse(findResult.movie_results[0]);
       } else if (findResult.tv_results && !_.isEmpty(findResult.tv_results)) {

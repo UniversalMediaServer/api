@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
-import { Document, Schema } from 'mongoose';
+import { Schema } from 'mongoose';
 
-export interface EpisodeProcessingInterface extends Document {
+export interface EpisodeProcessingInterface {
   seriesimdbid: string;
 }
 

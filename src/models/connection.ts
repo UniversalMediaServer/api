@@ -2,7 +2,7 @@ import mongoose, { Mongoose } from 'mongoose';
 
 mongoose.set('bufferCommands', false);
 mongoose.set('strictQuery', true);
-mongoose.set('strict', 'throw')
+mongoose.set('strict', 'throw');
 
 export default (db: string): void => {
   if (!db) {
@@ -27,10 +27,9 @@ export default (db: string): void => {
     connect().catch(error => console.error(error));
   });
 
-  process.on('SIGINT', function() {
-    mongoose.connection.close(function() {
-      console.log('Mongoose default connection disconnected through app termination');
-      process.exit(0);
-    });
+  process.on('SIGINT', async () => {
+    await mongoose.connection.close();
+    console.log('Mongoose default connection disconnected through app termination');
+    process.exit(0);
   });
 };

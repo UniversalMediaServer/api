@@ -5,12 +5,12 @@ import * as stoppable from 'stoppable';
 
 import app, { PORT } from '../../src/app';
 import FailedLookupsModel from '../../src/models/FailedLookups';
-import MediaMetadata, { MediaMetadataInterfaceDocument } from '../../src/models/MediaMetadata';
+import MediaMetadata, { MediaMetadataInterface } from '../../src/models/MediaMetadata';
 import * as apihelper from '../../src/services/external-api-helper';
 
 interface UmsApiMediaAxiosResponse  {
   status: number;
-  data: MediaMetadataInterfaceDocument;
+  data: MediaMetadataInterface;
   headers?: object;
 }
 

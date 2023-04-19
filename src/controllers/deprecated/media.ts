@@ -1,11 +1,10 @@
 import { SearchRequest } from '@universalmediaserver/imdb-api';
 import { ParameterizedContext } from 'koa';
 import * as _ from 'lodash';
-import { LeanDocument } from 'mongoose';
 
 import { ExternalAPIError, MediaNotFoundError, ValidationError } from '../../helpers/customErrors';
 import FailedLookups, { FailedLookupsInterface } from '../../models/FailedLookups';
-import MediaMetadata, { MediaMetadataInterface, MediaMetadataInterfaceDocument } from '../../models/MediaMetadata';
+import MediaMetadata, { MediaMetadataInterface } from '../../models/MediaMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../../models/SeriesMetadata';
 import osAPI from '../../services/opensubtitles';
 import * as externalAPIHelper from '../../services/external-api-helper';
@@ -295,7 +294,7 @@ export const getByImdbID = async(ctx: ParameterizedContext): Promise<MediaMetada
 /**
  * @deprecated
  */
-export const getSeries = async(ctx: ParameterizedContext): Promise<SeriesMetadataInterface | LeanDocument<MediaMetadataInterfaceDocument>> => {
+export const getSeries = async(ctx: ParameterizedContext): Promise<SeriesMetadataInterface | MediaMetadataInterface> => {
   const { imdbID, title, year }: UmsQueryParams = ctx.query;
   if (!title && !imdbID) {
     throw new ValidationError('Either IMDb ID or title required');

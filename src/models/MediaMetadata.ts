@@ -1,6 +1,6 @@
 import { OmdbRating } from '@universalmediaserver/imdb-api/lib/interfaces';
 import * as mongoose from 'mongoose';
-import { Schema, Document } from 'mongoose';
+import { Schema } from 'mongoose';
 import { CreditsResponse, EpisodeCreditsResponse, EpisodeExternalIdsResponse, EpisodeImagesResponse, MovieExternalIdsResponse, MovieImagesResponse } from 'moviedb-promise/dist/request-types';
 import { ProductionCompany, ProductionCountry, SpokenLanguage } from 'moviedb-promise/dist/types';
 import { ValidationError } from '../helpers/customErrors';
@@ -50,8 +50,6 @@ export interface MediaMetadataInterface {
   votes?: string;
   year?: string;
 }
-
-export interface MediaMetadataInterfaceDocument extends Document, MediaMetadataInterface {}
 
 const isTypeEpisode = function(context?: MediaMetadataInterface): boolean {
   return context ? context.type === 'episode' : this.type === 'episode';
@@ -130,7 +128,7 @@ const MediaMetadataSchema: Schema = new Schema({
   versionKey: false,
 });
 
-MediaMetadataSchema.pre<MediaMetadataInterfaceDocument>('save', function(next) {
+MediaMetadataSchema.pre<MediaMetadataInterface>('save', function(next) {
   if (this.title && this.title.startsWith('Episode #')) {
     this.title = undefined;
   }
@@ -141,7 +139,7 @@ MediaMetadataSchema.virtual('imdburl').get(function() {
   return `https://www.imdb.com/title/${this.imdbID}`;
 });
 
-const MediaMetadata = mongoose.model<MediaMetadataInterfaceDocument>('MediaMetadata', MediaMetadataSchema);
+const MediaMetadata = mongoose.model<MediaMetadataInterface>('MediaMetadata', MediaMetadataSchema);
 
 MediaMetadata.on('index', function(err) {
   if (err) {

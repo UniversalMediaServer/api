@@ -13,7 +13,7 @@
     "start": "ts-node --files src/app.ts",
     "start:prod": "./node_modules/.bin/pm2 start ecosystem.config.js --update-env",
     "test": "IMDB_API_KEY=foo NODE_ENV=test OS_API_USERAGENT=OS_API_MOCK_KEY jest test/e2e/media-video.spec.ts --coverage --forceExit --detectOpenHandles && npm run test:mocks",
-    "test:mocks": "IMDB_API_KEY=foo NODE_ENV=test OS_API_USERAGENT=OS_API_MOCK_KEY jest test/**/*.spec.ts  --testPathIgnorePatterns test/e2e/media-video.spec.ts --coverage --forceExit --detectOpenHandles",
+    "test:mocks": "IMDB_API_KEY=foo TMDB_API_KEY=foo NODE_ENV=test OS_API_USERAGENT=OS_API_MOCK_KEY jest test/**/*.spec.ts --testPathIgnorePatterns test/e2e/media-video.spec.ts --coverage --forceExit --detectOpenHandles",
     "test:models": "jest test/models/*.spec.ts --coverage --forceExit --detectOpenHandles",
     "tsc:ci": "tsc && rm -rf dist",
     "watch": "tsc --watch"
@@ -71,7 +71,7 @@
     "koa-qs": "3.0.0",
     "koa-router": "12.0.0",
     "lodash": "4.17.21",
-    "mongoose": "6.10.5",
+    "mongoose": "7.0.4",
     "moviedb-promise": "3.4.0",
     "object-mapper": "6.2.0",
     "opensubtitles-api": "https://github.com/UniversalMediaServer/opensubtitles-api#94e2339b2e38533e518e6556f49b65e541bbe9e3",
