@@ -16,6 +16,17 @@ import { addSearchMatchByIMDbID } from '../media';
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
 
 /**
+ * Increment the count of any matching failed lookup and throw
+ * MediaNotFoundError if it was found, otherwise do nothing.
+ */
+const incrementFailedCountAndThrowIfFound = async(query): Promise<void> => {
+  const failedLookupRecord = await FailedLookups.findOneAndUpdate(query, { $inc: { count: 1 } }, { lean: true, rawResult: true }).exec();
+  if (failedLookupRecord && failedLookupRecord.lastErrorObject.updatedExisting === true) {
+    throw new MediaNotFoundError();
+  }
+};
+
+/**
  * @deprecated
  */
 export const getByOsdbHash = async(ctx: ParameterizedContext): Promise<MediaMetadataInterface> => {
@@ -34,11 +45,7 @@ export const getByOsdbHash = async(ctx: ParameterizedContext): Promise<MediaMeta
     return ctx.body = dbMeta;
   }
 
-  // If we already failed to get a result, return early
-  if (await FailedLookups.findOne({ osdbHash }, '_id', { lean: true }).exec()) {
-    await FailedLookups.updateOne({ osdbHash }, { $inc: { count: 1 } }).exec();
-    throw new MediaNotFoundError();
-  }
+  await incrementFailedCountAndThrowIfFound({ osdbHash });
 
   const osQuery: OpenSubtitlesQuery = {
     moviehash: osdbHash,
@@ -105,15 +112,11 @@ export const getBySanitizedTitle = async(ctx: ParameterizedContext): Promise<Med
     return ctx.body = existingResultFromSearchMatch;
   }
 
-  // If we already failed to get a result, return early
   const failedLookupQuery: FailedLookupsInterface = { title };
   if (year) {
     failedLookupQuery.year = year.toString();
   }
-  if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
-    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
-    throw new MediaNotFoundError();
-  }
+  await incrementFailedCountAndThrowIfFound(failedLookupQuery);
 
   const searchRequest: SearchRequest = { name: title };
   if (year) {
@@ -197,10 +200,7 @@ export const getBySanitizedTitleV2 = async(ctx: ParameterizedContext): Promise<M
   if (season) {
     failedLookupQuery.season = season.toString();
   }
-  if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
-    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
-    throw new MediaNotFoundError();
-  }
+  await incrementFailedCountAndThrowIfFound(failedLookupQuery);
 
   const searchRequest: SearchRequest = { name: title };
   if (year) {
@@ -271,10 +271,8 @@ export const getByImdbID = async(ctx: ParameterizedContext): Promise<MediaMetada
     return ctx.body = seriesMetadata;
   }
 
-  if (await FailedLookups.findOne({ imdbID: imdbid }, null, { lean: true }).exec()) {
-    await FailedLookups.updateOne({ imdbID: imdbid }, { $inc: { count: 1 } }).exec();
-    throw new MediaNotFoundError();
-  }
+  await incrementFailedCountAndThrowIfFound({ imdbID: imdbid });
+
   const imdbData: MediaMetadataInterface = await deprecatedExternalAPIHelper.getFromOMDbAPI(imdbid);
 
   try {
@@ -378,12 +376,7 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
     return ctx.body = existingResult;
   }
 
-  const existingFailedResult = await FailedLookups.findOne({ $or: failedQuery }, null, { lean: true }).exec();
-  if (existingFailedResult) {
-    // we have an existing failure record, so increment it, and throw not found error
-    await FailedLookups.updateOne({ _id: existingFailedResult._id }, { $inc: { count: 1 } }).exec();
-    throw new MediaNotFoundError();
-  }
+  await incrementFailedCountAndThrowIfFound({ $or: failedQuery });
 
   // the database does not have a record of this file, so begin search for metadata on external apis.
 

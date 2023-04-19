@@ -32,6 +32,16 @@ export interface OpenSubtitlesValidation {
 }
 
 /**
+ * Increment the count of any matching failed lookup.
+ *
+ * @returns whether existing failure was found
+ */
+const incrementFailedCount = async(query): Promise<boolean> => {
+  const failedLookupRecord = await FailedLookups.findOneAndUpdate(query, { $inc: { count: 1 } }, { lean: true, rawResult: true }).exec();
+  return _.get(failedLookupRecord, 'lastErrorObject.updatedExisting');
+};
+
+/**
  * Adds a searchMatch to an existing result by IMDb ID, and returns the result.
  *
  * @param imdbID the IMDb ID
@@ -196,8 +206,7 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, language
   if (imdbID) {
     failedLookupQuery = { imdbID };
     // We shouldn't have failures since we got this IMDb ID from their API
-    if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
-      await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
+    if (await incrementFailedCount(failedLookupQuery)) {
       return null;
     }
 
@@ -249,11 +258,7 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, language
     } else {
       sortBy['startYear'] = 1;
     }
-
-    // Return early for previously-failed lookups
-    if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
-      await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
-
+    if (await incrementFailedCount(failedLookupQuery)) {
       // Also store a failed result for the title that the client sent
       if (titleToCache) {
         await FailedLookups.updateOne({ title: titleToCache, type: 'series' }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
@@ -398,8 +403,7 @@ export const getSeasonMetadata = async(tmdbTvID?: number, seasonNumber?: number)
 
   // Return early for previously-failed lookups
   const failedLookupQuery: FailedLookupsInterface = { tmdbID: tmdbTvID, season: String(seasonNumber), type: 'season' };
-  if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
-    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
+  if (await incrementFailedCount(failedLookupQuery)) {
     return null;
   }
 
@@ -441,8 +445,7 @@ export const getCollectionMetadata = async(tmdbID?: number): Promise<Partial<Col
 
   // Return early for previously-failed lookups
   const failedLookupQuery: FailedLookupsInterface = { tmdbID: tmdbID, type: 'collection' };
-  if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
-    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
+  if (await incrementFailedCount(failedLookupQuery)) {
     return null;
   }
 
