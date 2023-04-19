@@ -62,10 +62,9 @@ export const getLocalize = async(ctx: ParameterizedContext): Promise<Partial<Loc
   }
 
   const failedLookupQuery: FailedLookupsInterface = { language, type: mediaType, imdbID, tmdbID, season, episode };
-
-  // increment the count of any matching failed lookup, otherwise continue
-  const failedLookupRecord = await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
-  if (failedLookupRecord && failedLookupRecord.modifiedCount === 1) {
+  // TODO: can this be one query instead of two?
+  if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
     return null;
   }
 
@@ -268,9 +267,10 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
     return ctx.body = existingResult;
   }
 
-  // increment the count of any matching failed lookup, otherwise continue
-  const failedLookupRecord = await FailedLookups.updateOne({ $or: failedQuery }, { $inc: { count: 1 } }).exec();
-  if (failedLookupRecord && failedLookupRecord.modifiedCount === 1) {
+  const existingFailedResult = await FailedLookups.findOne({ $or: failedQuery }, null, { lean: true }).exec();
+  if (existingFailedResult) {
+    // we have an existing failure record, so increment it, and throw not found error
+    await FailedLookups.updateOne({ _id: existingFailedResult._id }, { $inc: { count: 1 } }).exec();
     throw new MediaNotFoundError();
   }
 

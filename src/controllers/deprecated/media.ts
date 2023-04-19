@@ -34,9 +34,9 @@ export const getByOsdbHash = async(ctx: ParameterizedContext): Promise<MediaMeta
     return ctx.body = dbMeta;
   }
 
-  // increment the count of any matching failed lookup, otherwise continue
-  const failedLookupRecord = await FailedLookups.updateOne({ osdbHash }, { $inc: { count: 1 } }).exec();
-  if (failedLookupRecord && failedLookupRecord.modifiedCount === 1) {
+  // If we already failed to get a result, return early
+  if (await FailedLookups.findOne({ osdbHash }, '_id', { lean: true }).exec()) {
+    await FailedLookups.updateOne({ osdbHash }, { $inc: { count: 1 } }).exec();
     throw new MediaNotFoundError();
   }
 
@@ -105,13 +105,13 @@ export const getBySanitizedTitle = async(ctx: ParameterizedContext): Promise<Med
     return ctx.body = existingResultFromSearchMatch;
   }
 
+  // If we already failed to get a result, return early
   const failedLookupQuery: FailedLookupsInterface = { title };
   if (year) {
     failedLookupQuery.year = year.toString();
   }
-  // increment the count of any matching failed lookup, otherwise continue
-  const failedLookupRecord = await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
-  if (failedLookupRecord && failedLookupRecord.modifiedCount === 1) {
+  if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
     throw new MediaNotFoundError();
   }
 
@@ -197,9 +197,8 @@ export const getBySanitizedTitleV2 = async(ctx: ParameterizedContext): Promise<M
   if (season) {
     failedLookupQuery.season = season.toString();
   }
-  // increment the count of any matching failed lookup, otherwise continue
-  const failedLookupRecord = await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
-  if (failedLookupRecord && failedLookupRecord.modifiedCount === 1) {
+  if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
     throw new MediaNotFoundError();
   }
 
@@ -272,12 +271,10 @@ export const getByImdbID = async(ctx: ParameterizedContext): Promise<MediaMetada
     return ctx.body = seriesMetadata;
   }
 
-  // increment the count of any matching failed lookup, otherwise continue
-  const failedLookupRecord = await FailedLookups.updateOne({ imdbID: imdbid }, { $inc: { count: 1 } }).exec();
-  if (failedLookupRecord && failedLookupRecord.modifiedCount === 1) {
+  if (await FailedLookups.findOne({ imdbID: imdbid }, null, { lean: true }).exec()) {
+    await FailedLookups.updateOne({ imdbID: imdbid }, { $inc: { count: 1 } }).exec();
     throw new MediaNotFoundError();
   }
-
   const imdbData: MediaMetadataInterface = await deprecatedExternalAPIHelper.getFromOMDbAPI(imdbid);
 
   try {
@@ -381,9 +378,10 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
     return ctx.body = existingResult;
   }
 
-  // increment the count of any matching failed lookup, otherwise continue
-  const failedLookupRecord = await FailedLookups.updateOne({ $or: failedQuery }, { $inc: { count: 1 } }).exec();
-  if (failedLookupRecord && failedLookupRecord.modifiedCount === 1) {
+  const existingFailedResult = await FailedLookups.findOne({ $or: failedQuery }, null, { lean: true }).exec();
+  if (existingFailedResult) {
+    // we have an existing failure record, so increment it, and throw not found error
+    await FailedLookups.updateOne({ _id: existingFailedResult._id }, { $inc: { count: 1 } }).exec();
     throw new MediaNotFoundError();
   }
 
