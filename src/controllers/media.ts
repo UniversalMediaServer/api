@@ -325,7 +325,7 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
     tmdbData = await externalAPIHelper.getFromTMDBAPI(title, language, imdbIdToSearch, yearNumber, seasonNumber, episodeNumbers);
     imdbIdToSearch = imdbIdToSearch || tmdbData?.imdbID;
   } catch (e) {
-    // Log the error but continue on to try the next API, OMDb
+    // Log the error but continue
     if (e.message && e.message.includes('404') && e.response?.config?.url) {
       console.log('Received 404 response from ' + e.response.config.url);
     } else {

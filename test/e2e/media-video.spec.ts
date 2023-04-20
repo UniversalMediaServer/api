@@ -66,7 +66,6 @@ const EPISODE_AVATAR = {
 
 describe('get by all', () => {
   beforeAll((done) => {
-    require('../omdb-mocks');
     require('../opensubtitles-mocks');
     require('../tmdb-mocks');
     MongoMemoryServer.create()
@@ -253,7 +252,6 @@ describe('get by all', () => {
       expect(response.data.title).toEqual(EPISODE_PRISONBREAK.title);
       expect(response.data.type).toEqual('episode');
 
-      // This value comes from OMDb
       expect(response.data.seriesIMDbID).toEqual(EPISODE_PRISONBREAK.seriesIMDbID);
       expect(openSubsSpy).toHaveBeenCalledTimes(1);
       openSubsSpy.mockReset();
@@ -280,7 +278,6 @@ describe('get by all', () => {
       expect(response.data.type).toEqual('episode');
       expect(response.data.episode).toEqual(EPISODE_AVATAR.episode);
 
-      // This value comes from OMDb
       expect(response.data.seriesIMDbID).toEqual(EPISODE_AVATAR.seriesIMDbID);
       expect(openSubsSpy).toHaveBeenCalledTimes(1);
       openSubsSpy.mockReset();

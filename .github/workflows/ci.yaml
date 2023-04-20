@@ -7,7 +7,6 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      IMDB_API_KEY: ${{ secrets.IMDB_API_KEY }}
       OS_API_USERAGENT: ${{ secrets. OS_API_USERAGENT }}
       TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
 

@@ -17,7 +17,6 @@ API -> "Universal Media Server Client": If found, return API response
 
 API -> TMDB : Query source API 1
 API -> OpenSubtitles : Query source API 2
-API -> OMDB : Query source API 3
 
 API -> "API MongoDB": (3) Save metadata to MongoDB
 

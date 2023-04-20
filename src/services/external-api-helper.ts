@@ -371,7 +371,7 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, language?: stri
         if (i === 0) {
           metadata = mapper.parseTMDBAPIEpisodeResponse(tmdbData);
           metadata.tmdbTvID = seriesTMDBID;
-          //get series IMDbID from tmdb as omdb seems to give wrong value
+          // get series IMDbID
           const tmdbSeriesData: TvExternalIdsResponse = await tmdb.tvExternalIds(seriesTMDBID);
           if (tmdbSeriesData?.imdb_id) {
             metadata.seriesIMDbID = tmdbSeriesData.imdb_id;
