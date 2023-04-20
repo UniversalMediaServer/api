@@ -1,11 +1,9 @@
-import { Movie, SearchRequest, TVShow } from '@universalmediaserver/imdb-api';
 import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
 import { Episode, EpisodeRequest, ExternalId, SearchMovieRequest, SearchTvRequest, TvExternalIdsResponse } from 'moviedb-promise/dist/request-types';
 import { jaroWinkler } from '@skyra/jaro-winkler';
 
 import osAPI from './opensubtitles';
-import omdbAPI from './omdb-api';
 import { tmdb } from './tmdb-api';
 import { ValidationError } from '../helpers/customErrors';
 import CollectionMetadata, { CollectionMetadataInterface } from '../models/CollectionMetadata';
@@ -44,105 +42,6 @@ const addSearchMatchByIMDbID = async(imdbID: string, searchMatch: string): Promi
     { $push: { searchMatches: searchMatch } },
     { new: true, lean: true },
   ).exec();
-};
-
-/**
- * Attempts a query to the OMDb API and standardizes the response
- * before returning.
- *
- * OMDb does not return goofs, osdbHash, tagline, trivia
- *
- * @param [imdbId] the IMDb ID
- * @param [searchRequest] a query to perform in order to get the imdbId
- * @param [season] the season number if this is an episode
- * @param [episodeNumbers] the episode number/s if this is episode/s
- */
-export const getFromOMDbAPIV2 = async(imdbId?: string, searchRequest?: SearchRequest, season?: number, episodeNumbers?: number[]): Promise<MediaMetadataInterface | null> => {
-  if (!imdbId && !_.get(searchRequest, 'name')) {
-    throw new Error('Either imdbId or searchRequest.name must be specified');
-  }
-  // If the client specified episode number/s, this is episode/s
-  const isExpectingTVEpisode = Boolean(episodeNumbers);
-
-  // We need the IMDb ID for the imdbAPI get request below so here we get it.
-  if (!imdbId) {
-    if (isExpectingTVEpisode) {
-      /**
-       * This is a really roundabout way to get info for one episode;
-       * it requires that we lookup the series, then lookup each season
-       * (one request per season), just to get the imdb of the episode
-       * we want. There is a feature request on the module repo but we should
-       * consider doing it ourselves if that gets stale.
-       *
-       * @see https://github.com/worr/node-imdb-api/issues/89
-       */
-      searchRequest.reqtype = 'series';
-      const tvSeriesInfo = await omdbAPI.get(searchRequest);
-
-      if (tvSeriesInfo && tvSeriesInfo instanceof TVShow) {
-        try {
-          const allEpisodes = await tvSeriesInfo.episodes();
-          const currentEpisode = _.find(allEpisodes, { season, episode: episodeNumbers[0] });
-          if (!currentEpisode) {
-            return null;
-          }
-          imdbId = currentEpisode.imdbid;
-        } catch (err) {
-          // stop throwing for an empty array
-          if (err && err.message && err.message.includes('Invalid response from server: []')) {
-            console.trace(err);
-            return null;
-          }
-          throw err;
-        }
-      }
-    } else {
-      searchRequest.reqtype = 'movie';
-      const searchResults = await omdbAPI.search(searchRequest);
-
-      if (!searchResults) {
-        return null;
-      }
-
-      // find the best search results utilising the Jaro-Winkler distance metric
-      const searchResultStringDistance = searchResults.results.map(result => jaroWinkler(searchRequest.name, result.title));
-      const bestSearchResultKey = _.indexOf(searchResultStringDistance, _.max(searchResultStringDistance));
-
-      const searchResult = searchResults.results[bestSearchResultKey] as Movie;
-      if (!searchResult) {
-        return null;
-      }
-
-      imdbId = searchResult.imdbid;
-    }
-  }
-
-  if (!imdbId) {
-    return null;
-  }
-
-  const imdbData = await omdbAPI.get({ id: imdbId });
-
-  if (!imdbData) {
-    return null;
-  }
-
-  let metadata: any;
-  if (isExpectingTVEpisode || imdbData.type === 'episode') {
-    if (imdbData.type === 'episode') {
-      metadata = mapper.parseOMDbAPIEpisodeResponse(imdbData);
-    } else {
-      throw new Error('Received type ' + imdbData.type + ' but expected episode for ' + imdbId + ' ' + searchRequest + ' ' + season + ' ' + episodeNumbers);
-    }
-  } else if (imdbData.type === 'movie') {
-    metadata = mapper.parseOMDbAPIMovieResponse(imdbData);
-  } else if (imdbData.type === 'series') {
-    metadata = mapper.parseOMDbAPISeriesResponse(imdbData);
-  } else {
-    throw new Error('Received a type we did not expect: ' + imdbData.type);
-  }
-
-  return metadata;
 };
 
 const getSeriesTMDBIDFromTMDBAPI = async(imdbID?: string, seriesTitle?: string, language?: string, year?: number): Promise<number> => {
@@ -190,7 +89,6 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, language
     searchMatch = language ? language + '@' + title : title;
   }
   let failedLookupQuery: FailedLookupsInterface;
-  let omdbData: Partial<SeriesMetadataInterface> = {};
   let tmdbData: Partial<SeriesMetadataInterface> = {};
 
   if (imdbID) {
@@ -224,18 +122,6 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, language
       tmdbData = mapper.parseTMDBAPISeriesResponse(tmdbResponse);
     }
     // End TMDB lookups
-
-    try {
-      omdbData = await getFromOMDbAPIV2(imdbID);
-    } catch (err) {
-      // Log errors thrown from OMDb without discarding the results
-      console.log(err);
-    }
-
-    // discard non-series results
-    if (omdbData.type && omdbData.type !== 'series') {
-      omdbData = {};
-    }
   } else {
     const sortBy = {};
     const titleQuery: GetSeriesFilter = { searchMatches: { $in: [searchMatch] } };
@@ -304,29 +190,7 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, language
       }
     }
 
-    // Start OMDb lookups
-    const searchRequest: SearchRequest = {
-      name: title,
-      reqtype: 'series',
-    };
-    if (year) {
-      searchRequest.year = Number(year);
-    }
-
-    let omdbResponse;
-    try {
-      omdbResponse = await omdbAPI.get(searchRequest);
-    } catch (err) {
-      // stop throwing for an empty array
-      if (err && err.message && err.message.includes('Invalid response from server: []')) {
-        console.trace(err);
-        return null;
-      }
-      // log errors for OMDb but don't let it crash the rest of the method
-      console.log(err);
-    }
-
-    if (!tmdbData && !omdbResponse && year) {
+    if (!tmdbData && year) {
       /**
        * If the client specified a year, it may have been incorrect because of
        * the way filename parsing works; the filename Galactica.1980.S01E01 might
@@ -336,26 +200,9 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, language
        */
       return getSeriesMetadata(null, title + ' ' + year, language, title);
     }
-    omdbData = mapper.parseOMDbAPISeriesResponse(omdbResponse);
-
-    // discard non-series results
-    if (omdbData.type && omdbData.type !== 'series') {
-      omdbData = {};
-    }
-
-    // End OMDb lookups
-
-    // If we found an IMDb ID from OMDb, see if we have an existing record for the now-known media.
-    if (_.get(omdbData, 'imdbID')) {
-      const existingResult = await SeriesMetadata.findOne({ imdbID: omdbData.imdbID }, null, { lean: true }).exec();
-      if (existingResult) {
-        return await addSearchMatchByIMDbID(omdbData.imdbID, title);
-      }
-    }
   }
 
-  const combinedResponse = _.merge(omdbData, tmdbData);
-  if (!combinedResponse || _.isEmpty(combinedResponse)) {
+  if (!tmdbData || _.isEmpty(tmdbData)) {
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
 
     // Also store a failed result for the title that the client sent
@@ -368,16 +215,16 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, language
   }
 
   if (searchMatch) {
-    combinedResponse.searchMatches = [searchMatch];
+    tmdbData.searchMatches = [searchMatch];
   }
 
-  let response = await SeriesMetadata.create(combinedResponse);
+  let response = await SeriesMetadata.create(tmdbData);
 
   // Cache the result for the title that the client sent
   if (titleToCache) {
-    combinedResponse.searchMatches = combinedResponse.searchMatches || [];
-    combinedResponse.searchMatches.push(titleToCache);
-    response = await SeriesMetadata.create(combinedResponse);
+    tmdbData.searchMatches = tmdbData.searchMatches || [];
+    tmdbData.searchMatches.push(titleToCache);
+    response = await SeriesMetadata.create(tmdbData);
   }
 
   return response;

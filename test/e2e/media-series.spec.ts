@@ -62,7 +62,6 @@ describe('Media Metadata endpoints', () => {
       expect(response.data.totalSeasons).toBe(8);
       expect(response.data.title).toBe('Homeland');
       expect(response.data.startYear).toBe('2011');
-      expect(response.data.poster).toContain('https://');
 
       response = await axios.get(`${appUrl}/api/media/series/v2?title=HoMelAnD   `);
       expect(response.data._id).toEqual(newDocumentId);

@@ -1,4 +1,3 @@
-import { SearchRequest } from '@universalmediaserver/imdb-api';
 import { ParameterizedContext } from 'koa';
 import * as _ from 'lodash';
 
@@ -343,41 +342,7 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
   }
   // End TMDB lookups
 
-  // Start OMDb lookups
-  const omdbSearchRequest = {} as SearchRequest;
-
-  if (title) {
-    omdbSearchRequest.name = title;
-  }
-
-  if (year) {
-    omdbSearchRequest.year = yearNumber;
-  }
-
-  let omdbData: MediaMetadataInterface;
-  try {
-    omdbData = await externalAPIHelper.getFromOMDbAPIV2(imdbIdToSearch, omdbSearchRequest, seasonNumber, episodeNumbers);
-    imdbIdToSearch = imdbIdToSearch || omdbData?.imdbID;
-  } catch (e) {
-    // Log errors thrown from OMDb but continue on to TMDB
-    console.log(e);
-  }
-
-  /*
-   * If the client did not pass an imdbID, and did not
-   * find it on Open Subtitles or TMDB, but we found one
-   * from OMDb, see if we have an existing record for
-   * the now-known media.
-   */
-  if (!imdbID && imdbIdToSearch) {
-    const existingResult = await MediaMetadata.findOne({ imdbID: imdbIdToSearch }, null, { lean: true }).exec();
-    if (existingResult) {
-      return ctx.body = await addSearchMatchByIMDbID(imdbIdToSearch, searchMatch);
-    }
-  }
-  // End OMDb lookups
-
-  const combinedResponse = _.merge(openSubtitlesMetadata, omdbData, tmdbData);
+  const combinedResponse = _.merge(openSubtitlesMetadata, tmdbData);
   if (!combinedResponse || _.isEmpty(combinedResponse)) {
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();

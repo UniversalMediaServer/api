@@ -1,4 +1,3 @@
-import { SearchRequest } from '@universalmediaserver/imdb-api';
 import { ParameterizedContext } from 'koa';
 import * as _ from 'lodash';
 
@@ -76,11 +75,9 @@ export const getByOsdbHash = async(ctx: ParameterizedContext): Promise<MediaMeta
   }
 
   const parsedOpenSubtitlesResponse = mapper.parseOpenSubtitlesResponse(openSubtitlesResponse);
-  const parsedIMDbResponse: MediaMetadataInterface = await deprecatedExternalAPIHelper.getFromOMDbAPI(parsedOpenSubtitlesResponse.imdbID);
-  const combinedResponse = _.merge(parsedOpenSubtitlesResponse, parsedIMDbResponse);
 
   try {
-    dbMeta = await MediaMetadata.create(combinedResponse);
+    dbMeta = await MediaMetadata.create(parsedOpenSubtitlesResponse);
     return ctx.body = dbMeta;
   } catch (e) {
     await FailedLookups.updateOne({ osdbHash }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
@@ -89,11 +86,13 @@ export const getByOsdbHash = async(ctx: ParameterizedContext): Promise<MediaMeta
 };
 
 /**
+ * Since this is deprecated, it will only return a result that has been created
+ * by the newer route. This will never add new information to the database.
+ *
  * @deprecated
  */
 export const getBySanitizedTitle = async(ctx: ParameterizedContext): Promise<MediaMetadataInterface> => {
   const { title }: UmsQueryParams = ctx.query;
-  const year = ctx.query.year ? Number(ctx.query.year) : null;
 
   if (!title) {
     throw new ValidationError('title is required');
@@ -105,53 +104,15 @@ export const getBySanitizedTitle = async(ctx: ParameterizedContext): Promise<Med
     return ctx.body = existingResultFromSearchMatch;
   }
 
-  // If we already failed to get a result, return early
-  const failedLookupQuery: FailedLookupsInterface = { title };
-  if (year) {
-    failedLookupQuery.year = year.toString();
-  }
-  if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
-    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
-    throw new MediaNotFoundError();
-  }
-
-  const searchRequest: SearchRequest = { name: title };
-  if (year) {
-    searchRequest.year = year;
-  }
-  const imdbData: MediaMetadataInterface = await deprecatedExternalAPIHelper.getFromOMDbAPI(null, searchRequest);
-
-  if (!imdbData) {
-    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
-    throw new MediaNotFoundError();
-  }
-
-  /**
-   * If we already have a result based on IMDb ID, return it after adding
-   * this new searchMatch to the array.
-   */
-  const existingResultFromIMDbID: MediaMetadataInterface = await MediaMetadata.findOne({ imdbID: imdbData.imdbID }, null, { lean: true }).exec();
-  if (existingResultFromIMDbID) {
-    return ctx.body = await addSearchMatchByIMDbID(imdbData.imdbID, title);
-  }
-
-  try {
-    imdbData.searchMatches = [title];
-
-    let newlyCreatedResult = await MediaMetadata.create(imdbData);
-    newlyCreatedResult = newlyCreatedResult.toObject();
-    delete newlyCreatedResult.searchMatches;
-    return ctx.body = newlyCreatedResult;
-  } catch (e) {
-    console.error(e);
-    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
-    throw new MediaNotFoundError();
-  }
+  throw new MediaNotFoundError();
 };
 
 /**
  * Looks up a video by its title, and optionally its year, season and episode number.
  * If it is an episode, it also sets the series data.
+ *
+ * Since this is deprecated, it will only return a result that has been created
+ * by the newer route. This will never add new information to the database.
  *
  * @deprecated
  */
@@ -159,12 +120,6 @@ export const getBySanitizedTitleV2 = async(ctx: ParameterizedContext): Promise<M
   const { episode, title }: UmsQueryParams = ctx.query;
   const season = ctx.query.season ? Number(ctx.query.season) : null;
   const year = ctx.query.year ? Number(ctx.query.year) : null;
-
-  let episodeNumbers = null;
-  if (episode) {
-    const episodes = episode.split('-');
-    episodeNumbers = episodes.map(Number);
-  }
 
   if (!title) {
     throw new ValidationError('title is required');
@@ -186,66 +141,7 @@ export const getBySanitizedTitleV2 = async(ctx: ParameterizedContext): Promise<M
     return ctx.body = existingResultFromSearchMatch;
   }
 
-  // If we already failed to get a result, return early
-  const failedLookupQuery: FailedLookupsInterface = { title };
-  if (year) {
-    failedLookupQuery.year = year.toString();
-  }
-  if (episode) {
-    failedLookupQuery.episode = episode.toString();
-  }
-  if (season) {
-    failedLookupQuery.season = season.toString();
-  }
-  if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
-    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
-    throw new MediaNotFoundError();
-  }
-
-  const searchRequest: SearchRequest = { name: title };
-  if (year) {
-    searchRequest.year = year;
-  }
-  let imdbData: MediaMetadataInterface;
-  try {
-    imdbData = await externalAPIHelper.getFromOMDbAPIV2(null, searchRequest, season, episodeNumbers);
-  } catch (e) {
-    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
-    throw new MediaNotFoundError();
-  }
-
-  if (!imdbData) {
-    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
-    throw new MediaNotFoundError();
-  }
-
-  /**
-   * If we already have a result based on IMDb ID, return it after adding
-   * this new searchMatch to the array.
-   */
-  const existingResultFromIMDbID: MediaMetadataInterface = await MediaMetadata.findOne({ imdbID: imdbData.imdbID }, null, { lean: true }).exec();
-  if (existingResultFromIMDbID) {
-    const updatedResult = await addSearchMatchByIMDbID(imdbData.imdbID, title);
-    return ctx.body = updatedResult;
-  }
-
-  try {
-    imdbData.searchMatches = [title];
-
-    // Ensure that we return and cache the same episode number that was searched for
-    if (episodeNumbers && episodeNumbers.length > 1 && episodeNumbers[0] === imdbData.episode) {
-      imdbData.episode = episode;
-    }
-
-    let newlyCreatedResult = await MediaMetadata.create(imdbData);
-    newlyCreatedResult = newlyCreatedResult.toObject();
-    delete newlyCreatedResult.searchMatches;
-    return ctx.body = newlyCreatedResult;
-  } catch (e) {
-    console.error(e);
-    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
-    throw new MediaNotFoundError();
-  }
+  throw new MediaNotFoundError();
 };
 
 /**
@@ -271,24 +167,7 @@ export const getByImdbID = async(ctx: ParameterizedContext): Promise<MediaMetada
     return ctx.body = seriesMetadata;
   }
 
-  if (await FailedLookups.findOne({ imdbID: imdbid }, null, { lean: true }).exec()) {
-    await FailedLookups.updateOne({ imdbID: imdbid }, { $inc: { count: 1 } }).exec();
-    throw new MediaNotFoundError();
-  }
-  const imdbData: MediaMetadataInterface = await deprecatedExternalAPIHelper.getFromOMDbAPI(imdbid);
-
-  try {
-    let dbMeta;
-    if (imdbData.type === 'series') {
-      dbMeta = await SeriesMetadata.create(imdbData);
-    } else {
-      dbMeta = await MediaMetadata.create(imdbData);
-    }
-    return ctx.body = dbMeta;
-  } catch (e) {
-    await FailedLookups.updateOne({ imdbID: imdbid }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
-    throw new MediaNotFoundError();
-  }
+  throw new MediaNotFoundError();
 };
 
 /**
@@ -453,44 +332,7 @@ export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataI
   }
   // End TMDB lookups
 
-  // Start OMDb lookups
-  const omdbSearchRequest = {} as SearchRequest;
-
-  if (title) {
-    omdbSearchRequest.name = title;
-  }
-
-  if (year) {
-    omdbSearchRequest.year = yearNumber;
-  }
-
-  let omdbData: MediaMetadataInterface;
-  try {
-    omdbData = await externalAPIHelper.getFromOMDbAPIV2(imdbIdToSearch, omdbSearchRequest, seasonNumber, episodeNumbers);
-    imdbIdToSearch = imdbIdToSearch || omdbData?.imdbID;
-  } catch (e) {
-    console.error(e);
-    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
-    throw new MediaNotFoundError();
-  }
-
-  /*
-   * If the client did not pass an imdbID, and did not
-   * find it on Open Subtitles or TMDB, but we found one
-   * from OMDb, see if we have an existing record for
-   * the now-known media.
-   */
-  if (!imdbID && imdbIdToSearch) {
-    {
-      const existingResult = await MediaMetadata.findOne({ imdbID: imdbIdToSearch }, null, { lean: true }).exec();
-      if (existingResult) {
-        return ctx.body = await addSearchMatchByIMDbID(imdbIdToSearch, title);
-      }
-    }
-  }
-  // End OMDb lookups
-
-  const combinedResponse = _.merge(openSubtitlesMetadata, omdbData, tmdbData);
+  const combinedResponse = _.merge(openSubtitlesMetadata, tmdbData);
   if (!combinedResponse || _.isEmpty(combinedResponse)) {
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();

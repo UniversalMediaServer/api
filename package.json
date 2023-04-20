@@ -36,7 +36,7 @@
       "@typescript-eslint"
     ],
     "parserOptions": {
-      "ecmaVersion": 2021,
+      "ecmaVersion": 2023,
       "project": "./tsconfig.json",
       "sourceType": "module"
     },
@@ -61,7 +61,6 @@
   },
   "dependencies": {
     "@skyra/jaro-winkler": "^1.1.0",
-    "@universalmediaserver/imdb-api": "https://github.com/UniversalMediaServer/node-imdb-api#8bdef69c6d5d6663b7e3f3d7b61b24794be2c38e",
     "debug": "4.3.4",
     "episode-parser": "2.0.2",
     "escape-string-regexp": "5.0.0",
