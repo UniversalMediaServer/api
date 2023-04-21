@@ -1,4 +1,3 @@
-import { OmdbRating } from '@universalmediaserver/imdb-api/lib/interfaces';
 import * as mongoose from 'mongoose';
 import { Schema } from 'mongoose';
 import { CreditsResponse, EpisodeCreditsResponse, EpisodeExternalIdsResponse, EpisodeImagesResponse, MovieExternalIdsResponse, MovieImagesResponse } from 'moviedb-promise/dist/request-types';
@@ -33,7 +32,7 @@ export interface MediaMetadataInterface {
   productionCountries?: Array<ProductionCountry>;
   rated?: string; // e.g 'PG-13'
   rating?: number; // e.g. 6.7
-  ratings?: Array<OmdbRating>; // e.g. {"Source": "Metacritic", "Value": "67/100"}
+  ratings?: any; // e.g. {"Source": "Metacritic", "Value": "67/100"} NO LONGER USED, THIS WAS FROM OMDB
   released?: Date;
   revenue?: string;
   runtime?: string;

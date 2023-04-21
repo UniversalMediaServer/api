@@ -44,68 +44,6 @@ const openSubtitlesData = {
   type: 'movie',
 };
 
-const omdbApiEpisode = {
-  title: 'One Last Thing',
-  year: 2013,
-  rated: 'TV-MA',
-  released: '2013-11-23T11:00:00.000Z',
-  season: 3,
-  episode: 9,
-  runtime: '57 min',
-  genres: 'Crime, Drama, Mystery, Thriller',
-  director: 'Jeffrey Reiner, N/A',
-  writer: 'Howard Gordon (developed for american television by), Alex Gansa (developed for american television by), Gideon Raff (based on the original Israeli series "Prisoners of War" by), Barbara Hall',
-  actors: 'Claire Danes, Damian Lewis, Rupert Friend, Morena Baccarin',
-  plot: 'Saul has found and rescued Brody and is now trying to help him recover from addiction. A task that proved to be a little challenging, so Saul turns to Carrie for help. She only agrees to help after she hears about Saul\'s new plan.',
-  languages: 'English',
-  country: 'USA',
-  awards: 'N/A',
-  poster: 'https://m.media-amazon.com/images/M/MV5BMTc0NDc2Nzg0MV5BMl5BanBnXkFtZTgwMzA2MzM2MDE@._V1_SX300.jpg',
-  ratings: [{ Source: 'Internet Movie Database', Value: '8.6/10' }],
-  metascore: 'N/A',
-  rating: 8.6,
-  votes: '2211',
-  imdbid: 't2916312', // intentionally missing a "t"
-  type: 'episode',
-  response: 'True',
-  series: true,
-  imdburl: 'https://www.imdb.com/title/tt2916312',
-};
-
-const omdbApiSeries = {
-  ratings: [{ source: 'Internet Movie Database', value: '8.3/10' }],
-  title: 'Prison Break',
-  year: 0,
-  _yearData: '2005–2017',
-  rated: 'TV-14',
-  released: new Date('2005-08-28T12:00:00.000Z'),
-  runtime: '44 min',
-  genres: 'Action, Crime, Drama',
-  director: 'N/A',
-  writer: 'Paul T. Scheuring',
-  actors: 'Dominic Purcell, Wentworth Miller, Amaury Nolasco',
-  plot: 'An innocent man is framed for the homicide of the Vice President\'s brother and scheduled to be executed at a super-max penitentiary, thus it\'s up to his younger brother to save him with his genius scheme: install himself in the same prison by holding up a bank and, as the final month ticks away, launch the escape plan step-by-step to break the both of them out, with his full-body tattoo acting as his guide; a tattoo which hides the layout of the prison facility and necessary clues vital to the escape.',
-  languages: 'English, Arabic, Spanish',
-  country: 'United Kingdom, United States',
-  awards: 'Nominated for 1 Primetime Emmy. 8 wins & 32 nominations total',
-  poster: 'https://m.media-amazon.com/images/M/MV5BMTg3NTkwNzAxOF5BMl5BanBnXkFtZTcwMjM1NjI5MQ@@._V1_SX300.jpg',
-  metascore: 'N/A',
-  rating: 8.3,
-  votes: '497,403',
-  imdbid: 'tt0455275',
-  type: 'series',
-  boxoffice: undefined,
-  production: undefined,
-  website: undefined,
-  name: 'Prison Break',
-  series: true,
-  imdburl: 'https://www.imdb.com/title/tt0455275',
-  _episodes: [],
-  start_year: 2005,
-  end_year: undefined,
-  totalseasons: 5,
-};
-
 const tmdbApiMovieResponse = {
   'adult': false,
   'backdrop_path': '/2KjPXUYDoSbAtIQGjbEIcX6b7x5.jpg',
@@ -448,60 +386,6 @@ describe('Data mapper', () => {
         'Phil Rosenthal',
         'Billie Joe Armstrong',
       ]);
-    });
-  });
-
-  describe('OMDb API responses', () => {
-    describe('episodes', () => {
-      it('should parse to expected flat structure', () => {
-        const parsed = mapper.parseOMDbAPIEpisodeResponse(omdbApiEpisode);
-        expect(parsed.actors).toEqual(['Claire Danes', 'Damian Lewis', 'Rupert Friend', 'Morena Baccarin']);
-        expect(parsed.country).toEqual('USA');
-        expect(parsed.directors).toEqual(['Jeffrey Reiner']);
-        expect(parsed.episode).toEqual(9);
-        expect(parsed.genres).toEqual(['Crime', 'Drama', 'Mystery', 'Thriller']);
-        expect(parsed.plot).toEqual(omdbApiEpisode.plot);
-        expect(parsed.imdbID).toEqual('t' + omdbApiEpisode.imdbid);
-        expect(parsed.poster).toEqual('https://m.media-amazon.com/images/M/MV5BMTc0NDc2Nzg0MV5BMl5BanBnXkFtZTgwMzA2MzM2MDE@._V1_SX300.jpg');
-        expect(parsed.rated).toEqual('TV-MA');
-        expect(parsed.rating).toEqual(8.6);
-        expect(parsed.ratings).toEqual([{ Source: 'Internet Movie Database', Value: '8.6/10' }]);
-        expect(parsed.released).toEqual('2013-11-23T11:00:00.000Z');
-        expect(parsed.runtime).toEqual('57 min');
-        expect(parsed.season).toEqual(omdbApiEpisode.season);
-        expect(parsed.title).toEqual(omdbApiEpisode.title);
-        expect(parsed.type).toEqual('episode');
-        expect(parsed.votes).toEqual('2211');
-        expect(typeof parsed.year).toBe('string');  
-      });
-
-      it('should remove N/A values', () => {
-        const parsed = mapper.parseOMDbAPIEpisodeResponse(omdbApiEpisode);
-        expect(parsed.awards).not.toBe('N/A');
-      });
-    });
-
-    describe('series', () => {
-      it('should parse as expected', () => {
-        const parsed = mapper.parseOMDbAPISeriesResponse(omdbApiSeries);
-        expect(parsed.actors).toEqual(['Dominic Purcell', 'Wentworth Miller', 'Amaury Nolasco']),
-        expect(parsed.awards).toBe('Nominated for 1 Primetime Emmy. 8 wins & 32 nominations total'),
-        expect(parsed.country).toBe('United Kingdom, United States'),
-        expect(parsed.directors).toEqual([]),
-        expect(parsed.imdbID).toBe('tt0455275'),
-        expect(parsed.title).toBe('Prison Break'),
-        expect(parsed.genres).toEqual(['Action', 'Crime', 'Drama']),
-        expect(parsed.plot).toBe('An innocent man is framed for the homicide of the Vice President\'s brother and scheduled to be executed at a super-max penitentiary, thus it\'s up to his younger brother to save him with his genius scheme: install himself in the same prison by holding up a bank and, as the final month ticks away, launch the escape plan step-by-step to break the both of them out, with his full-body tattoo acting as his guide; a tattoo which hides the layout of the prison facility and necessary clues vital to the escape.'),
-        expect(parsed.poster).toBe('https://m.media-amazon.com/images/M/MV5BMTg3NTkwNzAxOF5BMl5BanBnXkFtZTcwMjM1NjI5MQ@@._V1_SX300.jpg'),
-        expect(parsed.rated).toBe('TV-14'),
-        expect(parsed.rating).toBe(8.3),
-        expect(parsed.ratings).toEqual([{ Source: 'Internet Movie Database', Value: '8.3/10' }]),
-        expect(parsed.startYear).toBe('2005'),
-        expect(parsed.year).toBe('2005'),
-        expect(parsed.totalSeasons).toBe(5),
-        expect(parsed.type).toBe('series'),
-        expect(parsed.votes).toBe('497,403');
-      });
     });
   });
 

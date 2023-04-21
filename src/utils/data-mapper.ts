@@ -204,7 +204,7 @@ const tmdbCollectionMap = {
       return parts.map(part => part.id);
     },
   },
-}
+};
 
 const tmdbMovieMap = {
   'belongs_to_collection.id': 'collectionTmdbID',
@@ -246,170 +246,6 @@ const tmdbMovieMap = {
   },
 };
 
-const omdbEpisodeMap = {
-  'actors': {
-    key: 'actors?',
-    transform: (val: string): Array<string> => _.isEmpty(val) ? null : val.split(', '),
-  },
-  'awards': 'awards',
-  'boxoffice': 'boxoffice',
-  'country': 'country',
-  'director': {
-    key: 'directors?',
-    transform: (val: string): Array<string> => _.isEmpty(val) ? null : val.split(', '),
-  },
-  'episode': 'episode',
-  'imdbid': 'imdbID',
-  'genres': {
-    key: 'genres?',
-    transform: (val: string): Array<string> => _.isEmpty(val) ? null : val.split(', '),
-  },
-  'metascore': 'metascore',
-  'plot': 'plot',
-  'production': 'production',
-  'poster': 'poster',
-  'rated': 'rated',
-  'rating': 'rating',
-  'ratings': {
-    key: 'ratings?',
-    transform: val => {
-      if (_.isEmpty(val)) {
-        return null;
-      }
-
-      const transformedValue = [];
-      for (const rating of val) {
-        transformedValue.push({ Source: rating.source || rating.Source, Value: rating.value || rating.Value });
-      }
-      return transformedValue;
-    },
-  },
-  'released': 'released',
-  'runtime': 'runtime',
-  'season': 'season',
-  'title': 'title',
-  'type': 'type',
-  'votes': 'votes',
-  'year': {
-    key: 'year',
-    transform: (val: number): string => val ? val.toString() : undefined,
-  },
-};
-
-const omdbSeriesMap = {
-  'actors': {
-    key: 'actors?',
-    transform: (val: string): Array<string> => _.isEmpty(val) ? null : val.split(', '),
-  },
-  'awards': 'awards',
-  'country': 'country',
-  'director': {
-    key: 'directors?',
-    transform: (val: string): Array<string> => _.isEmpty(val) ? null : val.split(', '),
-  },
-  'end_year': {
-    key: 'endYear',
-    transform: (val: number): string => val ? val.toString() : undefined,
-  },
-  'imdbid': 'imdbID',
-  'title': 'title',
-  'genres': {
-    key: 'genres?',
-    transform: (val: string): Array<string> => _.isEmpty(val) ? null : val.split(', '),
-  },
-  'metascore': 'metascore',
-  'plot': 'plot',
-  'poster': 'poster',
-  'rated': 'rated',
-  'rating': 'rating',
-  'ratings': {
-    key: 'ratings?',
-    transform: val => {
-      if (_.isEmpty(val)) {
-        return null;
-      }
-
-      const transformedValue = [];
-      for (const rating of val) {
-        transformedValue.push({ Source: rating.source, Value: rating.value });
-      }
-      return transformedValue;
-    },
-  },
-  'start_year': [
-    {
-      key: 'startYear',
-      transform: (val: number): string => val ? val.toString() : undefined,
-    },
-    { key: 'year' },
-  ],
-  'totalseasons': {
-    key: 'totalSeasons',
-    transform: (val): number => {
-      if (val) {
-        const parsedValue = parseFloat(val);
-        if (!isNaN(parsedValue)) {
-          return parsedValue;
-        }
-      }
-      return undefined;
-    },
-  },
-  'type': 'type',
-  'votes': 'votes',
-};
-
-const omdbMovieMap = {
-  'actors': {
-    key: 'actors?',
-    transform: (val: string): Array<string> => _.isEmpty(val) ? null : val.split(', '),
-  },
-  'awards': 'awards',
-  'boxoffice': 'boxoffice',
-  'country': 'country',
-  'director': {
-    key: 'directors?',
-    transform: (val: string): Array<string> => _.isEmpty(val) ? null : val.split(', '),
-  },
-  'genres': {
-    key: 'genres?',
-    transform: (val: string): Array<string> => _.isEmpty(val) ? null : val.split(', '),
-  },
-  'imdbid': 'imdbID',
-  'metascore': 'metascore',
-  'plot': 'plot',
-  'production': 'production',
-  'poster': 'poster',
-  'rated': 'rated',
-  'rating': 'rating',
-  'ratings': {
-    key: 'ratings?',
-    transform: val => {
-      if (_.isEmpty(val)) {
-        return null;
-      }
-
-      const transformedValue = [];
-      for (const rating of val) {
-        transformedValue.push({ Source: rating.source, Value: rating.value });
-      }
-      return transformedValue;
-    },
-  },
-  'released': 'released',
-  'runtime': 'runtime',
-  'title': 'title',
-  'type': {
-    key: 'type',
-    transform: (): string => 'movie',
-  },
-  'votes': 'votes',
-  'year': {
-    key: 'year',
-    transform: (val: number): string => val ? val.toString() : undefined,
-  },
-};
-
 const filterUnwantedValues = (obj): Partial<MediaMetadataInterface | SeriesMetadataInterface> => {
   return _.pickBy(obj, (v) => {
     if (typeof v === 'object') {
@@ -432,8 +268,6 @@ const filterUnwantedLocalizeValues = (obj): Partial<LocalizeMetadataInterface> =
  * Ensures that IMDb IDs have "tt" at the start.
  * This is because APIs sometimes return IMDb IDs with
  * only one or no "t".
- * For example from OMDb for Ultimate Tag we received
- * t10329660 which is correct when you add the extra "t".
  */
 const ensureIMDbIDFormat = (metadata, propertyName = 'imdbID'): Partial<MediaMetadataInterface | SeriesMetadataInterface> => {
   if (
@@ -504,25 +338,6 @@ class UmsDataMapper {
   parseTMDBAPILocalizeResponse(tmdbData): Partial<LocalizeMetadataInterface> {
     const mappedData = objectMapper.merge(tmdbData, tmdbLocalizeMap);
     return filterUnwantedLocalizeValues(mappedData);
-  }
-
-  parseOMDbAPIEpisodeResponse(omdbData): Partial<MediaMetadataInterface> {
-    let mappedData = objectMapper.merge(omdbData, omdbEpisodeMap);
-    mappedData = filterUnwantedValues(mappedData);
-    mappedData = ensureIMDbIDFormat(mappedData);
-    return ensureIMDbIDFormat(mappedData, 'seriesIMDbID');
-  }
-
-  parseOMDbAPISeriesResponse(omdbData): Partial<SeriesMetadataInterface> {
-    let mappedData = objectMapper.merge(omdbData, omdbSeriesMap);
-    mappedData = filterUnwantedValues(mappedData);
-    return ensureIMDbIDFormat(mappedData);
-  }
-
-  parseOMDbAPIMovieResponse(omdbData): Partial<MediaMetadataInterface> {
-    let mappedData = objectMapper.merge(omdbData, omdbMovieMap);
-    mappedData = filterUnwantedValues(mappedData);
-    return ensureIMDbIDFormat(mappedData);
   }
 }
 
