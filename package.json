@@ -65,7 +65,7 @@
     "episode-parser": "2.0.2",
     "escape-string-regexp": "5.0.0",
     "koa": "2.14.2",
-    "koa-bodyparser": "4.4.0",
+    "koa-bodyparser": "4.4.1",
     "koa-helmet": "7.0.2",
     "koa-qs": "3.0.0",
     "koa-router": "12.0.0",
