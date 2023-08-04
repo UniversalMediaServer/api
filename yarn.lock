@@ -2231,9 +2231,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/koa@npm:2.13.7":
-  version: 2.13.7
-  resolution: "@types/koa@npm:2.13.7"
+"@types/koa@npm:2.13.8":
+  version: 2.13.8
+  resolution: "@types/koa@npm:2.13.8"
   dependencies:
     "@types/accepts": "*"
     "@types/content-disposition": "*"
@@ -2243,7 +2243,7 @@ __metadata:
     "@types/keygrip": "*"
     "@types/koa-compose": "*"
     "@types/node": "*"
-  checksum: 1fc188f2e872999508fb37544f0a31b7dc5d9b534db3833dcc074d398681d2a299af98f46594b21213d7c377fa4d0fd3d5eed84c768572b1adcbf4f3db2626bb
+  checksum: 76a2a6d219c65f242a43efca42970d864701c58319c346a91dd8c3b4df2021786fd0d600a88dfb098358c9085f9f4a2dfe62563641441cf21e11e2bfe04f4fdf
   languageName: node
   linkType: hard
 
@@ -7974,7 +7974,7 @@ __metadata:
   dependencies:
     "@skyra/jaro-winkler": ^1.1.0
     "@types/jest": 29.5.3
-    "@types/koa": 2.13.7
+    "@types/koa": 2.13.8
     "@types/koa-bodyparser": 4.3.10
     "@types/koa-helmet": 6.0.4
     "@types/koa-router": 7.4.4
