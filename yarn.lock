@@ -2765,7 +2765,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:1.5.0":
+"axios@npm:1.5.0, axios@npm:^1.4.0":
   version: 1.5.0
   resolution: "axios@npm:1.5.0"
   dependencies:
@@ -2782,15 +2782,6 @@ __metadata:
   dependencies:
     follow-redirects: ^1.14.0
   checksum: 44245f24ac971e7458f3120c92f9d66d1fc695e8b97019139de5b0cc65d9b8104647db01e5f46917728edfc0cfd88eb30fc4c55e6053eef4ace76768ce95ff3c
-  languageName: node
-  linkType: hard
-
-"axios@npm:^0.26.1":
-  version: 0.26.1
-  resolution: "axios@npm:0.26.1"
-  dependencies:
-    follow-redirects: ^1.14.8
-  checksum: d9eb58ff4bc0b36a04783fc9ff760e9245c829a5a1052ee7ca6013410d427036b1d10d04e7380c02f3508c5eaf3485b1ae67bd2adbfec3683704745c8d7a6e1a
   languageName: node
   linkType: hard
 
@@ -4203,7 +4194,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.14.0, follow-redirects@npm:^1.14.8, follow-redirects@npm:^1.15.0, follow-redirects@npm:^1.15.2":
+"follow-redirects@npm:^1.14.0, follow-redirects@npm:^1.15.0, follow-redirects@npm:^1.15.2":
   version: 1.15.2
   resolution: "follow-redirects@npm:1.15.2"
   peerDependenciesMeta:
@@ -6221,13 +6212,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"moviedb-promise@npm:3.4.1":
-  version: 3.4.1
-  resolution: "moviedb-promise@npm:3.4.1"
+"moviedb-promise@npm:4.0.1":
+  version: 4.0.1
+  resolution: "moviedb-promise@npm:4.0.1"
   dependencies:
-    axios: ^0.26.1
+    axios: ^1.4.0
     lodash: ^4.17.21
-  checksum: e2549e3f2eeff953fa931077bf6b4483df6eb801d379ed2316f8d7242f88f29dcf80368b3038c570d001df1273e70c2e43896fe22d06345a6a4b9d21e3dc747a
+    promise-throttle: ^1.1.2
+  checksum: 640403158c22249f3ccbc53d7c96a932133e62a5ebb191836c86e8123cca34a3bb5b8120456c086f3249710daf76d49b263eca10789f4f82e778f41b29c810a0
   languageName: node
   linkType: hard
 
@@ -6904,6 +6896,13 @@ __metadata:
     err-code: ^2.0.2
     retry: ^0.12.0
   checksum: f96a3f6d90b92b568a26f71e966cbbc0f63ab85ea6ff6c81284dc869b41510e6cdef99b6b65f9030f0db422bf7c96652a3fff9f2e8fb4a0f069d8f4430359429
+  languageName: node
+  linkType: hard
+
+"promise-throttle@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "promise-throttle@npm:1.1.2"
+  checksum: 9c147f7c4be88590b8e42bc3ed159768515b6536e185ddc088b9d21cf59b0b10185e741efda475659417e7bd56db0226b5c202998ca925f918906473f4f003ed
   languageName: node
   linkType: hard
 
@@ -7954,7 +7953,7 @@ __metadata:
     lodash: 4.17.21
     mongodb-memory-server: 8.15.1
     mongoose: 7.4.2
-    moviedb-promise: 3.4.1
+    moviedb-promise: 4.0.1
     nock: 13.3.3
     nodemon: 3.0.1
     object-mapper: 6.2.0
