@@ -11,8 +11,6 @@ import { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import * as externalAPIHelper from '../services/external-api-helper';
 import { OpenSubtitlesQuery } from '../services/external-api-helper';
 
-export const FAILED_LOOKUP_SKIP_DAYS = 30;
-
 /**
  * Adds a searchMatch to an existing result by IMDb ID, and returns the result.
  *

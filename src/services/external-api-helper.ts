@@ -14,8 +14,6 @@ import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadat
 import { mapper } from '../utils/data-mapper';
 import { FlattenMaps, Types } from 'mongoose';
 
-export const FAILED_LOOKUP_SKIP_DAYS = 30;
-
 export interface OpenSubtitlesQuery {
   extend: boolean;
   moviebytesize: number;
@@ -23,7 +21,7 @@ export interface OpenSubtitlesQuery {
   remote: boolean;
 }
 
-export interface OpenSubtitlesValidation {
+interface OpenSubtitlesValidation {
   year: string;
   season: string;
   episode: string;
