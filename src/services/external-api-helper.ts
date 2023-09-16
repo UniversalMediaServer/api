@@ -13,6 +13,7 @@ import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
 import SeasonMetadata, { SeasonMetadataInterface } from '../models/SeasonMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import { mapper } from '../utils/data-mapper';
+import { FlattenMaps, Types } from 'mongoose';
 
 export const FAILED_LOOKUP_SKIP_DAYS = 30;
 
@@ -36,7 +37,7 @@ export interface OpenSubtitlesValidation {
  * @param searchMatch the title with language if any
  * @returns the updated record
  */
-const addSearchMatchByIMDbID = async(imdbID: string, searchMatch: string): Promise<SeriesMetadataInterface> => {
+const addSearchMatchByIMDbID = async(imdbID: string, searchMatch: string) => {
   return SeriesMetadata.findOneAndUpdate(
     { imdbID },
     { $push: { searchMatches: searchMatch } },
@@ -80,7 +81,13 @@ const getSeriesTMDBIDFromTMDBAPI = async(imdbID?: string, seriesTitle?: string, 
  * @param [titleToCache] the original title, used for caching if this method is calling itself
  * @returns series metadata
  */
-export const getSeriesMetadata = async(imdbID?: string, title?: string, language?: string, year?: string, titleToCache?: string): Promise<Partial<SeriesMetadataInterface> | null> => {
+export const getSeriesMetadata = async(
+  imdbID?: string,
+  title?: string,
+  language?: string,
+  year?: string,
+  titleToCache?: string,
+): Promise<FlattenMaps<SeriesMetadataInterface> & { _id: Types.ObjectId; } | null> => {
   if (!imdbID && !title) {
     throw new Error('Either IMDb ID or title required');
   }
@@ -99,7 +106,7 @@ export const getSeriesMetadata = async(imdbID?: string, title?: string, language
       return null;
     }
 
-    const existingSeries: SeriesMetadataInterface = await SeriesMetadata.findOne({ imdbID }, null, { lean: true }).exec();
+    const existingSeries = await SeriesMetadata.findOne({ imdbID }, null, { lean: true }).exec();
     if (existingSeries) {
       const updatedResult = await SeriesMetadata.findOneAndUpdate(
         { imdbID },
