@@ -1,7 +1,6 @@
 import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
-import { Episode, EpisodeRequest, ExternalId, SearchMovieRequest, SearchTvRequest, TvExternalIdsResponse } from 'moviedb-promise/dist/request-types';
-import { jaroWinkler } from '@skyra/jaro-winkler';
+import { Episode, EpisodeRequest, ExternalId, SearchMovieRequest, SearchTvRequest, SimpleEpisode, TvExternalIdsResponse } from 'moviedb-promise/dist/request-types';
 
 import osAPI from './opensubtitles';
 import { tmdb } from './tmdb-api';
@@ -341,7 +340,7 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, language?: stri
   const isExpectingTVEpisode = Boolean(episodeNumbers);
   const yearString = year ? year.toString() : null;
 
-  let metadata: any;
+  let metadata;
   if (isExpectingTVEpisode) {
     const episodeIMDbID = movieOrEpisodeIMDbID;
     let seriesTMDBID: string | number;
@@ -349,7 +348,7 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, language?: stri
       const findResult = await tmdb.find({ id: episodeIMDbID, external_source: ExternalId.ImdbId });
       // Using any here to make up for missing interface, should submit fix
       if (findResult?.tv_episode_results && findResult?.tv_episode_results[0]) {
-        const tvEpisodeResult = findResult.tv_episode_results[0] as any;
+        const tvEpisodeResult = findResult.tv_episode_results[0] as SimpleEpisode;
         seriesTMDBID = tvEpisodeResult?.show_id;
       }
     } else {
@@ -485,7 +484,7 @@ export const getLocalizedMetadata = async(language?: string, mediaType?: string,
     return null;
   }
   // Start TMDB lookups
-  let tmdbData: any;
+  let tmdbData;
   switch (mediaType) {
     case 'collection':
       tmdbData = await tmdb.collectionInfo({
