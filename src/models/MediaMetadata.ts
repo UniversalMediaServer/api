@@ -32,7 +32,6 @@ export interface MediaMetadataInterface {
   productionCountries?: Array<ProductionCountry>;
   rated?: string; // e.g 'PG-13'
   rating?: number; // e.g. 6.7
-  ratings?: any; // e.g. {"Source": "Metacritic", "Value": "67/100"} NO LONGER USED, THIS WAS FROM OMDB
   released?: Date;
   revenue?: string;
   runtime?: string;
@@ -102,7 +101,6 @@ const MediaMetadataSchema: Schema = new Schema({
   production: { type: String },
   rated: { type: String },
   rating: { type: Number },
-  ratings: { type: Array },
   released: { type: Date },
   revenue: { type: String },
   runtime: { type: String },

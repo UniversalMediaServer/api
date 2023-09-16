@@ -10,7 +10,7 @@ import { SeriesMetadataInterface } from '../../models/SeriesMetadata';
  *
  * This must be done on-the-fly like this because the imageBaseURL can change.
  */
-export const addPosterFromImages = async(metadata: any): Promise<SeriesMetadataInterface | MediaMetadataInterface> => {
+export const addPosterFromImages = async(metadata): Promise<SeriesMetadataInterface | MediaMetadataInterface> => {
   if (!metadata) {
     throw new Error('Metadata is required');
   }
