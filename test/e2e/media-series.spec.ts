@@ -122,6 +122,18 @@ describe('Media Metadata endpoints', () => {
       const response = await axios.get(`${appUrl}/api/media/series/v2?title=Galactica&year=1980`) as UmsApiSeriesAxiosResponse;
       expect(response.data).toHaveProperty('title', 'Galactica 1980');
     });
-  });
 
+    it('should NOT store a failed lookup document if the request hit the TMDB Cloudfront rate limit', async() => {
+      let err;
+      try {
+        await axios.get(`${appUrl}/api/media/series/v2?title=RateLimitedResultTest`) as UmsApiSeriesAxiosResponse;
+      } catch (e) {
+        err = e;
+      }
+      expect(err.message).toBe('Request failed with status code 429');
+
+      const failedResult = await mongoose.connection.db.collection('failed_lookups').findOne({ title: 'RateLimitedResultTest' });
+      expect(failedResult).toBeNull();
+    });
+  });
 });
