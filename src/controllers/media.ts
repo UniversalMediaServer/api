@@ -1,7 +1,7 @@
 import { ParameterizedContext } from 'koa';
 import * as _ from 'lodash';
 
-import { ExternalAPIError, MediaNotFoundError, ValidationError } from '../helpers/customErrors';
+import { ExternalAPIError, MediaNotFoundError, RateLimitError, ValidationError } from '../helpers/customErrors';
 import { CollectionMetadataInterface } from '../models/CollectionMetadata';
 import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
 import LocalizeMetadata, { LocalizeMetadataInterface } from '../models/LocalizeMetadata';
@@ -10,8 +10,6 @@ import { SeasonMetadataInterface } from '../models/SeasonMetadata';
 import { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import * as externalAPIHelper from '../services/external-api-helper';
 import { OpenSubtitlesQuery } from '../services/external-api-helper';
-
-export const FAILED_LOOKUP_SKIP_DAYS = 30;
 
 /**
  * Adds a searchMatch to an existing result by IMDb ID, and returns the result.
@@ -97,7 +95,12 @@ export const getLocalize = async(ctx: ParameterizedContext): Promise<Partial<Loc
     if (!(err instanceof MediaNotFoundError)) {
       console.error(err);
     }
-    throw new MediaNotFoundError();
+
+    if (err instanceof RateLimitError) {
+      throw err;
+    } else {
+      throw new MediaNotFoundError();
+    }
   }
 };
 
@@ -124,7 +127,12 @@ export const getSeriesV2 = async(ctx: ParameterizedContext): Promise<Partial<Ser
     if (!(err instanceof MediaNotFoundError)) {
       console.error(err);
     }
-    throw new MediaNotFoundError();
+
+    if (err instanceof RateLimitError) {
+      throw err;
+    } else {
+      throw new MediaNotFoundError();
+    }
   }
 };
 
@@ -168,7 +176,12 @@ export const getSeason = async(ctx: ParameterizedContext): Promise<Partial<Seaso
     if (!(err instanceof MediaNotFoundError)) {
       console.error(err);
     }
-    throw new MediaNotFoundError();
+
+    if (err instanceof RateLimitError) {
+      throw err;
+    } else {
+      throw new MediaNotFoundError();
+    }
   }
 };
 
@@ -193,7 +206,12 @@ export const getCollection = async(ctx: ParameterizedContext): Promise<Partial<C
     if (!(err instanceof MediaNotFoundError)) {
       console.error(err);
     }
-    throw new MediaNotFoundError();
+
+    if (err instanceof RateLimitError) {
+      throw err;
+    } else {
+      throw new MediaNotFoundError();
+    }
   }
 };
 
@@ -324,12 +342,16 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
   try {
     tmdbData = await externalAPIHelper.getFromTMDBAPI(title, language, imdbIdToSearch, yearNumber, seasonNumber, episodeNumbers);
     imdbIdToSearch = imdbIdToSearch || tmdbData?.imdbID;
-  } catch (e) {
+  } catch (err) {
+    if (err instanceof RateLimitError) {
+      throw err;
+    }
+
     // Log the error but continue
-    if (e.message && e.message.includes('404') && e.response?.config?.url) {
-      console.log('Received 404 response from ' + e.response.config.url);
+    if (err.message && err.message.includes('404') && err.response?.config?.url) {
+      console.log('Received 404 response from ' + err.response.config.url);
     } else {
-      console.log(e);
+      console.error(err);
     }
   }
 

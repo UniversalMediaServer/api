@@ -23,6 +23,15 @@ export class MediaNotFoundError extends Error {
   }
 }
 
+export class RateLimitError extends Error {
+  constructor() {
+    super();
+    Error.captureStackTrace(this, RateLimitError);
+    this.message = 'Request was prevented by an upstream rate-limit, try again.';
+    this.name = 'RateLimitError';
+  }
+}
+
 export class IMDbIDNotFoundError extends MediaNotFoundError {
   constructor() {
     super();

@@ -12,8 +12,6 @@ import { mapper } from '../../utils/data-mapper';
 import { OpenSubtitlesQuery } from '../../services/external-api-helper';
 import { addSearchMatchByIMDbID } from '../media';
 
-export const FAILED_LOOKUP_SKIP_DAYS = 30;
-
 /**
  * @deprecated
  */

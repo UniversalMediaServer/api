@@ -12,7 +12,7 @@ const debug = Debug('universalmediaserver-api:server');
 import indexRouter from './routes/index';
 import mediaRouter  from './routes/media';
 import deprecatedMediaRouter  from './routes/deprecated/media';
-import { ExternalAPIError, IMDbIDNotFoundError, MediaNotFoundError, ValidationError } from './helpers/customErrors';
+import { ExternalAPIError, IMDbIDNotFoundError, MediaNotFoundError, RateLimitError, ValidationError } from './helpers/customErrors';
 
 const app = new Koa();
 
@@ -41,6 +41,9 @@ app.use(async(ctx, next) => {
     }
     if (err instanceof ExternalAPIError) {
       ctx.status = 503;
+    }
+    if (err instanceof RateLimitError) {
+      ctx.status = 429;
     }
     ctx.status = ctx.status || err.status || 500;
     ctx.body = { 'error': err.message };
@@ -73,7 +76,7 @@ app.use(async(ctx, next) => {
   await next();
 });
 
-app.use(async(ctx: ParameterizedContext, next) => {
+app.use(async(_ctx: ParameterizedContext, next) => {
   if (bypassMongo) {
     await mongoose.connection.dropDatabase();
   }
