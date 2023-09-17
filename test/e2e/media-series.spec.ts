@@ -123,6 +123,7 @@ describe('Media Metadata endpoints', () => {
       expect(response.data).toHaveProperty('title', 'Galactica 1980');
     });
 
+  // https://github.com/grantholle/moviedb-promise/pull/74
     it('should NOT store a failed lookup document if the request hit the TMDB Cloudfront rate limit', async() => {
       let err;
       try {
