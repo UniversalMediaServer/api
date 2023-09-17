@@ -351,7 +351,7 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
     if (err.message && err.message.includes('404') && err.response?.config?.url) {
       console.log('Received 404 response from ' + err.response.config.url);
     } else {
-      console.log(err);
+      console.error(err);
     }
   }
 
