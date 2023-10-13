@@ -5591,15 +5591,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"koa-router@npm:12.0.0":
-  version: 12.0.0
-  resolution: "koa-router@npm:12.0.0"
+"koa-router@npm:12.0.1":
+  version: 12.0.1
+  resolution: "koa-router@npm:12.0.1"
   dependencies:
+    debug: ^4.3.4
     http-errors: ^2.0.0
     koa-compose: ^4.1.0
     methods: ^1.1.2
     path-to-regexp: ^6.2.1
-  checksum: 29b02fd96972c037e805f6ce2626c971f4fd9cba04005bfedc080ab425d31b4b1cfe2ebc000b26e4a45e68215a3a3ed557f836ba486ea0d2f1e7e78fc95f8dca
+  checksum: 62852af6c47dba9327c993594367b8bcd995fd49972d2539eae9afa231571680f75ebe0f439bf886256cdfaf791900c2d11fe31b894d9ba8c60d1c727c03b9ed
   languageName: node
   linkType: hard
 
@@ -7825,7 +7826,7 @@ __metadata:
     koa-bodyparser: 4.4.1
     koa-helmet: 7.0.2
     koa-qs: 3.0.0
-    koa-router: 12.0.0
+    koa-router: 12.0.1
     ky: 1.0.1
     lodash: 4.17.21
     mongodb-memory-server: 8.15.1
