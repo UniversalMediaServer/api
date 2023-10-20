@@ -1260,7 +1260,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/koa@npm:*, @types/koa@npm:2.13.9":
+"@types/koa@npm:*":
   version: 2.13.9
   resolution: "@types/koa@npm:2.13.9"
   dependencies:
@@ -1273,6 +1273,22 @@ __metadata:
     "@types/koa-compose": "*"
     "@types/node": "*"
   checksum: af9cd599c8e17e2ae0f4168a61d964e343f713d002b65fd995658d7addc6551ccadecfd32b3405cf44e4d360178ee4f972d6881533548261ae1f636a655d24b1
+  languageName: node
+  linkType: hard
+
+"@types/koa@npm:2.13.10":
+  version: 2.13.10
+  resolution: "@types/koa@npm:2.13.10"
+  dependencies:
+    "@types/accepts": "*"
+    "@types/content-disposition": "*"
+    "@types/cookies": "*"
+    "@types/http-assert": "*"
+    "@types/http-errors": "*"
+    "@types/keygrip": "*"
+    "@types/koa-compose": "*"
+    "@types/node": "*"
+  checksum: dd3b3cbe1bb2fc0b5edd44672a64816abdc7bc0281d2913389ef7926681dd602a53842e29d59853926cf2c74ffa1fc0ebc44e83be9c172c5cead417866b3ecac
   languageName: node
   linkType: hard
 
@@ -6790,7 +6806,7 @@ __metadata:
   dependencies:
     "@skyra/jaro-winkler": ^1.1.0
     "@types/jest": 29.5.6
-    "@types/koa": 2.13.9
+    "@types/koa": 2.13.10
     "@types/koa-bodyparser": 4.3.10
     "@types/koa-helmet": 6.0.6
     "@types/koa-router": 7.4.5
