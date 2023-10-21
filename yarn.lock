@@ -1339,10 +1339,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/object-mapper@npm:6.2.0":
-  version: 6.2.0
-  resolution: "@types/object-mapper@npm:6.2.0"
-  checksum: f391258bdd40efbf5518a90bc54fd1eb0840446615629946e961e0106e7da5d5e99aa945fb39d171993192626395f107ca7c5212eb61e6a5d56e776d050ad39c
+"@types/object-mapper@npm:6.2.1":
+  version: 6.2.1
+  resolution: "@types/object-mapper@npm:6.2.1"
+  checksum: f87ec1ca40b117885be992d10d56d6f7d58c3c6346c5d9cafc380fb1167f40ced3933c772637f971709081afacbcb26b76e17a9382f227c79bb63e56b64d2496
   languageName: node
   linkType: hard
 
@@ -6814,7 +6814,7 @@ __metadata:
     "@types/lodash": 4.14.200
     "@types/natural": 5.1.4
     "@types/node": 18.18.6
-    "@types/object-mapper": 6.2.0
+    "@types/object-mapper": 6.2.1
     "@typescript-eslint/eslint-plugin": 6.7.5
     "@typescript-eslint/parser": 6.7.5
     axios: 1.5.1
