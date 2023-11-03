@@ -4594,10 +4594,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ky@npm:1.1.1":
-  version: 1.1.1
-  resolution: "ky@npm:1.1.1"
-  checksum: 3d5f106ff5f8b3bfad14f6bf203d8330926a6a7e4b4082bd7739791e9c24ca929fac466de7e48e424fafa26ee6748fef95c40eccc917b12d1a8de23b29f58092
+"ky@npm:1.1.3":
+  version: 1.1.3
+  resolution: "ky@npm:1.1.3"
+  checksum: 5fe71516f175fab4ee0284f1d7c1392cae15a04d7ea132db78ea69919b070b5b8efaa09f34585182a64607c48a9060751be63381225310f4a64a3a07bea0a05e
   languageName: node
   linkType: hard
 
@@ -6786,7 +6786,7 @@ __metadata:
     koa-helmet: 7.0.2
     koa-qs: 3.0.0
     koa-router: 12.0.1
-    ky: 1.1.1
+    ky: 1.1.3
     lodash: 4.17.21
     mongodb-memory-server: 9.0.1
     mongoose: 7.6.3
