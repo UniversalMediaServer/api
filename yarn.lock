@@ -1247,14 +1247,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/koa-helmet@npm:6.0.7":
-  version: 6.0.7
-  resolution: "@types/koa-helmet@npm:6.0.7"
+"@types/koa-helmet@npm:6.0.8":
+  version: 6.0.8
+  resolution: "@types/koa-helmet@npm:6.0.8"
   dependencies:
     "@types/koa": "*"
     "@types/node": "*"
     helmet: ^4.0.0
-  checksum: eb550a9e2d734fdd97080f5915b897d3c9eaf6101816f54355754b30c3fe7280799f0e41392d0493e547a834b9563fd95789a26052f95224016dbc0c00919a4f
+  checksum: 3ee0ba70805ab0868083a0606140c1fd2b5eb4f1d8d030ab9207978b22f31a95f8314b93a54ef588732156001f37a535aa0d235418f096f519c176d0480ed450
   languageName: node
   linkType: hard
 
@@ -6782,7 +6782,7 @@ __metadata:
     "@types/jest": 29.5.8
     "@types/koa": 2.13.11
     "@types/koa-bodyparser": 4.3.12
-    "@types/koa-helmet": 6.0.7
+    "@types/koa-helmet": 6.0.8
     "@types/koa-router": 7.4.6
     "@types/lodash": 4.14.200
     "@types/natural": 5.1.4
