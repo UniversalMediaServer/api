@@ -1320,12 +1320,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/natural@npm:5.1.4":
-  version: 5.1.4
-  resolution: "@types/natural@npm:5.1.4"
+"@types/natural@npm:5.1.5":
+  version: 5.1.5
+  resolution: "@types/natural@npm:5.1.5"
   dependencies:
     "@types/node": "*"
-  checksum: 403f8982e5bdc2a1aad8cb769268f806b5b347212c05a2eef5edb0702297216ac20a129e8cfc56077febd1cefb1e830a6d92de3370e06a0abf97d7ea535b12c8
+  checksum: 6013c2ea4cdc43ad2df66f67ab98ae03268b6bd747873b5d2ba42f5e8f71cd44382ebe92eb0916aa6cca58538cb8636168e35502a9c3654ac82e8b15bdca494d
   languageName: node
   linkType: hard
 
@@ -6785,7 +6785,7 @@ __metadata:
     "@types/koa-helmet": 6.0.8
     "@types/koa-router": 7.4.7
     "@types/lodash": 4.14.201
-    "@types/natural": 5.1.4
+    "@types/natural": 5.1.5
     "@types/node": 18.18.8
     "@types/object-mapper": 6.2.1
     "@typescript-eslint/eslint-plugin": 6.9.1
