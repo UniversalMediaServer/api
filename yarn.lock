@@ -5083,9 +5083,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongoose@npm:7.6.4":
-  version: 7.6.4
-  resolution: "mongoose@npm:7.6.4"
+"mongoose@npm:7.6.5":
+  version: 7.6.5
+  resolution: "mongoose@npm:7.6.5"
   dependencies:
     bson: ^5.5.0
     kareem: 2.5.1
@@ -5094,7 +5094,7 @@ __metadata:
     mquery: 5.0.0
     ms: 2.1.3
     sift: 16.0.1
-  checksum: 61ccd2d007c38ef751130544b001ee393cd7f277f89a1c871f4239ae196ff6d44a09341846e194dddbd501cc168d0474842aee926d3b3a542fd99c04c717bb64
+  checksum: 1cd2b5f5f7035d4a12e5808e3cb8712e5b78f9a50e9554bcded17a70690c12b6b82eba7f8391af5118c67e4d0223d8da1afe001060e7e40b7caf93288500118d
   languageName: node
   linkType: hard
 
@@ -6802,7 +6802,7 @@ __metadata:
     ky: 1.1.3
     lodash: 4.17.21
     mongodb-memory-server: 9.0.1
-    mongoose: 7.6.4
+    mongoose: 7.6.5
     moviedb-promise: 4.0.3
     nock: 13.3.8
     nodemon: 3.0.1
