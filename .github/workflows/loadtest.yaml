@@ -24,7 +24,7 @@ jobs:
         run: /home/node/artillery/bin/artillery report --output reports/report reports/report.json
 
       - name: Archive test report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: artillery-test-report
           path: reports/*
