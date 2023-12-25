@@ -1339,9 +1339,9 @@ __metadata:
   linkType: hard
 
 "@types/qs@npm:*":
-  version: 6.9.10
-  resolution: "@types/qs@npm:6.9.10"
-  checksum: 3e479ee056bd2b60894baa119d12ecd33f20a25231b836af04654e784c886f28a356477630430152a86fba253da65d7ecd18acffbc2a8877a336e75aa0272c67
+  version: 6.9.11
+  resolution: "@types/qs@npm:6.9.11"
+  checksum: 620ca1628bf3da65662c54ed6ebb120b18a3da477d0bfcc872b696685a9bb1893c3c92b53a1190a8f54d52eaddb6af8b2157755699ac83164604329935e8a7f2
   languageName: node
   linkType: hard
 
@@ -2117,9 +2117,9 @@ __metadata:
   linkType: hard
 
 "caniuse-lite@npm:^1.0.30001565":
-  version: 1.0.30001570
-  resolution: "caniuse-lite@npm:1.0.30001570"
-  checksum: 460be2c7a9b1c8a83b6aae4226661c276d9dada6c84209dee547699cf4b28030b9d1fc29ddd7626acee77412b6401993878ea0ef3eadbf3a63ded9034896ae20
+  version: 1.0.30001571
+  resolution: "caniuse-lite@npm:1.0.30001571"
+  checksum: 4098e68bb91cab6dc5212c844c7c2ec2fe517111a5bd00d63ca29c913c883676ce1cffaa4760d037c4dc360af551b8c8dfedf84047bfa7106f56ab0b5d2a7c32
   languageName: node
   linkType: hard
 
@@ -2661,9 +2661,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.4.601":
-  version: 1.4.614
-  resolution: "electron-to-chromium@npm:1.4.614"
-  checksum: e99e6c8600aa76b4d385a4381b943ec2cfeebfdc36a2675fbf87b334256428b92f5d79ab287b8bab0e1875a992284a8a95a03b41b71e9d64a75b5088daf1dc5e
+  version: 1.4.616
+  resolution: "electron-to-chromium@npm:1.4.616"
+  checksum: 9fd53bd4e5cded61ee51164a0d23ced1d7677ab176ef8e28eb4a27ceaae1deb3bb0038024db48478507204bfcd48ef66866c078721915a9c7b019697cc5680bf
   languageName: node
   linkType: hard
 
@@ -3055,11 +3055,11 @@ __metadata:
   linkType: hard
 
 "fastq@npm:^1.6.0":
-  version: 1.15.0
-  resolution: "fastq@npm:1.15.0"
+  version: 1.16.0
+  resolution: "fastq@npm:1.16.0"
   dependencies:
     reusify: ^1.0.4
-  checksum: 0170e6bfcd5d57a70412440b8ef600da6de3b2a6c5966aeaf0a852d542daff506a0ee92d6de7679d1de82e644bce69d7a574a6c93f0b03964b5337eed75ada1a
+  checksum: 1d40ed1f100ae625e5720484e8602b7ad07649370f1cbc3e34a6b9630a0bfed6946bab0322d8a368a1e3cde87bb9bbb8d3bc2ae01a0c1f022fac1d07c04e4feb
   languageName: node
   linkType: hard
 
@@ -6432,8 +6432,8 @@ __metadata:
   linkType: hard
 
 "systeminformation@npm:^5.7":
-  version: 5.21.20
-  resolution: "systeminformation@npm:5.21.20"
+  version: 5.21.22
+  resolution: "systeminformation@npm:5.21.22"
   bin:
     systeminformation: lib/cli.js
   conditions: (os=darwin | os=linux | os=win32 | os=freebsd | os=openbsd | os=netbsd | os=sunos | os=android)
