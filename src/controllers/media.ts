@@ -254,6 +254,7 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
   }
 
   let searchMatch: string;
+
   if (title) {
     searchMatch = language ? language + '@' + title : title;
     const titleQuery: GetVideoFilter = { searchMatches: { $in: [searchMatch] } };
@@ -279,6 +280,7 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
   }
 
   const existingResult = await MediaMetadata.findOne({ $or: query }, null, { lean: true }).exec();
+
   if (existingResult) {
     // we have an existing metadata record, so return it
     return ctx.body = existingResult;
@@ -292,7 +294,6 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
   }
 
   // the database does not have a record of this file, so begin search for metadata on external apis.
-
   // Start OpenSubtitles lookups
   let openSubtitlesMetadata: Partial<MediaMetadataInterface>;
   if (osdbHash && filebytesize) {
@@ -363,8 +364,8 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
     }
   }
   // End TMDB lookups
-
   const combinedResponse = _.merge(openSubtitlesMetadata, tmdbData);
+
   if (!combinedResponse || _.isEmpty(combinedResponse)) {
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();

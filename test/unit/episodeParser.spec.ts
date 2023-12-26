@@ -1,5 +1,5 @@
 // ensures the third party module is doing what we expect in our context.
-import * as episodeParser from 'episode-parser';
+import episodeParser from 'episode-parser';
 
 describe('TV Series parsing', () => {
   it('should parse common episode and season from filenames', () => {

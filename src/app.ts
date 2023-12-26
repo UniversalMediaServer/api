@@ -1,10 +1,10 @@
-import * as Koa from 'koa';
-import * as bodyParser from 'koa-bodyparser';
-import * as helmet from 'koa-helmet';
+import Koa from 'koa';
+import bodyParser from 'koa-bodyparser';
+import helmet from 'koa-helmet';
 import * as mongoose from 'mongoose';
 import { ParameterizedContext } from 'koa';
-import * as koaQs from 'koa-qs';
-import * as Debug from 'debug';
+import koaQs from 'koa-qs';
+import Debug from 'debug';
 import * as fs from 'fs';
 import * as http from 'http';
 import * as https from 'https';
@@ -33,8 +33,10 @@ app.use(async(ctx, next) => {
   try {
     await next();
   } catch (err) {
+    console.error(err instanceof MediaNotFoundError)
     if (err instanceof MediaNotFoundError || err instanceof IMDbIDNotFoundError) {
       ctx.status = 404;
+      console.log(ctx.status)
     }
     if (err instanceof ValidationError) {
       ctx.status = 422;

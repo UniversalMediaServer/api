@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import * as episodeParser from 'episode-parser';
+import episodeParser from 'episode-parser';
 import { Episode, EpisodeRequest, ExternalId, SearchMovieRequest, SearchTvRequest, SimpleEpisode, TvExternalIdsResponse } from 'moviedb-promise/dist/request-types';
 
 import osAPI from './opensubtitles';
@@ -597,9 +597,9 @@ export const getFromOpenSubtitles = async(osQuery: OpenSubtitlesQuery, validatio
   if (!osQuery.moviehash || !osQuery.moviebytesize) {
     throw new ValidationError('moviehash and moviebytesize are required');
   }
-
+  console.error('BEFORE')
   const openSubtitlesResponse = await osAPI.identify({ ...osQuery });
-
+  console.error('AFTER')
   if (!openSubtitlesResponse.metadata) {
     return null;
   }

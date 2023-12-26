@@ -1,4 +1,4 @@
-import * as OpenSubtitles from 'opensubtitles-api';
+import OpenSubtitles from 'opensubtitles-api';
 import * as _ from 'lodash';
 import { ExternalAPIError } from '../helpers/customErrors';
 import { OpenSubtitlesQuery } from './external-api-helper';

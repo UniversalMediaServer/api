@@ -1,7 +1,7 @@
 import axios from 'axios';
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import * as stoppable from 'stoppable';
+import stoppable from 'stoppable';
 
 import app, { PORT } from '../../src/app';
 import FailedLookupsModel from '../../src/models/FailedLookups';
@@ -95,7 +95,7 @@ describe('get by all', () => {
   });
 
   describe('Movies', () => {
-    test('should return a movie by imdbid, from source APIs then store', async() => {
+    test.only('should return a movie by imdbid, from source APIs then store', async() => {
       let response = await axios.get(`${appUrl}/api/media/video/v2?imdbID=${MOVIE_INTERSTELLAR.imdbID}`) as UmsApiMediaAxiosResponse;
       expect(response.headers['x-api-subversion']).toBeTruthy();
       expect(response.data.title).toEqual(MOVIE_INTERSTELLAR.title);
@@ -104,6 +104,7 @@ describe('get by all', () => {
 
       // subsequent calls should return MongoDB result rather than calling external apis
       response = await axios.get(`${appUrl}/api/media/video/v2?imdbID=${MOVIE_INTERSTELLAR.imdbID}`);
+      console.log(response)
       expect(response.data.title).toEqual(MOVIE_INTERSTELLAR.title);
       expect(response.data.type).toEqual('movie');
     });

@@ -8,9 +8,10 @@
   },
   "scripts": {
     "dev": "DEBUG=\"*universalmediaserver-api:server\" nodemon",
+    "lint": "node_modules/.bin/eslint src/**/*.ts",
     "purge": "TS_NODE_FILES=true ts-node --files scripts/purge",
     "reload:prod": "./node_modules/.bin/pm2 reload ecosystem.config.js --update-env",
-    "start": "ts-node --files src/app.ts",
+    "start": "bun src/app.ts",
     "start:prod": "./node_modules/.bin/pm2 start ecosystem.config.js --update-env",
     "test": "NODE_ENV=test OS_API_USERAGENT=OS_API_MOCK_KEY jest test/e2e/media-video.spec.ts --coverage --forceExit --detectOpenHandles && npm run test:mocks",
     "test:mocks": "TMDB_API_KEY=foo NODE_ENV=test OS_API_USERAGENT=OS_API_MOCK_KEY jest test/**/*.spec.ts --testPathIgnorePatterns test/e2e/media-video.spec.ts --coverage --forceExit --detectOpenHandles",
@@ -100,6 +101,5 @@
     "stoppable": "1.1.0",
     "ts-jest": "29.1.1",
     "typescript": "5.3.3"
-  },
-  "packageManager": "yarn@3.7.0"
+  }
 }
