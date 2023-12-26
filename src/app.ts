@@ -33,10 +33,8 @@ app.use(async(ctx, next) => {
   try {
     await next();
   } catch (err) {
-    console.error(err instanceof MediaNotFoundError)
     if (err instanceof MediaNotFoundError || err instanceof IMDbIDNotFoundError) {
       ctx.status = 404;
-      console.log(ctx.status)
     }
     if (err instanceof ValidationError) {
       ctx.status = 422;

@@ -597,9 +597,8 @@ export const getFromOpenSubtitles = async(osQuery: OpenSubtitlesQuery, validatio
   if (!osQuery.moviehash || !osQuery.moviebytesize) {
     throw new ValidationError('moviehash and moviebytesize are required');
   }
-  console.error('BEFORE')
+
   const openSubtitlesResponse = await osAPI.identify({ ...osQuery });
-  console.error('AFTER')
   if (!openSubtitlesResponse.metadata) {
     return null;
   }
