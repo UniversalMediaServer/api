@@ -11,7 +11,7 @@
     "purge": "TS_NODE_FILES=true ts-node --files scripts/purge",
     "reload:prod": "./node_modules/.bin/pm2 reload ecosystem.config.js --update-env",
     "start": "node build/app.js",
-    "build": "yarn dlx tsc",
+    "build": "tsc",
     "test": "NODE_ENV=test OS_API_USERAGENT=OS_API_MOCK_KEY jest test/e2e/media-video.spec.ts --coverage --forceExit --detectOpenHandles && npm run test:mocks",
     "test:mocks": "TMDB_API_KEY=foo NODE_ENV=test OS_API_USERAGENT=OS_API_MOCK_KEY jest test/**/*.spec.ts --testPathIgnorePatterns test/e2e/media-video.spec.ts --coverage --forceExit --detectOpenHandles",
     "test:models": "jest test/models/*.spec.ts --coverage --forceExit --detectOpenHandles",
@@ -74,7 +74,8 @@
     "moviedb-promise": "4.0.3",
     "object-mapper": "6.2.0",
     "opensubtitles-api": "https://github.com/UniversalMediaServer/opensubtitles-api#94e2339b2e38533e518e6556f49b65e541bbe9e3",
-    "pm2": "5.3.0"
+    "pm2": "5.3.0",
+    "typescript": "5.3.3"
   },
   "devDependencies": {
     "@types/jest": "29.5.11",
@@ -97,8 +98,7 @@
     "nock": "13.4.0",
     "nodemon": "3.0.2",
     "stoppable": "1.1.0",
-    "ts-jest": "29.1.1",
-    "typescript": "5.3.3"
+    "ts-jest": "29.1.1"
   },
   "packageManager": "yarn@3.7.0"
 }
