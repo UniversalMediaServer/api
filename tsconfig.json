@@ -3,11 +3,12 @@
     "target": "es2020",
     "module": "commonjs",
     "moduleResolution": "node",
+    "outDir": "build"
   },
   "files": [
     "./src/interfaces.d.ts"
   ],
   "include": [
-    "./**/*"
+    "src/**/*"
   ]
 }
