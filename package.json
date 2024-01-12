@@ -11,7 +11,7 @@
     "purge": "TS_NODE_FILES=true ts-node --files scripts/purge",
     "reload:prod": "./node_modules/.bin/pm2 reload ecosystem.config.js --update-env",
     "start": "node build/app.js",
-    "build": "tsc",
+    "build": "yarn dlx tsc",
     "test": "NODE_ENV=test OS_API_USERAGENT=OS_API_MOCK_KEY jest test/e2e/media-video.spec.ts --coverage --forceExit --detectOpenHandles && npm run test:mocks",
     "test:mocks": "TMDB_API_KEY=foo NODE_ENV=test OS_API_USERAGENT=OS_API_MOCK_KEY jest test/**/*.spec.ts --testPathIgnorePatterns test/e2e/media-video.spec.ts --coverage --forceExit --detectOpenHandles",
     "test:models": "jest test/models/*.spec.ts --coverage --forceExit --detectOpenHandles",
