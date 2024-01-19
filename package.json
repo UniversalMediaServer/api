@@ -96,7 +96,7 @@
     "ky": "1.2.0",
     "mongodb-memory-server": "9.1.6",
     "nock": "13.4.0",
-    "nodemon": "3.0.2",
+    "nodemon": "3.0.3",
     "stoppable": "1.1.0",
     "ts-jest": "29.1.1"
   },
