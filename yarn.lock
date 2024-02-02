@@ -1275,12 +1275,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:18.19.10":
-  version: 18.19.10
-  resolution: "@types/node@npm:18.19.10"
+"@types/node@npm:18.19.14":
+  version: 18.19.14
+  resolution: "@types/node@npm:18.19.14"
   dependencies:
     undici-types: ~5.26.4
-  checksum: eea429c1fe8d25702c1e860f5c4ac053db3c52a5884646f458513b622a507660a6c88c717ee4f106e63c82f4ec6cafbf999e3f3f1d3083f7a40b4f715e03332b
+  checksum: 3d42b50e649f18c6ca7044714eaeb51ba5fda463c845eeb1973bcbbfcab8e93179501fbf865e675cb0c7a5e59f7ea18eca8296b52c2455c856aa45c77ae815dc
   languageName: node
   linkType: hard
 
@@ -6659,7 +6659,7 @@ __metadata:
     "@types/koa-router": 7.4.8
     "@types/lodash": 4.14.202
     "@types/natural": 5.1.5
-    "@types/node": 18.19.10
+    "@types/node": 18.19.14
     "@types/object-mapper": 6.2.2
     "@typescript-eslint/eslint-plugin": 6.19.1
     "@typescript-eslint/parser": 6.19.1
