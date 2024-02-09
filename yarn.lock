@@ -3616,9 +3616,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"inquirer@npm:9.2.13":
-  version: 9.2.13
-  resolution: "inquirer@npm:9.2.13"
+"inquirer@npm:9.2.14":
+  version: 9.2.14
+  resolution: "inquirer@npm:9.2.14"
   dependencies:
     "@ljharb/through": ^2.3.12
     ansi-escapes: ^4.3.2
@@ -3635,7 +3635,7 @@ __metadata:
     string-width: ^4.2.3
     strip-ansi: ^6.0.1
     wrap-ansi: ^6.2.0
-  checksum: 3fdc0e1f2ca06ab7e3b1c9a6e5f86f5c502d5f28ddd168de0bbe312ce00342453ed1d37e206ac4c3b5cd2db566349ed409901eeef2b91c88d71d6bc52eae8b54
+  checksum: a4e4d6eaa295dee1a4e658f51646a19644f7a747566fc445ca14ba4401dbbf1819edb6832d8b1f5c3fb2baa3d1bf26251ea33fe087ee45a7ae45381911443833
   languageName: node
   linkType: hard
 
@@ -6668,7 +6668,7 @@ __metadata:
     episode-parser: 2.0.2
     escape-string-regexp: 5.0.0
     eslint: 8.56.0
-    inquirer: 9.2.13
+    inquirer: 9.2.14
     jest: 29.7.0
     koa: 2.15.0
     koa-bodyparser: 4.4.1
