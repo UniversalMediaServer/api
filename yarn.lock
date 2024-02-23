@@ -5131,14 +5131,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nock@npm:13.5.1":
-  version: 13.5.1
-  resolution: "nock@npm:13.5.1"
+"nock@npm:13.5.3":
+  version: 13.5.3
+  resolution: "nock@npm:13.5.3"
   dependencies:
     debug: ^4.1.0
     json-stringify-safe: ^5.0.1
     propagate: ^2.0.0
-  checksum: d7e33e92ef1af2c2302af411e4f9c98d53aefb3b6729de487e051281d1547e910ccd1aeb6d251fa1af70046cc28aa6f3a43c1964eff94cb75fb470bd84ffe081
+  checksum: f119e71d8e56a456a29bfa00a1d959387210fe8ada69443a7102fa9329a9c5fb2e0db149c4a00d304b11681127efd03fc0e6bc142a4ff609b1e153f70aa8712d
   languageName: node
   linkType: hard
 
@@ -6725,7 +6725,7 @@ __metadata:
     mongodb-memory-server: 9.1.6
     mongoose: 7.6.8
     moviedb-promise: 4.0.3
-    nock: 13.5.1
+    nock: 13.5.3
     nodemon: 3.0.3
     object-mapper: 6.2.0
     opensubtitles-api: "https://github.com/UniversalMediaServer/opensubtitles-api#94e2339b2e38533e518e6556f49b65e541bbe9e3"
