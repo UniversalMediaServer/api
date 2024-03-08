@@ -75,7 +75,7 @@
     "object-mapper": "6.2.0",
     "opensubtitles-api": "https://github.com/UniversalMediaServer/opensubtitles-api#94e2339b2e38533e518e6556f49b65e541bbe9e3",
     "pm2": "5.3.1",
-    "typescript": "5.3.3"
+    "typescript": "5.4.2"
   },
   "devDependencies": {
     "@types/jest": "29.5.12",
