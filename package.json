@@ -18,47 +18,6 @@
     "tsc:ci": "tsc && rm -rf dist",
     "watch": "tsc --watch"
   },
-  "eslintConfig": {
-    "env": {
-      "es6": true,
-      "node": true
-    },
-    "extends": [
-      "eslint:recommended",
-      "plugin:@typescript-eslint/recommended"
-    ],
-    "globals": {
-      "Atomics": "readonly",
-      "SharedArrayBuffer": "readonly"
-    },
-    "parser": "@typescript-eslint/parser",
-    "plugins": [
-      "@typescript-eslint"
-    ],
-    "parserOptions": {
-      "ecmaVersion": 2023,
-      "project": "./tsconfig.json",
-      "sourceType": "module"
-    },
-    "rules": {
-      "array-bracket-spacing": "error",
-      "arrow-spacing": "error",
-      "block-spacing": "error",
-      "computed-property-spacing": "error",
-      "key-spacing": "error",
-      "keyword-spacing": "error",
-      "no-trailing-spaces": "error",
-      "no-whitespace-before-property": "error",
-      "object-curly-spacing": [
-        "error",
-        "always"
-      ],
-      "rest-spread-spacing": "error",
-      "semi-spacing": "error",
-      "space-before-blocks": "error",
-      "space-infix-ops": "error"
-    }
-  },
   "dependencies": {
     "@skyra/jaro-winkler": "^1.1.0",
     "debug": "4.3.4",
@@ -75,7 +34,8 @@
     "object-mapper": "6.2.0",
     "opensubtitles-api": "https://github.com/UniversalMediaServer/opensubtitles-api#94e2339b2e38533e518e6556f49b65e541bbe9e3",
     "pm2": "5.3.1",
-    "typescript": "5.4.3"
+    "typescript": "5.4.3",
+    "typescript-eslint": "^7.3.1"
   },
   "devDependencies": {
     "@types/jest": "29.5.12",

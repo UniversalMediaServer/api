@@ -6660,6 +6660,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"typescript-eslint@npm:^7.3.1":
+  version: 7.3.1
+  resolution: "typescript-eslint@npm:7.3.1"
+  dependencies:
+    "@typescript-eslint/eslint-plugin": 7.3.1
+    "@typescript-eslint/parser": 7.3.1
+  peerDependencies:
+    eslint: ^8.56.0
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 0362dfab4489150d0b3eb5c5aca79a4c0e2ca60569ea8fda8385ecf4d7ee5918bb5d146f4f7d23dc160a2d991d639af646bed9de197c0a1d154a85b59909435f
+  languageName: node
+  linkType: hard
+
 "typescript@npm:5.4.3":
   version: 5.4.3
   resolution: "typescript@npm:5.4.3"
@@ -6760,6 +6775,7 @@ __metadata:
     stoppable: 1.1.0
     ts-jest: 29.1.2
     typescript: 5.4.3
+    typescript-eslint: ^7.3.1
   languageName: unknown
   linkType: soft
 
