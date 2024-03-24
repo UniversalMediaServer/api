@@ -30,7 +30,7 @@ jobs:
       if: steps.cache.outputs.cache-hit != 'true'
       run: yarn
     - run: yarn run tsc:ci
-    - run: node_modules/.bin/eslint src/**/*.ts
+    - run: yarn eslint .
     - run: yarn test
 
   deploy:
