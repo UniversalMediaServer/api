@@ -132,7 +132,7 @@ describe('Season Metadata endpoint', () => {
       expect(await FailedLookups.countDocuments()).toEqual(0);
       const spyGetFromApi = jest.spyOn(apihelper, 'getSeasonMetadata');
       const spyGetFromTmdb = jest.spyOn(tmdb, 'seasonInfo');
-      let error: any;
+      let error;
       try {
         await axios.get(`${appUrl}/api/media/season?tmdbID=${SEASON_AVATAR.tmdbTvID}&season=999`);
       } catch (e) {
@@ -170,7 +170,7 @@ describe('Season Metadata endpoint', () => {
       expect(await FailedLookups.countDocuments()).toEqual(0);
       const spyGetFromApi = jest.spyOn(apihelper, 'getSeasonMetadata');
       const spyGetFromTmdb = jest.spyOn(tmdb, 'seasonInfo');
-      let error: any;
+      let error;
       try {
         await axios.get(`${appUrl}/api/media/season?title=Not A Series Type&season=${SEASON_AVATAR.seasonNumber}`);
       } catch (e) {
@@ -196,7 +196,7 @@ describe('Season Metadata endpoint', () => {
 
   describe('Validation', () => {
     test('should require tmdbID or title param', async() => {
-      let error: any;
+      let error;
       try {
         await axios.get(`${appUrl}/api/media/season`);
       } catch (e) {
@@ -211,7 +211,7 @@ describe('Season Metadata endpoint', () => {
       expect(error.message).toEqual('Request failed with status code 422');
     });
     test('should require saison number param', async() => {
-      let error: any;
+      let error;
       //season is missing
       try {
         await axios.get(`${appUrl}/api/media/season?tmdbID=${SEASON_AVATAR.tmdbTvID}`);

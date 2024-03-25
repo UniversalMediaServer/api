@@ -53,7 +53,7 @@ describe('Info endpoint', () => {
 
   describe('root endpoint', () => {
     it('should return OK status', async() => {
-      let response = await axios.get(`${appUrl}`) as UmsApiAxiosResponse;
+      const response = await axios.get(`${appUrl}`) as UmsApiAxiosResponse;
       expect(response.data).toHaveProperty('status', 'OK');
     });
   });
@@ -61,7 +61,7 @@ describe('Info endpoint', () => {
   describe('API configuration endpoint', () => {
     it('should return configuration and store it', async() => {
       const spyGetFromTmdb = jest.spyOn(tmdb, 'configuration');
-      let response = await axios.get(`${appUrl}/api/configuration`) as UmsApiConfigurationAxiosResponse;
+      const response = await axios.get(`${appUrl}/api/configuration`) as UmsApiConfigurationAxiosResponse;
       expect(response.data).toHaveProperty('imageBaseURL');
       expect(response.data.imageBaseURL).toContain('https://image.tmdb.org/');
       expect(spyGetFromTmdb).toHaveBeenCalledTimes(1);
@@ -69,7 +69,7 @@ describe('Info endpoint', () => {
 
     it('should return configuration from in-memory on multiple call', async() => {
       const spyGetFromTmdb = jest.spyOn(tmdb, 'configuration');
-      let response = await axios.get(`${appUrl}/api/configuration`) as UmsApiConfigurationAxiosResponse;
+      const response = await axios.get(`${appUrl}/api/configuration`) as UmsApiConfigurationAxiosResponse;
       expect(response.data).toHaveProperty('imageBaseURL');
       expect(response.data.imageBaseURL).toContain('https://image.tmdb.org/');
       expect(spyGetFromTmdb).toHaveBeenCalledTimes(0);
@@ -78,7 +78,7 @@ describe('Info endpoint', () => {
 
   describe('API subversions endpoint', () => {
     it('should return subversions', async() => {
-      let response = await axios.get(`${appUrl}/api/subversions`) as UmsApiAxiosResponse;
+      const response = await axios.get(`${appUrl}/api/subversions`) as UmsApiAxiosResponse;
       expect(response.data).toHaveProperty('collection');
       expect(response.data).toHaveProperty('configuration');
       expect(response.data).toHaveProperty('localize');

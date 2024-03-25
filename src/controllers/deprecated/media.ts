@@ -1,4 +1,3 @@
-import { ParameterizedContext } from 'koa';
 import * as _ from 'lodash';
 
 import { ExternalAPIError, MediaNotFoundError, ValidationError } from '../../helpers/customErrors';
@@ -15,7 +14,7 @@ import { addSearchMatchByIMDbID } from '../media';
 /**
  * @deprecated
  */
-export const getByOsdbHash = async(ctx: ParameterizedContext): Promise<MediaMetadataInterface> => {
+export const getByOsdbHash = async(ctx): Promise<MediaMetadataInterface> => {
   const { osdbhash: osdbHash, filebytesize } = ctx.params;
 
   if (!osdbHash || !filebytesize) {
@@ -89,7 +88,7 @@ export const getByOsdbHash = async(ctx: ParameterizedContext): Promise<MediaMeta
  *
  * @deprecated
  */
-export const getBySanitizedTitle = async(ctx: ParameterizedContext): Promise<MediaMetadataInterface> => {
+export const getBySanitizedTitle = async(ctx): Promise<MediaMetadataInterface> => {
   const { title }: UmsQueryParams = ctx.query;
 
   if (!title) {
@@ -114,7 +113,7 @@ export const getBySanitizedTitle = async(ctx: ParameterizedContext): Promise<Med
  *
  * @deprecated
  */
-export const getBySanitizedTitleV2 = async(ctx: ParameterizedContext): Promise<MediaMetadataInterface> => {
+export const getBySanitizedTitleV2 = async(ctx): Promise<MediaMetadataInterface> => {
   const { episode, title }: UmsQueryParams = ctx.query;
   const season = ctx.query.season ? Number(ctx.query.season) : null;
   const year = ctx.query.year ? Number(ctx.query.year) : null;
@@ -145,7 +144,7 @@ export const getBySanitizedTitleV2 = async(ctx: ParameterizedContext): Promise<M
 /**
  * @deprecated
  */
-export const getByImdbID = async(ctx: ParameterizedContext): Promise<MediaMetadataInterface | SeriesMetadataInterface> => {
+export const getByImdbID = async(ctx): Promise<MediaMetadataInterface | SeriesMetadataInterface> => {
   const { imdbid }: UmsQueryParams = ctx.query;
 
   if (!imdbid) {
@@ -171,7 +170,7 @@ export const getByImdbID = async(ctx: ParameterizedContext): Promise<MediaMetada
 /**
  * @deprecated
  */
-export const getSeries = async(ctx: ParameterizedContext): Promise<SeriesMetadataInterface | MediaMetadataInterface> => {
+export const getSeries = async(ctx): Promise<SeriesMetadataInterface | MediaMetadataInterface> => {
   const { imdbID, title, year }: UmsQueryParams = ctx.query;
   if (!title && !imdbID) {
     throw new ValidationError('Either IMDb ID or title required');
@@ -197,7 +196,7 @@ export const getSeries = async(ctx: ParameterizedContext): Promise<SeriesMetadat
 /**
  * @deprecated
  */
-export const getVideo = async(ctx: ParameterizedContext): Promise<MediaMetadataInterface> => {
+export const getVideo = async(ctx): Promise<MediaMetadataInterface> => {
   const { title, osdbHash, imdbID }: UmsQueryParams = ctx.query;
   const { episode, season, year, filebytesize }: UmsQueryParams = ctx.query;
   const [seasonNumber, yearNumber, filebytesizeNumber] = [season, year, filebytesize].map(param => param ? Number(param) : null);

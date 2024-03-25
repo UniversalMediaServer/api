@@ -29,8 +29,8 @@ jobs:
     - name: Install Dependencies
       if: steps.cache.outputs.cache-hit != 'true'
       run: yarn
+    - run: yarn eslint .
     - run: yarn run tsc:ci
-    - run: node_modules/.bin/eslint src/**/*.ts
     - run: yarn test
 
   deploy:

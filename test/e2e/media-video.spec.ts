@@ -295,7 +295,7 @@ describe('get by all', () => {
   describe('Failures', () => {
     test('should find a failed lookup - movie', async() => {
       expect(await FailedLookupsModel.countDocuments()).toEqual(0);
-      let error: any;
+      let error;
       try {
         await axios.get(`${appUrl}/api/media/video/v2?title=areallylongtitlethatsurelywontmatchanymoviename`);
       } catch (e) {
@@ -314,7 +314,7 @@ describe('get by all', () => {
 
     test('should find a failed lookup - episode', async() => {
       expect(await FailedLookupsModel.countDocuments()).toEqual(0);
-      let error: any;
+      let error;
       try {
         await axios.get(`${appUrl}/api/media/video/v2?title=${EPISODE_LOST.seriesTitle}&season=999&episode=999`);
       } catch (e) {
@@ -334,7 +334,7 @@ describe('get by all', () => {
 
   describe('Validation', () => {
     test('should require title, osdbHash or imdbID param', async() => {
-      let error: any;
+      let error;
       try {
         await axios.get(`${appUrl}/api/media/video/v2`);
       } catch (e) {
@@ -344,7 +344,7 @@ describe('get by all', () => {
     });
 
     test('should require filebytesize if attempting osbdHash search', async() => {
-      let error: any;
+      let error;
       try {
         await axios.get(`${appUrl}/api/media/video/v2?osbdHash=fsd`);
       } catch (e) {

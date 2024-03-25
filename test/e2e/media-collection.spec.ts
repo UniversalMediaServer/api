@@ -58,7 +58,7 @@ describe('Collection Metadata endpoint', () => {
 
   describe('get collection metadata', () => {
     it('should return collection metadata by TMDb ID', async() => {
-      let response = await axios.get(`${appUrl}/api/media/collection?tmdbID=${COLLECTION_BLADE_RUNNER.tmdbID}`) as UmsApiCollectionAxiosResponse;
+      const response = await axios.get(`${appUrl}/api/media/collection?tmdbID=${COLLECTION_BLADE_RUNNER.tmdbID}`) as UmsApiCollectionAxiosResponse;
       expect(response.data.tmdbID).toBe(COLLECTION_BLADE_RUNNER.tmdbID);
       expect(response.data.name).toBe(COLLECTION_BLADE_RUNNER.name);
       expect(response.data.overview).toContain(COLLECTION_BLADE_RUNNER.overview);
@@ -68,7 +68,7 @@ describe('Collection Metadata endpoint', () => {
       const spyGetFromApi = jest.spyOn(apihelper, 'getCollectionMetadata');
       const spyGetFromTmdb = jest.spyOn(tmdb, 'collectionInfo');
       let response = await axios.get(`${appUrl}/api/media/collection?tmdbID=${COLLECTION_BLADE_RUNNER.tmdbID}`) as UmsApiCollectionAxiosResponse;
-	  expect(response.data.name).toBe(COLLECTION_BLADE_RUNNER.name);
+      expect(response.data.name).toBe(COLLECTION_BLADE_RUNNER.name);
       expect(spyGetFromApi).toHaveBeenCalledTimes(1);
       expect(spyGetFromTmdb).toHaveBeenCalledTimes(1);
       spyGetFromApi.mockClear();
@@ -85,7 +85,7 @@ describe('Collection Metadata endpoint', () => {
   describe('Indexes', () => {
     test('Indexes should succed and log to console', async() => {
       console.info = jest.fn();
-	  await CollectionMetadata.ensureIndexes();
+      await CollectionMetadata.ensureIndexes();
       expect(console.info).toHaveBeenCalledWith('CollectionMetadata indexing complete');
     });
     test('should show error messages to console on fail', async() => {
@@ -100,7 +100,7 @@ describe('Collection Metadata endpoint', () => {
       expect(await FailedLookups.countDocuments()).toEqual(0);
       const spyGetFromApi = jest.spyOn(apihelper, 'getCollectionMetadata');
       const spyGetFromTmdb = jest.spyOn(tmdb, 'collectionInfo');
-      let error: any;
+      let error;
       try {
         await axios.get(`${appUrl}/api/media/collection?tmdbID=15`);
       } catch (e) {
@@ -126,7 +126,7 @@ describe('Collection Metadata endpoint', () => {
 
   describe('Validation', () => {
     test('should require tmdbID param', async() => {
-      let error: any;
+      let error;
       try {
         await axios.get(`${appUrl}/api/media/collection`);
       } catch (e) {

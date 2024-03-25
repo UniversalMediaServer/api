@@ -312,10 +312,9 @@ describe('Localize Metadata endpoint', () => {
   });
 
   describe('Indexes', () => {
-
     test('Indexes should succed and log to console', async() => {
       console.info = jest.fn();
-	  await LocalizeMetadata.ensureIndexes();
+      await LocalizeMetadata.ensureIndexes();
       expect(console.info).toHaveBeenCalledWith('LocalizeMetadata indexing complete');
     });
 
@@ -324,13 +323,11 @@ describe('Localize Metadata endpoint', () => {
       LocalizeMetadata.emit('index', 'jest errored');
       expect(console.error).toHaveBeenCalledWith('LocalizeMetadata index error: %s', 'jest errored');
     });
-
   });
 
   describe('Validation', () => {
-
     test('should require language, media type and either IMDb ID or TMDB Id type param', async() => {
-      let error: any;
+      let error;
 
       //no param
       try {
@@ -366,7 +363,7 @@ describe('Localize Metadata endpoint', () => {
     });
 
     test('should require well formatted language', async() => {
-      let error: any;
+      let error;
 
       //bad language
       const badLanguages = ['french', 'f', 'fr-fr'];
@@ -377,11 +374,11 @@ describe('Localize Metadata endpoint', () => {
           error = e;
         }
         expect(error.message).toEqual('Request failed with status code 422');
-	  }
+      }
     });
 
     test('should require a known media type', async() => {
-      let error: any;
+      let error;
 
       //bad media type
       const badMediaTypes = ['test', 'movies'];
@@ -392,11 +389,11 @@ describe('Localize Metadata endpoint', () => {
           error = e;
         }
         expect(error.message).toEqual('Request failed with status code 422');
-	  }
+      }
     });
 
     test('should require season number param for season media with TMDB Id', async() => {
-      let error: any;
+      let error;
 
       //no saison number
       try {
@@ -416,7 +413,7 @@ describe('Localize Metadata endpoint', () => {
     });
 
     test('should require season and episode number params for episode media with TMDB Id', async() => {
-      let error: any;
+      let error;
 
       //no season number
       try {
@@ -444,7 +441,7 @@ describe('Localize Metadata endpoint', () => {
     });
 
     test('should require TMDB Id params for collection media', async() => {
-      let error: any;
+      let error;
 
       //no tmdbID
       try {

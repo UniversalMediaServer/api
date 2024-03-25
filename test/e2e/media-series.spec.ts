@@ -79,7 +79,7 @@ describe('Media Metadata endpoints', () => {
 
     it('should fail to save non series type', async() => {
       expect(await SeriesMetadata.countDocuments()).toBe(0);
-      let err: any;
+      let err;
       try {
         await axios.get(`${appUrl}/api/media/series/v2?title=Not A Series Type`) as UmsApiSeriesAxiosResponse;
       } catch (e) {
