@@ -1,5 +1,8 @@
-export const preset = 'ts-jest';
-export const testEnvironment = 'node';
-export const testTimeout = 15000;
-export const verbose = true;
-export const restoreMocks = true;
+/** @type {import('ts-jest').JestConfigWithTsJest} */
+module.exports = {
+  preset: 'ts-jest',
+  testEnvironment: 'node',
+  testTimeout: 15000,
+  verbose: true,
+  restoreMocks: true,
+};
