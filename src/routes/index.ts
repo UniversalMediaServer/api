@@ -18,7 +18,6 @@ router.get('/api/subversions', (ctx) => {
 
 router.get('/api/configuration', async(ctx) => {
   ctx.set('X-Api-Subversion', subversions['configuration']);
-  // @ts-expect-error Argument of type 'ParameterizedContext<any, IRouterParamContext<any, {}>, any>' is not assignable to parameter of type 'ParameterizedContext'.
   await getConfiguration(ctx);
 });
 
