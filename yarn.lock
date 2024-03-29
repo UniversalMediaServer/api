@@ -3116,7 +3116,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.14.0, follow-redirects@npm:^1.15.3, follow-redirects@npm:^1.15.6":
+"follow-redirects@npm:^1.14.0, follow-redirects@npm:^1.15.6":
   version: 1.15.6
   resolution: "follow-redirects@npm:1.15.6"
   peerDependenciesMeta:
@@ -4925,15 +4925,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongodb-memory-server-core@npm:9.1.7":
-  version: 9.1.7
-  resolution: "mongodb-memory-server-core@npm:9.1.7"
+"mongodb-memory-server-core@npm:9.1.8":
+  version: 9.1.8
+  resolution: "mongodb-memory-server-core@npm:9.1.8"
   dependencies:
     async-mutex: ^0.4.0
     camelcase: ^6.3.0
     debug: ^4.3.4
     find-cache-dir: ^3.3.2
-    follow-redirects: ^1.15.3
+    follow-redirects: ^1.15.6
     https-proxy-agent: ^7.0.2
     mongodb: ^5.9.1
     new-find-package-json: ^2.0.0
@@ -4941,17 +4941,17 @@ __metadata:
     tar-stream: ^3.0.0
     tslib: ^2.6.2
     yauzl: ^2.10.0
-  checksum: b92902d51750cd9810cb758b4c384d8e3fe282d41a6531ba2141621920347a33bb2211503a2ebea099b930f2d8d680aad56f97b1e866b073bbe0240a1aba4fd6
+  checksum: f60a91af8abe55e2a1257659b57ec65bcf4ebe18a1fd4e7206f1977cecc5f007afac802b445b5b00b55b6bb19894dfa55a551e0877a1c634731961d591445beb
   languageName: node
   linkType: hard
 
-"mongodb-memory-server@npm:9.1.7":
-  version: 9.1.7
-  resolution: "mongodb-memory-server@npm:9.1.7"
+"mongodb-memory-server@npm:9.1.8":
+  version: 9.1.8
+  resolution: "mongodb-memory-server@npm:9.1.8"
   dependencies:
-    mongodb-memory-server-core: 9.1.7
+    mongodb-memory-server-core: 9.1.8
     tslib: ^2.6.2
-  checksum: 3d7e6de6dcb7a9f24720f541ee6a29b93db5c212ffb370b9af648ea4a9b0d9dd90e32d97d32fe0bf7b3b5900a54f3b0f13dfbce2621854024e201ae6b89ea34c
+  checksum: 098803c9bc67d2a28214a0f181d7e9dd715b626f560a9066b33d53db592dfb77bd8962707907cff079734069786333bb9a1f58f2bb0eaeeeb2af24dfdf72c97e
   languageName: node
   linkType: hard
 
@@ -6737,7 +6737,7 @@ __metadata:
     koa-router: 12.0.1
     ky: 1.2.3
     lodash: 4.17.21
-    mongodb-memory-server: 9.1.7
+    mongodb-memory-server: 9.1.8
     mongoose: 7.6.10
     moviedb-promise: 4.0.3
     nock: 13.5.4
