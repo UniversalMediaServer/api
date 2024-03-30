@@ -21,7 +21,7 @@ router.get('/api/configuration', async(ctx) => {
   await getConfiguration(ctx);
 });
 
-// add this route to one PM2 process
+// add this route to one process
 if (NODE_APP_INSTANCE === '0') {
   router.get('/_system/heapdump', async (ctx) => {
     const { key } = ctx.query;
