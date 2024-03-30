@@ -1,6 +1,6 @@
 import mongoose, { Schema, InferSchemaType } from 'mongoose';
 
-const LocalizeMetadataSchema: Schema = new Schema({
+const LocalizeMetadataSchema = new Schema({
   episodeNumber: { index: true, type: Number },
   homepage: { type: String },
   imdbID: { index: true, type: String },

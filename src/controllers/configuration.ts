@@ -3,7 +3,7 @@ import { ParameterizedContext } from 'koa';
 import TMDBConfiguration, { TMDBConfigurationInterface } from '../models/TMDBConfiguration';
 import { tmdb } from '../services/tmdb-api';
 
-let configuration: TMDBConfigurationInterface;
+let configuration: Partial<TMDBConfigurationInterface>;
 let configurationExpiryDate: Date;
 
 export const getTMDBImageBaseURL = async(): Promise<string> => {
