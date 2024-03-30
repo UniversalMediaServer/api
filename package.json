@@ -9,7 +9,6 @@
   "scripts": {
     "dev": "DEBUG=\"*universalmediaserver-api:server\" nodemon",
     "purge": "TS_NODE_FILES=true ts-node --files scripts/purge",
-    "reload:prod": "./node_modules/.bin/pm2 reload ecosystem.config.js --update-env",
     "start": "node build/app.js",
     "build": "tsc",
     "test": "NODE_ENV=test OS_API_USERAGENT=OS_API_MOCK_KEY jest test/e2e/media-video.spec.ts --coverage --forceExit --detectOpenHandles && npm run test:mocks",
@@ -33,7 +32,6 @@
     "moviedb-promise": "4.0.3",
     "object-mapper": "6.2.0",
     "opensubtitles-api": "https://github.com/UniversalMediaServer/opensubtitles-api#94e2339b2e38533e518e6556f49b65e541bbe9e3",
-    "pm2": "5.3.1",
     "typescript": "5.4.3"
   },
   "devDependencies": {
