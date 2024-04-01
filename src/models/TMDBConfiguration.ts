@@ -2,7 +2,7 @@ import mongoose, { InferSchemaType, Schema } from 'mongoose';
 
 const THREE_DAYS_IN_SECONDS = 259200;
 
-const TMDBConfigurationSchema: Schema = new Schema({
+const TMDBConfigurationSchema = new Schema({
   imageBaseURL: { type: String, required: true },
   createdAt: {
     default: Date.now,
