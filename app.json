@@ -3,16 +3,5 @@
     "dokku": {
       "predeploy": "yarn build"
     }
-  },
-  "healthchecks": {
-    "web": [
-      {
-        "type": "startup",
-        "name": "Web check",
-        "description": "Checking if the app responds to the / endpoint",
-        "path": "/",
-        "attempts": 5
-      }
-    ]
   }
 }
