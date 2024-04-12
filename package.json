@@ -32,7 +32,7 @@
     "moviedb-promise": "4.0.4",
     "object-mapper": "6.2.0",
     "opensubtitles-api": "https://github.com/UniversalMediaServer/opensubtitles-api#94e2339b2e38533e518e6556f49b65e541bbe9e3",
-    "typescript": "5.4.4"
+    "typescript": "5.4.5"
   },
   "devDependencies": {
     "@types/jest": "29.5.12",
