@@ -42,7 +42,7 @@
     "@types/koa-router": "7.4.8",
     "@types/lodash": "4.17.1",
     "@types/natural": "5.1.5",
-    "@types/node": "18.19.31",
+    "@types/node": "18.19.33",
     "@types/object-mapper": "6.2.2",
     "axios": "1.6.8",
     "eslint": "^8.57.0",
