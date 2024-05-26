@@ -974,4 +974,4 @@ components:
       properties:
         error:
           type: string
-          example: title, osdbHash or imdbId is a required parameter
+          example: title or imdbId is a required parameter

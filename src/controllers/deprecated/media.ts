@@ -132,31 +132,22 @@ export const getSeries = async(ctx): Promise<SeriesMetadataInterface | MediaMeta
  * @deprecated
  */
 export const getVideo = async(ctx): Promise<MediaMetadataInterface> => {
-  const { title, osdbHash, imdbID }: UmsQueryParams = ctx.query;
-  const { episode, season, year, filebytesize }: UmsQueryParams = ctx.query;
-  const [seasonNumber, yearNumber, filebytesizeNumber] = [season, year, filebytesize].map(param => param ? Number(param) : null);
+  const { title, imdbID }: UmsQueryParams = ctx.query;
+  const { episode, season, year }: UmsQueryParams = ctx.query;
+  const [seasonNumber, yearNumber] = [season, year].map(param => param ? Number(param) : null);
   let episodeNumbers = null;
   if (episode) {
     const episodes = episode.split('-');
     episodeNumbers = episodes.map(Number);
   }
 
-  if (!title && !osdbHash && !imdbID) {
-    throw new ValidationError('title, osdbHash or imdbId is a required parameter');
-  }
-
-  if (osdbHash && !filebytesize) {
-    throw new ValidationError('filebytesize is required when passing osdbHash');
+  if (!title && !imdbID) {
+    throw new ValidationError('title or imdbId is a required parameter');
   }
 
   const query = [];
   const failedQuery = [];
   let imdbIdToSearch = imdbID;
-
-  if (osdbHash) {
-    query.push({ osdbHash });
-    failedQuery.push({ osdbHash });
-  }
 
   if (imdbIdToSearch) {
     query.push({ imdbID: imdbIdToSearch });
@@ -198,7 +189,7 @@ export const getVideo = async(ctx): Promise<MediaMetadataInterface> => {
 
   // the database does not have a record of this file, so begin search for metadata on external apis.
 
-  const failedLookupQuery = { episode, imdbID, osdbHash, season, title, year };
+  const failedLookupQuery = { episode, imdbID, season, title, year };
 
   if (!title && !imdbIdToSearch) {
     // The APIs below require either a title or IMDb ID, so return if we don't have one
@@ -239,10 +230,6 @@ export const getVideo = async(ctx): Promise<MediaMetadataInterface> => {
   try {
     if (title) {
       tmdbData.searchMatches = [title];
-    }
-
-    if (osdbHash) {
-      tmdbData.osdbHash = osdbHash;
     }
 
     // Ensure that we return and cache the same episode number that was searched for

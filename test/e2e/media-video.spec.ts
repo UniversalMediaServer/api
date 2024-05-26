@@ -5,7 +5,7 @@ import * as stoppable from 'stoppable';
 
 import app, { PORT } from '../../src/app';
 import FailedLookupsModel from '../../src/models/FailedLookups';
-import MediaMetadata, { MediaMetadataInterface } from '../../src/models/MediaMetadata';
+import { MediaMetadataInterface } from '../../src/models/MediaMetadata';
 import * as apihelper from '../../src/services/external-api-helper';
 
 interface UmsApiMediaAxiosResponse  {
@@ -211,29 +211,6 @@ describe('get by all', () => {
       expect(response.data.seriesIMDbID).toEqual(EPISODE_LOST.seriesIMDbID);
     });
 
-    test('should return an episode by osdbHash, from source APIs then store', async() => {
-      let response = await axios.get(`${appUrl}/api/media/video/v2?osdbHash=${EPISODE_PRISONBREAK.osdbHash}&filebytesize=${EPISODE_PRISONBREAK.filebytesize}`) as UmsApiMediaAxiosResponse;
-      expect(response.data.title).toEqual(EPISODE_PRISONBREAK.title);
-      expect(response.data.type).toEqual('episode');
-      expect(response.data.imdbID).toEqual(EPISODE_PRISONBREAK.imdbID);
-      expect(response.data.seriesIMDbID).toEqual(EPISODE_PRISONBREAK.seriesIMDbID);
-
-      // subsequent calls should return MongoDB result rather than calling external apis
-      response = await axios.get(`${appUrl}/api/media/video/v2?osdbHash=${EPISODE_PRISONBREAK.osdbHash}&filebytesize=${EPISODE_PRISONBREAK.filebytesize}`);
-      expect(response.data.title).toEqual(EPISODE_PRISONBREAK.title);
-      expect(response.data.type).toEqual('episode');
-      expect(response.data.imdbID).toEqual(EPISODE_PRISONBREAK.imdbID);
-      expect(response.data.seriesIMDbID).toEqual(EPISODE_PRISONBREAK.seriesIMDbID);
-    });
-    // tests that when a result is found by open subtitles, we first check if we already have a document for that id
-    test('should return an episode by osdbHash, but return existing metadata if found by imdbid', async() => {
-      const MongoSpy = jest.spyOn(MediaMetadata, 'findOne');
-      await mongoose.connection.db.collection('media_metadata').insertOne({ imdbID: EPISODE_PRISONBREAK.imdbID, title: EPISODE_PRISONBREAK.title });
-      const response = await axios.get(`${appUrl}/api/media/video/v2?osdbHash=${EPISODE_PRISONBREAK.osdbHash}&filebytesize=${EPISODE_PRISONBREAK.filebytesize}`) as UmsApiMediaAxiosResponse;
-      expect(response.data.title).toEqual(EPISODE_PRISONBREAK.title);
-      expect(MongoSpy).toHaveBeenCalledTimes(2);
-    });
-
     test('should return an episode by when passed all possible params, from source APIs then store', async() => {
       const url = `${appUrl}/api/media/video/v2?`+
         `osdbHash=${EPISODE_PRISONBREAK.osdbHash}`+
@@ -320,20 +297,10 @@ describe('get by all', () => {
   });
 
   describe('Validation', () => {
-    test('should require title, osdbHash or imdbID param', async() => {
+    test('should require title or imdbID param', async() => {
       let error;
       try {
         await axios.get(`${appUrl}/api/media/video/v2`);
-      } catch (e) {
-        error = e;
-      }
-      expect(error.message).toEqual('Request failed with status code 422');
-    });
-
-    test('should require filebytesize if attempting osbdHash search', async() => {
-      let error;
-      try {
-        await axios.get(`${appUrl}/api/media/video/v2?osbdHash=fsd`);
       } catch (e) {
         error = e;
       }

@@ -7,10 +7,8 @@ interface UmsQueryParams {
   year?: string;
   imdbid?: string;
   imdbID?: string;
-  filebytesize?: string;
   episode?: string;
   season?: string;
-  osdbHash?: string;
   language?: string;
   mediaType?: string;
   tmdbID?: number;

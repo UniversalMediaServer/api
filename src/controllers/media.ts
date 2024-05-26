@@ -215,10 +215,10 @@ export const getCollection = async(ctx: ParameterizedContext): Promise<Partial<C
 };
 
 export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadataInterface> => {
-  const { title, osdbHash, imdbID }: UmsQueryParams = ctx.query;
-  const { episode, season, year, filebytesize }: UmsQueryParams = ctx.query;
+  const { title, imdbID }: UmsQueryParams = ctx.query;
+  const { episode, season, year }: UmsQueryParams = ctx.query;
   let { language }: UmsQueryParams = ctx.query;
-  const [yearNumber, filebytesizeNumber] = [year, filebytesize].map(param => param ? Number(param) : null);
+  const [yearNumber] = [year].map(param => param ? Number(param) : null);
   let seasonNumber = Number(season);
   let episodeNumbers = null;
   if (episode) {
@@ -226,12 +226,8 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
     episodeNumbers = episodes.map(Number);
   }
 
-  if (!title && !osdbHash && !imdbID) {
-    throw new ValidationError('title, osdbHash or imdbId is a required parameter');
-  }
-
-  if (osdbHash && !filebytesize) {
-    throw new ValidationError('filebytesize is required when passing osdbHash');
+  if (!title && !imdbID) {
+    throw new ValidationError('title or imdbId is a required parameter');
   }
 
   if (language && !language.match(/^[a-z]{2}(-[A-Z]{2})?$/)) {
@@ -241,11 +237,6 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
   const query = [];
   const failedQuery = [];
   let imdbIdToSearch = imdbID;
-
-  if (osdbHash) {
-    query.push({ osdbHash });
-    failedQuery.push({ osdbHash });
-  }
 
   if (imdbIdToSearch) {
     query.push({ imdbID: imdbIdToSearch });
@@ -292,7 +283,7 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
 
   // the database does not have a record of this file, so begin search for metadata on external apis.
 
-  const failedLookupQuery = { episode, imdbID, osdbHash, season, title, year };
+  const failedLookupQuery = { episode, imdbID, season, title, year };
 
   if (!title && !imdbIdToSearch) {
     // The APIs below require either a title or IMDb ID, so return if we don't have one
@@ -335,10 +326,6 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
   try {
     if (searchMatch) {
       tmdbData.searchMatches = [searchMatch];
-    }
-
-    if (osdbHash) {
-      tmdbData.osdbHash = osdbHash;
     }
 
     // Ensure that we return and cache the same episode number that was searched for

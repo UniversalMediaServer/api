@@ -8,7 +8,6 @@ export interface FailedLookupsInterface {
   failedValidation?: boolean;
   imdbID?: string;
   language?: string;
-  osdbHash?: string;
   season?: string;
   startYear?: string;
   title?: string;
@@ -32,19 +31,6 @@ const FailedLookupsSchema = new Schema({
   episode: { index: true, type: String },
   imdbID: { index: true, type: String },
   language: { index: true, type: String },
-  osdbHash: {
-    index: true,
-    required: function(): boolean {
-      return !this.title;
-    },
-    type: String,
-    validate: {
-      validator: function(v: string): boolean {
-        return v.length === 16;
-      },
-      msg: 'Invalid osdb hash length.',
-    },
-  },
   season: { index: true, type: String },
   startYear: {
     index: true,
@@ -52,9 +38,7 @@ const FailedLookupsSchema = new Schema({
   },
   title: {
     index: true,
-    required: function(): boolean {
-      return !this.osdbHash;
-    },
+    required: true,
     type: String,
   },
   tmdbID: { index: true, type: Number },
