@@ -31,6 +31,7 @@ describe('Failed Lookups Model', () => {
 
   describe('Indexes', () => {
     it('should use index when find by title', async() => {
+      await FailedLookups.init();
       await FailedLookups.create({ title: 'Jackass 2' });
       const response = await FailedLookups.findOne({ title: 'Jackass 2' }, {}, { explain: true }).exec();
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'stage'])).toEqual('IXSCAN');
