@@ -20,7 +20,7 @@ describe('Failed Lookups Model', () => {
   });
 
   it('should require title', async() => {
-    let err: Error = new Error();
+    let err: Error;
     try {
       await FailedLookups.create({});
     } catch (e) {

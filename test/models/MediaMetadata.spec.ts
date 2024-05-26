@@ -74,7 +74,7 @@ describe('Media Metadata Model', () => {
     }
     expect(err.message).toBe('MediaMetadata validation failed: season: Path `season` is required.');
 
-    let err2: Error = new Error();
+    let err2: Error;
     doc.type = 'movie';
     try {
       await MediaMetadata.create(doc);

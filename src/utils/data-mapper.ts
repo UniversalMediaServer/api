@@ -147,16 +147,13 @@ const tmdbMovieMap = {
       key: 'actors',
       transform: (credits: CreditsResponse | EpisodeCreditsResponse): string[] => {
         // populate the old "actors" array which came from OpenSubtitles
-        if (!credits || !credits[0]) {
+        if (!credits?.cast) {
           return [];
         }
-
         const actors = [];
-        if (credits.cast) {
-          credits.cast.forEach((castEntry: Cast) => {
-            actors.push(castEntry.name);
-          });
-        }
+        credits.cast.forEach((castEntry: Cast) => {
+          actors.push(castEntry.name);
+        });
         return actors;
       },
     },
@@ -164,18 +161,16 @@ const tmdbMovieMap = {
       key: 'directors',
       transform: (credits: CreditsResponse | EpisodeCreditsResponse): string[] => {
         // populate the old "directors" array which came from OpenSubtitles
-        if (!credits || !credits[0]) {
+        if (!credits?.crew) {
           return [];
         }
 
         const directors = [];
-        if (credits.crew) {
-          credits.crew.forEach((crewEntry: Crew) => {
-            if (crewEntry.job === 'Director') {
-              directors.push(crewEntry.name);
-            }
-          });
-        }
+        credits.crew.forEach((crewEntry: Crew) => {
+          if (crewEntry.job === 'Director') {
+            directors.push(crewEntry.name);
+          }
+        });
         return directors;
       },
     },

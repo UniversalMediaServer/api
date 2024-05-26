@@ -122,7 +122,7 @@ const tmdbApiMovieResponse = {
         'profile_path': null,
         'credit_id': '5d5ec71ef263ba001495033f',
         'department': 'Sound',
-        'job': 'Sound Editor',
+        'job': 'Director',
       },
     ],
   },
@@ -443,7 +443,8 @@ describe('Data mapper for TMDB API responses', () => {
     it('should parse as expected', () => {
       const parsed = mapper.parseTMDBAPIMovieResponse(tmdbApiMovieResponse);
 
-      expect(parsed.actors).toBe('todo');
+      expect(parsed.actors).toBeDefined();
+      expect(parsed.actors[0]).toBe('Lance Guest');
       expect(parsed.budget).toBe(15000000);
       expect(parsed.collectionTmdbID).toBe(422837);
       expect(parsed.credits).toEqual({
@@ -467,7 +468,7 @@ describe('Data mapper for TMDB API responses', () => {
           'department': 'Sound',
           'gender': 0,
           'id': 375,
-          'job': 'Sound Editor',
+          'job': 'Director', // changed this from the actual result in order to test the directors array
           'known_for_department': 'Sound',
           'name': 'Bub Asman',
           'original_name': 'Bub Asman',
@@ -475,7 +476,8 @@ describe('Data mapper for TMDB API responses', () => {
           'profile_path': null,
         }],
       });
-      expect(parsed.directors).toBe('todo');
+      expect(parsed.directors).toBeDefined();
+      expect(parsed.directors[0]).toBe('Bub Asman');
       expect(parsed.externalIDs).toEqual({
         imdb_id: 'tt0087597',
         facebook_id: null,

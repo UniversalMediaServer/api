@@ -44,11 +44,12 @@ const EPISODE_LOST = {
 const EPISODE_PRISONBREAK = {
   'osdbHash': '35acba68a9dcfc8f',
   'filebytesize': '271224190',
-  'title': 'Behind the Eyes',
+  'title': 'Prison Break',
+  'episodeTitle': 'Behind the Eyes',
   'season': '5',
   'episode': '9',
   'imdbID': 'tt5538198',
-  'year': 2017,
+  'year': 2005,
   'seriesIMDbID': 'tt0455275',
 };
 
@@ -61,7 +62,7 @@ const EPISODE_AVATAR = {
   'imdbID': 'tt1176477',
   'year': 2005,
   'seriesIMDbID': 'tt0417299',
-  'seriesTitle': 'Avatar: The Last Airbender',
+  'title': 'Avatar: The Last Airbender',
 };
 
 describe('get by all', () => {
@@ -220,14 +221,14 @@ describe('get by all', () => {
         `&episode=${EPISODE_PRISONBREAK.episode}`+
         `&year=${EPISODE_PRISONBREAK.year}`;
       let response = await axios.get(url) as UmsApiMediaAxiosResponse;
-      expect(response.data.title).toEqual(EPISODE_PRISONBREAK.title);
+      expect(response.data.title).toEqual(EPISODE_PRISONBREAK.episodeTitle);
       expect(response.data.type).toEqual('episode');
 
       expect(response.data.seriesIMDbID).toEqual(EPISODE_PRISONBREAK.seriesIMDbID);
 
       // subsequent calls should return MongoDB result rather than calling external apis
       response = await axios.get(url);
-      expect(response.data.title).toEqual(EPISODE_PRISONBREAK.title);
+      expect(response.data.title).toEqual(EPISODE_PRISONBREAK.episodeTitle);
       expect(response.data.type).toEqual('episode');
       expect(response.data.seriesIMDbID).toEqual(EPISODE_PRISONBREAK.seriesIMDbID);
     });
@@ -236,7 +237,7 @@ describe('get by all', () => {
       const url = `${appUrl}/api/media/video/v2?`+
         `osdbHash=${EPISODE_AVATAR.osdbHash}`+
         `&filebytesize=${EPISODE_AVATAR.filebytesize}`+
-        `&title=${EPISODE_AVATAR.seriesTitle}`+
+        `&title=${EPISODE_AVATAR.title}`+
         `&season=${EPISODE_AVATAR.season}`+
         `&episode=${EPISODE_AVATAR.episode}`+
         `&year=${EPISODE_AVATAR.year}`;
