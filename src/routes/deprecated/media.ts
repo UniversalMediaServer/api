@@ -4,8 +4,8 @@ import { subversions } from '../../helpers/subversioning';
 
 const router = new Router({ prefix: '/api/media' });
 
-router.get('/osdbhash/:osdbhash/:filebytesize', async(ctx) => {
-  await DeprecatedMediaController.getByOsdbHash(ctx);
+router.get('/osdbhash/:osdbhash/:filebytesize', async() => {
+  await DeprecatedMediaController.getByOsdbHash();
 });
 
 router.get('/title', async(ctx) => {
