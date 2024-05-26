@@ -229,29 +229,6 @@ const filterUnwantedLocalizeValues = (obj): Partial<LocalizeMetadataInterface> =
   });
 };
 
-/*
- * Ensures that IMDb IDs have "tt" at the start.
- * This is because APIs sometimes return IMDb IDs with
- * only one or no "t".
- */
-const ensureIMDbIDFormat = (metadata, propertyName = 'imdbID'): Partial<MediaMetadataInterface | SeriesMetadataInterface> => {
-  if (
-    !metadata ||
-    !metadata[propertyName] ||
-    metadata[propertyName].startsWith('tt')
-  ) {
-    return metadata;
-  }
-
-  if (metadata[propertyName].startsWith('t')) {
-    metadata[propertyName] = 't' + metadata[propertyName];
-    return metadata;
-  }
-
-  metadata[propertyName] = 'tt' + metadata[propertyName];
-  return metadata;
-};
-
 class UmsDataMapper {
   parseTMDBAPIEpisodeResponse(tmdbData): Partial<MediaMetadataInterface> {
     const mappedData = objectMapper.merge(tmdbData, tmdbEpisodeMap);

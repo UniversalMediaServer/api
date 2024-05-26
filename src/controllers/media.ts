@@ -1,7 +1,7 @@
 import { ParameterizedContext } from 'koa';
 import * as _ from 'lodash';
 
-import { ExternalAPIError, MediaNotFoundError, RateLimitError, ValidationError } from '../helpers/customErrors';
+import { MediaNotFoundError, RateLimitError, ValidationError } from '../helpers/customErrors';
 import { CollectionMetadataInterface } from '../models/CollectionMetadata';
 import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
 import LocalizeMetadata, { LocalizeMetadataInterface } from '../models/LocalizeMetadata';
@@ -219,7 +219,7 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
   const { episode, season, year }: UmsQueryParams = ctx.query;
   let { language }: UmsQueryParams = ctx.query;
   const [yearNumber] = [year].map(param => param ? Number(param) : null);
-  let seasonNumber = Number(season);
+  const seasonNumber = Number(season);
   let episodeNumbers = null;
   if (episode) {
     const episodes = episode.split('-');
