@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { CollectionInfoResponse, Genre } from 'moviedb-promise';
+import { Cast, CollectionInfoResponse, CreditsResponse, Crew, EpisodeCreditsResponse, Genre } from 'moviedb-promise';
 import * as objectMapper from 'object-mapper';
 
 import { CollectionMetadataInterface } from '../models/CollectionMetadata';
@@ -209,7 +209,45 @@ const tmdbCollectionMap = {
 const tmdbMovieMap = {
   'belongs_to_collection.id': 'collectionTmdbID',
   'budget': 'budget',
-  'credits': 'credits',
+  'credits': [
+    { key: 'credits' },
+    {
+      key: 'actors',
+      transform: (credits: CreditsResponse | EpisodeCreditsResponse): string[] => {
+        // populate the old "actors" array which came from OpenSubtitles
+        if (!credits || !credits[0]) {
+          return [];
+        }
+
+        const actors = [];
+        if (credits.cast) {
+          credits.cast.forEach((castEntry: Cast) => {
+            actors.push(castEntry.name);
+          });
+        }
+        return actors;
+      },
+    },
+    {
+      key: 'directors',
+      transform: (credits: CreditsResponse | EpisodeCreditsResponse): string[] => {
+        // populate the old "directors" array which came from OpenSubtitles
+        if (!credits || !credits[0]) {
+          return [];
+        }
+
+        const directors = [];
+        if (credits.crew) {
+          credits.crew.forEach((crewEntry: Crew) => {
+            if (crewEntry.job === 'Director') {
+              directors.push(crewEntry.name);
+            }
+          });
+        }
+        return directors;
+      },
+    },
+  ],
   'external_ids': 'externalIDs',
   'genres': {
     key: 'genres?',
