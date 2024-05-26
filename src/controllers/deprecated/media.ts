@@ -13,7 +13,7 @@ import { addSearchMatchByIMDbID } from '../media';
  *
  * @deprecated
  */
-export const getByOsdbHash = async(_ctx): Promise<MediaMetadataInterface> => {
+export const getByOsdbHash = async(): Promise<MediaMetadataInterface> => {
   throw new MediaNotFoundError();
 };
 
