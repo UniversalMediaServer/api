@@ -66,7 +66,6 @@ const EPISODE_AVATAR = {
 
 describe('get by all', () => {
   beforeAll((done) => {
-    require('../opensubtitles-mocks');
     require('../tmdb-mocks');
     MongoMemoryServer.create()
       .then((value) => {
@@ -142,18 +141,14 @@ describe('get by all', () => {
     });
 
     test('should return a movie by all possible params, from source APIs then store', async() => {
-      const openSubsSpy = jest.spyOn(apihelper, 'getFromOpenSubtitles');
       let response = await axios.get(`${appUrl}/api/media/video/v2?osdbHash=${MOVIE_INTERSTELLAR.osdbHash}&filebytesize=${MOVIE_INTERSTELLAR.filebytesize}&title=${MOVIE_INTERSTELLAR.title}&imdbID=${MOVIE_INTERSTELLAR.imdbID}`) as UmsApiMediaAxiosResponse;
       expect(response.data.title).toEqual(MOVIE_INTERSTELLAR.title);
       expect(response.data.type).toEqual('movie');
-      expect(openSubsSpy).toHaveBeenCalledTimes(1);
-      openSubsSpy.mockReset();
 
       // subsequent calls should return MongoDB result rather than calling external apis
       response = await axios.get(`${appUrl}/api/media/video/v2?osdbHash=${MOVIE_INTERSTELLAR.osdbHash}&filebytesize=${MOVIE_INTERSTELLAR.filebytesize}&title=${MOVIE_INTERSTELLAR.title}&imdbID=${MOVIE_INTERSTELLAR.imdbID}`);
       expect(response.data.title).toEqual(MOVIE_INTERSTELLAR.title);
       expect(response.data.type).toEqual('movie');
-      expect(openSubsSpy).toHaveBeenCalledTimes(0);
     });
 
     test('should return a movie (en-US) by title AND language, from source APIs then store', async() => {
@@ -238,9 +233,8 @@ describe('get by all', () => {
       expect(response.data.title).toEqual(EPISODE_PRISONBREAK.title);
       expect(MongoSpy).toHaveBeenCalledTimes(2);
     });
-    // this also tests opensubtitles validation
+
     test('should return an episode by when passed all possible params, from source APIs then store', async() => {
-      const openSubsSpy = jest.spyOn(apihelper, 'getFromOpenSubtitles');
       const url = `${appUrl}/api/media/video/v2?`+
         `osdbHash=${EPISODE_PRISONBREAK.osdbHash}`+
         `&filebytesize=${EPISODE_PRISONBREAK.filebytesize}`+
@@ -253,19 +247,15 @@ describe('get by all', () => {
       expect(response.data.type).toEqual('episode');
 
       expect(response.data.seriesIMDbID).toEqual(EPISODE_PRISONBREAK.seriesIMDbID);
-      expect(openSubsSpy).toHaveBeenCalledTimes(1);
-      openSubsSpy.mockReset();
 
       // subsequent calls should return MongoDB result rather than calling external apis
       response = await axios.get(url);
-      expect(openSubsSpy).toHaveBeenCalledTimes(0);
       expect(response.data.title).toEqual(EPISODE_PRISONBREAK.title);
       expect(response.data.type).toEqual('episode');
       expect(response.data.seriesIMDbID).toEqual(EPISODE_PRISONBREAK.seriesIMDbID);
     });
 
     test('should return two episodes when passed all possible params, from source APIs then store', async() => {
-      const openSubsSpy = jest.spyOn(apihelper, 'getFromOpenSubtitles');
       const url = `${appUrl}/api/media/video/v2?`+
         `osdbHash=${EPISODE_AVATAR.osdbHash}`+
         `&filebytesize=${EPISODE_AVATAR.filebytesize}`+
@@ -279,12 +269,9 @@ describe('get by all', () => {
       expect(response.data.episode).toEqual(EPISODE_AVATAR.episode);
 
       expect(response.data.seriesIMDbID).toEqual(EPISODE_AVATAR.seriesIMDbID);
-      expect(openSubsSpy).toHaveBeenCalledTimes(1);
-      openSubsSpy.mockReset();
 
       // subsequent calls should return MongoDB result rather than calling external apis
       response = await axios.get(url);
-      expect(openSubsSpy).toHaveBeenCalledTimes(0);
       expect(response.data.title).toEqual(EPISODE_AVATAR.episodeTitle);
       expect(response.data.type).toEqual('episode');
       expect(response.data.episode).toEqual(EPISODE_AVATAR.episode);

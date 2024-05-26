@@ -4814,16 +4814,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"opensubtitles-api@https://github.com/UniversalMediaServer/opensubtitles-api#94e2339b2e38533e518e6556f49b65e541bbe9e3":
-  version: 5.1.2
-  resolution: "opensubtitles-api@https://github.com/UniversalMediaServer/opensubtitles-api.git#commit=94e2339b2e38533e518e6556f49b65e541bbe9e3"
-  dependencies:
-    urijs: "npm:^1.19.1"
-    xmlrpc: "npm:^1.3.2"
-  checksum: 10/524c6346f128f7441c0bd2099773566c75d1176edee66b8ac85fcb3d9626486e5a2d770bf2027a4743b8e5302698817515435c2a46f80bdf6cdae5de332e2e3b
-  languageName: node
-  linkType: hard
-
 "optionator@npm:^0.9.3":
   version: 0.9.3
   resolution: "optionator@npm:0.9.3"
@@ -5314,13 +5304,6 @@ __metadata:
   version: 2.1.2
   resolution: "safer-buffer@npm:2.1.2"
   checksum: 10/7eaf7a0cf37cc27b42fb3ef6a9b1df6e93a1c6d98c6c6702b02fe262d5fcbd89db63320793b99b21cb5348097d0a53de81bd5f4e8b86e20cc9412e3f1cfb4e83
-  languageName: node
-  linkType: hard
-
-"sax@npm:1.2.x":
-  version: 1.2.4
-  resolution: "sax@npm:1.2.4"
-  checksum: 10/09b79ff6dc09689a24323352117c94593c69db348997b2af0edbd82fa08aba47d778055bf9616b57285bb73d25d790900c044bf631a8f10c8252412e3f3fe5dd
   languageName: node
   linkType: hard
 
@@ -5984,7 +5967,6 @@ __metadata:
     nock: "npm:13.5.4"
     nodemon: "npm:^3.1.1"
     object-mapper: "npm:6.2.0"
-    opensubtitles-api: "https://github.com/UniversalMediaServer/opensubtitles-api#94e2339b2e38533e518e6556f49b65e541bbe9e3"
     stoppable: "npm:1.1.0"
     ts-jest: "npm:29.1.3"
     typescript: "npm:5.4.5"
@@ -6019,13 +6001,6 @@ __metadata:
   dependencies:
     punycode: "npm:^2.1.0"
   checksum: 10/b271ca7e3d46b7160222e3afa3e531505161c9a4e097febae9664e4b59912f4cbe94861361a4175edac3a03fee99d91e44b6a58c17a634bc5a664b19fc76fbcb
-  languageName: node
-  linkType: hard
-
-"urijs@npm:^1.19.1":
-  version: 1.19.11
-  resolution: "urijs@npm:1.19.11"
-  checksum: 10/2aa5547b53c37ebee03a8ad70feae1638a37cc4c7e543abbffb14fc86b17f84f303d08e45c501441410c025bab22aa84673c97604b7b2619967f1dd49f69931f
   languageName: node
   linkType: hard
 
@@ -6168,23 +6143,6 @@ __metadata:
     imurmurhash: "npm:^0.1.4"
     signal-exit: "npm:^3.0.7"
   checksum: 10/3be1f5508a46c190619d5386b1ac8f3af3dbe951ed0f7b0b4a0961eed6fc626bd84b50cf4be768dabc0a05b672f5d0c5ee7f42daa557b14415d18c3a13c7d246
-  languageName: node
-  linkType: hard
-
-"xmlbuilder@npm:8.2.x":
-  version: 8.2.2
-  resolution: "xmlbuilder@npm:8.2.2"
-  checksum: 10/4985db85ad58ae4176b13eccb4604fbade279ee6745a56d4c380a73042791ac97836174ac23b2be80234459c43526bfd91e7c672e6375c78459ad907a370b6c5
-  languageName: node
-  linkType: hard
-
-"xmlrpc@npm:^1.3.2":
-  version: 1.3.2
-  resolution: "xmlrpc@npm:1.3.2"
-  dependencies:
-    sax: "npm:1.2.x"
-    xmlbuilder: "npm:8.2.x"
-  checksum: 10/5d79e1697cb5481d0b195fbae60c3acd487e2d124dc395a38d8d3ed38cf86c023bfef21042f2a86eacb5d432ea9a71b8f0ddf10c9e505f2678049c94511eed8e
   languageName: node
   linkType: hard
 

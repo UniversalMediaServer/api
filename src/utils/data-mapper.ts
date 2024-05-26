@@ -8,74 +8,6 @@ import { MediaMetadataInterface } from '../models/MediaMetadata';
 import { SeasonMetadataInterface } from '../models/SeasonMetadata';
 import { SeriesMetadataInterface } from '../models/SeriesMetadata';
 
-const openSubtitlesMovieMap = {
-  'metadata.cast': [
-    {
-      key: 'actors?',
-      transform: (val): Array<string> => _.isEmpty(_.values(val)) ? null : _.values(val),
-    },
-  ],
-  'metadata.genres': [
-    {
-      key: 'genres?',
-      transform: (val): Array<string> => _.isEmpty(_.values(val)) ? null : _.values(val),
-    },
-  ],
-
-  'metadata.rating': [
-    {
-      key: 'rating',
-      transform: (val: string): number => parseFloat(val),
-    },
-  ],
-  'metadata.goofs': 'goofs',
-  'metadata.cover': 'poster',
-  'metadata.imdbid': 'imdbID',
-  'moviehash': 'osdbHash',
-  'metadata.tagline': 'tagline',
-  'metadata.title': 'title',
-  'metadata.trivia': 'trivia',
-  'metadata.duration': 'runtime',
-  'type': 'type',
-  'metadata.year': 'year',
-  'metadata.votes': 'votes',
-};
-
-const openSubtitlesEpisodeMap = {
-  'metadata.cast': [
-    {
-      key: 'actors?',
-      transform: (val): Array<string> => _.isEmpty(_.values(val)) ? null : _.values(val),
-    },
-  ],
-  'metadata.genres': [
-    {
-      key: 'genres?',
-      transform: (val): Array<string> => _.isEmpty(_.values(val)) ? null : _.values(val),
-    },
-  ],
-
-  'metadata.rating': [
-    {
-      key: 'rating',
-      transform: (val: string): number => parseFloat(val),
-    },
-  ],
-  'metadata.goofs': 'goofs',
-  'metadata.cover': 'poster',
-  'metadata.imdbid': 'imdbID',
-  'moviehash': 'osdbHash',
-  'metadata.tagline': 'tagline',
-  'metadata.episode_title': 'title',
-  'metadata.trivia': 'trivia',
-  'metadata.duration': 'runtime',
-  'type': 'type',
-  'metadata.year': 'year',
-  'metadata.votes': 'votes',
-  'metadata.season': 'season',
-  'metadata.episode': 'episode',
-};
-
 const tmdbEpisodeMap = {
   'air_date': [
     { key: 'released' },
@@ -326,18 +258,6 @@ const ensureIMDbIDFormat = (metadata, propertyName = 'imdbID'): Partial<MediaMet
 };
 
 class UmsDataMapper {
-  parseOpenSubtitlesResponse(openSubtitlesData): Partial<MediaMetadataInterface> {
-    let mappedData = objectMapper.merge(openSubtitlesData, openSubtitlesMovieMap);
-    mappedData = filterUnwantedValues(mappedData);
-    return ensureIMDbIDFormat(mappedData);
-  }
-
-  parseOpenSubtitlesEpisodeResponse(openSubtitlesData): Partial<MediaMetadataInterface> {
-    let mappedData = objectMapper.merge(openSubtitlesData, openSubtitlesEpisodeMap);
-    mappedData = filterUnwantedValues(mappedData);
-    return ensureIMDbIDFormat(mappedData);
-  }
-
   parseTMDBAPIEpisodeResponse(tmdbData): Partial<MediaMetadataInterface> {
     const mappedData = objectMapper.merge(tmdbData, tmdbEpisodeMap);
     return filterUnwantedValues(mappedData);

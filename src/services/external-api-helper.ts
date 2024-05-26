@@ -2,7 +2,6 @@ import * as _ from 'lodash';
 import * as episodeParser from 'episode-parser';
 import { Episode, EpisodeRequest, ExternalId, SearchMovieRequest, SearchTvRequest, SimpleEpisode, TvExternalIdsResponse } from 'moviedb-promise/dist/request-types';
 
-import osAPI from './opensubtitles';
 import { tmdb } from './tmdb-api';
 import { ValidationError } from '../helpers/customErrors';
 import CollectionMetadata, { CollectionMetadataInterface } from '../models/CollectionMetadata';
@@ -13,19 +12,6 @@ import SeasonMetadata, { SeasonMetadataInterface } from '../models/SeasonMetadat
 import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import { mapper } from '../utils/data-mapper';
 import { FlattenMaps, Types } from 'mongoose';
-
-export interface OpenSubtitlesQuery {
-  extend: boolean;
-  moviebytesize: number;
-  moviehash: string;
-  remote: boolean;
-}
-
-interface OpenSubtitlesValidation {
-  year: string;
-  season: string;
-  episode: string;
-}
 
 /**
  * Adds a searchMatch to an existing result by IMDb ID, and returns the result.
@@ -584,52 +570,4 @@ export const getTmdbIdFromIMDbID = async(imdbID: string, mediaType?: string): Pr
       break;
   }
   return null;
-};
-
-/**
- * Gets metadata from Open Subtitles and validates the response if provided validation data
- */
-export const getFromOpenSubtitles = async(osQuery: OpenSubtitlesQuery, validationData: OpenSubtitlesValidation): Promise<Partial<MediaMetadataInterface>> => {
-  const validateMovieByYear = Boolean(validationData.year);
-  const validateEpisodeBySeasonAndEpisode = Boolean(validationData.season && validationData.episode);
-  let passedValidation = true;
-
-  if (!osQuery.moviehash || !osQuery.moviebytesize) {
-    throw new ValidationError('moviehash and moviebytesize are required');
-  }
-
-  const openSubtitlesResponse = await osAPI.identify({ ...osQuery });
-
-  if (!openSubtitlesResponse.metadata) {
-    return null;
-  }
-
-  if (validateMovieByYear || validateEpisodeBySeasonAndEpisode) {
-    passedValidation = false;
-    if (validateMovieByYear) {
-      if (validationData.year === openSubtitlesResponse.metadata?.year) {
-        passedValidation = true;
-      }
-    }
-
-    if (validateEpisodeBySeasonAndEpisode) {
-      if (
-        validationData.season === openSubtitlesResponse.metadata.season &&
-        validationData.episode === openSubtitlesResponse.metadata.episode
-      ) {
-        passedValidation = true;
-      }
-    }
-  }
-
-  // If the data from Open Subtitles did not match the search, treat it as a non-result.
-  if (!passedValidation) {
-    return null;
-  }
-
-  if (openSubtitlesResponse.type === 'episode') {
-    return mapper.parseOpenSubtitlesEpisodeResponse(openSubtitlesResponse);
-  }
-
-  return mapper.parseOpenSubtitlesResponse(openSubtitlesResponse);
 };

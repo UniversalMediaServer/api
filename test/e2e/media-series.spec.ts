@@ -25,7 +25,6 @@ const americanHorrorStorySeries = {
 
 describe('Media Metadata endpoints', () => {
   beforeAll((done) => {
-    require('../opensubtitles-mocks');
     require('../tmdb-mocks');
     MongoMemoryServer.create()
       .then((value) => {
