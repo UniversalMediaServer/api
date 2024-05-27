@@ -19,7 +19,43 @@ const tmdbEpisodeMap = {
       },
     },
   ],
-  'credits': 'credits',
+  'credits': [
+    { key: 'credits' },
+    {
+      key: 'actors',
+      transform: (credits: EpisodeCreditsResponse): string[] => {
+        // populate the old "actors" array which came from OpenSubtitles
+        if (!credits?.cast) {
+          return [];
+        }
+        const actors = [];
+        for (const castEntry of credits.cast) {
+          actors.push(castEntry.name);
+          if (actors.length > 4) {
+            break;
+          }
+        }
+        return actors;
+      },
+    },
+    {
+      key: 'directors',
+      transform: (credits: EpisodeCreditsResponse): string[] => {
+        // populate the old "directors" array which came from OpenSubtitles
+        if (!credits?.crew) {
+          return [];
+        }
+
+        const directors = [];
+        for (const crewEntry of credits.crew) {
+          if (crewEntry.job === 'Director' && crewEntry.department === 'Directing') {
+            directors.push(crewEntry.name);
+          }
+        }
+        return directors;
+      },
+    },
+  ],
   'episode_number': 'episode',
   'external_ids.imdb_id': 'imdbID',
   'external_ids': 'externalIDs',
@@ -74,7 +110,43 @@ const tmdbSeasonMap = {
 
 const tmdbSeriesMap = {
   'created_by': 'createdBy',
-  'credits': 'credits',
+  'credits': [
+    { key: 'credits' },
+    {
+      key: 'actors',
+      transform: (credits: CreditsResponse): string[] => {
+        // populate the old "actors" array which came from OpenSubtitles
+        if (!credits?.cast) {
+          return [];
+        }
+        const actors = [];
+        for (const castEntry of credits.cast) {
+          actors.push(castEntry.name);
+          if (actors.length > 4) {
+            break;
+          }
+        }
+        return actors;
+      },
+    },
+    {
+      key: 'directors',
+      transform: (credits: CreditsResponse): string[] => {
+        // populate the old "directors" array which came from OpenSubtitles
+        if (!credits?.crew) {
+          return [];
+        }
+
+        const directors = [];
+        for (const crewEntry of credits.crew) {
+          if (crewEntry.job === 'Director' && crewEntry.department === 'Directing') {
+            directors.push(crewEntry.name);
+          }
+        }
+        return directors;
+      },
+    },
+  ],
   'external_ids.imdb_id': 'imdbID',
   'external_ids': 'externalIDs',
   'first_air_date': [
@@ -145,32 +217,35 @@ const tmdbMovieMap = {
     { key: 'credits' },
     {
       key: 'actors',
-      transform: (credits: CreditsResponse | EpisodeCreditsResponse): string[] => {
+      transform: (credits: CreditsResponse): string[] => {
         // populate the old "actors" array which came from OpenSubtitles
         if (!credits?.cast) {
           return [];
         }
         const actors = [];
-        credits.cast.forEach((castEntry: Cast) => {
+        for (const castEntry of credits.cast) {
           actors.push(castEntry.name);
-        });
+          if (actors.length > 4) {
+            break;
+          }
+        }
         return actors;
       },
     },
     {
       key: 'directors',
-      transform: (credits: CreditsResponse | EpisodeCreditsResponse): string[] => {
+      transform: (credits: CreditsResponse): string[] => {
         // populate the old "directors" array which came from OpenSubtitles
         if (!credits?.crew) {
           return [];
         }
 
         const directors = [];
-        credits.crew.forEach((crewEntry: Crew) => {
-          if (crewEntry.job === 'Director') {
+        for (const crewEntry of credits.crew) {
+          if (crewEntry.job === 'Director' && crewEntry.department === 'Directing') {
             directors.push(crewEntry.name);
           }
-        });
+        }
         return directors;
       },
     },

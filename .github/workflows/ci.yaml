@@ -7,7 +7,6 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      OS_API_USERAGENT: ${{ secrets. OS_API_USERAGENT }}
       TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
 
     steps:

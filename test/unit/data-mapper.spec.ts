@@ -121,7 +121,7 @@ const tmdbApiMovieResponse = {
         'popularity': 1.286,
         'profile_path': null,
         'credit_id': '5d5ec71ef263ba001495033f',
-        'department': 'Sound',
+        'department': 'Directing',
         'job': 'Director',
       },
     ],
@@ -309,6 +309,7 @@ describe('Data mapper for TMDB API responses', () => {
   describe('series', () => {
     it('should parse as expected', () => {
       const parsed = mapper.parseTMDBAPISeriesResponse(tmdbApiSeriesResponse);
+      expect(parsed.actors).toEqual(['Neil Patrick Harris']);
       expect(parsed.createdBy).toEqual([
         {
           id: 5174,
@@ -465,7 +466,7 @@ describe('Data mapper for TMDB API responses', () => {
         crew: [{
           'adult': false,
           'credit_id': '5d5ec71ef263ba001495033f',
-          'department': 'Sound',
+          'department': 'Directing',
           'gender': 0,
           'id': 375,
           'job': 'Director', // changed this from the actual result in order to test the directors array
