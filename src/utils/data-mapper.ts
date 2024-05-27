@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { Cast, CollectionInfoResponse, CreditsResponse, Crew, EpisodeCreditsResponse, Genre } from 'moviedb-promise';
+import { CollectionInfoResponse, CreditsResponse, EpisodeCreditsResponse, Genre } from 'moviedb-promise';
 import * as objectMapper from 'object-mapper';
 
 import { CollectionMetadataInterface } from '../models/CollectionMetadata';
