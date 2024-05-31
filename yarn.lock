@@ -5965,7 +5965,7 @@ __metadata:
     mongoose: "npm:^8.4.0"
     moviedb-promise: "npm:4.0.6"
     nock: "npm:13.5.4"
-    nodemon: "npm:^3.1.1"
+    nodemon: "npm:3.1.2"
     object-mapper: "npm:6.2.0"
     stoppable: "npm:1.1.0"
     ts-jest: "npm:29.1.3"
