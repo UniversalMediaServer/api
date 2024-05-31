@@ -45,51 +45,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Configuration'
 
-  /api/media/osdbhash/{osdbhash}/{filebytesize}:
-    get:
-      description: |
-        Returns media metadata for the Opensubtitles hash of a file
-      externalDocs:
-        url: https://trac.opensubtitles.org/projects/opensubtitles/wiki/HashSourceCodes
-        description: Learn more about how to generate Open Subtitles file hashes
-      parameters:
-        - in: path
-          name: osdbhash
-          description: A OpenSubtitles hash of a media file
-          schema:
-            type: string
-          required: true
-        - in: path
-          name: filebytesize
-          schema:
-            type: string
-          required: true
-      responses:
-        '200':
-          description: Media metadata
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MediaMetadata'
-        '404':
-          description: Metadata not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MetadataNotFoundError'
-        '422':
-          description: Unprocessable Entity
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RequestValidationError'
-        '503':
-          description: Service unavailable
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DependencyError'
-
   /api/media/title:
     get:
       description: |
@@ -1005,7 +960,7 @@ components:
       properties:
         error:
           type: string
-          example: Opensubtitles API is offline
+          example: TMDB API is offline
 
     MetadataNotFoundError:
       type: object
@@ -1019,4 +974,4 @@ components:
       properties:
         error:
           type: string
-          example: title, osdbHash or imdbId is a required parameter
+          example: title or imdbId is a required parameter

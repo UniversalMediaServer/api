@@ -2,7 +2,6 @@ import * as mongoose from 'mongoose';
 import { Schema } from 'mongoose';
 import { CreditsResponse, EpisodeCreditsResponse, EpisodeExternalIdsResponse, EpisodeImagesResponse, MovieExternalIdsResponse, MovieImagesResponse } from 'moviedb-promise/dist/request-types';
 import { ProductionCompany, ProductionCountry, SpokenLanguage } from 'moviedb-promise/dist/types';
-import { ValidationError } from '../helpers/customErrors';
 
 export interface MediaMetadataInterface {
   actors?: Array<string>;
@@ -23,7 +22,6 @@ export interface MediaMetadataInterface {
   metascore?: string;
   originalLanguage?: string;
   originalTitle?: string;
-  osdbHash?: string;
   plot?: string;
   poster?: string;
   posterRelativePath?: string;
@@ -81,18 +79,6 @@ const MediaMetadataSchema: Schema = new Schema({
   metascore: { type: String },
   originalLanguage: { type: String },
   originalTitle: { type: String },
-  osdbHash: {
-    index: true,
-    type: String,
-    validate: {
-      validator: (hash: string): boolean => {
-        if (hash.length !== 16) {
-          throw new ValidationError('Invalid osdb hash length.');
-        }
-        return true;
-      },
-    },
-  },
   productionCompanies: { type: Array },
   productionCountries: { type: Array },
   plot: { type: String },

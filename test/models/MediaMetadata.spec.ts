@@ -12,7 +12,6 @@ const interstellarMetaData = {
   episode: '3',
   genres: ['Adventure', 'Drama', 'Sci-Fi'],
   imdbID: 'tt0816692',
-  osdbHash: '8e245d9679d31e12',
   searchMatches: ['Interstellar (2014)'],
   season: '2',
   title: 'Interstellar',
@@ -41,7 +40,6 @@ describe('Media Metadata Model', () => {
     const savedMedia = await MediaMetadata.create(interstellarMetaData);
     expect(savedMedia._id).toBeDefined();
     expect(savedMedia.title).toBe('Interstellar');
-    expect(savedMedia.osdbHash).toBe('8e245d9679d31e12');
     expect(savedMedia.genres).toBeInstanceOf(Array);
   });
 
@@ -49,7 +47,7 @@ describe('Media Metadata Model', () => {
     const doc = _.cloneDeep(interstellarMetaData);
     delete doc.title;
     doc.type = 'movie';
-    let err: Error;
+    let err: Error = new Error();
     try {
       await MediaMetadata.create(doc);
     } catch (e) {
@@ -68,7 +66,7 @@ describe('Media Metadata Model', () => {
   it('should require episode for episodes but not for movies', async() => {
     const doc = _.cloneDeep(interstellarMetaData);
     delete doc.season;
-    let err: Error;
+    let err: Error = new Error();
     try {
       await MediaMetadata.create(doc);
     } catch (e) {
@@ -84,18 +82,6 @@ describe('Media Metadata Model', () => {
       err2 = e;
     }
     expect(err2).toBeUndefined();
-  });
-
-  it('should validate for a valid osdb hash', async() => {
-    const doc = _.cloneDeep(interstellarMetaData);
-    doc.osdbHash = 'a3e8hm1';
-    let err: Error;
-    try {
-      await MediaMetadata.create(doc);
-    } catch (e) {
-      err = e;
-    }
-    expect(err.message).toBe('MediaMetadata validation failed: osdbHash: Invalid osdb hash length.');
   });
 
   it('should not store dummy episode titles', async() => {
@@ -120,14 +106,6 @@ describe('Media Metadata Model', () => {
   });
 
   describe('Indexes', () => {
-    it('should use index when find by osdbHash', async() => {
-      await MediaMetadata.create(interstellarMetaData);
-      const response = await MediaMetadata.findOne({ osdbHash: interstellarMetaData.osdbHash }, null, { explain: true }).exec();
-      expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'inputStage', 'stage'])).toEqual('IXSCAN');
-      expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'stage'])).toEqual('FETCH');
-      expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'stage'])).toEqual('PROJECTION_DEFAULT');
-    });
-
     it('should use index when find by title', async() => {
       await MediaMetadata.create(interstellarMetaData);
       const response = await MediaMetadata.findOne({ title: interstellarMetaData.title }, null, { explain: true }).exec();

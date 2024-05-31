@@ -1,7 +1,7 @@
 import { ParameterizedContext } from 'koa';
 import * as _ from 'lodash';
 
-import { ExternalAPIError, MediaNotFoundError, RateLimitError, ValidationError } from '../helpers/customErrors';
+import { MediaNotFoundError, RateLimitError, ValidationError } from '../helpers/customErrors';
 import { CollectionMetadataInterface } from '../models/CollectionMetadata';
 import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
 import LocalizeMetadata, { LocalizeMetadataInterface } from '../models/LocalizeMetadata';
@@ -9,7 +9,6 @@ import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
 import { SeasonMetadataInterface } from '../models/SeasonMetadata';
 import { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import * as externalAPIHelper from '../services/external-api-helper';
-import { OpenSubtitlesQuery } from '../services/external-api-helper';
 
 /**
  * Adds a searchMatch to an existing result by IMDb ID, and returns the result.
@@ -216,23 +215,19 @@ export const getCollection = async(ctx: ParameterizedContext): Promise<Partial<C
 };
 
 export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadataInterface> => {
-  const { title, osdbHash, imdbID }: UmsQueryParams = ctx.query;
-  const { episode, season, year, filebytesize }: UmsQueryParams = ctx.query;
+  const { title, imdbID }: UmsQueryParams = ctx.query;
+  const { episode, season, year }: UmsQueryParams = ctx.query;
   let { language }: UmsQueryParams = ctx.query;
-  const [yearNumber, filebytesizeNumber] = [year, filebytesize].map(param => param ? Number(param) : null);
-  let seasonNumber = Number(season);
+  const [yearNumber] = [year].map(param => param ? Number(param) : null);
+  const seasonNumber = Number(season);
   let episodeNumbers = null;
   if (episode) {
     const episodes = episode.split('-');
     episodeNumbers = episodes.map(Number);
   }
 
-  if (!title && !osdbHash && !imdbID) {
-    throw new ValidationError('title, osdbHash or imdbId is a required parameter');
-  }
-
-  if (osdbHash && !filebytesize) {
-    throw new ValidationError('filebytesize is required when passing osdbHash');
+  if (!title && !imdbID) {
+    throw new ValidationError('title or imdbId is a required parameter');
   }
 
   if (language && !language.match(/^[a-z]{2}(-[A-Z]{2})?$/)) {
@@ -242,11 +237,6 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
   const query = [];
   const failedQuery = [];
   let imdbIdToSearch = imdbID;
-
-  if (osdbHash) {
-    query.push({ osdbHash });
-    failedQuery.push({ osdbHash });
-  }
 
   if (imdbIdToSearch) {
     query.push({ imdbID: imdbIdToSearch });
@@ -293,43 +283,7 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
 
   // the database does not have a record of this file, so begin search for metadata on external apis.
 
-  // Start OpenSubtitles lookups
-  let openSubtitlesMetadata: Partial<MediaMetadataInterface>;
-  if (osdbHash && filebytesize) {
-    const osQuery: OpenSubtitlesQuery = { moviehash: osdbHash, moviebytesize: filebytesizeNumber, extend: true, remote: true };
-    const validation = {
-      year: year ? year : null,
-      season: season ? season : null,
-      episode: episode ? episode : null,
-    };
-
-    try {
-      openSubtitlesMetadata = await externalAPIHelper.getFromOpenSubtitles(osQuery, validation);
-      imdbIdToSearch = imdbIdToSearch || openSubtitlesMetadata?.imdbID;
-      if (!title && !imdbID && !episodeNumbers && openSubtitlesMetadata?.type === 'episode') {
-        //here we know the osdbHash is for an episode and episode is not set
-        episodeNumbers = [Number(openSubtitlesMetadata.episode)];
-        seasonNumber = Number(openSubtitlesMetadata.season);
-      }
-    } catch (e) {
-      // Rethrow errors except if they are about Open Subtitles being offline. as that happens a lot
-      if (!(e instanceof ExternalAPIError)) {
-        console.error(e);
-        throw e;
-      }
-    }
-  }
-
-  // if the client did not pass an imdbID, but we found one on Open Subtitles, see if we have an existing record for the now-known media.
-  if (!imdbID && imdbIdToSearch) {
-    const existingResult = await MediaMetadata.findOne({ imdbID: imdbIdToSearch }, null, { lean: true }).exec();
-    if (existingResult) {
-      return ctx.body = await addSearchMatchByIMDbID(imdbIdToSearch, searchMatch);
-    }
-  }
-  // End OpenSubtitles lookups
-
-  const failedLookupQuery = { episode, imdbID, osdbHash, season, title, year };
+  const failedLookupQuery = { episode, imdbID, season, title, year };
 
   if (!title && !imdbIdToSearch) {
     // The APIs below require either a title or IMDb ID, so return if we don't have one
@@ -364,33 +318,28 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
   }
   // End TMDB lookups
 
-  const combinedResponse = _.merge(openSubtitlesMetadata, tmdbData);
-  if (!combinedResponse || _.isEmpty(combinedResponse)) {
+  if (!tmdbData || _.isEmpty(tmdbData)) {
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
 
   try {
     if (searchMatch) {
-      combinedResponse.searchMatches = [searchMatch];
-    }
-
-    if (osdbHash) {
-      combinedResponse.osdbHash = osdbHash;
+      tmdbData.searchMatches = [searchMatch];
     }
 
     // Ensure that we return and cache the same episode number that was searched for
-    if (episode && episodeNumbers && episodeNumbers.length > 1 && episodeNumbers[0] === combinedResponse.episode) {
-      combinedResponse.episode = episode;
+    if (episode && episodeNumbers && episodeNumbers.length > 1 && episodeNumbers[0] === tmdbData.episode) {
+      tmdbData.episode = episode;
     }
 
-    const dbMeta = await MediaMetadata.create(combinedResponse);
+    const dbMeta = await MediaMetadata.create(tmdbData);
 
     // TODO: Investigate why we need this "as" syntax
     const leanMeta = dbMeta.toObject({ useProjection: true }) as MediaMetadataInterface;
     return ctx.body = leanMeta;
   } catch (e) {
-    console.error(e,combinedResponse);
+    console.error(e,tmdbData);
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
