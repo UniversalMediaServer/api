@@ -4592,14 +4592,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"moviedb-promise@npm:4.0.5":
-  version: 4.0.5
-  resolution: "moviedb-promise@npm:4.0.5"
+"moviedb-promise@npm:4.0.6":
+  version: 4.0.6
+  resolution: "moviedb-promise@npm:4.0.6"
   dependencies:
     axios: "npm:^1.4.0"
     lodash: "npm:^4.17.21"
     promise-throttle: "npm:^1.1.2"
-  checksum: 10/cb771d6315565edd90099a72e8b57692d262849e0c5e1917998980428124cf5b75a77c8833aca5b7402e0549b395bfb07d163525be1cda304f7d0eb079beea9f
+  checksum: 10/0fd51f64a9023840eb8b5cea3fcad159bcdab823c102e73dbaf6fc6bcf6b40c635f84ef73480701e5be38c4d1ee1de4408c0e43fec46d6f476ec590283191950
   languageName: node
   linkType: hard
 
@@ -4708,9 +4708,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nodemon@npm:^3.1.1":
-  version: 3.1.1
-  resolution: "nodemon@npm:3.1.1"
+"nodemon@npm:3.1.2":
+  version: 3.1.2
+  resolution: "nodemon@npm:3.1.2"
   dependencies:
     chokidar: "npm:^3.5.2"
     debug: "npm:^4"
@@ -4724,7 +4724,7 @@ __metadata:
     undefsafe: "npm:^2.0.5"
   bin:
     nodemon: bin/nodemon.js
-  checksum: 10/644708d64db4a9805b82f7d6324f359612e91be8389d7f3d6cd3d9f13750a0bc06e9ce5b66c0f67e828d7a5e280b9c070ab7e8882d2f1cc1593fd8300c2e6d59
+  checksum: 10/e5a87e42c874f9504fa5740c65692978c1f8444e9250598f167a3d55a90d3189a91790d35b4a2a0991b05d574f2679978449c6190b698a5c6e3f0343b5dfcac0
   languageName: node
   linkType: hard
 
@@ -5963,7 +5963,7 @@ __metadata:
     lodash: "npm:4.17.21"
     mongodb-memory-server: "npm:9.2.0"
     mongoose: "npm:^8.4.0"
-    moviedb-promise: "npm:4.0.5"
+    moviedb-promise: "npm:4.0.6"
     nock: "npm:13.5.4"
     nodemon: "npm:^3.1.1"
     object-mapper: "npm:6.2.0"
