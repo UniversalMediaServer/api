@@ -20,7 +20,7 @@ import * as externalAPIHelper from '../services/external-api-helper';
 export const addSearchMatchByIMDbID = async(imdbID: string, title: string): Promise<MediaMetadataInterface> => {
   return MediaMetadata.findOneAndUpdate(
     { imdbID },
-    { $push: { searchMatches: title } },
+    { $addToSet: { searchMatches: title } },
     { new: true, lean: true },
   ).exec();
 };

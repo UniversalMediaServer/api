@@ -23,7 +23,7 @@ import { FlattenMaps, Types } from 'mongoose';
 const addSearchMatchByIMDbID = async(imdbID: string, searchMatch: string) => {
   return SeriesMetadata.findOneAndUpdate(
     { imdbID },
-    { $push: { searchMatches: searchMatch } },
+    { $addToSet: { searchMatches: searchMatch } },
     { new: true, lean: true },
   ).exec();
 };
@@ -93,7 +93,7 @@ export const getSeriesMetadata = async(
     if (existingSeries) {
       const updatedResult = await SeriesMetadata.findOneAndUpdate(
         { imdbID },
-        { $push: { searchMatches: searchMatch } },
+        { $addToSet: { searchMatches: searchMatch } },
         { new: true, lean: true },
       ).exec();
       return updatedResult;
@@ -146,7 +146,7 @@ export const getSeriesMetadata = async(
       if (titleToCache) {
         return await SeriesMetadata.findOneAndUpdate(
           { _id: seriesMetadata._id },
-          { $push: { searchMatches: titleToCache } },
+          { $addToSet: { searchMatches: titleToCache } },
           { new: true, lean: true },
         ).exec();
       }
