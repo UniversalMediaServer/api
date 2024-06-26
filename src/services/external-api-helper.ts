@@ -91,12 +91,19 @@ export const getSeriesMetadata = async(
 
     const existingSeries = await SeriesMetadata.findOne({ imdbID }, null, { lean: true }).exec();
     if (existingSeries) {
-      const updatedResult = await SeriesMetadata.findOneAndUpdate(
-        { imdbID },
-        { $addToSet: { searchMatches: searchMatch } },
-        { new: true, lean: true },
-      ).exec();
-      return updatedResult;
+      const alreadyHasSearchMatch = searchMatch && existingSeries.searchMatches.length > 0 && existingSeries.searchMatches.includes(searchMatch);
+      if (searchMatch && !alreadyHasSearchMatch) {
+        // add the searchMatch result for future queries before returning
+        const updatedResult = await SeriesMetadata.findOneAndUpdate(
+          { imdbID },
+          { $addToSet: { searchMatches: searchMatch } },
+          { new: true, lean: true },
+        ).exec();
+
+        return updatedResult;
+      } else {
+        return existingSeries;
+      }
     }
 
     // Start TMDB lookups
