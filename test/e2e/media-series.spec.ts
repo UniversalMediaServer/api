@@ -18,9 +18,21 @@ const appUrl = 'http://localhost:3000';
 let server : stoppable;
 let mongod: MongoMemoryServer;
 
+const thirdRockFromTheSunSeries = {
+  title: '3rd Rock from the Sun',
+  imdbID: 'tt0115082',
+  startYear: '1996',
+};
+
 const americanHorrorStorySeries = {
   title: 'American Horror Story',
   imdbID: 'tt1844624',
+};
+
+const fromSeries = {
+  title: 'From',
+  imdbID: 'tt9813792',
+  startYear: '2022',
 };
 
 describe('Media Metadata endpoints', () => {
@@ -63,6 +75,7 @@ describe('Media Metadata endpoints', () => {
       response = await axios.get(`${appUrl}/api/media/series/v2?title=HoMelAnD   `);
       expect(response.data._id).toEqual(newDocumentId);
     });
+
     it('should return series metadata by IMDb ID', async() => {
       // This is the method that finds the TMDB ID from the IMDb ID
       const spy = jest.spyOn(tmdb, 'find');
@@ -73,6 +86,21 @@ describe('Media Metadata endpoints', () => {
       expect(response.data).toHaveProperty('title', americanHorrorStorySeries.title);
       expect(response.data).toHaveProperty('startYear', '2011');
       expect(spy).toHaveBeenCalledTimes(1);
+    });
+
+    it.only('should return series with exact name instead of partial match', async() => {
+      // populate the cache
+      let response = await axios.get(`${appUrl}/api/media/series/v2?title=${thirdRockFromTheSunSeries.title}`) as UmsApiSeriesAxiosResponse;
+      expect(response.data).toHaveProperty('credits');
+      expect(response.data).toHaveProperty('totalSeasons');
+      expect(response.data).toHaveProperty('title', thirdRockFromTheSunSeries.title);
+      expect(response.data).toHaveProperty('startYear', thirdRockFromTheSunSeries.startYear);
+
+      response = await axios.get(`${appUrl}/api/media/series/v2?title=${fromSeries.title}`) as UmsApiSeriesAxiosResponse;
+      expect(response.data).toHaveProperty('credits');
+      expect(response.data).toHaveProperty('totalSeasons');
+      expect(response.data).toHaveProperty('title', 'FROM');
+      expect(response.data).toHaveProperty('startYear', fromSeries.startYear);
     });
 
     it('should fail to save non series type', async() => {
