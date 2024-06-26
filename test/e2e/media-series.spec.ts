@@ -88,7 +88,7 @@ describe('Media Metadata endpoints', () => {
       expect(spy).toHaveBeenCalledTimes(1);
     });
 
-    it.only('should return series with exact name instead of partial match', async() => {
+    it('should return series with exact name instead of partial match', async() => {
       // populate the cache
       let response = await axios.get(`${appUrl}/api/media/series/v2?title=${thirdRockFromTheSunSeries.title}`) as UmsApiSeriesAxiosResponse;
       expect(response.data).toHaveProperty('credits');
