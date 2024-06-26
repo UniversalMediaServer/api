@@ -68,7 +68,6 @@ const EPISODE_AVATAR_FRENCH = {
 
 describe('Localize Metadata endpoint', () => {
   beforeAll((done) => {
-    require('../tmdb-mocks');
     MongoMemoryServer.create()
       .then((value) => {
         mongod = value;
@@ -312,7 +311,7 @@ describe('Localize Metadata endpoint', () => {
   });
 
   describe('Indexes', () => {
-    test('Indexes should succed and log to console', async() => {
+    test('Indexes should succeed and log to console', async() => {
       console.info = jest.fn();
       await LocalizeMetadata.ensureIndexes();
       expect(console.info).toHaveBeenCalledWith('LocalizeMetadata indexing complete');

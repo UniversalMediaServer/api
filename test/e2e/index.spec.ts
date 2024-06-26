@@ -25,7 +25,6 @@ let mongod: MongoMemoryServer;
 
 describe('Info endpoint', () => {
   beforeAll((done) => {
-    require('../tmdb-mocks');
     MongoMemoryServer.create()
       .then((value) => {
         mongod = value;

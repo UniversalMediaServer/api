@@ -67,7 +67,6 @@ const EPISODE_AVATAR = {
 
 describe('get by all', () => {
   beforeAll((done) => {
-    require('../tmdb-mocks');
     MongoMemoryServer.create()
       .then((value) => {
         mongod = value;
