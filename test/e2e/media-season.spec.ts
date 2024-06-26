@@ -26,7 +26,7 @@ const SEASON_AVATAR = {
     'freebase_id': null,
     'tvdb_id': 16658,
     'tvrage_id': null,
-    'wikidata_id': null,
+    'wikidata_id': 'Q13517027',
   },
   name: 'Book Three: Fire',
   overview: 'Aang wakes up from his battle with Azula to discover',
