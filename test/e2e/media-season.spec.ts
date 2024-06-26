@@ -39,7 +39,6 @@ const SEASON_AVATAR = {
 
 describe('Season Metadata endpoint', () => {
   beforeAll((done) => {
-    require('../tmdb-mocks');
     MongoMemoryServer.create()
       .then((value) => {
         mongod = value;
@@ -115,7 +114,7 @@ describe('Season Metadata endpoint', () => {
   });
 
   describe('Indexes', () => {
-    test('Indexes should succed and log to console', async() => {
+    test('Indexes should succeed and log to console', async() => {
       console.info = jest.fn();
       await SeasonMetadata.ensureIndexes();
       expect(console.info).toHaveBeenCalledWith('SeasonMetadata indexing complete');

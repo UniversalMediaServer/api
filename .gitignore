@@ -65,7 +65,6 @@ nbproject
 
 !jest-mongodb-config.js
 !jest.config.js
-!test/tmdb-mocks.js
 !ecosystem.config.js
 
 # yarn 3
