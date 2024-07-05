@@ -105,6 +105,15 @@ export const getSeriesMetadata = async(
 
       const tmdbResponse = await tmdb.tvInfo(seriesRequest);
       tmdbData = mapper.parseTMDBAPISeriesResponse(tmdbResponse);
+
+      /*
+       * We matched based on IMDb ID, not title, so we prevent the
+       * later code from saving those potentially mismatched values.
+       */
+      if (tmdbData && !_.isEmpty(tmdbData)) {
+        titleToCache = null;
+        searchMatch = null;
+      }
     }
     // End TMDB lookups
   } else {
