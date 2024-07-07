@@ -30,7 +30,7 @@ const getSeriesTMDBIDFromTMDBAPI = async(imdbID?: string, seriesTitle?: string, 
       tmdbQuery.language = language;
     }
     const searchResults = await tmdb.searchTv(tmdbQuery);
-    if (searchResults?.results && searchResults.results[0] && searchResults.results[0].id) {
+    if (searchResults?.results[0] && searchResults.results[0].id) {
       return searchResults.results[0].id;
     }
   }
@@ -65,6 +65,10 @@ export const getSeriesMetadata = async(
   }
   let failedLookupQuery: FailedLookupsInterface;
   let tmdbData: Partial<SeriesMetadataInterface> = {};
+  let yearNumber = null;
+  if (year) {
+    yearNumber = Number(year);
+  }
 
   if (imdbID) {
     failedLookupQuery = { imdbID };
@@ -148,8 +152,7 @@ export const getSeriesMetadata = async(
     title = parsed && parsed.show ? parsed.show : title;
 
     // Start TMDB lookups
-    const seriesTMDBID = await getSeriesTMDBIDFromTMDBAPI(null, title, language, Number(year));
-
+    const seriesTMDBID = await getSeriesTMDBIDFromTMDBAPI(null, title, language, yearNumber);
     if (seriesTMDBID) {
       // See if we have an existing record for the now-known media.
       const existingResult = await SeriesMetadata.findOne({ tmdbID: seriesTMDBID }, null, { lean: true }).exec();
