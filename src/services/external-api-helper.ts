@@ -176,9 +176,9 @@ export const getSeriesMetadata = async(
     }
     // End TMDB lookups
 
-    // If we found an IMDb ID from TMDB, see if we have an existing record for the now-known media.
-    if (_.get(tmdbData, 'imdbID')) {
-      const existingResult = await SeriesMetadata.findOne({ imdbID: tmdbData.imdbID }, null, { lean: true }).exec();
+    // If we found an TMDB ID from TMDB, see if we have an existing record for the now-known media.
+    if (_.get(tmdbData, 'tmdbID')) {
+      const existingResult = await SeriesMetadata.findOne({ tmdbID: tmdbData.tmdbID }, null, { lean: true }).exec();
       if (existingResult) {
         return await addSearchMatchByIMDbID(tmdbData.imdbID, title);
       }
