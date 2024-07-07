@@ -30,7 +30,7 @@ const getSeriesTMDBIDFromTMDBAPI = async(imdbID?: string, seriesTitle?: string, 
       tmdbQuery.language = language;
     }
     const searchResults = await tmdb.searchTv(tmdbQuery);
-    if (searchResults?.results[0] && searchResults.results[0].id) {
+    if (searchResults?.results && searchResults.results[0] && searchResults.results[0].id) {
       return searchResults.results[0].id;
     }
   }
