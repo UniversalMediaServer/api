@@ -13,21 +13,6 @@ import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadat
 import { mapper } from '../utils/data-mapper';
 import { FlattenMaps, Types } from 'mongoose';
 
-/**
- * Adds a searchMatch to an existing result by IMDb ID, and returns the result.
- *
- * @param imdbID the IMDb ID
- * @param searchMatch the title with language if any
- * @returns the updated record
- */
-const addSearchMatchByIMDbID = async(imdbID: string, searchMatch: string) => {
-  return SeriesMetadata.findOneAndUpdate(
-    { imdbID },
-    { $addToSet: { searchMatches: searchMatch } },
-    { new: true, lean: true },
-  ).exec();
-};
-
 const getSeriesTMDBIDFromTMDBAPI = async(imdbID?: string, seriesTitle?: string, language?: string, year?: number): Promise<number> => {
   if (imdbID) {
     const findResult = await tmdb.find({ id: imdbID, external_source: ExternalId.ImdbId });
@@ -80,6 +65,10 @@ export const getSeriesMetadata = async(
   }
   let failedLookupQuery: FailedLookupsInterface;
   let tmdbData: Partial<SeriesMetadataInterface> = {};
+  let yearNumber = null;
+  if (year) {
+    yearNumber = Number(year);
+  }
 
   if (imdbID) {
     failedLookupQuery = { imdbID };
@@ -163,9 +152,19 @@ export const getSeriesMetadata = async(
     title = parsed && parsed.show ? parsed.show : title;
 
     // Start TMDB lookups
-    const seriesTMDBID = await getSeriesTMDBIDFromTMDBAPI(null, title, language, Number(year));
-
+    const seriesTMDBID = await getSeriesTMDBIDFromTMDBAPI(null, title, language, yearNumber);
     if (seriesTMDBID) {
+      // See if we have an existing record for the now-known media.
+      const existingResult = await SeriesMetadata.findOne({ tmdbID: seriesTMDBID }, null, { lean: true }).exec();
+      if (existingResult) {
+        return await SeriesMetadata.findOneAndUpdate(
+          { tmdbID: seriesTMDBID },
+          { $addToSet: { searchMatches: title } },
+          { new: true, lean: true },
+        ).exec();
+      }
+
+      // We do not have an existing record for that series, get the full result from the TMDB API
       const seriesRequest = {
         append_to_response: 'images,external_ids,credits',
         id: seriesTMDBID,
@@ -175,14 +174,6 @@ export const getSeriesMetadata = async(
       tmdbData = mapper.parseTMDBAPISeriesResponse(tmdbResponse);
     }
     // End TMDB lookups
-
-    // If we found an IMDb ID from TMDB, see if we have an existing record for the now-known media.
-    if (_.get(tmdbData, 'imdbID')) {
-      const existingResult = await SeriesMetadata.findOne({ imdbID: tmdbData.imdbID }, null, { lean: true }).exec();
-      if (existingResult) {
-        return await addSearchMatchByIMDbID(tmdbData.imdbID, title);
-      }
-    }
 
     if (!tmdbData && year) {
       /**
