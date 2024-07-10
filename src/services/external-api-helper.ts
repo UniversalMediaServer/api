@@ -12,6 +12,7 @@ import SeasonMetadata, { SeasonMetadataInterface } from '../models/SeasonMetadat
 import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import { mapper } from '../utils/data-mapper';
 import { FlattenMaps, Types } from 'mongoose';
+import { raygunClient } from '../app';
 
 const getSeriesTMDBIDFromTMDBAPI = async(imdbID?: string, seriesTitle?: string, language?: string, year?: number): Promise<number> => {
   if (imdbID) {
@@ -135,8 +136,9 @@ export const getSeriesMetadata = async(
     const seriesMetadata = await SeriesMetadata.findOne(titleQuery, null, { lean: true }).sort(sortBy)
       .exec();
     if (seriesMetadata) {
-      // Also cache the result for the title that the client sent
+      // Also cache the result for the title that the client sent, if this is an automatic re-attempt with an appended year (see below)
       if (titleToCache) {
+        raygunClient.send(new Error('Adding titleToCache to searchMatches'), { customData: { seriesMetadata, titleToCache, title, searchMatch } });
         return await SeriesMetadata.findOneAndUpdate(
           { _id: seriesMetadata._id },
           { $addToSet: { searchMatches: titleToCache } },
@@ -149,17 +151,18 @@ export const getSeriesMetadata = async(
 
     // Extract the series name from the incoming string (usually not necessary)
     const parsed = episodeParser(title);
-    title = parsed && parsed.show ? parsed.show : title;
+    const parsedTitle = parsed && parsed.show ? parsed.show : title;
 
     // Start TMDB lookups
-    const seriesTMDBID = await getSeriesTMDBIDFromTMDBAPI(null, title, language, yearNumber);
+    const seriesTMDBID = await getSeriesTMDBIDFromTMDBAPI(null, parsedTitle, language, yearNumber);
     if (seriesTMDBID) {
       // See if we have an existing record for the now-known media.
       const existingResult = await SeriesMetadata.findOne({ tmdbID: seriesTMDBID }, null, { lean: true }).exec();
       if (existingResult) {
+        raygunClient.send(new Error('Adding parsedTitle to searchMatches'), { customData: { seriesMetadata, parsedTitle, title, searchMatch } });
         return await SeriesMetadata.findOneAndUpdate(
           { tmdbID: seriesTMDBID },
-          { $addToSet: { searchMatches: title } },
+          { $addToSet: { searchMatches: parsedTitle } },
           { new: true, lean: true },
         ).exec();
       }
@@ -183,7 +186,7 @@ export const getSeriesMetadata = async(
        * from 1980.
        * So, we attempt the lookup again with the year appended to the title.
        */
-      return getSeriesMetadata(null, title + ' ' + year, language, title);
+      return getSeriesMetadata(null, parsedTitle + ' ' + year, language, parsedTitle);
     }
   }
 
@@ -203,12 +206,14 @@ export const getSeriesMetadata = async(
     tmdbData.searchMatches = [searchMatch];
   }
 
+  raygunClient.send(new Error('Creating new TV series record from title'), { customData: { tmdbData, title, searchMatch } });
   let response = await SeriesMetadata.create(tmdbData);
 
   // Cache the result for the title that the client sent
   if (titleToCache) {
     tmdbData.searchMatches = tmdbData.searchMatches || [];
     tmdbData.searchMatches.push(titleToCache);
+    raygunClient.send(new Error('Creating new TV series record from titleToCache'), { customData: { tmdbData, title, searchMatch, titleToCache } });
     response = await SeriesMetadata.create(tmdbData);
   }
 

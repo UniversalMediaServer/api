@@ -8,6 +8,8 @@ import * as Debug from 'debug';
 import * as fs from 'fs';
 import * as http from 'http';
 import * as https from 'https';
+import * as raygun from 'raygun';
+
 const debug = Debug('universalmediaserver-api:server');
 import indexRouter from './routes/index';
 import mediaRouter  from './routes/media';
@@ -102,5 +104,11 @@ if (process.env.NODE_ENV !== 'test') {
     console.log('UMS API HTTPS server is up and running on port 443');
   }
 }
+
+export const raygunClient = new raygun.Client().init({
+  apiKey: 'FjgDRLYorZ24fWbdm4nwrQ',
+  batch: true,
+  reportUncaughtExceptions: true,
+});
 
 export default app;
