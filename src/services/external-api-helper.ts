@@ -66,8 +66,12 @@ export const getSeriesMetadata = async(
     throw new Error('Either IMDb ID or title required');
   }
   let searchMatch: string;
+  let parsedTitle: string;
   if (title) {
-    searchMatch = language ? language + '@' + title : title;
+    // Extract the series name from the incoming string (usually not necessary)
+    const parsed = episodeParser(title);
+    parsedTitle = parsed?.show ? parsed.show : title;
+    searchMatch = language ? language + '@' + parsedTitle : parsedTitle;
   }
   let failedLookupQuery: FailedLookupsInterface;
   let tmdbData: Partial<SeriesMetadataInterface> = {};
@@ -156,22 +160,18 @@ export const getSeriesMetadata = async(
       return seriesMetadata;
     }
 
-    // Extract the series name from the incoming string (usually not necessary)
-    const parsed = episodeParser(title);
-    const parsedTitle = parsed && parsed.show ? parsed.show : title;
-
     // Start TMDB lookups
     const seriesTMDBID = await getSeriesTMDBIDFromTMDBAPI(null, parsedTitle, language, yearNumber);
     if (seriesTMDBID) {
       // See if we have an existing record for the now-known media.
       const existingResult = await SeriesMetadata.findOne({ tmdbID: seriesTMDBID }, null, { lean: true }).exec();
       if (existingResult) {
-        if (parsedTitle === 'From' && process.env.NODE_ENV !== 'test') {
-          raygunClient.send(new Error('Adding parsedTitle to searchMatches'), { customData: { existingResult, parsedTitle, seriesTMDBID, title, yearNumber, titleQuery } });
+        if (title === 'From' && process.env.NODE_ENV !== 'test') {
+          raygunClient.send(new Error('Adding searchMatch to searchMatches'), { customData: { existingResult, searchMatch, parsedTitle, seriesTMDBID, title, yearNumber, titleQuery } });
         }
         return await SeriesMetadata.findOneAndUpdate(
           { tmdbID: seriesTMDBID },
-          { $addToSet: { searchMatches: parsedTitle } },
+          { $addToSet: { searchMatches: searchMatch } },
           { new: true, lean: true },
         ).exec();
       }
