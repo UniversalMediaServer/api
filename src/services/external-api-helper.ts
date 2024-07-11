@@ -17,12 +17,14 @@ import { raygunClient } from '../app';
 const getSeriesTMDBIDFromTMDBAPI = async(imdbID?: string, seriesTitle?: string, language?: string, year?: number): Promise<number> => {
   if (imdbID) {
     const findResult = await tmdb.find({ id: imdbID, external_source: ExternalId.ImdbId });
-    // Using any here to make up for missing interface, should submit fix
     if (findResult?.tv_results && findResult?.tv_results[0]) {
-      const tvEpisodeResults = findResult.tv_results[0];
-      return tvEpisodeResults?.id;
+      const tvEpisodeResult = findResult.tv_results[0];
+      if (seriesTitle === 'From' && process.env.NODE_ENV !== 'test') {
+        raygunClient.send(new Error('Got series TMDB ID from TMDB API by IMDb ID'), { customData: { imdbID, seriesTitle, tvEpisodeResult } });
+      }
+      return tvEpisodeResult?.id;
     }
-  } else {
+  } else if (seriesTitle) {
     const tmdbQuery: SearchTvRequest = { query: seriesTitle };
     if (year) {
       tmdbQuery.first_air_date_year = year;
@@ -32,6 +34,9 @@ const getSeriesTMDBIDFromTMDBAPI = async(imdbID?: string, seriesTitle?: string, 
     }
     const searchResults = await tmdb.searchTv(tmdbQuery);
     if (searchResults?.results && searchResults.results[0] && searchResults.results[0].id) {
+      if (seriesTitle === 'From' && process.env.NODE_ENV !== 'test') {
+        raygunClient.send(new Error('Got series TMDB ID from TMDB API by title'), { customData: { tmdbQuery, seriesTitle, searchResult: searchResults.results[0] } });
+      }
       return searchResults.results[0].id;
     }
   }
@@ -162,7 +167,7 @@ export const getSeriesMetadata = async(
       const existingResult = await SeriesMetadata.findOne({ tmdbID: seriesTMDBID }, null, { lean: true }).exec();
       if (existingResult) {
         if (parsedTitle === 'From' && process.env.NODE_ENV !== 'test') {
-          raygunClient.send(new Error('Adding parsedTitle to searchMatches'), { customData: { existingResult, parsedTitle, seriesTMDBID } });
+          raygunClient.send(new Error('Adding parsedTitle to searchMatches'), { customData: { existingResult, parsedTitle, seriesTMDBID, title, yearNumber } });
         }
         return await SeriesMetadata.findOneAndUpdate(
           { tmdbID: seriesTMDBID },
