@@ -162,7 +162,7 @@ export const getSeriesMetadata = async(
       const existingResult = await SeriesMetadata.findOne({ tmdbID: seriesTMDBID }, null, { lean: true }).exec();
       if (existingResult) {
         if (parsedTitle === 'From' && process.env.NODE_ENV !== 'test') {
-          raygunClient.send(new Error('Adding parsedTitle to searchMatches'), { customData: { seriesMetadata, parsedTitle, title, searchMatch } });
+          raygunClient.send(new Error('Adding parsedTitle to searchMatches'), { customData: { existingResult, parsedTitle, seriesTMDBID } });
         }
         return await SeriesMetadata.findOneAndUpdate(
           { tmdbID: seriesTMDBID },

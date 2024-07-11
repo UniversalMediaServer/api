@@ -7,8 +7,8 @@
 export const subversions = {
   'collection': '1',
   'configuration': '1',
-  'localize': '3',
+  'localize': '4',
   'season': '1',
-  'series': '5',
-  'video': '7',
+  'series': '6',
+  'video': '8',
 };
