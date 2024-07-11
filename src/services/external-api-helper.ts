@@ -138,7 +138,7 @@ export const getSeriesMetadata = async(
     if (seriesMetadata) {
       // Also cache the result for the title that the client sent, if this is an automatic re-attempt with an appended year (see below)
       if (titleToCache) {
-        if (titleToCache === 'From') {
+        if (titleToCache === 'From' && process.env.NODE_ENV !== 'test') {
           raygunClient.send(new Error('Adding titleToCache to searchMatches'), { customData: { seriesMetadata, titleToCache, title, searchMatch } });
         }
         return await SeriesMetadata.findOneAndUpdate(
@@ -161,7 +161,7 @@ export const getSeriesMetadata = async(
       // See if we have an existing record for the now-known media.
       const existingResult = await SeriesMetadata.findOne({ tmdbID: seriesTMDBID }, null, { lean: true }).exec();
       if (existingResult) {
-        if (parsedTitle === 'From') {
+        if (parsedTitle === 'From' && process.env.NODE_ENV !== 'test') {
           raygunClient.send(new Error('Adding parsedTitle to searchMatches'), { customData: { seriesMetadata, parsedTitle, title, searchMatch } });
         }
         return await SeriesMetadata.findOneAndUpdate(
@@ -210,7 +210,7 @@ export const getSeriesMetadata = async(
     tmdbData.searchMatches = [searchMatch];
   }
 
-  if (searchMatch === 'From') {
+  if (searchMatch === 'From' && process.env.NODE_ENV !== 'test') {
     raygunClient.send(new Error('Creating new TV series record from title'), { customData: { tmdbData, title, searchMatch } });
   }
   let response = await SeriesMetadata.create(tmdbData);
@@ -219,7 +219,7 @@ export const getSeriesMetadata = async(
   if (titleToCache) {
     tmdbData.searchMatches = tmdbData.searchMatches || [];
     tmdbData.searchMatches.push(titleToCache);
-    if (titleToCache === 'From') {
+    if (titleToCache === 'From' && process.env.NODE_ENV !== 'test') {
       raygunClient.send(new Error('Creating new TV series record from titleToCache'), { customData: { tmdbData, title, searchMatch, titleToCache } });
     }
     response = await SeriesMetadata.create(tmdbData);
