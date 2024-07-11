@@ -106,7 +106,7 @@ if (process.env.NODE_ENV !== 'test') {
 }
 
 export const raygunClient = new raygun.Client().init({
-  apiKey: 'FjgDRLYorZ24fWbdm4nwrQ',
+  apiKey: process.env.NODE_ENV === 'test' ? null : 'FjgDRLYorZ24fWbdm4nwrQ',
   batch: true,
   reportUncaughtExceptions: true,
 });

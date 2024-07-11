@@ -138,7 +138,9 @@ export const getSeriesMetadata = async(
     if (seriesMetadata) {
       // Also cache the result for the title that the client sent, if this is an automatic re-attempt with an appended year (see below)
       if (titleToCache) {
-        raygunClient.send(new Error('Adding titleToCache to searchMatches'), { customData: { seriesMetadata, titleToCache, title, searchMatch } });
+        if (titleToCache === 'From') {
+          raygunClient.send(new Error('Adding titleToCache to searchMatches'), { customData: { seriesMetadata, titleToCache, title, searchMatch } });
+        }
         return await SeriesMetadata.findOneAndUpdate(
           { _id: seriesMetadata._id },
           { $addToSet: { searchMatches: titleToCache } },
@@ -159,7 +161,9 @@ export const getSeriesMetadata = async(
       // See if we have an existing record for the now-known media.
       const existingResult = await SeriesMetadata.findOne({ tmdbID: seriesTMDBID }, null, { lean: true }).exec();
       if (existingResult) {
-        raygunClient.send(new Error('Adding parsedTitle to searchMatches'), { customData: { seriesMetadata, parsedTitle, title, searchMatch } });
+        if (parsedTitle === 'From') {
+          raygunClient.send(new Error('Adding parsedTitle to searchMatches'), { customData: { seriesMetadata, parsedTitle, title, searchMatch } });
+        }
         return await SeriesMetadata.findOneAndUpdate(
           { tmdbID: seriesTMDBID },
           { $addToSet: { searchMatches: parsedTitle } },
@@ -206,14 +210,18 @@ export const getSeriesMetadata = async(
     tmdbData.searchMatches = [searchMatch];
   }
 
-  raygunClient.send(new Error('Creating new TV series record from title'), { customData: { tmdbData, title, searchMatch } });
+  if (searchMatch === 'From') {
+    raygunClient.send(new Error('Creating new TV series record from title'), { customData: { tmdbData, title, searchMatch } });
+  }
   let response = await SeriesMetadata.create(tmdbData);
 
   // Cache the result for the title that the client sent
   if (titleToCache) {
     tmdbData.searchMatches = tmdbData.searchMatches || [];
     tmdbData.searchMatches.push(titleToCache);
-    raygunClient.send(new Error('Creating new TV series record from titleToCache'), { customData: { tmdbData, title, searchMatch, titleToCache } });
+    if (titleToCache === 'From') {
+      raygunClient.send(new Error('Creating new TV series record from titleToCache'), { customData: { tmdbData, title, searchMatch, titleToCache } });
+    }
     response = await SeriesMetadata.create(tmdbData);
   }
 
