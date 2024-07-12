@@ -3221,9 +3221,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"inquirer@npm:9.3.4":
-  version: 9.3.4
-  resolution: "inquirer@npm:9.3.4"
+"inquirer@npm:9.3.5":
+  version: 9.3.5
+  resolution: "inquirer@npm:9.3.5"
   dependencies:
     "@inquirer/figures": "npm:^1.0.3"
     ansi-escapes: "npm:^4.3.2"
@@ -3237,7 +3237,7 @@ __metadata:
     strip-ansi: "npm:^6.0.1"
     wrap-ansi: "npm:^6.2.0"
     yoctocolors-cjs: "npm:^2.1.2"
-  checksum: 10/f9d20820ad07bfaa98ad1b0e1bb65da9cb020edafda25f781a28e7fe0fc98eb15b3fe95687258140a24a6bc9d209740d38ab17cc265c12fa6738db530c71b17e
+  checksum: 10/77084423a2ff54f200b5b25900a212a92f496b7206df49c0031f17360f9a51ecfd7993e9e155b609631e636fa0fccfefcc03d01016e55ed32d5ec18f5644f288
   languageName: node
   linkType: hard
 
@@ -5955,7 +5955,7 @@ __metadata:
     episode-parser: "npm:2.0.2"
     escape-string-regexp: "npm:5.0.0"
     eslint: "npm:8.57.0"
-    inquirer: "npm:9.3.4"
+    inquirer: "npm:9.3.5"
     jest: "npm:29.7.0"
     koa: "npm:2.15.3"
     koa-bodyparser: "npm:4.4.1"
