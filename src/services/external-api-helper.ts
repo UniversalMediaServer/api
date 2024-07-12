@@ -41,9 +41,13 @@ const getSeriesTMDBIDFromTMDBAPI = async(imdbID?: string, seriesTitle?: string, 
         raygunClient.send(new Error('Got series TMDB ID from TMDB API by title'), { customData: { tmdbQuery, seriesTitle, searchResult: searchResults.results[0] } });
       }
 
-      // a wrong year could cause a wrong result, so also do a similarity check to be sure
-      if (year && jaroWinkler(searchResult.name, seriesTitle) < 0.5) {
-        return null;
+      if (year) {
+        // a wrong year could cause a wrong result, so also do a similarity check to be sure
+        const resultNameLowerCase = searchResult.name.toLowerCase();
+        const requestNameLowerCase = seriesTitle.toLowerCase();
+        if (jaroWinkler(resultNameLowerCase, requestNameLowerCase) < 0.7) {
+          return null;
+        }
       }
 
       return searchResult.id;

@@ -151,12 +151,19 @@ describe('Media Metadata endpoints', () => {
 
     it('should return series even when the year is when the episode aired, not the series start year', async() => {
       const response = await axios.get(`${appUrl}/api/media/series/v2?title=From&year=2023`) as UmsApiSeriesAxiosResponse;
-      expect(response.data).toHaveProperty('title', 'From');
+      expect(response.data).toHaveProperty('title', 'FROM');
     });
 
     it('should not return series when the year has no overlap with episode air dates', async() => {
-      const response = await axios.get(`${appUrl}/api/media/series/v2?title=From&year=2021`) as UmsApiSeriesAxiosResponse;
-      expect(response.status).toBe(404);
+      // this test also makes sure the Jaro-Winkler comparison is correctly filtering results
+      // because TMDB returns the series "Tokyo MPD – From ZERO to HERO" and we discard it
+      let error;
+      try {
+        await axios.get(`${appUrl}/api/media/series/v2?title=From&year=2021`) as UmsApiSeriesAxiosResponse;
+      } catch (err) {
+        error = err;
+      }
+      expect(error.message).toBe('Request failed with status code 404');
     });
   });
 });
