@@ -1,5 +1,7 @@
-import * as _ from 'lodash';
+import { jaroWinkler } from '@skyra/jaro-winkler';
 import * as episodeParser from 'episode-parser';
+import * as _ from 'lodash';
+import { FlattenMaps, Types } from 'mongoose';
 import { Episode, EpisodeRequest, ExternalId, SearchMovieRequest, SearchTvRequest, SimpleEpisode, TvExternalIdsResponse } from 'moviedb-promise/dist/request-types';
 
 import { tmdb } from './tmdb-api';
@@ -11,7 +13,6 @@ import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
 import SeasonMetadata, { SeasonMetadataInterface } from '../models/SeasonMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import { mapper } from '../utils/data-mapper';
-import { FlattenMaps, Types } from 'mongoose';
 import { raygunClient } from '../app';
 
 const getSeriesTMDBIDFromTMDBAPI = async(imdbID?: string, seriesTitle?: string, language?: string, year?: number): Promise<number> => {
@@ -27,17 +28,29 @@ const getSeriesTMDBIDFromTMDBAPI = async(imdbID?: string, seriesTitle?: string, 
   } else if (seriesTitle) {
     const tmdbQuery: SearchTvRequest = { query: seriesTitle };
     if (year) {
-      tmdbQuery.first_air_date_year = year;
+      // @ts-expect-error the type does not include year (yet)
+      tmdbQuery.year = year;
     }
     if (language) {
       tmdbQuery.language = language;
     }
     const searchResults = await tmdb.searchTv(tmdbQuery);
     if (searchResults?.results && searchResults.results[0] && searchResults.results[0].id) {
+      const searchResult = searchResults.results[0];
       if (seriesTitle === 'From' && process.env.NODE_ENV !== 'test') {
         raygunClient.send(new Error('Got series TMDB ID from TMDB API by title'), { customData: { tmdbQuery, seriesTitle, searchResult: searchResults.results[0] } });
       }
-      return searchResults.results[0].id;
+
+      if (year) {
+        // a wrong year could cause a wrong result, so also do a similarity check to be sure
+        const resultNameLowerCase = searchResult.name.toLowerCase();
+        const requestNameLowerCase = seriesTitle.toLowerCase();
+        if (jaroWinkler(resultNameLowerCase, requestNameLowerCase) < 0.7) {
+          return null;
+        }
+      }
+
+      return searchResult.id;
     }
   }
 

@@ -141,12 +141,29 @@ describe('Media Metadata endpoints', () => {
       expect(response.data._id).toEqual(newDocumentId);
     });
 
-    it('should return series with misidentified year', async() => {
+    it('should return series with a year in the title', async() => {
       await mongoose.connection.db.collection('series_metadata').insertOne({ imdbID: 'tt0080221', title: 'Galactica 1980' });
 
       // this request should find the result even though it's the wrong title
       const response = await axios.get(`${appUrl}/api/media/series/v2?title=Galactica&year=1980`) as UmsApiSeriesAxiosResponse;
       expect(response.data).toHaveProperty('title', 'Galactica 1980');
+    });
+
+    it('should return series even when the year is when the episode aired, not the series start year', async() => {
+      const response = await axios.get(`${appUrl}/api/media/series/v2?title=From&year=2023`) as UmsApiSeriesAxiosResponse;
+      expect(response.data).toHaveProperty('title', 'FROM');
+    });
+
+    it('should not return series when the year has no overlap with episode air dates', async() => {
+      // this test also makes sure the Jaro-Winkler comparison is correctly filtering results
+      // because TMDB returns the series "Tokyo MPD – From ZERO to HERO" and we discard it
+      let error;
+      try {
+        await axios.get(`${appUrl}/api/media/series/v2?title=From&year=2021`) as UmsApiSeriesAxiosResponse;
+      } catch (err) {
+        error = err;
+      }
+      expect(error.message).toBe('Request failed with status code 404');
     });
   });
 });
