@@ -1053,16 +1053,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:29.5.12":
-  version: 29.5.12
-  resolution: "@types/jest@npm:29.5.12"
-  dependencies:
-    expect: "npm:^29.0.0"
-    pretty-format: "npm:^29.0.0"
-  checksum: 10/312e8dcf92cdd5a5847d6426f0940829bca6fe6b5a917248f3d7f7ef5d85c9ce78ef05e47d2bbabc40d41a930e0e36db2d443d2610a9e3db9062da2d5c904211
-  languageName: node
-  linkType: hard
-
 "@types/keygrip@npm:*":
   version: 1.0.6
   resolution: "@types/keygrip@npm:1.0.6"
@@ -2410,13 +2400,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"escape-string-regexp@npm:5.0.0":
-  version: 5.0.0
-  resolution: "escape-string-regexp@npm:5.0.0"
-  checksum: 10/20daabe197f3cb198ec28546deebcf24b3dbb1a5a269184381b3116d12f0532e06007f4bc8da25669d6a7f8efb68db0758df4cd981f57bc5b57f521a3e12c59e
-  languageName: node
-  linkType: hard
-
 "escape-string-regexp@npm:^1.0.5":
   version: 1.0.5
   resolution: "escape-string-regexp@npm:1.0.5"
@@ -2580,7 +2563,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expect@npm:^29.0.0, expect@npm:^29.7.0":
+"expect@npm:^29.7.0":
   version: 29.7.0
   resolution: "expect@npm:29.7.0"
   dependencies:
@@ -4085,13 +4068,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ky@npm:1.4.0":
-  version: 1.4.0
-  resolution: "ky@npm:1.4.0"
-  checksum: 10/cb9d2464bfb428b245c6c90dc93a0116e689a25e18324daf83da352922df9f8554e11ff9c4cac5a58cca81667cb1e361a8e51950e8452cad0811d2b7c60bad57
-  languageName: node
-  linkType: hard
-
 "leven@npm:^3.1.0":
   version: 3.1.0
   resolution: "leven@npm:3.1.0"
@@ -4994,7 +4970,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pretty-format@npm:^29.0.0, pretty-format@npm:^29.7.0":
+"pretty-format@npm:^29.7.0":
   version: 29.7.0
   resolution: "pretty-format@npm:29.7.0"
   dependencies:
@@ -5932,7 +5908,6 @@ __metadata:
   resolution: "universalmediaserver-api@workspace:."
   dependencies:
     "@skyra/jaro-winkler": "npm:^1.1.1"
-    "@types/jest": "npm:29.5.12"
     "@types/koa": "npm:2.15.0"
     "@types/koa-bodyparser": "npm:4.3.12"
     "@types/koa-helmet": "npm:6.0.8"
@@ -5943,7 +5918,6 @@ __metadata:
     axios: "npm:1.7.2"
     debug: "npm:4.3.5"
     episode-parser: "npm:2.0.2"
-    escape-string-regexp: "npm:5.0.0"
     eslint: "npm:8.57.0"
     inquirer: "npm:9.3.4"
     jest: "npm:29.7.0"
@@ -5952,7 +5926,6 @@ __metadata:
     koa-helmet: "npm:7.0.2"
     koa-qs: "npm:3.0.0"
     koa-router: "npm:12.0.1"
-    ky: "npm:1.4.0"
     lodash: "npm:4.17.21"
     mongodb-memory-server: "npm:9.4.0"
     mongoose: "npm:^8.4.0"
