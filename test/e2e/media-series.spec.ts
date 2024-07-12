@@ -141,12 +141,22 @@ describe('Media Metadata endpoints', () => {
       expect(response.data._id).toEqual(newDocumentId);
     });
 
-    it('should return series with misidentified year', async() => {
+    it('should return series with a year in the title', async() => {
       await mongoose.connection.db.collection('series_metadata').insertOne({ imdbID: 'tt0080221', title: 'Galactica 1980' });
 
       // this request should find the result even though it's the wrong title
       const response = await axios.get(`${appUrl}/api/media/series/v2?title=Galactica&year=1980`) as UmsApiSeriesAxiosResponse;
       expect(response.data).toHaveProperty('title', 'Galactica 1980');
+    });
+
+    it('should return series even when the year is when the episode aired, not the series start year', async() => {
+      const response = await axios.get(`${appUrl}/api/media/series/v2?title=From&year=2023`) as UmsApiSeriesAxiosResponse;
+      expect(response.data).toHaveProperty('title', 'From');
+    });
+
+    it('should not return series when the year has no overlap with episode air dates', async() => {
+      const response = await axios.get(`${appUrl}/api/media/series/v2?title=From&year=2021`) as UmsApiSeriesAxiosResponse;
+      expect(response.status).toBe(404);
     });
   });
 });

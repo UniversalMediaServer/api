@@ -1145,15 +1145,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/natural@npm:5.1.5":
-  version: 5.1.5
-  resolution: "@types/natural@npm:5.1.5"
-  dependencies:
-    "@types/node": "npm:*"
-  checksum: 10/6cfb418e1b0d4c7cf58f122d3cae92b7decf3f6b190a1976424bf3d596dfee2f13ffa430dbe9650d0cacd95e1016f56e526e6266e5e08659cae26d62a7254df4
-  languageName: node
-  linkType: hard
-
 "@types/node@npm:*":
   version: 20.11.30
   resolution: "@types/node@npm:20.11.30"
@@ -5947,7 +5938,6 @@ __metadata:
     "@types/koa-helmet": "npm:6.0.8"
     "@types/koa-router": "npm:7.4.8"
     "@types/lodash": "npm:4.17.6"
-    "@types/natural": "npm:5.1.5"
     "@types/node": "npm:18.19.39"
     "@types/object-mapper": "npm:6.2.2"
     axios: "npm:1.7.2"
