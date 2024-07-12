@@ -35,6 +35,7 @@
     "typescript": "5.5.3"
   },
   "devDependencies": {
+    "@types/jest": "^29.5.12",
     "@types/koa": "2.15.0",
     "@types/koa-bodyparser": "4.3.12",
     "@types/koa-helmet": "6.0.8",
