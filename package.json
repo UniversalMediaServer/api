@@ -29,7 +29,7 @@
     "koa-router": "12.0.1",
     "lodash": "4.17.21",
     "mongoose": "^8.4.0",
-    "moviedb-promise": "4.0.6",
+    "moviedb-promise": "4.0.7",
     "object-mapper": "6.2.0",
     "raygun": "^1.2.0",
     "typescript": "5.5.3"
