@@ -50,7 +50,7 @@
     "mongodb-memory-server": "9.4.1",
     "nodemon": "3.1.4",
     "stoppable": "1.1.0",
-    "ts-jest": "29.2.2",
+    "ts-jest": "29.2.3",
     "typescript-eslint": "^7.10.0"
   },
   "packageManager": "yarn@4.3.1"
