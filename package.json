@@ -32,7 +32,7 @@
     "moviedb-promise": "4.0.7",
     "object-mapper": "6.2.0",
     "raygun": "^1.2.0",
-    "typescript": "5.5.3"
+    "typescript": "5.5.4"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
