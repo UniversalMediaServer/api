@@ -31,7 +31,7 @@
     "mongoose": "^8.4.0",
     "moviedb-promise": "4.0.7",
     "object-mapper": "6.2.0",
-    "raygun": "^1.2.0",
+    "raygun": "^2.0.0",
     "typescript": "5.5.4"
   },
   "devDependencies": {

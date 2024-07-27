@@ -5204,15 +5204,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"raygun@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "raygun@npm:1.2.0"
+"raygun@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "raygun@npm:2.0.0"
   dependencies:
     "@types/express": "npm:^4.17.21"
     debug: "npm:^4.3.4"
     stack-trace: "npm:0.0.10"
     uuid: "npm:^10.0.0"
-  checksum: 10/a0f809c3597113d2bed0b217b7a5acfdffdfe1fc311ff43a2b2ccfa045a8808b17e8789081b293e14517afacc5fc4c06c94caa8be196d6cf524fdd707ce5b665
+  checksum: 10/3491b6da723eb222a04f77250bd9334d286f87b6f20c1aadc8658ce2fcacba677196d10a077f6f19195b91cf48f3b8b5bf213b5532eeff4ef2fca8622f4b7834
   languageName: node
   linkType: hard
 
@@ -6030,7 +6030,7 @@ __metadata:
     moviedb-promise: "npm:4.0.7"
     nodemon: "npm:3.1.4"
     object-mapper: "npm:6.2.0"
-    raygun: "npm:^1.2.0"
+    raygun: "npm:^2.0.0"
     stoppable: "npm:1.1.0"
     ts-jest: "npm:29.2.3"
     typescript: "npm:5.5.4"
