@@ -13,16 +13,12 @@ import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
 import SeasonMetadata, { SeasonMetadataInterface } from '../models/SeasonMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import { mapper } from '../utils/data-mapper';
-import { raygunClient } from '../app';
 
 const getSeriesTMDBIDFromTMDBAPI = async(imdbID?: string, seriesTitle?: string, language?: string, year?: number): Promise<number> => {
   if (imdbID) {
     const findResult = await tmdb.find({ id: imdbID, external_source: ExternalId.ImdbId });
     if (findResult?.tv_results && findResult?.tv_results[0]) {
       const tvEpisodeResult = findResult.tv_results[0];
-      if (seriesTitle === 'From' && process.env.NODE_ENV !== 'test') {
-        raygunClient.send(new Error('Got series TMDB ID from TMDB API by IMDb ID'), { customData: { imdbID, seriesTitle, tvEpisodeResult } });
-      }
       return tvEpisodeResult?.id;
     }
   } else if (seriesTitle) {
@@ -36,9 +32,6 @@ const getSeriesTMDBIDFromTMDBAPI = async(imdbID?: string, seriesTitle?: string, 
     const searchResults = await tmdb.searchTv(tmdbQuery);
     if (searchResults?.results && searchResults.results[0] && searchResults.results[0].id) {
       const searchResult = searchResults.results[0];
-      if (seriesTitle === 'From' && process.env.NODE_ENV !== 'test') {
-        raygunClient.send(new Error('Got series TMDB ID from TMDB API by title'), { customData: { tmdbQuery, seriesTitle, searchResult: searchResults.results[0] } });
-      }
 
       if (year) {
         // a wrong year could cause a wrong result, so also do a similarity check to be sure
@@ -159,9 +152,6 @@ export const getSeriesMetadata = async(
     if (seriesMetadata) {
       // Also cache the result for the title that the client sent, if this is an automatic re-attempt with an appended year (see below)
       if (titleToCache) {
-        if (titleToCache === 'From' && process.env.NODE_ENV !== 'test') {
-          raygunClient.send(new Error('Adding titleToCache to searchMatches'), { customData: { seriesMetadata, titleToCache, title, searchMatch } });
-        }
         return await SeriesMetadata.findOneAndUpdate(
           { _id: seriesMetadata._id },
           { $addToSet: { searchMatches: titleToCache } },
@@ -178,9 +168,6 @@ export const getSeriesMetadata = async(
       // See if we have an existing record for the now-known media.
       const existingResult = await SeriesMetadata.findOne({ tmdbID: seriesTMDBID }, null, { lean: true }).exec();
       if (existingResult) {
-        if (title === 'From' && process.env.NODE_ENV !== 'test') {
-          raygunClient.send(new Error('Adding searchMatch to searchMatches'), { customData: { existingResult, searchMatch, parsedTitle, seriesTMDBID, title, yearNumber, titleQuery } });
-        }
         return await SeriesMetadata.findOneAndUpdate(
           { tmdbID: seriesTMDBID },
           { $addToSet: { searchMatches: searchMatch } },
@@ -227,18 +214,12 @@ export const getSeriesMetadata = async(
     tmdbData.searchMatches = [searchMatch];
   }
 
-  if (searchMatch === 'From' && process.env.NODE_ENV !== 'test') {
-    raygunClient.send(new Error('Creating new TV series record from title'), { customData: { tmdbData, title, searchMatch } });
-  }
   let response = await SeriesMetadata.create(tmdbData);
 
   // Cache the result for the title that the client sent
   if (titleToCache) {
     tmdbData.searchMatches = tmdbData.searchMatches || [];
     tmdbData.searchMatches.push(titleToCache);
-    if (titleToCache === 'From' && process.env.NODE_ENV !== 'test') {
-      raygunClient.send(new Error('Creating new TV series record from titleToCache'), { customData: { tmdbData, title, searchMatch, titleToCache } });
-    }
     response = await SeriesMetadata.create(tmdbData);
   }
 

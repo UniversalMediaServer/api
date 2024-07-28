@@ -1140,7 +1140,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/express@npm:*, @types/express@npm:^4.17.21":
+"@types/express@npm:*":
   version: 4.17.21
   resolution: "@types/express@npm:4.17.21"
   dependencies:
@@ -5204,18 +5204,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"raygun@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "raygun@npm:1.2.0"
-  dependencies:
-    "@types/express": "npm:^4.17.21"
-    debug: "npm:^4.3.4"
-    stack-trace: "npm:0.0.10"
-    uuid: "npm:^10.0.0"
-  checksum: 10/a0f809c3597113d2bed0b217b7a5acfdffdfe1fc311ff43a2b2ccfa045a8808b17e8789081b293e14517afacc5fc4c06c94caa8be196d6cf524fdd707ce5b665
-  languageName: node
-  linkType: hard
-
 "react-is@npm:^18.0.0":
   version: 18.2.0
   resolution: "react-is@npm:18.2.0"
@@ -5555,13 +5543,6 @@ __metadata:
   dependencies:
     minipass: "npm:^7.0.3"
   checksum: 10/453f9a1c241c13f5dfceca2ab7b4687bcff354c3ccbc932f35452687b9ef0ccf8983fd13b8a3baa5844c1a4882d6e3ddff48b0e7fd21d743809ef33b80616d79
-  languageName: node
-  linkType: hard
-
-"stack-trace@npm:0.0.10":
-  version: 0.0.10
-  resolution: "stack-trace@npm:0.0.10"
-  checksum: 10/7bd633f0e9ac46e81a0b0fe6538482c1d77031959cf94478228731709db4672fbbed59176f5b9a9fd89fec656b5dae03d084ef2d1b0c4c2f5683e05f2dbb1405
   languageName: node
   linkType: hard
 
@@ -6030,7 +6011,6 @@ __metadata:
     moviedb-promise: "npm:4.0.7"
     nodemon: "npm:3.1.4"
     object-mapper: "npm:6.2.0"
-    raygun: "npm:^1.2.0"
     stoppable: "npm:1.1.0"
     ts-jest: "npm:29.2.3"
     typescript: "npm:5.5.4"
@@ -6065,15 +6045,6 @@ __metadata:
   dependencies:
     punycode: "npm:^2.1.0"
   checksum: 10/b271ca7e3d46b7160222e3afa3e531505161c9a4e097febae9664e4b59912f4cbe94861361a4175edac3a03fee99d91e44b6a58c17a634bc5a664b19fc76fbcb
-  languageName: node
-  linkType: hard
-
-"uuid@npm:^10.0.0":
-  version: 10.0.0
-  resolution: "uuid@npm:10.0.0"
-  bin:
-    uuid: dist/bin/uuid
-  checksum: 10/35aa60614811a201ff90f8ca5e9ecb7076a75c3821e17f0f5ff72d44e36c2d35fcbc2ceee9c4ac7317f4cc41895da30e74f3885e30313bee48fda6338f250538
   languageName: node
   linkType: hard
 
