@@ -2308,7 +2308,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:4.3.5, debug@npm:^4.3.5":
+"debug@npm:4.3.6":
+  version: 4.3.6
+  resolution: "debug@npm:4.3.6"
+  dependencies:
+    ms: "npm:2.1.2"
+  peerDependenciesMeta:
+    supports-color:
+      optional: true
+  checksum: 10/d3adb9af7d57a9e809a68f404490cf776122acca16e6359a2702c0f462e510e91f9765c07f707b8ab0d91e03bad57328f3256f5082631cefb5393d0394d50fb7
+  languageName: node
+  linkType: hard
+
+"debug@npm:^4.3.5":
   version: 4.3.5
   resolution: "debug@npm:4.3.5"
   dependencies:
@@ -6008,7 +6020,7 @@ __metadata:
     "@types/node": "npm:18.19.42"
     "@types/object-mapper": "npm:6.2.2"
     axios: "npm:1.7.3"
-    debug: "npm:4.3.5"
+    debug: "npm:4.3.6"
     episode-parser: "npm:2.0.2"
     eslint: "npm:8.57.0"
     inquirer: "npm:10.1.2"
