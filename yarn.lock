@@ -1323,12 +1323,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:18.19.43":
-  version: 18.19.43
-  resolution: "@types/node@npm:18.19.43"
+"@types/node@npm:18.19.44":
+  version: 18.19.44
+  resolution: "@types/node@npm:18.19.44"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 10/b8ee19ecf9864f0afef8edc92d65e7f57d7b6ac5b756f0a2b49063899a82ecd6ba05f1eeca854644451e7777b9c1894f3049608e468991d44f2ea0c09d3b3184
+  checksum: 10/d64649e6d2fe68600c99fa3a9ca02099c2ce83680acb5303fdff4fab5fd86ecdd366658facdd447ccd6418af600785089336b5a38caa8b8ee3997926ed3c58a1
   languageName: node
   linkType: hard
 
@@ -6024,7 +6024,7 @@ __metadata:
     "@types/koa-helmet": "npm:6.0.8"
     "@types/koa-router": "npm:7.4.8"
     "@types/lodash": "npm:4.17.7"
-    "@types/node": "npm:18.19.43"
+    "@types/node": "npm:18.19.44"
     "@types/object-mapper": "npm:6.2.2"
     axios: "npm:1.7.3"
     debug: "npm:4.3.6"
