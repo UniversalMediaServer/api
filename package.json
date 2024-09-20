@@ -43,7 +43,7 @@
     "@types/node": "18.19.50",
     "@types/object-mapper": "6.2.2",
     "axios": "1.7.4",
-    "eslint": "8.57.0",
+    "eslint": "8.57.1",
     "inquirer": "10.2.2",
     "jest": "29.7.0",
     "mongodb-memory-server": "9.4.1",
