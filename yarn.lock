@@ -4819,9 +4819,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nodemon@npm:3.1.4":
-  version: 3.1.4
-  resolution: "nodemon@npm:3.1.4"
+"nodemon@npm:3.1.6":
+  version: 3.1.6
+  resolution: "nodemon@npm:3.1.6"
   dependencies:
     chokidar: "npm:^3.5.2"
     debug: "npm:^4"
@@ -4835,7 +4835,7 @@ __metadata:
     undefsafe: "npm:^2.0.5"
   bin:
     nodemon: bin/nodemon.js
-  checksum: 10/2e54d3d7b8522d46b27c2537361c57a1b29ae01d1b67e558d316d284c5fc319b5267a0dcaa10821a6533a4b6ff604ac66d37e192ed4a89e794cb441b7d5a2fe1
+  checksum: 10/83a28596531741413f468d32339f054b105f7f960566427ba583a6d37f193af49cedeaa2587ee154d7c20c174129c77f65b515a9ad3d0a26ffb77b94a2c5a177
   languageName: node
   linkType: hard
 
@@ -6051,7 +6051,7 @@ __metadata:
     mongodb-memory-server: "npm:9.4.1"
     mongoose: "npm:^8.4.0"
     moviedb-promise: "npm:4.0.7"
-    nodemon: "npm:3.1.4"
+    nodemon: "npm:3.1.6"
     object-mapper: "npm:6.2.0"
     stoppable: "npm:1.1.0"
     ts-jest: "npm:29.2.5"
