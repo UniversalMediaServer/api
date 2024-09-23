@@ -4187,16 +4187,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"koa-router@npm:12.0.1":
-  version: 12.0.1
-  resolution: "koa-router@npm:12.0.1"
+"koa-router@npm:13.0.1":
+  version: 13.0.1
+  resolution: "koa-router@npm:13.0.1"
   dependencies:
-    debug: "npm:^4.3.4"
     http-errors: "npm:^2.0.0"
     koa-compose: "npm:^4.1.0"
-    methods: "npm:^1.1.2"
-    path-to-regexp: "npm:^6.2.1"
-  checksum: 10/5c733289f58f74c91e5f9c8925fe369325b650038eafea2fde9d9cd5f9d775df0bd308313c6381995668ad428ca50725a13db002256f7f2232ed0f08b4e1f8a9
+    path-to-regexp: "npm:^8.1.0"
+  checksum: 10/d595cf1db0318ae770200301963a76935be8b4bbdd3348f9643fa27844370b8e1437821060dbe976f093b6949d81afb73aabeae61288259813de9228c2508feb
   languageName: node
   linkType: hard
 
@@ -4404,13 +4402,6 @@ __metadata:
   version: 1.4.1
   resolution: "merge2@npm:1.4.1"
   checksum: 10/7268db63ed5169466540b6fb947aec313200bcf6d40c5ab722c22e242f651994619bcd85601602972d3c85bd2cc45a358a4c61937e9f11a061919a1da569b0c2
-  languageName: node
-  linkType: hard
-
-"methods@npm:^1.1.2":
-  version: 1.1.2
-  resolution: "methods@npm:1.1.2"
-  checksum: 10/a385dd974faa34b5dd021b2bbf78c722881bf6f003bfe6d391d7da3ea1ed625d1ff10ddd13c57531f628b3e785be38d3eed10ad03cebd90b76932413df9a1820
   languageName: node
   linkType: hard
 
@@ -5049,10 +5040,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"path-to-regexp@npm:^6.2.1":
-  version: 6.3.0
-  resolution: "path-to-regexp@npm:6.3.0"
-  checksum: 10/6822f686f01556d99538b350722ef761541ec0ce95ca40ce4c29e20a5b492fe8361961f57993c71b2418de12e604478dcf7c430de34b2c31a688363a7a944d9c
+"path-to-regexp@npm:^8.1.0":
+  version: 8.1.0
+  resolution: "path-to-regexp@npm:8.1.0"
+  checksum: 10/5016a27153d99d3da6a7769a3f34eb4a35538d23a9b4044f517960978876af4d23146f0421e9714be0449f61ffffb04941ffcb7e6bd7c69cf6d891238becd587
   languageName: node
   linkType: hard
 
@@ -6013,7 +6004,7 @@ __metadata:
     koa-bodyparser: "npm:4.4.1"
     koa-helmet: "npm:7.0.2"
     koa-qs: "npm:3.0.0"
-    koa-router: "npm:12.0.1"
+    koa-router: "npm:13.0.1"
     lodash: "npm:4.17.21"
     mongodb-memory-server: "npm:10.0.1"
     mongoose: "npm:^8.4.0"
