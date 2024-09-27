@@ -42,7 +42,7 @@
     "@types/lodash": "4.17.9",
     "@types/node": "18.19.53",
     "@types/object-mapper": "6.2.2",
-    "axios": "1.7.4",
+    "axios": "1.7.7",
     "eslint": "8.57.1",
     "inquirer": "11.0.2",
     "jest": "29.7.0",
