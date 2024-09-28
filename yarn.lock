@@ -3322,9 +3322,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"inquirer@npm:11.0.2":
-  version: 11.0.2
-  resolution: "inquirer@npm:11.0.2"
+"inquirer@npm:11.1.0":
+  version: 11.1.0
+  resolution: "inquirer@npm:11.1.0"
   dependencies:
     "@inquirer/core": "npm:^9.2.1"
     "@inquirer/prompts": "npm:^6.0.1"
@@ -3334,7 +3334,7 @@ __metadata:
     mute-stream: "npm:^1.0.0"
     run-async: "npm:^3.0.0"
     rxjs: "npm:^7.8.1"
-  checksum: 10/a0736d263ffab518c366e187c706243f9f02be60da3b03dfc00777c6d16aec4548e04aecba3f77b6651da85a1a13b9795de2848df257fe59eed6599ce6fe2a61
+  checksum: 10/4294304262bf8b6d1e0fd213dabe63b6fab78b0248c6299a58758e2a59c2ef89996a0661570890a770b9c61a4d0ea6b16de76cd5b5ce1877e4d96c3b69ab3b22
   languageName: node
   linkType: hard
 
@@ -5915,7 +5915,7 @@ __metadata:
     debug: "npm:4.3.7"
     episode-parser: "npm:2.0.2"
     eslint: "npm:8.57.1"
-    inquirer: "npm:11.0.2"
+    inquirer: "npm:11.1.0"
     jest: "npm:29.7.0"
     koa: "npm:2.15.3"
     koa-bodyparser: "npm:4.4.1"
