@@ -52,5 +52,5 @@
     "ts-jest": "29.2.5",
     "typescript-eslint": "^8.6.0"
   },
-  "packageManager": "yarn@4.5.0"
+  "packageManager": "yarn@4.5.1"
 }
