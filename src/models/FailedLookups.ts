@@ -64,6 +64,7 @@ const FailedLookupsSchema = new Schema({
 FailedLookupsSchema.index({ title: 1, language: 1, year: 1 });
 FailedLookupsSchema.index({ title: 1, episode: 1, season: 1 });
 FailedLookupsSchema.index({ title: 1, language: 1, episode: 1, season: 1 });
+FailedLookupsSchema.index({ title: 1, type: 1 });
 
 const FailedLookups = mongoose.model<FailedLookupsInterfaceDocument>('FailedLookups', FailedLookupsSchema);
 
