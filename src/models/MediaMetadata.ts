@@ -111,6 +111,8 @@ const MediaMetadataSchema: Schema = new Schema({
   versionKey: false,
 });
 
+MediaMetadataSchema.index({ episode: 1, season: 1, searchMatches: 1 });
+
 MediaMetadataSchema.pre<MediaMetadataInterface>('save', function(next) {
   if (this.title && this.title.startsWith('Episode #')) {
     this.title = undefined;
