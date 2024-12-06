@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@skyra/jaro-winkler": "^1.1.1",
-    "debug": "4.3.7",
+    "debug": "4.4.0",
     "episode-parser": "2.0.2",
     "koa": "2.15.3",
     "koa-bodyparser": "4.4.1",
