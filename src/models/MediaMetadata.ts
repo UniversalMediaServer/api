@@ -112,6 +112,7 @@ const MediaMetadataSchema: Schema = new Schema({
 });
 
 MediaMetadataSchema.index({ episode: 1, season: 1, searchMatches: 1 });
+MediaMetadataSchema.index({ episode: 1, season: 1, searchMatches: 1, year: 1 });
 
 MediaMetadataSchema.pre<MediaMetadataInterface>('save', function(next) {
   if (this.title && this.title.startsWith('Episode #')) {

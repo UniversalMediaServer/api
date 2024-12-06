@@ -217,6 +217,15 @@ export const getCollection = async(ctx: ParameterizedContext): Promise<Partial<C
 export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadataInterface> => {
   const { title, imdbID }: UmsQueryParams = ctx.query;
   const { episode, season, year }: UmsQueryParams = ctx.query;
+
+  if (!title && !imdbID) {
+    throw new ValidationError('title or imdbId is a required parameter');
+  }
+
+  if (season && !episode) {
+    throw new ValidationError('season must also have an episode number');
+  }
+
   let { language }: UmsQueryParams = ctx.query;
   const [yearNumber] = [year].map(param => param ? Number(param) : null);
   const seasonNumber = Number(season);
@@ -224,10 +233,6 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
   if (episode) {
     const episodes = episode.split('-');
     episodeNumbers = episodes.map(Number);
-  }
-
-  if (!title && !imdbID) {
-    throw new ValidationError('title or imdbId is a required parameter');
   }
 
   if (language && !language.match(/^[a-z]{2}(-[A-Z]{2})?$/)) {
