@@ -1,6 +1,6 @@
 import * as Koa from 'koa';
 import * as bodyParser from 'koa-bodyparser';
-import * as helmet from 'koa-helmet';
+import helmet from "koa-helmet";
 import * as mongoose from 'mongoose';
 import { ParameterizedContext } from 'koa';
 import * as koaQs from 'koa-qs';
