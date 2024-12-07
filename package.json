@@ -24,7 +24,7 @@
     "episode-parser": "2.0.2",
     "koa": "2.15.3",
     "koa-bodyparser": "4.4.1",
-    "koa-helmet": "7.0.2",
+    "koa-helmet": "8.0.1",
     "koa-qs": "3.0.0",
     "koa-router": "13.0.1",
     "lodash": "4.17.21",
