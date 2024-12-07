@@ -66,7 +66,6 @@ const MediaMetadataSchema: Schema = new Schema({
   credits: { type: Array },
   directors: { type: Array },
   episode: {
-    index: true,
     required: isTypeEpisode,
     type: String,
   },
@@ -104,7 +103,7 @@ const MediaMetadataSchema: Schema = new Schema({
   trivia: { type: String },
   type: { type: String, required: true },
   votes: { type: String },
-  year: { index: true, type: String },
+  year: { type: String },
 }, {
   collection: 'media_metadata',
   timestamps: true,

@@ -24,33 +24,17 @@ export interface FailedLookupsInterface {
 export interface FailedLookupsInterfaceDocument extends mongoose.Document, FailedLookupsInterface {}
 
 const FailedLookupsSchema = new Schema({
-  count: {
-    default: 1,
-    type: Number,
-  },
-  episode: { index: true, type: String },
-  imdbID: { index: true, type: String },
-  language: { index: true, type: String },
-  season: { index: true, type: String },
-  startYear: {
-    index: true,
-    type: String,
-  },
-  title: {
-    index: true,
-    required: true,
-    type: String,
-  },
+  count: { type: Number, default: 1 },
+  episode: { type: String },
+  imdbID: { type: String, index: true },
+  language: { type: String },
+  season: { type: String },
+  startYear: { type: String },
+  title: { type: String, index: true, required: true },
   tmdbID: { index: true, type: Number },
-  year: {
-    index: true,
-    type: String,
-  },
-  failedValidation: {
-    default: false,
-    type: Boolean,
-  },
-  type: { type: String, index: true },
+  year: { type: String },
+  failedValidation: { type: Boolean, default: false },
+  type: { type: String },
   createdAt: {
     default: Date.now,
     expires: THIRTY_DAYS_IN_SECONDS,
@@ -65,6 +49,8 @@ FailedLookupsSchema.index({ title: 1, language: 1, year: 1 });
 FailedLookupsSchema.index({ title: 1, episode: 1, season: 1 });
 FailedLookupsSchema.index({ title: 1, language: 1, episode: 1, season: 1 });
 FailedLookupsSchema.index({ title: 1, type: 1 });
+FailedLookupsSchema.index({ title: 1, type: 1, startYear: 1 });
+FailedLookupsSchema.index({ language: 1, type: 1, imdbID: 1, tmdbID: 1, season: 1, episode: 1 })
 
 const FailedLookups = mongoose.model<FailedLookupsInterfaceDocument>('FailedLookups', FailedLookupsSchema);
 
