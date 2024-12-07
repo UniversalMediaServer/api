@@ -31,3 +31,13 @@ Runs the test suite
 
 #### `yarn run start:prod`
 Starts the API and cron job in production mode. TypeScript files are compiled in memory on application start.
+
+## Logs
+
+To view the production logs:
+1. Run `sudo sh -c "du -ch /var/lib/docker/containers/*/*-json.log"` to print the list of logs. Look for the biggest one and copy the container ID.
+2. Run `docker logs -f --tail 100 CONTAINER_ID`
+
+## Troubleshooting
+
+If the production server is unstable, it could be because the Docker cache is filling the hard drive. To fix it, run `docker system prune -a` to clear unused stuff.
