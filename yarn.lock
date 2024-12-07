@@ -3152,13 +3152,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"helmet@npm:^6.0.1":
-  version: 6.2.0
-  resolution: "helmet@npm:6.2.0"
-  checksum: 10/f112fcd0d8494e6c8ad10e9307e182f1be9c9c4917a3f9a3718c13ae120d4c4e1f251e735297d6a9266e068dcc0463ab101c8d7f2b809c0ceabcef4681f81a2a
-  languageName: node
-  linkType: hard
-
 "html-escaper@npm:^2.0.0":
   version: 2.0.2
   resolution: "html-escaper@npm:2.0.2"
@@ -4145,12 +4138,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"koa-helmet@npm:7.0.2":
-  version: 7.0.2
-  resolution: "koa-helmet@npm:7.0.2"
-  dependencies:
-    helmet: "npm:^6.0.1"
-  checksum: 10/a2f8f72f053402fd8b70deb219ab1535cb6dbc8975ae9bd84d2a976a88a2349f47289485d5db718f21c4d493a9555e8b4bb962119f47d2b0ff95877edc232004
+"koa-helmet@npm:7.1.0":
+  version: 7.1.0
+  resolution: "koa-helmet@npm:7.1.0"
+  peerDependencies:
+    helmet: ">= 6"
+  checksum: 10/51297fd52ff4dc9f1ad2191768f20875b97f010681cd07044fd795d77838ccb4f9d2d9f9bf72bf41320dac51f4f16c46e7fe2fda254ea943c086e6de14b4a5b6
   languageName: node
   linkType: hard
 
@@ -5972,7 +5965,7 @@ __metadata:
     jest: "npm:29.7.0"
     koa: "npm:2.15.3"
     koa-bodyparser: "npm:4.4.1"
-    koa-helmet: "npm:7.0.2"
+    koa-helmet: "npm:7.1.0"
     koa-qs: "npm:3.0.0"
     koa-router: "npm:13.0.1"
     lodash: "npm:4.17.21"
