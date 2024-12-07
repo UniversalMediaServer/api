@@ -3152,6 +3152,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"helmet@npm:^8.0.0":
+  version: 8.0.0
+  resolution: "helmet@npm:8.0.0"
+  checksum: 10/cf30579d1dbd095e301458265fb6b3446d1ee0598c99b5e946afda8a72c035a6a7ebf2176168d5ca2541e6e522a88fb58d06f0eeec4ab378646960de9aea6584
+  languageName: node
+  linkType: hard
+
 "html-escaper@npm:^2.0.0":
   version: 2.0.2
   resolution: "html-escaper@npm:2.0.2"
@@ -5961,6 +5968,7 @@ __metadata:
     debug: "npm:4.4.0"
     episode-parser: "npm:2.0.2"
     eslint: "npm:8.57.1"
+    helmet: "npm:^8.0.0"
     inquirer: "npm:12.1.0"
     jest: "npm:29.7.0"
     koa: "npm:2.15.3"
