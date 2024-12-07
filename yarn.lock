@@ -3152,10 +3152,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"helmet@npm:^6.0.1":
-  version: 6.2.0
-  resolution: "helmet@npm:6.2.0"
-  checksum: 10/f112fcd0d8494e6c8ad10e9307e182f1be9c9c4917a3f9a3718c13ae120d4c4e1f251e735297d6a9266e068dcc0463ab101c8d7f2b809c0ceabcef4681f81a2a
+"helmet@npm:^8.0.0":
+  version: 8.0.0
+  resolution: "helmet@npm:8.0.0"
+  checksum: 10/cf30579d1dbd095e301458265fb6b3446d1ee0598c99b5e946afda8a72c035a6a7ebf2176168d5ca2541e6e522a88fb58d06f0eeec4ab378646960de9aea6584
   languageName: node
   linkType: hard
 
@@ -4145,12 +4145,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"koa-helmet@npm:7.0.2":
-  version: 7.0.2
-  resolution: "koa-helmet@npm:7.0.2"
-  dependencies:
-    helmet: "npm:^6.0.1"
-  checksum: 10/a2f8f72f053402fd8b70deb219ab1535cb6dbc8975ae9bd84d2a976a88a2349f47289485d5db718f21c4d493a9555e8b4bb962119f47d2b0ff95877edc232004
+"koa-helmet@npm:8.0.1":
+  version: 8.0.1
+  resolution: "koa-helmet@npm:8.0.1"
+  peerDependencies:
+    helmet: ">= 6"
+  checksum: 10/4b3f60e6f35b00a7ae1e143e7ae72aae1ec0bfdab540b03359c010934d921513231bb3fe92ed0b08e62cb94931dab07b8617792068d424e8484fecd59b9f25d4
   languageName: node
   linkType: hard
 
@@ -5968,11 +5968,12 @@ __metadata:
     debug: "npm:4.4.0"
     episode-parser: "npm:2.0.2"
     eslint: "npm:8.57.1"
+    helmet: "npm:^8.0.0"
     inquirer: "npm:12.1.0"
     jest: "npm:29.7.0"
     koa: "npm:2.15.3"
     koa-bodyparser: "npm:4.4.1"
-    koa-helmet: "npm:7.0.2"
+    koa-helmet: "npm:8.0.1"
     koa-qs: "npm:3.0.0"
     koa-router: "npm:13.0.1"
     lodash: "npm:4.17.21"
