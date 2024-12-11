@@ -41,7 +41,7 @@
     "@types/koa-helmet": "6.0.8",
     "@types/koa-router": "7.4.8",
     "@types/lodash": "4.17.13",
-    "@types/node": "22.10.1",
+    "@types/node": "22.10.2",
     "@types/object-mapper": "6.2.2",
     "axios": "1.7.9",
     "eslint": "8.57.1",
