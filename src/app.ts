@@ -1,3 +1,4 @@
+import './tracing';
 import * as Koa from 'koa';
 import * as bodyParser from 'koa-bodyparser';
 import helmet from "koa-helmet";
