@@ -39,7 +39,7 @@ const COLLECTION_BLADE_RUNNER_FRENCH = {
 const SERIES_AVATAR_FRENCH = {
   language: 'fr',
   imdbID: 'tt0417299',
-  title: 'Avatar : Le dernier maître de l\'air',
+  title: 'Avatar : Le Dernier Maître de l\'air',
   mediaType: 'tv',
   overview: 'Ang est un jeune Maître de l',
   tagline: 'L\'eau. La terre. Le feu. L\'air.',
