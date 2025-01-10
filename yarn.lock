@@ -1089,8 +1089,8 @@ __metadata:
   linkType: hard
 
 "@opentelemetry/auto-instrumentations-node@npm:^0.55.0":
-  version: 0.55.0
-  resolution: "@opentelemetry/auto-instrumentations-node@npm:0.55.0"
+  version: 0.55.1
+  resolution: "@opentelemetry/auto-instrumentations-node@npm:0.55.1"
   dependencies:
     "@opentelemetry/instrumentation": "npm:^0.57.0"
     "@opentelemetry/instrumentation-amqplib": "npm:^0.46.0"
@@ -1108,7 +1108,7 @@ __metadata:
     "@opentelemetry/instrumentation-generic-pool": "npm:^0.43.0"
     "@opentelemetry/instrumentation-graphql": "npm:^0.47.0"
     "@opentelemetry/instrumentation-grpc": "npm:^0.57.0"
-    "@opentelemetry/instrumentation-hapi": "npm:^0.45.0"
+    "@opentelemetry/instrumentation-hapi": "npm:^0.45.1"
     "@opentelemetry/instrumentation-http": "npm:^0.57.0"
     "@opentelemetry/instrumentation-ioredis": "npm:^0.47.0"
     "@opentelemetry/instrumentation-kafkajs": "npm:^0.7.0"
@@ -1141,7 +1141,7 @@ __metadata:
     "@opentelemetry/sdk-node": "npm:^0.57.0"
   peerDependencies:
     "@opentelemetry/api": ^1.4.1
-  checksum: 10/bd85b1cef754e89dbaecda62d3596241fd8e25c9e466745b9e0b1c78c7ff266232ac5cf44a891a544de8e9c5bdef28076785f0dafc72f8adc646e75ca9dde74a
+  checksum: 10/2f3d88cab280bdbfb95b51ce4aa27cf260e51019d7ae8f7bc816a65802d4fe681afdbf2a091bad974c03b2116d6abb3a8ff293db1713c72a374c8dae3ffde79b
   languageName: node
   linkType: hard
 
@@ -1530,16 +1530,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@opentelemetry/instrumentation-hapi@npm:^0.45.0":
-  version: 0.45.0
-  resolution: "@opentelemetry/instrumentation-hapi@npm:0.45.0"
+"@opentelemetry/instrumentation-hapi@npm:^0.45.1":
+  version: 0.45.1
+  resolution: "@opentelemetry/instrumentation-hapi@npm:0.45.1"
   dependencies:
     "@opentelemetry/core": "npm:^1.8.0"
     "@opentelemetry/instrumentation": "npm:^0.57.0"
     "@opentelemetry/semantic-conventions": "npm:^1.27.0"
   peerDependencies:
     "@opentelemetry/api": ^1.3.0
-  checksum: 10/4b43403994466d101d1d588613569427f3a3170e7caee11ea1a52dfa0fab8711e7608310b9fd4b10313de4d2d7f2d65fb382a3dbc8dc3babb185394fd6d5cfa9
+  checksum: 10/606f4817cae57a658dc77c9fa7c235aaadef5aaf5addd137dc9c9c1fddfedc93916e80ed5d6413d36b160d2b4223974369f18090d07501bcf72a7b07f9e0b24f
   languageName: node
   linkType: hard
 
