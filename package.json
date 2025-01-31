@@ -19,7 +19,7 @@
     "watch": "tsc --watch"
   },
   "dependencies": {
-    "@opentelemetry/auto-instrumentations-node": "^0.55.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.56.0",
     "@opentelemetry/exporter-trace-otlp-http": "^0.57.0",
     "@opentelemetry/sdk-node": "^0.57.0",
     "@skyra/jaro-winkler": "^1.1.1",
