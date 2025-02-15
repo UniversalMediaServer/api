@@ -40,8 +40,8 @@ export const getLocalize = async(ctx: ParameterizedContext): Promise<Partial<Loc
   if (!language || !mediaType || !(imdbID || tmdbID)) {
     throw new ValidationError('Language, media type and either IMDb ID or TMDB ID are required');
   }
-  if (!language.match(/^[a-z]{2}(-[A-Z]{2})?$/)) {
-    throw new ValidationError('Language must have a minimum length of 2 and follow the pattern: ([a-z]{2})-([A-Z]{2})');
+  if (!language.match(/^[a-z]{2}(-[a-z]{2})?$/i)) {
+    throw new ValidationError('Language must have a minimum length of 2 and follow the case-insensitive pattern: ([a-z]{2})-([a-z]{2})');
   }
 
   if (mediaType !== 'collection' && mediaType !== 'movie' && mediaType !== 'tv' && mediaType !== 'tv_season' && mediaType !== 'tv_episode') {
