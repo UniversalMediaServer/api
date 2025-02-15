@@ -66,6 +66,17 @@ const EPISODE_AVATAR_FRENCH = {
   episodeNumber: 14,
 };
 
+const EPISODE_AVATAR_PORTUGUESE_BRAZILIAN = {
+  language: 'pt-br',
+  imdbID: 'tt1176477',
+  title: 'A Rocha Fervente (Parte 1)',
+  mediaType: 'tv_episode',
+  overview: 'Sokka e Zuko vão à prisão mais vigiada da Nação do Fogo, a Rocha Fervente, com a esperança de encontrar e fazer a força invasora escapar.',
+  seasonNumber: 3,
+  tmdbID: 246,
+  episodeNumber: 14,
+};
+
 describe('Localize Metadata endpoint', () => {
   beforeAll((done) => {
     MongoMemoryServer.create()
@@ -305,6 +316,52 @@ describe('Localize Metadata endpoint', () => {
       response = await axios.get(`${appUrl}/api/media/localize?language=${EPISODE_AVATAR_FRENCH.language}&mediaType=${EPISODE_AVATAR_FRENCH.mediaType}&imdbID=${EPISODE_AVATAR_FRENCH.imdbID}`) as UmsApiLocalizeAxiosResponse;
       expect(response.data.title).toBe(EPISODE_AVATAR_FRENCH.title);
       expect(response.data.tmdbID).toBe(EPISODE_AVATAR_FRENCH.tmdbID);
+      expect(spyGetFromApi).toHaveBeenCalledTimes(0);
+      expect(spyIdentifyTmdb).toHaveBeenCalledTimes(0);
+    });
+
+    it('should return tv episode metadata localized by TMDB ID with lowercase locale-specific language', async() => {
+      const spyGetFromApi = jest.spyOn(apihelper, 'getLocalizedMetadata');
+      const spyIdentifyTmdb = jest.spyOn(apihelper, 'getTmdbIdFromIMDbID');
+      let response = await axios.get(`${appUrl}/api/media/localize?language=${EPISODE_AVATAR_PORTUGUESE_BRAZILIAN.language}&mediaType=${EPISODE_AVATAR_PORTUGUESE_BRAZILIAN.mediaType}&tmdbID=${EPISODE_AVATAR_PORTUGUESE_BRAZILIAN.tmdbID}&season=${EPISODE_AVATAR_PORTUGUESE_BRAZILIAN.seasonNumber}&episode=${EPISODE_AVATAR_PORTUGUESE_BRAZILIAN.episodeNumber}`) as UmsApiLocalizeAxiosResponse;
+      expect(response.data.imdbID).toBe(EPISODE_AVATAR_PORTUGUESE_BRAZILIAN.imdbID);
+      expect(response.data.tmdbID).toBe(EPISODE_AVATAR_PORTUGUESE_BRAZILIAN.tmdbID);
+      expect(response.data.seasonNumber).toBe(EPISODE_AVATAR_PORTUGUESE_BRAZILIAN.seasonNumber);
+      expect(response.data.episodeNumber).toBe(EPISODE_AVATAR_PORTUGUESE_BRAZILIAN.episodeNumber);
+      expect(response.data.title).toBe(EPISODE_AVATAR_PORTUGUESE_BRAZILIAN.title);
+      expect(response.data.overview).toContain(EPISODE_AVATAR_PORTUGUESE_BRAZILIAN.overview);
+      expect(spyGetFromApi).toHaveBeenCalledTimes(1);
+      expect(spyIdentifyTmdb).toHaveBeenCalledTimes(0);
+      spyGetFromApi.mockReset();
+      spyIdentifyTmdb.mockReset();
+
+      // call with IMDB ID should return MongoDB result rather than calling external apis
+      response = await axios.get(`${appUrl}/api/media/localize?language=${EPISODE_AVATAR_PORTUGUESE_BRAZILIAN.language}&mediaType=${EPISODE_AVATAR_PORTUGUESE_BRAZILIAN.mediaType}&imdbID=${EPISODE_AVATAR_PORTUGUESE_BRAZILIAN.imdbID}`) as UmsApiLocalizeAxiosResponse;
+      expect(response.data.title).toBe(EPISODE_AVATAR_PORTUGUESE_BRAZILIAN.title);
+      expect(response.data.tmdbID).toBe(EPISODE_AVATAR_PORTUGUESE_BRAZILIAN.tmdbID);
+      expect(spyGetFromApi).toHaveBeenCalledTimes(0);
+      expect(spyIdentifyTmdb).toHaveBeenCalledTimes(0);
+    });
+
+    it('should return tv episode metadata localized by TMDB ID with mixed-case locale-specific language', async() => {
+      const spyGetFromApi = jest.spyOn(apihelper, 'getLocalizedMetadata');
+      const spyIdentifyTmdb = jest.spyOn(apihelper, 'getTmdbIdFromIMDbID');
+      let response = await axios.get(`${appUrl}/api/media/localize?language=pt-BR&mediaType=${EPISODE_AVATAR_PORTUGUESE_BRAZILIAN.mediaType}&tmdbID=${EPISODE_AVATAR_PORTUGUESE_BRAZILIAN.tmdbID}&season=${EPISODE_AVATAR_PORTUGUESE_BRAZILIAN.seasonNumber}&episode=${EPISODE_AVATAR_PORTUGUESE_BRAZILIAN.episodeNumber}`) as UmsApiLocalizeAxiosResponse;
+      expect(response.data.imdbID).toBe(EPISODE_AVATAR_PORTUGUESE_BRAZILIAN.imdbID);
+      expect(response.data.tmdbID).toBe(EPISODE_AVATAR_PORTUGUESE_BRAZILIAN.tmdbID);
+      expect(response.data.seasonNumber).toBe(EPISODE_AVATAR_PORTUGUESE_BRAZILIAN.seasonNumber);
+      expect(response.data.episodeNumber).toBe(EPISODE_AVATAR_PORTUGUESE_BRAZILIAN.episodeNumber);
+      expect(response.data.title).toBe(EPISODE_AVATAR_PORTUGUESE_BRAZILIAN.title);
+      expect(response.data.overview).toContain(EPISODE_AVATAR_PORTUGUESE_BRAZILIAN.overview);
+      expect(spyGetFromApi).toHaveBeenCalledTimes(1);
+      expect(spyIdentifyTmdb).toHaveBeenCalledTimes(0);
+      spyGetFromApi.mockReset();
+      spyIdentifyTmdb.mockReset();
+
+      // call with IMDB ID should return MongoDB result rather than calling external apis
+      response = await axios.get(`${appUrl}/api/media/localize?language=pt-BR&mediaType=${EPISODE_AVATAR_PORTUGUESE_BRAZILIAN.mediaType}&imdbID=${EPISODE_AVATAR_PORTUGUESE_BRAZILIAN.imdbID}`) as UmsApiLocalizeAxiosResponse;
+      expect(response.data.title).toBe(EPISODE_AVATAR_PORTUGUESE_BRAZILIAN.title);
+      expect(response.data.tmdbID).toBe(EPISODE_AVATAR_PORTUGUESE_BRAZILIAN.tmdbID);
       expect(spyGetFromApi).toHaveBeenCalledTimes(0);
       expect(spyIdentifyTmdb).toHaveBeenCalledTimes(0);
     });
