@@ -3034,7 +3034,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:1.8.4":
+"axios@npm:^1.4.0":
   version: 1.8.4
   resolution: "axios@npm:1.8.4"
   dependencies:
@@ -3042,17 +3042,6 @@ __metadata:
     form-data: "npm:^4.0.0"
     proxy-from-env: "npm:^1.1.0"
   checksum: 10/a10f0dd836613924e48cf03dc2eff3fd21b14f764807aedaee4880a70c0f142aaebdb21da7ce27104d4c16ca00d0e452a20a20851f60e385a8d5bad1ae909d46
-  languageName: node
-  linkType: hard
-
-"axios@npm:^1.4.0":
-  version: 1.6.8
-  resolution: "axios@npm:1.6.8"
-  dependencies:
-    follow-redirects: "npm:^1.15.6"
-    form-data: "npm:^4.0.0"
-    proxy-from-env: "npm:^1.1.0"
-  checksum: 10/3f9a79eaf1d159544fca9576261ff867cbbff64ed30017848e4210e49f3b01e97cf416390150e6fdf6633f336cd43dc1151f890bbd09c3c01ad60bb0891eee63
   languageName: node
   linkType: hard
 
@@ -7601,7 +7590,6 @@ __metadata:
     "@types/lodash": "npm:4.17.16"
     "@types/node": "npm:22.13.14"
     "@types/object-mapper": "npm:6.2.2"
-    axios: "npm:1.8.4"
     debug: "npm:4.4.0"
     episode-parser: "npm:2.0.2"
     eslint: "npm:8.57.1"
