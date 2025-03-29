@@ -3034,7 +3034,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.4.0":
+"axios@npm:1.8.4, axios@npm:^1.4.0":
   version: 1.8.4
   resolution: "axios@npm:1.8.4"
   dependencies:
@@ -7590,6 +7590,7 @@ __metadata:
     "@types/lodash": "npm:4.17.16"
     "@types/node": "npm:22.13.14"
     "@types/object-mapper": "npm:6.2.2"
+    axios: "npm:1.8.4"
     debug: "npm:4.4.0"
     episode-parser: "npm:2.0.2"
     eslint: "npm:8.57.1"
