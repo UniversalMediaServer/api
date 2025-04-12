@@ -41,7 +41,7 @@
     "@types/jest": "^29.5.12",
     "@types/koa": "2.15.0",
     "@types/koa-bodyparser": "4.3.12",
-    "@types/koa-helmet": "6.0.8",
+    "@types/koa-helmet": "6.1.0",
     "@types/koa-router": "7.4.8",
     "@types/lodash": "4.17.16",
     "@types/node": "22.14.1",
