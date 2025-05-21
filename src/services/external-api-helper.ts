@@ -37,7 +37,7 @@ const getSeriesTMDBIDFromTMDBAPI = async(imdbID?: string, seriesTitle?: string, 
         // a wrong year could cause a wrong result, so also do a similarity check to be sure
         const resultNameLowerCase = searchResult.name.toLowerCase();
         const requestNameLowerCase = seriesTitle.toLowerCase();
-        if (jaroWinkler(resultNameLowerCase, requestNameLowerCase) < 0.7) {
+        if (jaroWinkler(resultNameLowerCase, requestNameLowerCase) < 0.75) {
           return null;
         }
       }
