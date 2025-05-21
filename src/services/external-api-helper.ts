@@ -2,7 +2,7 @@ import { jaroWinkler } from '@skyra/jaro-winkler';
 import * as episodeParser from 'episode-parser';
 import * as _ from 'lodash';
 import { FlattenMaps, Types } from 'mongoose';
-import { Episode, EpisodeRequest, ExternalId, SearchMovieRequest, SearchTvRequest, SimpleEpisode, TvExternalIdsResponse } from 'moviedb-promise/dist/request-types';
+import { Episode, EpisodeRequest, ExternalId, SearchMovieRequest, SearchTvRequest, SimpleEpisode, TvExternalIdsResponse, TvResult } from 'moviedb-promise/dist/request-types';
 
 import { tmdb } from './tmdb-api';
 import { ValidationError } from '../helpers/customErrors';
@@ -24,16 +24,32 @@ const getSeriesTMDBIDFromTMDBAPI = async(imdbID?: string, seriesTitle?: string, 
   } else if (seriesTitle) {
     const tmdbQuery: SearchTvRequest = { query: seriesTitle };
     if (year) {
-      tmdbQuery.first_air_date_year = year;
+      tmdbQuery.year = year;
     }
     if (language) {
       tmdbQuery.language = language;
     }
-    const searchResults = await tmdb.searchTv(tmdbQuery);
-    if (searchResults?.results && searchResults.results[0] && searchResults.results[0].id) {
-      const searchResult = searchResults.results[0];
 
+    const searchResults = await tmdb.searchTv(tmdbQuery);
+
+    if (searchResults?.results && searchResults.results[0]) {
+      let searchResult: TvResult;
+      let didMatchYear: boolean;
       if (year) {
+        const resultWithMatchingYear = _.find(searchResults.results, function(result) {
+          return result.first_air_date.substring(0, 4) === year.toString();
+        });
+        if (resultWithMatchingYear?.id) {
+          searchResult = resultWithMatchingYear;
+          didMatchYear = true;
+        }
+      }
+
+      if (!searchResult) {
+        searchResult = searchResults.results[0];
+      }
+
+      if (didMatchYear) {
         // a wrong year could cause a wrong result, so also do a similarity check to be sure
         const resultNameLowerCase = searchResult.name.toLowerCase();
         const requestNameLowerCase = seriesTitle.toLowerCase();
