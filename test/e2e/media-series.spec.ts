@@ -156,7 +156,8 @@ describe('Media Metadata endpoints', () => {
 
     it('should not return series when the year has no overlap with episode air dates', async() => {
       // this test also makes sure the Jaro-Winkler comparison is correctly filtering results
-      // because TMDB returns the series "Tokyo MPD – From ZERO to HERO" and we discard it
+      // because TMDB returns the series "Tokyo MPD – From ZERO to HERO" and "Sveta From the Other World"
+      // and we discard them
       let error;
       try {
         await axios.get(`${appUrl}/api/media/series/v2?title=From&year=2021`) as UmsApiSeriesAxiosResponse;
