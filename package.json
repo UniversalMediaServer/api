@@ -20,8 +20,8 @@
   },
   "dependencies": {
     "@opentelemetry/auto-instrumentations-node": "^0.56.0",
-    "@opentelemetry/exporter-trace-otlp-http": "^0.57.0",
-    "@opentelemetry/sdk-node": "^0.57.0",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.201.0",
+    "@opentelemetry/sdk-node": "^0.201.0",
     "@skyra/jaro-winkler": "^1.1.1",
     "debug": "4.4.0",
     "episode-parser": "2.0.2",
