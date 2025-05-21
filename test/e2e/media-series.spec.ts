@@ -149,9 +149,15 @@ describe('Media Metadata endpoints', () => {
       expect(response.data).toHaveProperty('title', 'Galactica 1980');
     });
 
-    it('should return series even when the year is when the episode aired, not the series start year', async() => {
-      const response = await axios.get(`${appUrl}/api/media/series/v2?title=From&year=2023`) as UmsApiSeriesAxiosResponse;
-      expect(response.data).toHaveProperty('title', 'FROM');
+    // this used to return a result but it was really a workaround for a client bug, it should not return
+    it('should NOT return series when the year is when the episode aired, not the series start year', async() => {
+      let error;
+      try {
+        await axios.get(`${appUrl}/api/media/series/v2?title=From&year=2023`) as UmsApiSeriesAxiosResponse;
+      } catch (err) {
+        error = err;
+      }
+      expect(error.message).toBe('Request failed with status code 404');
     });
 
     it('should not return series when the year has no overlap with episode air dates', async() => {

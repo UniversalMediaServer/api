@@ -53,6 +53,15 @@ const EPISODE_PRISONBREAK = {
   'seriesIMDbID': 'tt0455275',
 };
 
+const EPISODE_DOCTORWHO = {
+  'episodeTitle': 'Lucky Day',
+  'title': 'Doctor Who',
+  'season': '2',
+  'episode': '4',
+  "seriesIMDbID": "tt31433814",
+  'year': 2024,
+};
+
 const EPISODE_AVATAR = {
   'episodeTitle': 'The Boiling Rock (1) & The Boiling Rock (2)',
   'osdbHash': 'de334f38f153fb6f',
@@ -211,7 +220,7 @@ describe('get by all', () => {
       expect(response.data.seriesIMDbID).toEqual(EPISODE_LOST.seriesIMDbID);
     });
 
-    test('should return an episode by when passed all possible params, from source APIs then store', async() => {
+    test('should return an episode by all possible params, from source APIs then store', async() => {
       const url = `${appUrl}/api/media/video/v2?`+
         `osdbHash=${EPISODE_PRISONBREAK.osdbHash}`+
         `&filebytesize=${EPISODE_PRISONBREAK.filebytesize}`+
@@ -230,6 +239,25 @@ describe('get by all', () => {
       expect(response.data.title).toEqual(EPISODE_PRISONBREAK.episodeTitle);
       expect(response.data.type).toEqual('episode');
       expect(response.data.seriesIMDbID).toEqual(EPISODE_PRISONBREAK.seriesIMDbID);
+    });
+
+    test('should return the episode from the correct series, when multiple series exist with different years, from source APIs then store', async() => {
+      const url = `${appUrl}/api/media/video/v2?`+
+        `title=${EPISODE_DOCTORWHO.title}`+
+        `&season=${EPISODE_DOCTORWHO.season}`+
+        `&episode=${EPISODE_DOCTORWHO.episode}`+
+        `&year=${EPISODE_DOCTORWHO.year}`;
+      let response = await axios.get(url) as UmsApiMediaAxiosResponse;
+      expect(response.data.title).toEqual(EPISODE_DOCTORWHO.episodeTitle);
+      expect(response.data.type).toEqual('episode');
+
+      expect(response.data.seriesIMDbID).toEqual(EPISODE_DOCTORWHO.seriesIMDbID);
+
+      // subsequent calls should return MongoDB result rather than calling external apis
+      response = await axios.get(url);
+      expect(response.data.title).toEqual(EPISODE_DOCTORWHO.episodeTitle);
+      expect(response.data.type).toEqual('episode');
+      expect(response.data.seriesIMDbID).toEqual(EPISODE_DOCTORWHO.seriesIMDbID);
     });
 
     test('should return two episodes when passed all possible params, from source APIs then store', async() => {
