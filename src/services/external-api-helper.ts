@@ -24,7 +24,7 @@ const getSeriesTMDBIDFromTMDBAPI = async(imdbID?: string, seriesTitle?: string, 
   } else if (seriesTitle) {
     const tmdbQuery: SearchTvRequest = { query: seriesTitle };
     if (year) {
-      tmdbQuery.year = year;
+      tmdbQuery.first_air_date_year = year;
     }
     if (language) {
       tmdbQuery.language = language;
