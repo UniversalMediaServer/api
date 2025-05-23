@@ -40,7 +40,7 @@
     "@types/koa-bodyparser": "4.3.12",
     "@types/koa-helmet": "6.1.0",
     "@types/koa-router": "7.4.8",
-    "@types/lodash": "4.17.16",
+    "@types/lodash": "4.17.17",
     "@types/node": "22.15.21",
     "@types/object-mapper": "6.2.2",
     "axios": "1.9.0",
