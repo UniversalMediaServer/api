@@ -4,7 +4,7 @@ const LocalizeMetadataSchema = new Schema({
   episodeNumber: { index: true, type: Number },
   homepage: { type: String },
   imdbID: { index: true, type: String },
-  language: { required: true, index: true, type: String },
+  language: { required: true, type: String },
   mediaType: { required: true, index: true, type: String },
   overview: { type: String },
   posterRelativePath: { type: String },
@@ -17,6 +17,8 @@ const LocalizeMetadataSchema = new Schema({
   timestamps: true,
   versionKey: false,
 });
+
+LocalizeMetadataSchema.index({ language: 1, mediaType: 1, tmdbID: 1, seasonNumber: 1, episodeNumber: 1 })
 
 export type LocalizeMetadataInterface = InferSchemaType<typeof LocalizeMetadataSchema>;
 
