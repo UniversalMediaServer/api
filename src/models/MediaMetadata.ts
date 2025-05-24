@@ -89,7 +89,7 @@ const MediaMetadataSchema: Schema = new Schema({
   released: { type: Date },
   revenue: { type: String },
   runtime: { type: String },
-  searchMatches: { type: Array, index: true, select: false },
+  searchMatches: { type: Array, select: false },
   season: {
     index: true,
     required: isTypeEpisode,

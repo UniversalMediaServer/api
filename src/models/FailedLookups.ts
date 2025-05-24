@@ -30,7 +30,7 @@ const FailedLookupsSchema = new Schema({
   language: { type: String },
   season: { type: String },
   startYear: { type: String },
-  title: { type: String, index: true, required: true },
+  title: { type: String, required: true },
   tmdbID: { index: true, type: Number },
   year: { type: String },
   failedValidation: { type: Boolean, default: false },
