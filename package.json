@@ -45,7 +45,7 @@
     "@types/object-mapper": "6.2.2",
     "axios": "1.9.0",
     "eslint": "9.27.0",
-    "inquirer": "12.6.2",
+    "inquirer": "12.6.3",
     "jest": "29.7.0",
     "mongodb-memory-server": "10.1.4",
     "nodemon": "3.1.10",
