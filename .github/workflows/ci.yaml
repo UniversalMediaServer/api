@@ -10,7 +10,7 @@ jobs:
       TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - name: Install Node.js
       uses: actions/setup-node@v4
       with:
@@ -38,7 +38,7 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
       - name: Cloning repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
