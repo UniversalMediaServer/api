@@ -540,9 +540,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@inquirer/confirm@npm:^5.1.14":
-  version: 5.1.14
-  resolution: "@inquirer/confirm@npm:5.1.14"
+"@inquirer/confirm@npm:^5.1.15":
+  version: 5.1.15
+  resolution: "@inquirer/confirm@npm:5.1.15"
   dependencies:
     "@inquirer/core": "npm:^10.1.15"
     "@inquirer/type": "npm:^3.0.8"
@@ -551,7 +551,7 @@ __metadata:
   peerDependenciesMeta:
     "@types/node":
       optional: true
-  checksum: 10/18e56ca1a46bd7b03064cc01b467f9c699d0c27abdccafb14174192875d7a39a1802eb968386f33668303a28b0b1859dac07ac0323422c35a62f5a80a0987a7a
+  checksum: 10/d9202888f29bf9f81f97d9f6f67da42324452d139f1408884e0c12037338dc18f565947ec9b843f4762c463f2981f29f9b2335a9befac9e8f0000ba237b76b91
   languageName: node
   linkType: hard
 
@@ -676,12 +676,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@inquirer/prompts@npm:^7.8.2":
-  version: 7.8.2
-  resolution: "@inquirer/prompts@npm:7.8.2"
+"@inquirer/prompts@npm:^7.8.3":
+  version: 7.8.3
+  resolution: "@inquirer/prompts@npm:7.8.3"
   dependencies:
     "@inquirer/checkbox": "npm:^4.2.1"
-    "@inquirer/confirm": "npm:^5.1.14"
+    "@inquirer/confirm": "npm:^5.1.15"
     "@inquirer/editor": "npm:^4.2.17"
     "@inquirer/expand": "npm:^4.0.17"
     "@inquirer/input": "npm:^4.2.1"
@@ -695,7 +695,7 @@ __metadata:
   peerDependenciesMeta:
     "@types/node":
       optional: true
-  checksum: 10/f9d8dc836b3806881ea7f259eac16dcc97915a0d6e2005b71de1ec730b106e699cfd6f9903309dbf95e13a620f0b5c8b9e9f4d2454b252a2c2d49df8f01d2daa
+  checksum: 10/18d9cfc46339c3f5a32ac14118396200a5b3512f4fb9e30351b6a50e608d704cca1c45c801a3203d01098b6afaa682a16cd9ee23a3aff0f44401cda35623df37
   languageName: node
   linkType: hard
 
@@ -3301,12 +3301,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"inquirer@npm:12.9.2":
-  version: 12.9.2
-  resolution: "inquirer@npm:12.9.2"
+"inquirer@npm:12.9.3":
+  version: 12.9.3
+  resolution: "inquirer@npm:12.9.3"
   dependencies:
     "@inquirer/core": "npm:^10.1.15"
-    "@inquirer/prompts": "npm:^7.8.2"
+    "@inquirer/prompts": "npm:^7.8.3"
     "@inquirer/type": "npm:^3.0.8"
     ansi-escapes: "npm:^4.3.2"
     mute-stream: "npm:^2.0.0"
@@ -3317,7 +3317,7 @@ __metadata:
   peerDependenciesMeta:
     "@types/node":
       optional: true
-  checksum: 10/f47b3ade0fa5532eca2bc46011b9c92e0d3051563b3f5682db81288868939c80ddb3fde2d4a6afd4f5c12ea7c5a5acb4205ea0ec77544b8eb27e150c4dbd39c4
+  checksum: 10/1eb31e91ad05403eb16c83e38cce5182cb0baae718683401a8bee04229da61af34b4a21c13af3a151de440e08dd65e18f2fee625c1ce16bc93c48ffdf9184d67
   languageName: node
   linkType: hard
 
@@ -5855,7 +5855,7 @@ __metadata:
     episode-parser: "npm:2.0.2"
     eslint: "npm:9.32.0"
     helmet: "npm:^8.0.0"
-    inquirer: "npm:12.9.2"
+    inquirer: "npm:12.9.3"
     jest: "npm:29.7.0"
     koa: "npm:3.0.1"
     koa-bodyparser: "npm:4.4.1"
