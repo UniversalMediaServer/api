@@ -9,8 +9,8 @@
   "scripts": {
     "dev": "DEBUG=\"*universalmediaserver-api:server\" nodemon",
     "purge": "TS_NODE_FILES=true ts-node --files scripts/purge",
-    "start": "node build/app.js",
-    "build": "tsc",
+    "start": "ts-node --files src/app.ts",
+    "start:prod": "npx pm2 start ecosystem.config.js --update-env",
     "test": "NODE_ENV=test jest test/**/*.spec.ts --forceExit --detectOpenHandles",
     "test:e2e": "NODE_ENV=test jest test/e2e/*.spec.ts --forceExit --detectOpenHandles",
     "test:unit": "NODE_ENV=test jest test/unit/*.spec.ts --forceExit --detectOpenHandles",
@@ -32,6 +32,8 @@
     "mongoose": "^8.4.0",
     "moviedb-promise": "4.0.7",
     "object-mapper": "6.2.0",
+    "pm2": "5",
+    "ts-node": "10",
     "typescript": "5.8"
   },
   "devDependencies": {
