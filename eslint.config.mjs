@@ -7,6 +7,6 @@ export default tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    "ignores": ["jest.config.cjs"],
+    "ignores": ["ecosystem.config.js", "jest.config.cjs"],
   }
 );
