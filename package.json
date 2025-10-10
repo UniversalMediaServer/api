@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "DEBUG=\"*universalmediaserver-api:server\" nodemon",
     "start": "ts-node --files src/app.ts",
-    "start:prod": "npx pm2 start ecosystem.config.js --update-env",
+    "start:prod": "pm2 start ecosystem.config.js --update-env",
     "test": "NODE_ENV=test jest test/**/*.spec.ts --forceExit --detectOpenHandles",
     "test:e2e": "NODE_ENV=test jest test/e2e/*.spec.ts --forceExit --detectOpenHandles",
     "test:unit": "NODE_ENV=test jest test/unit/*.spec.ts --forceExit --detectOpenHandles",
