@@ -2676,7 +2676,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:4, debug@npm:4.4.1, debug@npm:4.x, debug@npm:^4, debug@npm:^4.1.0, debug@npm:^4.1.1, debug@npm:^4.3.1, debug@npm:^4.3.2, debug@npm:^4.3.4, debug@npm:^4.4.1":
+"debug@npm:4, debug@npm:4.x, debug@npm:^4, debug@npm:^4.1.0, debug@npm:^4.1.1, debug@npm:^4.3.1, debug@npm:^4.3.2, debug@npm:^4.3.4, debug@npm:^4.4.1":
   version: 4.4.1
   resolution: "debug@npm:4.4.1"
   dependencies:
@@ -6753,7 +6753,7 @@ __metadata:
     "@types/node": "npm:22.18.11"
     "@types/object-mapper": "npm:6.2.2"
     axios: "npm:1.12.2"
-    debug: "npm:4.4.1"
+    debug: "npm:4.4.3"
     episode-parser: "npm:2.0.2"
     eslint: "npm:9.37.0"
     helmet: "npm:^8.0.0"
