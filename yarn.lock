@@ -1490,12 +1490,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/koa-router@npm:7.4.8":
-  version: 7.4.8
-  resolution: "@types/koa-router@npm:7.4.8"
+"@types/koa-router@npm:7.4.9":
+  version: 7.4.9
+  resolution: "@types/koa-router@npm:7.4.9"
   dependencies:
     "@types/koa": "npm:*"
-  checksum: 10/d9bd6c8c8869a5757dd0b8208fdd06402359a5b8f6a40706e89f81b2c0b796ae3561761913b9743dccff5508e04bca88ce14e05c6fdf8b45b1cccec2ed996fe8
+  checksum: 10/f1dffa2d6fe8016dbb637f42a4c813afc05157dd8c6f5666f10eb648909e3398de9a871b5d756daa22d521a2f5ca26622c56dcf5bc06afda347103ce3815e4c8
   languageName: node
   linkType: hard
 
@@ -6747,7 +6747,7 @@ __metadata:
     "@types/koa": "npm:2.15.0"
     "@types/koa-bodyparser": "npm:4.3.13"
     "@types/koa-helmet": "npm:6.1.0"
-    "@types/koa-router": "npm:7.4.8"
+    "@types/koa-router": "npm:7.4.9"
     "@types/lodash": "npm:4.17.20"
     "@types/node": "npm:22.18.12"
     "@types/object-mapper": "npm:6.2.2"
