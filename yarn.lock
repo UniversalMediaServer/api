@@ -2688,7 +2688,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:4.4.3":
+"debug@npm:4.4.3, debug@npm:^4.4.3":
   version: 4.4.3
   resolution: "debug@npm:4.4.3"
   dependencies:
@@ -3348,7 +3348,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.14.0":
+"follow-redirects@npm:^1.14.0, follow-redirects@npm:^1.15.11":
   version: 1.15.11
   resolution: "follow-redirects@npm:1.15.11"
   peerDependenciesMeta:
@@ -3358,7 +3358,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.15.6, follow-redirects@npm:^1.15.9":
+"follow-redirects@npm:^1.15.6":
   version: 1.15.9
   resolution: "follow-redirects@npm:1.15.9"
   peerDependenciesMeta:
@@ -5017,33 +5017,33 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongodb-memory-server-core@npm:10.2.3":
-  version: 10.2.3
-  resolution: "mongodb-memory-server-core@npm:10.2.3"
+"mongodb-memory-server-core@npm:10.3.0":
+  version: 10.3.0
+  resolution: "mongodb-memory-server-core@npm:10.3.0"
   dependencies:
     async-mutex: "npm:^0.5.0"
     camelcase: "npm:^6.3.0"
-    debug: "npm:^4.4.1"
+    debug: "npm:^4.4.3"
     find-cache-dir: "npm:^3.3.2"
-    follow-redirects: "npm:^1.15.9"
+    follow-redirects: "npm:^1.15.11"
     https-proxy-agent: "npm:^7.0.6"
     mongodb: "npm:^6.9.0"
     new-find-package-json: "npm:^2.0.0"
-    semver: "npm:^7.7.2"
+    semver: "npm:^7.7.3"
     tar-stream: "npm:^3.1.7"
     tslib: "npm:^2.8.1"
     yauzl: "npm:^3.2.0"
-  checksum: 10/eaf497167ed17fdbc464df5c26d8a9fa42e7acd3ca40c0646b6e0f27d92e31a37248191caadbefdc88c2b91ff7906465f11fd4c120e9e2c56805130723c00c24
+  checksum: 10/629ddd09b9c97b21708aa1815865312956f7d43755aa082b90ac93da2604de2c292b8e247ce0dff87f1bebd59f5114bcb3ad09a1c5b61030b9a0a29d5f08f4ed
   languageName: node
   linkType: hard
 
-"mongodb-memory-server@npm:10.2.3":
-  version: 10.2.3
-  resolution: "mongodb-memory-server@npm:10.2.3"
+"mongodb-memory-server@npm:10.3.0":
+  version: 10.3.0
+  resolution: "mongodb-memory-server@npm:10.3.0"
   dependencies:
-    mongodb-memory-server-core: "npm:10.2.3"
+    mongodb-memory-server-core: "npm:10.3.0"
     tslib: "npm:^2.8.1"
-  checksum: 10/72167e4ca7b9c188aeededa2f4920f7a92d9a18ff6dcc4f5549cefe6ec2eebccf045a72fc0ce3b0e529d055f2f6dc38cf59dca792c3d3a3c62c2ea1d81faf936
+  checksum: 10/5750aa792519aa2e0fd5372d3fd20db61c06d13287b4634901ef9b8223093a6f7b7c27a038ca1c1c5f538e9c2a09172fa695c8f34333d4ffa7753401462b407c
   languageName: node
   linkType: hard
 
@@ -6763,7 +6763,7 @@ __metadata:
     koa-qs: "npm:3.0.0"
     koa-router: "npm:14.0.0"
     lodash: "npm:4.17.21"
-    mongodb-memory-server: "npm:10.2.3"
+    mongodb-memory-server: "npm:10.3.0"
     mongoose: "npm:^8.4.0"
     moviedb-promise: "npm:4.0.7"
     nodemon: "npm:3.1.10"
