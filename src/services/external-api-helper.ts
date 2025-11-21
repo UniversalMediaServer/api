@@ -451,7 +451,7 @@ export const getLocalizedMetadata = async(language?: string, mediaType?: string,
     throw new ValidationError('Language, media type and either IMDb ID or TMDB Id are required');
   }
   if (!language.match(/^[a-z]{2}(-[a-z]{2})?$/i)) {
-    throw new ValidationError('Language must have a minimum length of 2 and follow the case-insensitive pattern: ([a-z]{2})-([a-z]{2})');
+    throw new ValidationError('Language must have a minimum length of 2 and follow the case-insensitive pattern: ([a-z]{2})-([a-z]{2}), received ' + language);
   }
   if (mediaType === 'tv_season' && tmdbID && !seasonNumber) {
     throw new ValidationError('Season number is required for season media');
