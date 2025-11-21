@@ -54,6 +54,7 @@ app.use(async(ctx, next) => {
     if (
       process.env.NODE_ENV !== 'test' &&
       (
+        !(err instanceof DeprecationError) &&
         !(err instanceof MediaNotFoundError) &&
         !(err instanceof IMDbIDNotFoundError) &&
         !(err instanceof ExternalAPIError) &&
