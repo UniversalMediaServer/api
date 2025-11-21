@@ -219,7 +219,7 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
   const { osdbHash, filebytesize }: DeprecatedUmsQueryParams = ctx.query;
   const { episode, season, year }: UmsQueryParams = ctx.query;
 
-  // this error will not be logged, the user just need to update to a new version of UMS
+  // this error will not be logged, the user just needs to update to a new version of UMS
   if (osdbHash && filebytesize) {
     throw new DeprecationError();
   }

@@ -249,12 +249,6 @@ paths:
             type: string
             example: 2003
         - in: query
-          name: osdbHash
-          description: osdbHash of the media file
-          schema:
-            type: string
-            example: 0f0f4c9f3416e24f
-        - in: query
           name: imdbID
           description: imdbID of the media file
           schema:
@@ -272,12 +266,6 @@ paths:
           schema:
             type: string
             example: 1
-        - in: query
-          name: filebytesize
-          description: filebytesize of the media file
-          schema:
-            type: string
-            example: 2431697820
       responses:
         '200':
           description: Media metadata
