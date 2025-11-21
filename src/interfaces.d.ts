@@ -2,6 +2,11 @@ interface CustomError extends Error {
   status?: number;
 }
 
+interface DeprecatedUmsQueryParams {
+  filebytesize?: string;
+  osdbHash?: string;
+}
+
 interface UmsQueryParams {
   title?: string;
   year?: string;

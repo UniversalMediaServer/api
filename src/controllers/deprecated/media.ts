@@ -9,15 +9,6 @@ import * as deprecatedExternalAPIHelper from '../../services/deprecated/external
 import { addSearchMatchByIMDbID } from '../media';
 
 /**
- * We aren't connected to OpenSubtitles API anymore so this can never succeed
- *
- * @deprecated
- */
-export const getByOsdbHash = async(): Promise<MediaMetadataInterface> => {
-  throw new MediaNotFoundError();
-};
-
-/**
  * Since this is deprecated, it will only return a result that has been created
  * by the newer route. This will never add new information to the database.
  *

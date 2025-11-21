@@ -1,11 +1,13 @@
 import * as Router from 'koa-router';
 import * as DeprecatedMediaController from '../../controllers/deprecated/media';
 import { subversions } from '../../helpers/subversioning';
+import { DeprecationError } from '../../helpers/customErrors';
 
 const router = new Router({ prefix: '/api/media' });
 
+// We aren't connected to OpenSubtitles API anymore so this can never succeed
 router.get('/osdbhash/:osdbhash/:filebytesize', async() => {
-  await DeprecatedMediaController.getByOsdbHash();
+  throw new DeprecationError();
 });
 
 router.get('/title', async(ctx) => {

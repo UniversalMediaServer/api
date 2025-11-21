@@ -13,7 +13,7 @@ const debug = Debug('universalmediaserver-api:server');
 import indexRouter from './routes/index';
 import mediaRouter  from './routes/media';
 import deprecatedMediaRouter  from './routes/deprecated/media';
-import { ExternalAPIError, IMDbIDNotFoundError, MediaNotFoundError, RateLimitError, ValidationError } from './helpers/customErrors';
+import { DeprecationError, ExternalAPIError, IMDbIDNotFoundError, MediaNotFoundError, RateLimitError, ValidationError } from './helpers/customErrors';
 
 const app = new Koa();
 
@@ -34,7 +34,7 @@ app.use(async(ctx, next) => {
   try {
     await next();
   } catch (err) {
-    if (err instanceof MediaNotFoundError || err instanceof IMDbIDNotFoundError) {
+    if (err instanceof MediaNotFoundError || err instanceof IMDbIDNotFoundError || err instanceof DeprecationError) {
       ctx.status = 404;
     }
     if (err instanceof ValidationError) {

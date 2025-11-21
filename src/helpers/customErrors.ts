@@ -1,3 +1,12 @@
+export class DeprecationError extends Error {
+  constructor() {
+    super();
+    Error.captureStackTrace(this, DeprecationError);
+    this.message = 'Metadata not found because request was made by an unsupported version of UMS.';
+    this.name = 'DeprecationError';
+  }
+}
+
 export class ValidationError extends Error {
   constructor(message: string) {
     super(message);

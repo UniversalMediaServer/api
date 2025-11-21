@@ -1,7 +1,7 @@
 import { ParameterizedContext } from 'koa';
 import * as _ from 'lodash';
 
-import { MediaNotFoundError, RateLimitError, ValidationError } from '../helpers/customErrors';
+import { DeprecationError, MediaNotFoundError, RateLimitError, ValidationError } from '../helpers/customErrors';
 import { CollectionMetadataInterface } from '../models/CollectionMetadata';
 import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
 import LocalizeMetadata, { LocalizeMetadataInterface } from '../models/LocalizeMetadata';
@@ -215,8 +215,14 @@ export const getCollection = async(ctx: ParameterizedContext): Promise<Partial<C
 };
 
 export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadataInterface> => {
-  const { title, imdbID }: UmsQueryParams = ctx.query;
+  const { imdbID, title }: UmsQueryParams = ctx.query;
+  const { osdbHash, filebytesize }: DeprecatedUmsQueryParams = ctx.query;
   const { episode, season, year }: UmsQueryParams = ctx.query;
+
+  // this error will not be logged, the user just need to update to a new version of UMS
+  if (osdbHash && filebytesize) {
+    throw new DeprecationError();
+  }
 
   if (!title && !imdbID) {
     throw new ValidationError(`title or imdbId is a required parameter, received ${ctx.url}`);
