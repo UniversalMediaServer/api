@@ -229,7 +229,7 @@ export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadat
   }
 
   if (season && !episode) {
-    throw new ValidationError('season must also have an episode number');
+    throw new ValidationError(`season must also have an episode number, received ${ctx.url}`);
   }
 
   let { language }: UmsQueryParams = ctx.query;
