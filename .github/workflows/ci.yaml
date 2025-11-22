@@ -10,7 +10,7 @@ jobs:
       TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
 
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - name: Install Node.js
       uses: actions/setup-node@v6
       with:
