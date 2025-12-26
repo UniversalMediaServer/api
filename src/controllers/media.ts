@@ -29,7 +29,7 @@ export const addSearchMatchByIMDbID = async(imdbID: string, title: string): Prom
  * Gets localized information from TMDB since it's the only API
  * we use that has that functionality.
  */
-export const getLocalize = async(ctx: ParameterizedContext): Promise<Partial<LocalizeMetadataInterface>> => {
+export const getLocalize = async(ctx): Promise<Partial<LocalizeMetadataInterface>> => {
   const { language, mediaType, imdbID, tmdbID }: UmsQueryParams = ctx.query;
   const { episode, season }: UmsQueryParams = ctx.query;
   let seasonNumber: number|undefined;
@@ -103,7 +103,7 @@ export const getLocalize = async(ctx: ParameterizedContext): Promise<Partial<Loc
   }
 };
 
-export const getSeriesV2 = async(ctx: ParameterizedContext): Promise<Partial<SeriesMetadataInterface> | MediaMetadataInterface> => {
+export const getSeriesV2 = async(ctx): Promise<Partial<SeriesMetadataInterface> | MediaMetadataInterface> => {
   const { imdbID, title, year }: UmsQueryParams = ctx.query;
   let { language }: UmsQueryParams = ctx.query;
   if (!title && !imdbID) {
@@ -139,7 +139,7 @@ export const getSeriesV2 = async(ctx: ParameterizedContext): Promise<Partial<Ser
  * Gets season information from TMDB since it's the only API
  * we use that has that functionality.
  */
-export const getSeason = async(ctx: ParameterizedContext): Promise<Partial<SeasonMetadataInterface>> => {
+export const getSeason = async(ctx): Promise<Partial<SeasonMetadataInterface>> => {
   const { season, title, year }: UmsQueryParams = ctx.query;
   let { tmdbID, language }: UmsQueryParams = ctx.query;
   if (!tmdbID && !title) {
@@ -185,10 +185,9 @@ export const getSeason = async(ctx: ParameterizedContext): Promise<Partial<Seaso
 };
 
 /*
- * Gets collection information from TMDB since it's the only API
- * we use that has that functionality.
+ * Gets collection information from TMDB
  */
-export const getCollection = async(ctx: ParameterizedContext): Promise<Partial<CollectionMetadataInterface>> => {
+export const getCollection = async(ctx): Promise<Partial<CollectionMetadataInterface>> => {
   const { tmdbID }: UmsQueryParams = ctx.query;
   if (!tmdbID) {
     throw new ValidationError('tmdbID is required');
@@ -214,7 +213,7 @@ export const getCollection = async(ctx: ParameterizedContext): Promise<Partial<C
   }
 };
 
-export const getVideoV2 = async(ctx: ParameterizedContext): Promise<MediaMetadataInterface> => {
+export const getVideoV2 = async(ctx): Promise<MediaMetadataInterface> => {
   const { imdbID, title }: UmsQueryParams = ctx.query;
   const { osdbHash, filebytesize }: DeprecatedUmsQueryParams = ctx.query;
   const { episode, season, year }: UmsQueryParams = ctx.query;
