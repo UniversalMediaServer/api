@@ -1,4 +1,3 @@
-import { ParameterizedContext } from 'koa';
 import * as _ from 'lodash';
 
 import { DeprecationError, MediaNotFoundError, RateLimitError, ValidationError } from '../helpers/customErrors';
