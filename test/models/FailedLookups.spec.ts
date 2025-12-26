@@ -34,7 +34,7 @@ describe('Failed Lookups Model', () => {
       await FailedLookups.init();
       await FailedLookups.create({ title: 'Jackass 2' });
       const response = await FailedLookups.findOne({ title: 'Jackass 2' }, {}, { explain: true }).exec();
-      expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'stage'])).toEqual('IXSCAN');
+      expect(_.get(response, ['queryPlanner', 'winningPlan', 'stage'])).toEqual('EXPRESS_IXSCAN');
     });
   });
 });
