@@ -1,7 +1,7 @@
 import { jaroWinkler } from '@skyra/jaro-winkler';
 import * as episodeParser from 'episode-parser';
 import * as _ from 'lodash';
-import { FlattenMaps, Types } from 'mongoose';
+import { FlattenMaps } from 'mongoose';
 import { Episode, EpisodeRequest, ExternalId, SearchMovieRequest, SearchTvRequest, SimpleEpisode, TvExternalIdsResponse, TvResult } from 'moviedb-promise/dist/request-types';
 
 import { tmdb } from './tmdb-api';
@@ -82,7 +82,7 @@ export const getSeriesMetadata = async(
   language?: string,
   year?: string,
   titleToCache?: string,
-): Promise<FlattenMaps<SeriesMetadataInterface> & { _id: Types.ObjectId; } | null> => {
+): Promise<FlattenMaps<SeriesMetadataInterface> | null> => {
   if (!imdbID && !title) {
     throw new Error('Either IMDb ID or title required');
   }
@@ -169,7 +169,7 @@ export const getSeriesMetadata = async(
       // Also cache the result for the title that the client sent, if this is an automatic re-attempt with an appended year (see below)
       if (titleToCache) {
         return await SeriesMetadata.findOneAndUpdate(
-          { _id: seriesMetadata._id },
+          { _id: seriesMetadata.id },
           { $addToSet: { searchMatches: titleToCache } },
           { new: true, lean: true },
         ).exec();

@@ -14,6 +14,7 @@ export interface SeriesMetadataInterface {
   externalIDs?: TvExternalIdsResponse;
   genres: Array<string>;
   homepage?: string;
+  id: string;
   images?: TvImagesResponse;
   imdbID?: string;
   inProduction?: boolean;

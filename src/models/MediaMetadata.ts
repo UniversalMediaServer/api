@@ -117,11 +117,10 @@ MediaMetadataSchema.index({ episode: 1, season: 1, searchMatches: 1 });
 MediaMetadataSchema.index({ episode: 1, season: 1, searchMatches: 1, year: 1 });
 MediaMetadataSchema.index({ searchMatches: 1, year: 1 });
 
-MediaMetadataSchema.pre<MediaMetadataInterface>('save', function(next) {
+MediaMetadataSchema.pre<MediaMetadataInterface>('save', function() {
   if (this.title && this.title.startsWith('Episode #')) {
     this.title = undefined;
   }
-  next();
 });
 
 MediaMetadataSchema.virtual('imdburl').get(function() {
