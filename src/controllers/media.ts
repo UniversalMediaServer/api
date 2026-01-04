@@ -39,8 +39,8 @@ export const getLocalize = async(ctx): Promise<Partial<LocalizeMetadataInterface
   if (!language || !mediaType || !(imdbID || tmdbID)) {
     throw new ValidationError('Language, media type and either IMDb ID or TMDB ID are required');
   }
-  if (!language.match(/^[a-z]{2}(-[a-z]{2-4})?$/i)) {
-    throw new ValidationError(`Language must have a minimum length of 2 and follow the case-insensitive pattern: ([a-z]{2})-([a-z]{2-4}), received ${ctx.url}`);
+  if (!language.match(/^[a-z]{2}(-[a-z]{2,4})?$/i)) {
+    throw new ValidationError(`Language must have a minimum length of 2 and follow the case-insensitive pattern: ([a-z]{2})-([a-z]{2,4}), received ${ctx.url}`);
   }
 
   if (mediaType !== 'collection' && mediaType !== 'movie' && mediaType !== 'tv' && mediaType !== 'tv_season' && mediaType !== 'tv_episode') {
