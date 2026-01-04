@@ -1,4 +1,4 @@
-import * as Router from 'koa-router';
+import Router from 'koa-router';
 
 import * as MediaController from '../controllers/media';
 import { subversions } from '../helpers/subversioning';

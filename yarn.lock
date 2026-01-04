@@ -1321,24 +1321,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/koa-helmet@npm:6.1.0":
-  version: 6.1.0
-  resolution: "@types/koa-helmet@npm:6.1.0"
-  dependencies:
-    koa-helmet: "npm:*"
-  checksum: 10/025a1a662d83777dd528e17e7116792a973b09a7ed917f22914cde0a96cd5be90f25fda1edbf26e29f4b5752c19b073e84f0eed592ba245b199b144fa287d6c5
-  languageName: node
-  linkType: hard
-
-"@types/koa-router@npm:7.4.9":
-  version: 7.4.9
-  resolution: "@types/koa-router@npm:7.4.9"
-  dependencies:
-    "@types/koa": "npm:*"
-  checksum: 10/f1dffa2d6fe8016dbb637f42a4c813afc05157dd8c6f5666f10eb648909e3398de9a871b5d756daa22d521a2f5ca26622c56dcf5bc06afda347103ce3815e4c8
-  languageName: node
-  linkType: hard
-
 "@types/koa@npm:*":
   version: 3.0.1
   resolution: "@types/koa@npm:3.0.1"
@@ -4398,23 +4380,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"koa-helmet@npm:*":
+"koa-helmet@npm:^9.0.0":
   version: 9.0.0
   resolution: "koa-helmet@npm:9.0.0"
   peerDependencies:
     helmet: ^6 || ^7 || ^8
     koa: ^2 || ^3
   checksum: 10/c92cef14ff4f24db1e114b8a1f848a5042a9d66b41673507fc89dcbb32da77d4e759ec50d1f8986464dd6a2081ec882a2ad2892231b7e275217dbcb8f13bdeb9
-  languageName: node
-  linkType: hard
-
-"koa-helmet@npm:8.0.3":
-  version: 8.0.3
-  resolution: "koa-helmet@npm:8.0.3"
-  peerDependencies:
-    helmet: ">= 6"
-    koa: ">= 2"
-  checksum: 10/31934b81e9564cf8506c29a142b7ad8927003e4d7b37b5cb13883a67ec653ca71bc59ae4ee2e4f9974356190bc98130aa5d994caf0268317ee488993668720af
   languageName: node
   linkType: hard
 
@@ -6508,8 +6480,6 @@ __metadata:
     "@skyra/jaro-winkler": "npm:^1.1.1"
     "@types/jest": "npm:^30.0.0"
     "@types/koa-bodyparser": "npm:4.3.13"
-    "@types/koa-helmet": "npm:6.1.0"
-    "@types/koa-router": "npm:7.4.9"
     "@types/lodash": "npm:4.17.21"
     "@types/node": "npm:22.19.3"
     "@types/object-mapper": "npm:6.2.2"
@@ -6521,7 +6491,7 @@ __metadata:
     jest: "npm:30.2.0"
     koa: "npm:^3.1.1"
     koa-bodyparser: "npm:4.4.1"
-    koa-helmet: "npm:8.0.3"
+    koa-helmet: "npm:^9.0.0"
     koa-qs: "npm:3.0.0"
     koa-router: "npm:14.0.0"
     lodash: "npm:4.17.21"

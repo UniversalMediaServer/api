@@ -1,4 +1,4 @@
-import * as Router from 'koa-router';
+import Router from 'koa-router';
 import * as v8 from 'v8';
 
 import { getConfiguration } from '../controllers/configuration';

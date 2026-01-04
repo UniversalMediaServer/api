@@ -1,5 +1,5 @@
 import { jaroWinkler } from '@skyra/jaro-winkler';
-import * as episodeParser from 'episode-parser';
+import episodeParser from 'episode-parser';
 import * as _ from 'lodash';
 import { FlattenMaps } from 'mongoose';
 import { Episode, EpisodeRequest, ExternalId, SearchMovieRequest, SearchTvRequest, SimpleEpisode, TvExternalIdsResponse, TvResult } from 'moviedb-promise/dist/request-types';

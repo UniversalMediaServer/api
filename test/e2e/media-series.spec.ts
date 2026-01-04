@@ -1,7 +1,7 @@
 import axios from 'axios';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import * as stoppable from 'stoppable';
+import stoppable from 'stoppable';
 
 import app, { PORT } from '../../src/app';
 import FailedLookups from '../../src/models/FailedLookups';
