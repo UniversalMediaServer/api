@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "engines": {
-    "node": "22",
+    "node": "24",
     "yarn": ">=1.22.10"
   },
   "scripts": {
@@ -39,7 +39,7 @@
     "@types/jest": "^30.0.0",
     "@types/koa-bodyparser": "4.3.13",
     "@types/lodash": "4.17.21",
-    "@types/node": "22.19.3",
+    "@types/node": "24.10.4",
     "@types/object-mapper": "6.2.2",
     "axios": "1.13.2",
     "eslint": "9.39.2",
