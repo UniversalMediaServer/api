@@ -8,15 +8,16 @@ interface DeprecatedUmsQueryParams {
 }
 
 interface UmsQueryParams {
-  title?: string;
-  year?: string;
+  episode?: string;
+  filename?: string;
   imdbid?: string;
   imdbID?: string;
-  episode?: string;
-  season?: string;
   language?: string;
   mediaType?: string;
+  season?: string;
+  title?: string;
   tmdbID?: number;
+  year?: string;
 }
 
 interface GetVideoFilter {
