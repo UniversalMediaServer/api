@@ -4909,14 +4909,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"moviedb-promise@npm:4.0.7":
-  version: 4.0.7
-  resolution: "moviedb-promise@npm:4.0.7"
+"moviedb-promise@npm:4.0.8":
+  version: 4.0.8
+  resolution: "moviedb-promise@npm:4.0.8"
   dependencies:
     axios: "npm:^1.4.0"
     lodash: "npm:^4.17.21"
     promise-throttle: "npm:^1.1.2"
-  checksum: 10/9458acf076fcafc5700dc2e04c447519e61f1aa10d60bf2ee18c2d050346ce7b2241951d9ee3185dd3b3d337f826abc7252aa3a68be234d58298fc5d32b3bf64
+  checksum: 10/d813ea3064db8419bb89cce2c03b5f609eae29ba1d696ea978386c8925af87595a6c9730c72e12c47e084bba7eb8b20b51d634466c9be31c81bda5ad6153ebf7
   languageName: node
   linkType: hard
 
@@ -6501,7 +6501,7 @@ __metadata:
     lodash: "npm:4.17.23"
     mongodb-memory-server: "npm:^11.0.1"
     mongoose: "npm:^9.0.2"
-    moviedb-promise: "npm:4.0.7"
+    moviedb-promise: "npm:4.0.8"
     nodemon: "npm:3.1.11"
     object-mapper: "npm:6.2.0"
     pm2: "npm:^6.0.13"
