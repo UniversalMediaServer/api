@@ -294,12 +294,6 @@ export const getVideoV2 = async(ctx): Promise<MediaMetadataInterface> => {
 
   const failedLookupQuery = { episode, imdbID, season, title, year };
 
-  if (!title && !imdbIdToSearch) {
-    // The APIs below require either a title or IMDb ID, so return if we don't have one
-    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
-    throw new MediaNotFoundError();
-  }
-
   // Start TMDB lookups
   let tmdbData: MediaMetadataInterface;
   try {
