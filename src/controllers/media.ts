@@ -286,21 +286,29 @@ export const getVideoV2 = async(ctx): Promise<MediaMetadataInterface> => {
   const existingFailedResult = await FailedLookups.findOne({ $or: failedQuery }, null, { lean: true }).exec();
   if (existingFailedResult) {
     // we have an existing failure record, so increment it, and throw not found error
+    if (process.env.VERBOSE === 'true') {
+      console.trace('found existingFailedResult', existingFailedResult, failedQuery);
+    }
     await FailedLookups.updateOne({ _id: existingFailedResult._id }, { $inc: { count: 1 } }).exec();
     throw new MediaNotFoundError();
   }
 
-  // the database does not have a record of this file, so begin search for metadata on external apis.
+  // the database does not have a record of this file, so begin search for metadata on TMDB.
 
   const failedLookupQuery = { episode, imdbID, season, title, year };
 
-  // Start TMDB lookups
   let tmdbData: MediaMetadataInterface;
   try {
     tmdbData = await externalAPIHelper.getFromTMDBAPI(title, language, imdbIdToSearch, yearNumber, seasonNumber, episodeNumbers);
     imdbIdToSearch = imdbIdToSearch || tmdbData?.imdbID;
+    if (process.env.VERBOSE === 'true') {
+      console.trace('found tmdbData and imdbIdToSearch', tmdbData, imdbIdToSearch);
+    }
   } catch (err) {
     if (err instanceof RateLimitError) {
+      if (process.env.VERBOSE === 'true') {
+        console.trace(err);
+      }
       throw err;
     }
 
@@ -316,12 +324,17 @@ export const getVideoV2 = async(ctx): Promise<MediaMetadataInterface> => {
   if (!imdbID && imdbIdToSearch) {
     const existingResult = await MediaMetadata.findOne({ imdbID: imdbIdToSearch }, null, { lean: true }).exec();
     if (existingResult) {
+      if (process.env.VERBOSE === 'true') {
+        console.trace('found existingResult from IMDb ID from TMDB', existingResult, imdbIdToSearch);
+      }
       return ctx.body = await addSearchMatchByIMDbID(imdbIdToSearch, searchMatch);
     }
   }
-  // End TMDB lookups
 
   if (!tmdbData || _.isEmpty(tmdbData)) {
+    if (process.env.VERBOSE === 'true') {
+      console.trace('No data was found on TMDB for this query', title, language, imdbIdToSearch, yearNumber, seasonNumber, episodeNumbers);
+    }
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
@@ -342,7 +355,7 @@ export const getVideoV2 = async(ctx): Promise<MediaMetadataInterface> => {
     const leanMeta = dbMeta.toObject({ useProjection: true }) as MediaMetadataInterface;
     return ctx.body = leanMeta;
   } catch (e) {
-    console.error(e,tmdbData);
+    console.error(e, tmdbData);
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
