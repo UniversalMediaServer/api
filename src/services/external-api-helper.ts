@@ -351,22 +351,44 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, language?: stri
     const episodeIMDbID = movieOrEpisodeIMDbID;
     let seriesTMDBID: string | number;
     if (episodeIMDbID) {
+      if (process.env.VERBOSE === 'true') {
+        console.trace('Looking for an episode with the IMDb ID', episodeIMDbID);
+      }
       const findResult = await tmdb.find({ id: episodeIMDbID, external_source: ExternalId.ImdbId });
-      // Using any here to make up for missing interface, should submit fix
       if (findResult?.tv_episode_results && findResult?.tv_episode_results[0]) {
         const tvEpisodeResult = findResult.tv_episode_results[0] as SimpleEpisode;
         seriesTMDBID = tvEpisodeResult?.show_id;
+        if (process.env.VERBOSE === 'true') {
+          console.trace('Found tvEpisodeResult and seriesTMDBID', tvEpisodeResult, seriesTMDBID);
+        }
+      } else {
+        if (process.env.VERBOSE === 'true') {
+          console.trace('Did not find an episode with the IMDb ID', episodeIMDbID);
+        }
       }
     } else {
+      if (process.env.VERBOSE === 'true') {
+        console.trace('Looking for seriesTMDBID with', movieOrSeriesTitle, language, yearString);
+      }
       const seriesMetadata = await getSeriesMetadata(null, movieOrSeriesTitle, language, yearString);
       seriesTMDBID = seriesMetadata?.tmdbID;
     }
 
     if (!seriesTMDBID) {
+      if (process.env.VERBOSE === 'true') {
+        console.trace('Did not find seriesTMDBID with', movieOrSeriesTitle, language, yearString);
+      }
       return null;
+    } else {
+      if (process.env.VERBOSE === 'true') {
+        console.trace('Found seriesTMDBID ' + seriesTMDBID + 'with', movieOrSeriesTitle, language, yearString);
+      }
     }
 
     for (let i = 0; i < episodeNumbers.length; i++) {
+      if (process.env.VERBOSE === 'true') {
+        console.trace('Looking for episode number ' + episodeNumbers[i] + 'with', seriesTMDBID, seasonNumber);
+      }
       const episodeRequest: EpisodeRequest = {
         append_to_response: 'images,external_ids,credits',
         episode_number: episodeNumbers[i],
@@ -388,8 +410,15 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, language?: stri
           if (tmdbSeriesData?.imdb_id) {
             metadata.seriesIMDbID = tmdbSeriesData.imdb_id;
           }
+          if (process.env.VERBOSE === 'true') {
+            console.trace('Found metadata', metadata);
+          }
         } else {
           metadata.title = metadata.title ? metadata.title + ' & ' + tmdbData.name : tmdbData.name;
+        }
+      } else {
+        if (process.env.VERBOSE === 'true') {
+          console.trace('Did not find tmdbData from', episodeRequest);
         }
       }
     }
