@@ -94,7 +94,26 @@ export const getSeriesMetadata = async(
     parsedTitle = parsed?.show ? parsed.show : title;
     searchMatch = language ? language + '@' + parsedTitle : parsedTitle;
   }
-  let failedLookupQuery: FailedLookupsInterface;
+
+  // there will be a way to make this automatic but I cbf rn
+  let failedLookupQuery: {
+    episode?: string;
+    failedValidation?: boolean;
+    imdbID?: string;
+    language?: string | { $exists: boolean };
+    season?: string;
+    startYear?: string;
+    title?: string;
+    tmdbID?: number;
+    type?: string;
+    year?: string;
+    count?: number;
+
+    // Added automatically:
+    createdAt?: string;
+    updatedAt?: string;
+  };
+
   let tmdbData: Partial<SeriesMetadataInterface> = {};
   let yearNumber = null;
   if (year) {
@@ -142,7 +161,10 @@ export const getSeriesMetadata = async(
     failedLookupQuery = { title: parsedTitle, type: 'series' };
     if (language) {
       failedLookupQuery.language = language;
+    } else {
+      failedLookupQuery.language = { $exists: false };
     }
+
     if (year) {
       failedLookupQuery.startYear = year;
       titleQuery.startYear = year;
