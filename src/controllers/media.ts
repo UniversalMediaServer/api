@@ -279,6 +279,9 @@ export const getVideoV2 = async(ctx): Promise<MediaMetadataInterface> => {
 
   const existingResult = await MediaMetadata.findOne({ $or: query }, null, { lean: true }).exec();
   if (existingResult) {
+    if (process.env.VERBOSE === 'true') {
+      console.trace('found existingResult', query, existingResult);
+    }
     // we have an existing metadata record, so return it
     return ctx.body = existingResult;
   }
@@ -302,7 +305,7 @@ export const getVideoV2 = async(ctx): Promise<MediaMetadataInterface> => {
     tmdbData = await externalAPIHelper.getFromTMDBAPI(title, language, imdbIdToSearch, yearNumber, seasonNumber, episodeNumbers);
     imdbIdToSearch = imdbIdToSearch || tmdbData?.imdbID;
     if (process.env.VERBOSE === 'true') {
-      console.trace('found tmdbData and imdbIdToSearch', tmdbData, imdbIdToSearch);
+      console.trace('found tmdbData and imdbIdToSearch', query, tmdbData, imdbIdToSearch);
     }
   } catch (err) {
     if (err instanceof RateLimitError) {
@@ -316,7 +319,7 @@ export const getVideoV2 = async(ctx): Promise<MediaMetadataInterface> => {
     if (err.message && err.message.includes('404') && err.response?.config?.url) {
       console.log('Received 404 response from ' + err.response.config.url);
     } else {
-      console.error(err);
+      console.error('Error thrown when getting tmdbData', err);
     }
   }
 
