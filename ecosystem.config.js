@@ -9,6 +9,7 @@ module.exports = {
       script: 'node_modules/.bin/ts-node',
       args: '--transpileOnly --files ./src/app.ts',
       env: { NODE_ENV: 'production' },
+      env_verbose: { NODE_ENV: 'production', VERBOSE: 'true' },
       instances: 0,
       exec_mode: 'cluster',
       watch: true,
