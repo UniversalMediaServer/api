@@ -8,7 +8,7 @@ module.exports = {
       name: 'API',
       script: 'node_modules/.bin/ts-node',
       args: '--transpileOnly --files ./src/app.ts',
-      env: { NODE_ENV: 'production' },
+      env: { NODE_ENV: 'production', VERBOSE: 'false' },
       env_verbose: { NODE_ENV: 'production', VERBOSE: 'true' },
       instances: 0,
       exec_mode: 'cluster',

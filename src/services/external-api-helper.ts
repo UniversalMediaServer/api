@@ -139,7 +139,7 @@ export const getSeriesMetadata = async(
   } else {
     const sortBy = {};
     const titleQuery: GetSeriesFilter = { searchMatches: { $in: [searchMatch] } };
-    failedLookupQuery = { title: title, type: 'series' };
+    failedLookupQuery = { title: parsedTitle, type: 'series' };
     if (language) {
       failedLookupQuery.language = language;
     }
@@ -163,8 +163,10 @@ export const getSeriesMetadata = async(
     }
 
     // Return any previous match
-    const seriesMetadata = await SeriesMetadata.findOne(titleQuery, null, { lean: true }).sort(sortBy)
-      .exec();
+    if (process.env.VERBOSE === 'true') {
+      console.trace('Looking for TV series in db', parsedTitle);
+    }
+    const seriesMetadata = await SeriesMetadata.findOne(titleQuery, null, { lean: true }).sort(sortBy).exec();
     if (seriesMetadata) {
       // Also cache the result for the title that the client sent, if this is an automatic re-attempt with an appended year (see below)
       if (titleToCache) {
@@ -174,21 +176,37 @@ export const getSeriesMetadata = async(
           { new: true, lean: true },
         ).exec();
       }
+      if (process.env.VERBOSE === 'true') {
+        console.trace('Found TV series', seriesMetadata);
+      }
 
       return seriesMetadata;
     }
 
     // Start TMDB lookups
+    if (process.env.VERBOSE === 'true') {
+      console.trace('Looking for TV seriesTMDBID on TMDB', parsedTitle);
+    }
     const seriesTMDBID = await getSeriesTMDBIDFromTMDBAPI(null, parsedTitle, language, yearNumber);
     if (seriesTMDBID) {
+      if (process.env.VERBOSE === 'true') {
+        console.trace('Found TV seriesTMDBID for parsedTitle', seriesTMDBID);
+      }
       // See if we have an existing record for the now-known media.
       const existingResult = await SeriesMetadata.findOne({ tmdbID: seriesTMDBID }, null, { lean: true }).exec();
       if (existingResult) {
+        if (process.env.VERBOSE === 'true') {
+          console.trace('Found existingResult for parsedTitle', existingResult);
+        }
         return await SeriesMetadata.findOneAndUpdate(
           { tmdbID: seriesTMDBID },
           { $addToSet: { searchMatches: searchMatch } },
           { new: true, lean: true },
         ).exec();
+      } else {
+        if (process.env.VERBOSE === 'true') {
+          console.trace('No existingResult for parsedTitle', existingResult);
+        }
       }
 
       // We do not have an existing record for that series, get the full result from the TMDB API
@@ -197,7 +215,13 @@ export const getSeriesMetadata = async(
         id: seriesTMDBID,
       };
 
+      if (process.env.VERBOSE === 'true') {
+        console.trace('Looking for series on TMDB', parsedTitle);
+      }
       const tmdbResponse = await tmdb.tvInfo(seriesRequest);
+      if (process.env.VERBOSE === 'true') {
+        console.trace('Found series on TMDB', tmdbResponse);
+      }
       tmdbData = mapper.parseTMDBAPISeriesResponse(tmdbResponse);
     }
     // End TMDB lookups
