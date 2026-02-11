@@ -9,6 +9,6 @@ export const subversions = {
   'configuration': '1',
   'localize': '6',
   'season': '1',
-  'series': '8',
-  'video': '10',
+  'series': '9',
+  'video': '11',
 };
