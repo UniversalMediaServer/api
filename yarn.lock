@@ -1945,18 +1945,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:1.13.4":
-  version: 1.13.4
-  resolution: "axios@npm:1.13.4"
-  dependencies:
-    follow-redirects: "npm:^1.15.6"
-    form-data: "npm:^4.0.4"
-    proxy-from-env: "npm:^1.1.0"
-  checksum: 10/54b7ef71c64837f9d52475832337f520cf6fa85c94612e03a3a2aad7082804a2544741267122696662147e90e6d2746601346984cf531ae715ecdb56d586a04c
-  languageName: node
-  linkType: hard
-
-"axios@npm:^1.4.0":
+"axios@npm:1.13.5, axios@npm:^1.4.0":
   version: 1.13.5
   resolution: "axios@npm:1.13.5"
   dependencies:
@@ -3167,7 +3156,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.14.0, follow-redirects@npm:^1.15.11, follow-redirects@npm:^1.15.6":
+"follow-redirects@npm:^1.14.0, follow-redirects@npm:^1.15.11":
   version: 1.15.11
   resolution: "follow-redirects@npm:1.15.11"
   peerDependenciesMeta:
@@ -3187,7 +3176,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"form-data@npm:^4.0.4, form-data@npm:^4.0.5":
+"form-data@npm:^4.0.5":
   version: 4.0.5
   resolution: "form-data@npm:4.0.5"
   dependencies:
@@ -6521,7 +6510,7 @@ __metadata:
     "@types/lodash": "npm:4.17.23"
     "@types/node": "npm:24.10.13"
     "@types/object-mapper": "npm:6.2.2"
-    axios: "npm:1.13.4"
+    axios: "npm:1.13.5"
     debug: "npm:4.4.3"
     episode-parser: "npm:2.0.2"
     eslint: "npm:9.39.2"

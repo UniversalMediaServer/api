@@ -44,7 +44,7 @@
     "@types/lodash": "4.17.23",
     "@types/node": "24.10.13",
     "@types/object-mapper": "6.2.2",
-    "axios": "1.13.4",
+    "axios": "1.13.5",
     "eslint": "9.39.2",
     "jest": "30.2.0",
     "mongodb-memory-server": "^11.0.1",
