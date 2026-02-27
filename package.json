@@ -42,7 +42,7 @@
     "@types/jest": "^30.0.0",
     "@types/koa-bodyparser": "4.3.13",
     "@types/lodash": "4.17.24",
-    "@types/node": "24.10.13",
+    "@types/node": "24.10.15",
     "@types/object-mapper": "6.2.2",
     "axios": "1.13.5",
     "eslint": "9.39.3",

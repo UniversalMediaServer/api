@@ -1337,12 +1337,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:24.10.13":
-  version: 24.10.13
-  resolution: "@types/node@npm:24.10.13"
+"@types/node@npm:24.10.15":
+  version: 24.10.15
+  resolution: "@types/node@npm:24.10.15"
   dependencies:
     undici-types: "npm:~7.16.0"
-  checksum: 10/c779d14cf17758a9d603e0c0978c8045bd070e259617ec16f4ddac419ec11aac0e0cf2bb013dab008fdbd2f46c39f82397884662bbdfabeb19bef0079679ea48
+  checksum: 10/e6be2220f59a8776f4c8facb3f809bcc6ddb4051752bf86e935178eca58ba7841ce51871442616fcf1c419bf03b1a091dab4c9888ea5c063c9569a34382a5263
   languageName: node
   linkType: hard
 
@@ -6513,7 +6513,7 @@ __metadata:
     "@types/jest": "npm:^30.0.0"
     "@types/koa-bodyparser": "npm:4.3.13"
     "@types/lodash": "npm:4.17.24"
-    "@types/node": "npm:24.10.13"
+    "@types/node": "npm:24.10.15"
     "@types/object-mapper": "npm:6.2.2"
     axios: "npm:1.13.5"
     debug: "npm:4.4.3"
