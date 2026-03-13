@@ -2219,7 +2219,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bson@npm:^7.0.0, bson@npm:^7.1.1":
+"bson@npm:^7.1.1":
   version: 7.2.0
   resolution: "bson@npm:7.2.0"
   checksum: 10/a768e55d328a5961aa1bda0f1d1ea619e8bab911fb72018ca5c779000ae538cfc0cc8082fe75d4e941cb8ee928b6a7377b10bc0eb75872f36cdfaac8380512c6
@@ -4871,7 +4871,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongodb@npm:^7.0.0":
+"mongodb@npm:^7.0.0, mongodb@npm:~7.1":
   version: 7.1.0
   resolution: "mongodb@npm:7.1.0"
   dependencies:
@@ -4905,51 +4905,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongodb@npm:~7.0":
-  version: 7.0.0
-  resolution: "mongodb@npm:7.0.0"
-  dependencies:
-    "@mongodb-js/saslprep": "npm:^1.3.0"
-    bson: "npm:^7.0.0"
-    mongodb-connection-string-url: "npm:^7.0.0"
-  peerDependencies:
-    "@aws-sdk/credential-providers": ^3.806.0
-    "@mongodb-js/zstd": ^7.0.0
-    gcp-metadata: ^7.0.1
-    kerberos: ^7.0.0
-    mongodb-client-encryption: ">=7.0.0 <7.1.0"
-    snappy: ^7.3.2
-    socks: ^2.8.6
-  peerDependenciesMeta:
-    "@aws-sdk/credential-providers":
-      optional: true
-    "@mongodb-js/zstd":
-      optional: true
-    gcp-metadata:
-      optional: true
-    kerberos:
-      optional: true
-    mongodb-client-encryption:
-      optional: true
-    snappy:
-      optional: true
-    socks:
-      optional: true
-  checksum: 10/6220f2836b526cfe30828669c7963e74457b4a34dffcd8580eece61fa7294267e3ca0fb0cd0d5f03e5800f628d806299b29c8c29ead6189f6abc6bf69000ecf7
-  languageName: node
-  linkType: hard
-
 "mongoose@npm:^9.0.2":
-  version: 9.2.4
-  resolution: "mongoose@npm:9.2.4"
+  version: 9.3.0
+  resolution: "mongoose@npm:9.3.0"
   dependencies:
     kareem: "npm:3.2.0"
-    mongodb: "npm:~7.0"
+    mongodb: "npm:~7.1"
     mpath: "npm:0.9.0"
     mquery: "npm:6.0.0"
     ms: "npm:2.1.3"
     sift: "npm:17.1.3"
-  checksum: 10/4d37c944646db4086f5316d4308f6918068e9be60fa096e92d444cea912b84a44d59629aa194395afbd9f9fd7bc5f80c8e80c5405d98d102d44f91ca9f0f9cb1
+  checksum: 10/ac1048904fc92605f51dfeab1fa2adcc5d151632757ad81f7a7a542caa84d2bb7435c9c31f664536fdfe0c99d34f4409f786cfd0de7e034ff08ca6e58513e217
   languageName: node
   linkType: hard
 
