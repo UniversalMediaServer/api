@@ -198,7 +198,7 @@ export const getSeriesMetadata = async(
         return await SeriesMetadata.findOneAndUpdate(
           { _id: seriesMetadata.id },
           { $addToSet: { searchMatches: titleToCache } },
-          { new: true, lean: true },
+          { returnDocument: 'after', lean: true },
         ).exec();
       }
       if (process.env.VERBOSE === 'true') {
@@ -226,7 +226,7 @@ export const getSeriesMetadata = async(
         return await SeriesMetadata.findOneAndUpdate(
           { tmdbID: seriesTMDBID },
           { $addToSet: { searchMatches: searchMatch } },
-          { new: true, lean: true },
+          { returnDocument: 'after', lean: true },
         ).exec();
       } else {
         if (process.env.VERBOSE === 'true') {

@@ -20,7 +20,7 @@ export const addSearchMatchByIMDbID = async(imdbID: string, title: string): Prom
   return MediaMetadata.findOneAndUpdate(
     { imdbID },
     { $addToSet: { searchMatches: title } },
-    { new: true, lean: true },
+    { returnDocument: 'after', lean: true },
   ).exec();
 };
 
