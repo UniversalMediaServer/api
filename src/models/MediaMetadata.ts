@@ -51,7 +51,7 @@ const isTypeEpisode = function(context?: MediaMetadataInterface): boolean {
   return context ? context.type === 'episode' : this.type === 'episode';
 };
 
-const ONE_DAY_IN_SECONDS = 86400; // 1 day
+const THIRTY_DAYS_IN_MILLISECONDS = 24 * 60 * 60 * 30 * 1000;
 
 const MediaMetadataSchema: Schema = new Schema({
   actors: { type: Array },
@@ -62,7 +62,7 @@ const MediaMetadataSchema: Schema = new Schema({
   country: { type: String },
   createdAt: {
     default: Date.now,
-    expires: ONE_DAY_IN_SECONDS,
+    expires: THIRTY_DAYS_IN_MILLISECONDS,
     select: false,
     type: Date,
   },
