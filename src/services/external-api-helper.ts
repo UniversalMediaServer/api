@@ -671,3 +671,23 @@ export const getTmdbIdFromIMDbID = async(imdbID: string, mediaType?: string): Pr
   }
   return null;
 };
+
+/**
+ * @returns whether the incoming metadata contains any images
+ */
+export const doesMetadataContainAnyImages = async(metadata): Promise<boolean> => {
+  if (!metadata) {
+    throw new Error('Metadata is required');
+  }
+
+  if (
+    metadata.poster ||
+    metadata.posterRelativePath ||
+    metadata.images?.posters ||
+    metadata.images?.stills
+  ) {
+    return true;
+  }
+
+  return false;
+};

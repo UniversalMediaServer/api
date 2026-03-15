@@ -9,6 +9,8 @@ import { SeasonMetadataInterface } from '../models/SeasonMetadata';
 import { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import * as externalAPIHelper from '../services/external-api-helper';
 
+const THIRTY_DAYS_IN_MILLISECONDS = 24 * 60 * 60 * 30 * 1000;
+
 /**
  * Adds a searchMatch to an existing result by IMDb ID, and returns the result.
  *
@@ -135,8 +137,7 @@ export const getSeriesV2 = async(ctx): Promise<Partial<SeriesMetadataInterface> 
 };
 
 /*
- * Gets season information from TMDB since it's the only API
- * we use that has that functionality.
+ * Gets season information from TMDB
  */
 export const getSeason = async(ctx): Promise<Partial<SeasonMetadataInterface>> => {
   const { season, title, year }: UmsQueryParams = ctx.query;
@@ -350,6 +351,39 @@ export const getVideoV2 = async(ctx): Promise<MediaMetadataInterface> => {
     // Ensure that we return and cache the same episode number that was searched for
     if (episode && episodeNumbers && episodeNumbers.length > 1 && episodeNumbers[0] === tmdbData.episode) {
       tmdbData.episode = episode;
+    }
+
+    /**
+     * We have a result, but if it does not contain any
+     * images, we will do additional verification.
+     *
+     * Note that we do not stored the record of a failed lookup for
+     * this, because we want to keep the possibility open for a
+     * successful one as soon as possible.
+     *
+     * This is mostly to cater for videos that have just been
+     * released and there hasn't been time for TMDB users to
+     * populate the full data yet. It usually happens very quickly.
+     */
+    if (!externalAPIHelper.doesMetadataContainAnyImages(tmdbData)) {
+      if (tmdbData.released) {
+        const releaseDate = new Date(tmdbData.released); 
+        const currentTime = Date.now();
+        const targetTime = releaseDate.getTime();
+
+        const isOver30DaysOld = currentTime - targetTime > THIRTY_DAYS_IN_MILLISECONDS;
+        if (!isOver30DaysOld) {
+          throw new MediaNotFoundError();
+        } else {
+          /*
+           * There has been 30 days for TMDB users to add images, so
+           * it's not very likely it will be done soon. We can store
+           * the data because this might be as good as it gets.
+           */
+        }
+      } else {
+        throw new MediaNotFoundError();
+      }
     }
 
     const dbMeta = await MediaMetadata.create(tmdbData);
