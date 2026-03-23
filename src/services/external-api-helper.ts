@@ -108,6 +108,7 @@ export const getSeriesMetadata = async(
     type?: string;
     year?: string;
     count?: number;
+    reason?: string;
 
     // Added automatically:
     createdAt?: string;
@@ -174,9 +175,9 @@ export const getSeriesMetadata = async(
 
     // Return early for previously-failed lookups
     if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
-    if (process.env.VERBOSE === 'true') {
-      console.trace('Found previously-failed lookup', failedLookupQuery);
-    }
+      if (process.env.VERBOSE === 'true') {
+        console.trace('Found previously-failed lookup', failedLookupQuery);
+      }
       await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
 
       // Also store a failed result for the title that the client sent
@@ -264,7 +265,8 @@ export const getSeriesMetadata = async(
   }
 
   if (!tmdbData || _.isEmpty(tmdbData)) {
-    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+    const reason = `getSeriesMetadata got no tmdb data for ${failedLookupQuery}`;
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 }, reason }, { upsert: true, setDefaultsOnInsert: true }).exec();
 
     // Also store a failed result for the title that the client sent
     if (titleToCache) {

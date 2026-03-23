@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 import { Schema } from 'mongoose';
 
-const THIRTY_DAYS_IN_SECONDS = 2592000; // 30 days
+const THIRTY_DAYS_IN_SECONDS = 2592000;
 
 export interface FailedLookupsInterface {
   episode?: string;
@@ -15,6 +15,7 @@ export interface FailedLookupsInterface {
   type?: string;
   year?: string;
   count?: number;
+  reason?: string;
 
   // Added automatically:
   createdAt?: string;
@@ -35,6 +36,10 @@ const FailedLookupsSchema = new Schema({
   year: { type: String },
   failedValidation: { type: Boolean, default: false },
   type: { type: String },
+  reason: {
+    select: false,
+    type: String,
+  },
   createdAt: {
     default: Date.now,
     expires: THIRTY_DAYS_IN_SECONDS,
