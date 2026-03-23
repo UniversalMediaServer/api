@@ -174,12 +174,11 @@ export const getSeriesMetadata = async(
     }
 
     // Return early for previously-failed lookups
-    const previouslyFailedLookup = await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec();
-    if (previouslyFailedLookup) {
+    if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
       if (process.env.VERBOSE === 'true') {
         console.trace('Found previously-failed lookup', failedLookupQuery);
       }
-      await FailedLookups.updateOne({ _id: previouslyFailedLookup._id }, { $inc: { count: 1 } }).exec();
+      await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
 
       // Also store a failed result for the title that the client sent
       if (titleToCache) {
