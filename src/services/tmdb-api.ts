@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { MovieDb } from 'moviedb-promise';
 import { CollectionInfoResponse, CollectionRequest, ConfigurationResponse, Episode, EpisodeRequest, FindRequest, FindResponse, IdAppendToResponseRequest, MovieResultsResponse, SearchMovieRequest, SearchTvRequest, ShowResponse, TvResultsResponse, TvSeasonRequest, TvSeasonResponse } from 'moviedb-promise/dist/request-types';
 import { ExternalAPIError, RateLimitError } from '../helpers/customErrors';

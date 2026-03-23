@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import _ from 'lodash';
 
 import { DeprecationError, MediaNotFoundError, RateLimitError, ValidationError } from '../helpers/customErrors';
 import { CollectionMetadataInterface } from '../models/CollectionMetadata';
