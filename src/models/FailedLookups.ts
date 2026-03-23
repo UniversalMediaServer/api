@@ -15,6 +15,7 @@ export interface FailedLookupsInterface {
   type?: string;
   year?: string;
   count?: number;
+  reason?: string;
 
   // Added automatically:
   createdAt?: string;
@@ -35,6 +36,10 @@ const FailedLookupsSchema = new Schema({
   year: { type: String },
   failedValidation: { type: Boolean, default: false },
   type: { type: String },
+  reason: {
+    select: false,
+    type: String,
+  },
   createdAt: {
     default: Date.now,
     expires: THIRTY_DAYS_IN_SECONDS,
