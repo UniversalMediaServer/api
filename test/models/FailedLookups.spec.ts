@@ -30,11 +30,15 @@ describe('Failed Lookups Model', () => {
   });
 
   describe('Indexes', () => {
-    it('should use index when find by title', async() => {
+    it('should use index when finding by title', async() => {
       await FailedLookups.init();
       await FailedLookups.create({ title: 'Jackass 2' });
       const response = await FailedLookups.findOne({ title: 'Jackass 2' }, {}, { explain: true }).exec();
-      expect(_.get(response, ['queryPlanner', 'winningPlan', 'stage'])).toEqual('EXPRESS_IXSCAN');
+
+      // https://www.mongodb.com/docs/manual/tutorial/analyze-query-plan/
+      expect(_.get(response, ['executionStats', 'nReturned'])).toEqual(1);
+      expect(_.get(response, ['executionStats', 'totalKeysExamined'])).toEqual(1);
+      expect(_.get(response, ['executionStats', 'totalDocsExamined'])).toEqual(1);
     });
   });
 });

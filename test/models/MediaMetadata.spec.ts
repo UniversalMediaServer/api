@@ -109,17 +109,21 @@ describe('Media Metadata Model', () => {
     it('should use index when find by title', async() => {
       await MediaMetadata.create(interstellarMetaData);
       const response = await MediaMetadata.findOne({ title: interstellarMetaData.title }, null, { explain: true }).exec();
-      expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'inputStage', 'stage'])).toEqual('IXSCAN');
-      expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'stage'])).toEqual('FETCH');
-      expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'stage'])).toEqual('PROJECTION_SIMPLE');
+      
+      // https://www.mongodb.com/docs/manual/tutorial/analyze-query-plan/
+      expect(_.get(response, ['executionStats', 'nReturned'])).toEqual(1);
+      expect(_.get(response, ['executionStats', 'totalKeysExamined'])).toEqual(1);
+      expect(_.get(response, ['executionStats', 'totalDocsExamined'])).toEqual(1);
     });
 
     it('should use index when find by searchMatches', async() => {
       await MediaMetadata.create(interstellarMetaData);
-      const response = await MediaMetadata.findOne({ searchMatches: { $in: [interstellarMetaData.searchMatches[0]] } }, null, { explain: true, verbosity: 'queryPlanner' }).exec();
-      expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'inputStage', 'stage'])).toEqual('IXSCAN');
-      expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'stage'])).toEqual('FETCH');
-      expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'stage'])).toEqual('PROJECTION_SIMPLE');
+      const response = await MediaMetadata.findOne({ searchMatches: { $in: [interstellarMetaData.searchMatches[0]] } }, null, { explain: true }).exec();
+
+      // https://www.mongodb.com/docs/manual/tutorial/analyze-query-plan/
+      expect(_.get(response, ['executionStats', 'nReturned'])).toEqual(1);
+      expect(_.get(response, ['executionStats', 'totalKeysExamined'])).toEqual(1);
+      expect(_.get(response, ['executionStats', 'totalDocsExamined'])).toEqual(1);
     });
   });
 });
