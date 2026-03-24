@@ -1,6 +1,6 @@
 import { jaroWinkler } from '@skyra/jaro-winkler';
 import episodeParser from 'episode-parser';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { FlattenMaps } from 'mongoose';
 import { Episode, EpisodeRequest, ExternalId, SearchMovieRequest, SearchTvRequest, SimpleEpisode, TvExternalIdsResponse, TvResult } from 'moviedb-promise/dist/request-types';
 
@@ -174,9 +174,9 @@ export const getSeriesMetadata = async(
 
     // Return early for previously-failed lookups
     if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
-    if (process.env.VERBOSE === 'true') {
-      console.trace('Found previously-failed lookup', failedLookupQuery);
-    }
+      if (process.env.VERBOSE === 'true') {
+        console.trace('Found previously-failed lookup', failedLookupQuery);
+      }
       await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
 
       // Also store a failed result for the title that the client sent

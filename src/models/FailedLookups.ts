@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 import { Schema } from 'mongoose';
 
-const THIRTY_DAYS_IN_SECONDS = 2592000; // 30 days
+const THIRTY_DAYS_IN_SECONDS = 2592000;
 
 export interface FailedLookupsInterface {
   episode?: string;

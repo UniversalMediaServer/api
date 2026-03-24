@@ -1,5 +1,5 @@
-import * as _ from 'lodash';
-import * as  mongoose from 'mongoose';
+import _ from 'lodash';
+import * as mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
 import MediaMetadata from '../../src/models/MediaMetadata';
@@ -116,7 +116,7 @@ describe('Media Metadata Model', () => {
 
     it('should use index when find by searchMatches', async() => {
       await MediaMetadata.create(interstellarMetaData);
-      const response = await MediaMetadata.findOne({ searchMatches: { $in: [interstellarMetaData.searchMatches[0]] } }, null, { explain: true }).exec();
+      const response = await MediaMetadata.findOne({ searchMatches: { $in: [interstellarMetaData.searchMatches[0]] } }, null, { explain: true, verbosity: 'queryPlanner' }).exec();
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'inputStage', 'stage'])).toEqual('IXSCAN');
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'inputStage', 'stage'])).toEqual('FETCH');
       expect(_.get(response, ['queryPlanner', 'winningPlan', 'inputStage', 'stage'])).toEqual('PROJECTION_SIMPLE');

@@ -51,7 +51,7 @@ const isTypeEpisode = function(context?: MediaMetadataInterface): boolean {
   return context ? context.type === 'episode' : this.type === 'episode';
 };
 
-const THIRTY_DAYS_IN_MILLISECONDS = 24 * 60 * 60 * 30 * 1000;
+const THIRTY_DAYS_IN_SECONDS = 2592000;
 
 const MediaMetadataSchema: Schema = new Schema({
   actors: { type: Array },
@@ -62,7 +62,7 @@ const MediaMetadataSchema: Schema = new Schema({
   country: { type: String },
   createdAt: {
     default: Date.now,
-    expires: THIRTY_DAYS_IN_MILLISECONDS,
+    expires: THIRTY_DAYS_IN_SECONDS,
     select: false,
     type: Date,
   },
@@ -92,7 +92,7 @@ const MediaMetadataSchema: Schema = new Schema({
   released: { type: Date },
   revenue: { type: String },
   runtime: { type: String },
-  searchMatches: { type: Array, select: false },
+  searchMatches: { type: Array, index: true, select: false },
   season: {
     index: true,
     required: isTypeEpisode,
