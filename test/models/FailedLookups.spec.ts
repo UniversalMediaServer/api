@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import _ from 'lodash';
 import * as mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 

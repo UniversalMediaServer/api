@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { CollectionInfoResponse, CreditsResponse, EpisodeCreditsResponse, Genre } from 'moviedb-promise';
 import * as objectMapper from 'object-mapper';
 
