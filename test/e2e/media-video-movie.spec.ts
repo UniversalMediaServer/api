@@ -159,6 +159,9 @@ describe('get by all', () => {
       expect(error.message).toEqual('Request failed with status code 404');
       expect(await FailedLookupsModel.countDocuments()).toEqual(1);
 
+      const failedResult = await FailedLookupsModel.findOne();
+      expect(failedResult.reason).toEqual('getVideoV2 got no tmdb data for areallylongtitlethatsurelywontmatchanymoviename, undefined, undefined, null, NaN, null')
+
       try {
         await axios.get(`${appUrl}/api/media/video/v2?title=areallylongtitlethatsurelywontmatchanymoviename`);
       } catch (e) {
