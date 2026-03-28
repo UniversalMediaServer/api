@@ -36,10 +36,7 @@ const FailedLookupsSchema = new Schema({
   year: { type: String },
   failedValidation: { type: Boolean, default: false },
   type: { type: String },
-  reason: {
-    select: false,
-    type: String,
-  },
+  reason: { type: String },
   createdAt: {
     default: Date.now,
     expires: THIRTY_DAYS_IN_SECONDS,

@@ -173,18 +173,17 @@ export const getVideo = async(ctx): Promise<MediaMetadataInterface> => {
 
   const existingFailedResult = await FailedLookups.findOne({ $or: failedQuery }, null, { lean: true }).exec();
   if (existingFailedResult) {
-    // we have an existing failure record, so increment it, and throw not found error
-    await FailedLookups.updateOne({ _id: existingFailedResult._id }, { $inc: { count: 1 } }).exec();
     throw new MediaNotFoundError();
   }
 
-  // the database does not have a record of this file, so begin search for metadata on external apis.
+  // the database does not have a record of this file, so begin search for metadata on TMDB.
 
   const failedLookupQuery = { episode, imdbID, season, title, year };
 
   if (!title && !imdbIdToSearch) {
-    // The APIs below require either a title or IMDb ID, so return if we don't have one
-    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+    // TMDB requires either a title or IMDb ID, so return if we don't have one
+    const reason = 'getVideo (deprecated) failed because there is no title or imdbId';
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 }, reason }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
 
@@ -214,7 +213,8 @@ export const getVideo = async(ctx): Promise<MediaMetadataInterface> => {
   // End TMDB lookups
 
   if (!tmdbData || _.isEmpty(tmdbData)) {
-    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+    const reason = `getVideo (deprecated) failed because no data was found on TMDB for ${failedLookupQuery}`;
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 }, reason }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
 
@@ -235,8 +235,9 @@ export const getVideo = async(ctx): Promise<MediaMetadataInterface> => {
     leanMeta = await deprecatedExternalAPIHelper.addPosterFromImages(leanMeta);
     return ctx.body = leanMeta;
   } catch (e) {
-    console.error(e,tmdbData);
-    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
+    console.error(e, tmdbData);
+    const reason = `getVideo (deprecated) failed because an error occurred: ${e}`;
+    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 }, reason }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }
 };
