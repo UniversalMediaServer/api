@@ -43,7 +43,7 @@
     "@types/jest": "^30.0.0",
     "@types/koa-bodyparser": "4.3.13",
     "@types/lodash": "4.17.24",
-    "@types/node": "24.12.0",
+    "@types/node": "24.12.2",
     "@types/object-mapper": "6.2.2",
     "axios": "1.14.0",
     "eslint": "^10.0.3",
