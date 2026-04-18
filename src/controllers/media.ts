@@ -258,15 +258,40 @@ export const getVideoV2 = async(ctx): Promise<MediaMetadataInterface> => {
   if (title) {
     searchMatch = language ? language + '@' + title : title;
     const titleQuery: GetVideoFilter = { searchMatches: { $in: [searchMatch] } };
-    const titleFailedQuery: FailedLookupsInterface = { title };
+
+    // there will be a way to make this automatic but I cbf rn
+    const titleFailedQuery: {
+      episode?: string;
+      failedValidation?: boolean;
+      imdbID?: string;
+      language?: string | { $exists: boolean };
+      season?: string;
+      startYear?: string;
+      title?: string;
+      tmdbID?: number;
+      type?: string;
+      year?: string | { $exists: boolean };
+      count?: number;
+      reason?: string;
+
+      // Added automatically:
+      createdAt?: string;
+      updatedAt?: string;
+    } = { title };
 
     if (language) {
       titleFailedQuery.language = language;
+    } else {
+      titleFailedQuery.language = { $exists: false };
     }
+
     if (year) {
       titleQuery.year = year;
       titleFailedQuery.year = year;
+    } else {
+      titleFailedQuery.year = { $exists: false };
     }
+
     if (episode) {
       titleQuery.episode = episode;
       titleFailedQuery.episode = episode;
@@ -300,7 +325,7 @@ export const getVideoV2 = async(ctx): Promise<MediaMetadataInterface> => {
 
   // the database does not have a record of this file, so begin search for metadata on TMDB.
 
-  const failedLookupQuery: FailedLookupsInterface = { episode, imdbID, season, title, year };
+  const failedLookupQuery: FailedLookupsInterface = { episode, imdbID, season, title, year, language };
 
   let tmdbData: MediaMetadataInterface;
   try {

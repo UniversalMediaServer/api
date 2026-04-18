@@ -106,7 +106,7 @@ export const getSeriesMetadata = async(
     title?: string;
     tmdbID?: number;
     type?: string;
-    year?: string;
+    year?: string | { $exists: boolean };
     count?: number;
     reason?: string;
 
