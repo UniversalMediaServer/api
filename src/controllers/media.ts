@@ -8,6 +8,7 @@ import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
 import { SeasonMetadataInterface } from '../models/SeasonMetadata';
 import { SeriesMetadataInterface } from '../models/SeriesMetadata';
 import * as externalAPIHelper from '../services/external-api-helper';
+import { traceLog } from '../helpers/logging';
 
 const THIRTY_DAYS_IN_MILLISECONDS = 24 * 60 * 60 * 30 * 1000;
 
@@ -306,9 +307,8 @@ export const getVideoV2 = async(ctx): Promise<MediaMetadataInterface> => {
 
   const existingResult = await MediaMetadata.findOne({ $or: query }, null, { lean: true }).exec();
   if (existingResult) {
-    if (process.env.VERBOSE === 'true') {
-      console.trace('found existingResult', query, existingResult);
-    }
+    traceLog('found existingResult', { query, existingResult });
+
     // we have an existing metadata record, so return it
     return ctx.body = existingResult;
   }
@@ -316,9 +316,7 @@ export const getVideoV2 = async(ctx): Promise<MediaMetadataInterface> => {
   const existingFailedResult = await FailedLookups.findOne({ $or: failedQuery }, null, { lean: true }).exec();
   if (existingFailedResult) {
     // we have an existing failure record, so increment it, and throw not found error
-    if (process.env.VERBOSE === 'true') {
-      console.trace('found existingFailedResult', existingFailedResult, failedQuery);
-    }
+    traceLog('found existingFailedResult', { existingFailedResult, failedQuery });
     await FailedLookups.updateOne({ _id: existingFailedResult._id }, { $inc: { count: 1 } }).exec();
     throw new MediaNotFoundError();
   }
@@ -331,14 +329,10 @@ export const getVideoV2 = async(ctx): Promise<MediaMetadataInterface> => {
   try {
     tmdbData = await externalAPIHelper.getFromTMDBAPI(title, language, imdbIdToSearch, yearNumber, seasonNumber, episodeNumbers);
     imdbIdToSearch = imdbIdToSearch || tmdbData?.imdbID;
-    if (process.env.VERBOSE === 'true') {
-      console.trace('found tmdbData and imdbIdToSearch', query, tmdbData, imdbIdToSearch);
-    }
+    traceLog('found tmdbData and imdbIdToSearch', { query, tmdbData, imdbIdToSearch });
   } catch (err) {
     if (err instanceof RateLimitError) {
-      if (process.env.VERBOSE === 'true') {
-        console.trace(err);
-      }
+      traceLog(err);
       throw err;
     }
 
@@ -354,17 +348,13 @@ export const getVideoV2 = async(ctx): Promise<MediaMetadataInterface> => {
   if (!imdbID && imdbIdToSearch) {
     const existingResult = await MediaMetadata.findOne({ imdbID: imdbIdToSearch }, null, { lean: true }).exec();
     if (existingResult) {
-      if (process.env.VERBOSE === 'true') {
-        console.trace('found existingResult from IMDb ID from TMDB', existingResult, imdbIdToSearch);
-      }
+      traceLog('found existingResult from IMDb ID from TMDB', { existingResult, imdbIdToSearch });
       return ctx.body = await addSearchMatchByIMDbID(imdbIdToSearch, searchMatch);
     }
   }
 
   if (!tmdbData || _.isEmpty(tmdbData)) {
-    if (process.env.VERBOSE === 'true') {
-      console.trace('No data was found on TMDB for this query', title, language, imdbIdToSearch, yearNumber, seasonNumber, episodeNumbers);
-    }
+    traceLog('No data was found on TMDB for this query', { title, language, imdbIdToSearch, yearNumber, seasonNumber, episodeNumbers });
     const reason = `getVideoV2 got no tmdb data for ${title}, ${language}, ${imdbIdToSearch}, ${yearNumber}, ${seasonNumber}, ${episodeNumbers}`;
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 }, reason }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
@@ -420,9 +410,7 @@ export const getVideoV2 = async(ctx): Promise<MediaMetadataInterface> => {
     return ctx.body = leanMeta;
   } catch (e) {
     console.error(e, tmdbData);
-    if (process.env.VERBOSE === 'true') {
-      console.trace('No data was found on TMDB for this query in final getVideoV2 catch', e);
-    }
+    traceLog('No data was found on TMDB for this query in final getVideoV2 catch', e);
     const reason = `getVideoV2 caught an exception ${e}, for ${tmdbData}`;
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 }, reason }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
