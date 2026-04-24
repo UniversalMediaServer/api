@@ -4390,10 +4390,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"kareem@npm:3.2.0":
-  version: 3.2.0
-  resolution: "kareem@npm:3.2.0"
-  checksum: 10/cdf3ff207ed602efaa2efc6005c2e8836266f01348a61d8e96ad2e87babbaaa96c6aecb4d58071e18b253d4a07765353f4795564dcc7a1ad0e7ef9f3bafed824
+"kareem@npm:3.3.0":
+  version: 3.3.0
+  resolution: "kareem@npm:3.3.0"
+  checksum: 10/28fa51f594531ddf88b00e421156fd6e2b4d3c0fe069f908cc705587a2c3ba55ac90c7dbe6ffd867259b9116efcf0d3efdaab7b6a9ad711259d186c88ac18393
   languageName: node
   linkType: hard
 
@@ -4922,16 +4922,16 @@ __metadata:
   linkType: hard
 
 "mongoose@npm:^9.0.2":
-  version: 9.4.1
-  resolution: "mongoose@npm:9.4.1"
+  version: 9.5.0
+  resolution: "mongoose@npm:9.5.0"
   dependencies:
-    kareem: "npm:3.2.0"
+    kareem: "npm:3.3.0"
     mongodb: "npm:~7.1"
     mpath: "npm:0.9.0"
     mquery: "npm:6.0.0"
     ms: "npm:2.1.3"
     sift: "npm:17.1.3"
-  checksum: 10/1a2d90455f7bae9c1d3206b07edcff8a5a26da85ad978216fad553798450ca36a864e5c7ecca533ca41d409072fa51bff5d89dc35e9f9b1f2709dd232852d8fd
+  checksum: 10/5d3add1ae9dbfb26d749481cf6ea343a7f84a35e0a68e1fb042d8aea8cc82fe4fec6a849b11ffec042db5b7796e07484c0ec5708ef52254961978f2195e1c74b
   languageName: node
   linkType: hard
 
