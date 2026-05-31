@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "engines": {
-    "node": "24"
+    "node": "24",
+    "yarn": ">=1.22.10"
   },
   "scripts": {
     "dev": "DEBUG=\"*universalmediaserver-api:server\" nodemon",
@@ -52,5 +53,6 @@
     "stoppable": "1.1.0",
     "ts-jest": "29.4.11",
     "typescript-eslint": "^8.6.0"
-  }
+  },
+  "packageManager": "yarn@4.13.0"
 }
