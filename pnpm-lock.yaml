@@ -48,8 +48,8 @@ importers:
         specifier: 6.2.0
         version: 6.2.0
       pm2:
-        specifier: ^7.0.0
-        version: 7.0.0
+        specifier: ^7.0.1
+        version: 7.0.1
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@24.12.4)(typescript@5.9.3)
@@ -2225,8 +2225,8 @@ packages:
   pm2-sysmonit@1.2.8:
     resolution: {integrity: sha512-ACOhlONEXdCTVwKieBIQLSi2tQZ8eKinhcr9JpZSUAL8Qy0ajIgRtsLxG/lwPOW3JEKqPyw/UaHmTWhUzpP4kA==}
 
-  pm2@7.0.0:
-    resolution: {integrity: sha512-/VpW9f7jpy6o7k2CjWhsdCSS0YGYSSWZYz8gt2zJYg+PGOcbt50L7oZgiUqJDpJLyhIL+LnvgtRw4HXdg5pQCg==}
+  pm2@7.0.1:
+    resolution: {integrity: sha512-h/DI7WomfdAWDzDRtjhnNfsG4Do6kuOY+VGKbqffHW3yRZMUoWzwyBDkXjrOWvnBlwuY3lYBKkozDdCagfRI4Q==}
     engines: {node: '>=18.0.0'}
     hasBin: true
 
@@ -5213,7 +5213,7 @@ snapshots:
       - supports-color
     optional: true
 
-  pm2@7.0.0:
+  pm2@7.0.1:
     dependencies:
       '@pm2/blessed': 0.1.81
       '@pm2/js-api': 0.8.0
