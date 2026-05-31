@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "DEBUG=\"*universalmediaserver-api:server\" nodemon",
-    "start": "ts-node --files src/app.ts",
+    "start": "node --files src/app.ts",
     "start:prod": "pm2 start ecosystem.config.js --update-env",
     "start:prod:verbose": "pm2 start ecosystem.config.js --env verbose",
     "reload:prod": "pm2 reload ecosystem.config.js",
@@ -34,7 +34,6 @@
     "moviedb-promise": "4.0.8",
     "object-mapper": "6.2.0",
     "pm2": "^7.0.1",
-    "ts-node": "^10.9.2",
     "typescript": "5.9"
   },
   "devDependencies": {
