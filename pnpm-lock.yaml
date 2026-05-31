@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@koa/router':
+        specifier: ^14.0.0
+        version: 14.0.0
       '@skyra/jaro-winkler':
         specifier: ^1.1.1
         version: 1.1.1
@@ -32,9 +35,6 @@ importers:
       koa-qs:
         specifier: 3.0.0
         version: 3.0.0
-      koa-router:
-        specifier: 14.0.0
-        version: 14.0.0
       lodash:
         specifier: 4.18.1
         version: 4.18.1
@@ -48,8 +48,8 @@ importers:
         specifier: 6.2.0
         version: 6.2.0
       pm2:
-        specifier: ^7.0.0
-        version: 7.0.0
+        specifier: ^7.0.1
+        version: 7.0.1
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@24.12.4)(typescript@5.9.3)
@@ -454,6 +454,11 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.9':
     resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
+
+  '@koa/router@14.0.0':
+    resolution: {integrity: sha512-LBSu5K0qAaaQcXX/0WIB9PGDevyCxxpnc1uq13vV/CgObaVxuis5hKl3Eboq/8gcb6ebnkAStW9NB/Em2eYyFA==}
+    engines: {node: '>= 20'}
+    deprecated: Please upgrade to v15 or higher. All reported bugs in this version are fixed in newer releases, dependencies have been updated, and security has been improved.
 
   '@mongodb-js/saslprep@1.4.11':
     resolution: {integrity: sha512-o9rAHc0IpIjuPSxRutWpE1F62x7n+4mVS4rCNHkzhIUMQcc18bb6xEq5wd2NdN0WjepIyXIppRshYI2kQDOZVA==}
@@ -1887,11 +1892,6 @@ packages:
     resolution: {integrity: sha512-05IB5KirwMs3heWW26iTz46HuMAtrlrRMus/aNH1BRDocLyF/099EtCB0MIfQpRuT0TISvaTsWwSy2gctIWiGA==}
     engines: {node: '>= 8'}
 
-  koa-router@14.0.0:
-    resolution: {integrity: sha512-Ue8f/PRsLLNm6b7y+eS6xkqvsG2xH11d2VB1HPcfdfW6p5736kCHf2pXaq8q9XPQ01x0Dk7V/P5Il9pe+tGTxA==}
-    engines: {node: '>= 20'}
-    deprecated: 'Please use @koa/router instead, starting from v9! '
-
   koa@3.2.1:
     resolution: {integrity: sha512-e7IpWJrnanNUroVK2taAgMxoEZvHLXdQiNjeExSu/DEIWm83jaKGBgb7tLmu2rMYpA027qFB3iLR/k3AVpFRnA==}
     engines: {node: '>= 18'}
@@ -2225,8 +2225,8 @@ packages:
   pm2-sysmonit@1.2.8:
     resolution: {integrity: sha512-ACOhlONEXdCTVwKieBIQLSi2tQZ8eKinhcr9JpZSUAL8Qy0ajIgRtsLxG/lwPOW3JEKqPyw/UaHmTWhUzpP4kA==}
 
-  pm2@7.0.0:
-    resolution: {integrity: sha512-/VpW9f7jpy6o7k2CjWhsdCSS0YGYSSWZYz8gt2zJYg+PGOcbt50L7oZgiUqJDpJLyhIL+LnvgtRw4HXdg5pQCg==}
+  pm2@7.0.1:
+    resolution: {integrity: sha512-h/DI7WomfdAWDzDRtjhnNfsG4Do6kuOY+VGKbqffHW3yRZMUoWzwyBDkXjrOWvnBlwuY3lYBKkozDdCagfRI4Q==}
     engines: {node: '>=18.0.0'}
     hasBin: true
 
@@ -3208,6 +3208,15 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
+
+  '@koa/router@14.0.0':
+    dependencies:
+      debug: 4.4.3(supports-color@5.5.0)
+      http-errors: 2.0.1
+      koa-compose: 4.1.0
+      path-to-regexp: 8.4.2
+    transitivePeerDependencies:
+      - supports-color
 
   '@mongodb-js/saslprep@1.4.11':
     dependencies:
@@ -4844,15 +4853,6 @@ snapshots:
       merge-descriptors: 1.0.3
       qs: 6.15.2
 
-  koa-router@14.0.0:
-    dependencies:
-      debug: 4.4.3(supports-color@5.5.0)
-      http-errors: 2.0.1
-      koa-compose: 4.1.0
-      path-to-regexp: 8.4.2
-    transitivePeerDependencies:
-      - supports-color
-
   koa@3.2.1:
     dependencies:
       accepts: 1.3.8
@@ -5213,7 +5213,7 @@ snapshots:
       - supports-color
     optional: true
 
-  pm2@7.0.0:
+  pm2@7.0.1:
     dependencies:
       '@pm2/blessed': 0.1.81
       '@pm2/js-api': 0.8.0
