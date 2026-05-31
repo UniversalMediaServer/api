@@ -14,22 +14,22 @@ You can run `nvm use` and `yvm use` from the project root if you have [Node vers
 
 ### Commands
 
-#### `yarn watch`
-Watches for changes to TypeScript files and compiles them to JavaScript (use `yarn run build` to do it manually)
+#### `pnpm watch`
+Watches for changes to TypeScript files and compiles them to JavaScript (use `pnpm run build` to do it manually)
 
-#### `yarn dev`
+#### `pnpm dev`
 Runs the development server and restarts it when any file is changed
 
-#### `yarn dev:cron`
+#### `pnpm dev:cron`
 Runs the cron job feature using ts-node
 
-#### `yarn start`
+#### `pnpm start`
 Runs the server
 
-#### `yarn test`
+#### `pnpm test`
 Runs the test suite
 
-#### `yarn run start:prod`
+#### `pnpm run start:prod`
 Starts the API and cron job in production mode. TypeScript files are compiled in memory on application start.
 
 ## Logs
