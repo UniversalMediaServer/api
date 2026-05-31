@@ -2,9 +2,9 @@
 
 ## Development
 
-The required Node.js version is listed in the `package.json` file. 
+The required Node.js and Yarn versions are listed in the `package.json` file. 
 
-You can run `nvm use` from the project root if you have [Node version manager](https://github.com/nvm-sh/nvm) installed to select the correct version.
+You can run `nvm use` and `yvm use` from the project root if you have [Node version manager](https://github.com/nvm-sh/nvm) and [Yarn version manager](https://yvm.js.org)s installed to select the correct version.
 
 ### Environment variables
 
@@ -19,6 +19,9 @@ Watches for changes to TypeScript files and compiles them to JavaScript (use `pn
 
 #### `pnpm dev`
 Runs the development server and restarts it when any file is changed
+
+#### `pnpm dev:cron`
+Runs the cron job feature using ts-node
 
 #### `pnpm start`
 Runs the server
