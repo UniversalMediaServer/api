@@ -6,6 +6,7 @@ import { Episode, EpisodeRequest, ExternalId, SearchMovieRequest, SearchTvReques
 
 import { tmdb } from './tmdb-api';
 import { ValidationError } from '../helpers/customErrors';
+import { traceLog } from '../helpers/logging';
 import CollectionMetadata, { CollectionMetadataInterface } from '../models/CollectionMetadata';
 import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
 import LocalizeMetadata, { LocalizeMetadataInterface } from '../models/LocalizeMetadata';
@@ -106,7 +107,7 @@ export const getSeriesMetadata = async(
     title?: string;
     tmdbID?: number;
     type?: string;
-    year?: string;
+    year?: string | { $exists: boolean };
     count?: number;
     reason?: string;
 
@@ -175,9 +176,7 @@ export const getSeriesMetadata = async(
 
     // Return early for previously-failed lookups
     if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
-      if (process.env.VERBOSE === 'true') {
-        console.trace('Found previously-failed lookup', failedLookupQuery);
-      }
+      traceLog('Found previously-failed lookup', failedLookupQuery);
       await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
 
       // Also store a failed result for the title that the client sent
@@ -189,9 +188,7 @@ export const getSeriesMetadata = async(
     }
 
     // Return any previous match
-    if (process.env.VERBOSE === 'true') {
-      console.trace('Looking for TV series in db', parsedTitle);
-    }
+    traceLog('Looking for TV series in db', { parsedTitle });
     const seriesMetadata = await SeriesMetadata.findOne(titleQuery, null, { lean: true }).sort(sortBy).exec();
     if (seriesMetadata) {
       // Also cache the result for the title that the client sent, if this is an automatic re-attempt with an appended year (see below)
@@ -202,37 +199,31 @@ export const getSeriesMetadata = async(
           { returnDocument: 'after', lean: true },
         ).exec();
       }
-      if (process.env.VERBOSE === 'true') {
-        console.trace('Found TV series', seriesMetadata);
-      }
+
+      traceLog('Found TV series', seriesMetadata);
 
       return seriesMetadata;
     }
 
     // Start TMDB lookups
-    if (process.env.VERBOSE === 'true') {
-      console.trace('Looking for TV seriesTMDBID on TMDB', parsedTitle);
-    }
+    traceLog('Looking for TV seriesTMDBID on TMDB', { parsedTitle });
+
     const seriesTMDBID = await getSeriesTMDBIDFromTMDBAPI(null, parsedTitle, language, yearNumber);
     if (seriesTMDBID) {
-      if (process.env.VERBOSE === 'true') {
-        console.trace('Found TV seriesTMDBID for parsedTitle', seriesTMDBID);
-      }
+      traceLog('Found TV seriesTMDBID for parsedTitle', { seriesTMDBID });
+
       // See if we have an existing record for the now-known media.
       const existingResult = await SeriesMetadata.findOne({ tmdbID: seriesTMDBID }, null, { lean: true }).exec();
       if (existingResult) {
-        if (process.env.VERBOSE === 'true') {
-          console.trace('Found existingResult for parsedTitle', existingResult);
-        }
+        traceLog('Found existingResult for parsedTitle', existingResult);
+
         return await SeriesMetadata.findOneAndUpdate(
           { tmdbID: seriesTMDBID },
           { $addToSet: { searchMatches: searchMatch } },
           { returnDocument: 'after', lean: true },
         ).exec();
       } else {
-        if (process.env.VERBOSE === 'true') {
-          console.trace('No existingResult for parsedTitle', existingResult);
-        }
+        traceLog('No existingResult for parsedTitle', existingResult);
       }
 
       // We do not have an existing record for that series, get the full result from the TMDB API
@@ -241,13 +232,12 @@ export const getSeriesMetadata = async(
         id: seriesTMDBID,
       };
 
-      if (process.env.VERBOSE === 'true') {
-        console.trace('Looking for series on TMDB', parsedTitle);
-      }
+      traceLog('Looking for series on TMDB', { parsedTitle });
+
       const tmdbResponse = await tmdb.tvInfo(seriesRequest);
-      if (process.env.VERBOSE === 'true') {
-        console.trace('Found series on TMDB', tmdbResponse);
-      }
+
+      traceLog('Found series on TMDB', tmdbResponse);
+
       tmdbData = mapper.parseTMDBAPISeriesResponse(tmdbResponse);
     }
     // End TMDB lookups
@@ -402,44 +392,35 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, language?: stri
     const episodeIMDbID = movieOrEpisodeIMDbID;
     let seriesTMDBID: string | number;
     if (episodeIMDbID) {
-      if (process.env.VERBOSE === 'true') {
-        console.trace('Looking for an episode with the IMDb ID', episodeIMDbID);
-      }
+      traceLog('Looking for an episode with the IMDb ID', { episodeIMDbID });
+
       const findResult = await tmdb.find({ id: episodeIMDbID, external_source: ExternalId.ImdbId });
       if (findResult?.tv_episode_results && findResult?.tv_episode_results[0]) {
         const tvEpisodeResult = findResult.tv_episode_results[0] as SimpleEpisode;
         seriesTMDBID = tvEpisodeResult?.show_id;
-        if (process.env.VERBOSE === 'true') {
-          console.trace('Found tvEpisodeResult and seriesTMDBID', tvEpisodeResult, seriesTMDBID);
-        }
+
+        traceLog('Found tvEpisodeResult and seriesTMDBID', { tvEpisodeResult, seriesTMDBID });
       } else {
-        if (process.env.VERBOSE === 'true') {
-          console.trace('Did not find an episode with the IMDb ID', episodeIMDbID);
-        }
+        traceLog('Did not find an episode with the IMDb ID', { episodeIMDbID });
       }
     } else {
-      if (process.env.VERBOSE === 'true') {
-        console.trace('Looking for seriesTMDBID with', movieOrSeriesTitle, language, yearString);
-      }
+      traceLog('Looking for seriesTMDBID with', { movieOrSeriesTitle, language, yearString });
+
       const seriesMetadata = await getSeriesMetadata(null, movieOrSeriesTitle, language, yearString);
       seriesTMDBID = seriesMetadata?.tmdbID;
     }
 
     if (!seriesTMDBID) {
-      if (process.env.VERBOSE === 'true') {
-        console.trace('Did not find seriesTMDBID with', movieOrSeriesTitle, language, yearString);
-      }
+      traceLog('Did not find seriesTMDBID with', { movieOrSeriesTitle, language, yearString });
+
       return null;
     } else {
-      if (process.env.VERBOSE === 'true') {
-        console.trace('Found seriesTMDBID ' + seriesTMDBID + 'with', movieOrSeriesTitle, language, yearString);
-      }
+      traceLog('Found seriesTMDBID ' + seriesTMDBID + 'with', { movieOrSeriesTitle, language, yearString });
     }
 
     for (let i = 0; i < episodeNumbers.length; i++) {
-      if (process.env.VERBOSE === 'true') {
-        console.trace('Looking for episode number ' + episodeNumbers[i] + 'with', seriesTMDBID, seasonNumber);
-      }
+      traceLog('Looking for episode number ' + episodeNumbers[i] + 'with', { seriesTMDBID, seasonNumber });
+
       const episodeRequest: EpisodeRequest = {
         append_to_response: 'images,external_ids,credits',
         episode_number: episodeNumbers[i],
@@ -461,16 +442,12 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, language?: stri
           if (tmdbSeriesData?.imdb_id) {
             metadata.seriesIMDbID = tmdbSeriesData.imdb_id;
           }
-          if (process.env.VERBOSE === 'true') {
-            console.trace('Found metadata', metadata);
-          }
+          traceLog('Found metadata', metadata);
         } else {
           metadata.title = metadata.title ? metadata.title + ' & ' + tmdbData.name : tmdbData.name;
         }
       } else {
-        if (process.env.VERBOSE === 'true') {
-          console.trace('Did not find tmdbData from', episodeRequest);
-        }
+        traceLog('Did not find tmdbData from', episodeRequest);
       }
     }
   } else {
