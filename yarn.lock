@@ -4722,9 +4722,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongodb-memory-server-core@npm:11.1.0":
-  version: 11.1.0
-  resolution: "mongodb-memory-server-core@npm:11.1.0"
+"mongodb-memory-server-core@npm:11.2.0":
+  version: 11.2.0
+  resolution: "mongodb-memory-server-core@npm:11.2.0"
   dependencies:
     async-mutex: "npm:^0.5.0"
     camelcase: "npm:^6.3.0"
@@ -4737,18 +4737,18 @@ __metadata:
     semver: "npm:^7.7.3"
     tar-stream: "npm:^3.1.8"
     tslib: "npm:^2.8.1"
-    yauzl: "npm:^3.3.0"
-  checksum: 10/bdf3929c03d59807d7a5a6f6700a2e9f4ca4a555350a95741d7e4a37da70fe0cc3e8bc4b2ecadd300276de7e048865fb4b94af90c1ca5badf8c850f28550a962
+    yauzl: "npm:^3.3.1"
+  checksum: 10/4282aa2837ebe1eebbffd812ba1a4830585002dde658a719b80123ad10967d4702a09d2fe609820789aee4a69e8237cad9dcaca82d9d71d32db3e21fd2de51aa
   languageName: node
   linkType: hard
 
 "mongodb-memory-server@npm:^11.0.1":
-  version: 11.1.0
-  resolution: "mongodb-memory-server@npm:11.1.0"
+  version: 11.2.0
+  resolution: "mongodb-memory-server@npm:11.2.0"
   dependencies:
-    mongodb-memory-server-core: "npm:11.1.0"
+    mongodb-memory-server-core: "npm:11.2.0"
     tslib: "npm:^2.8.1"
-  checksum: 10/fb41a4eb0f032a9c6d02688b6288129ab3207806b30b50e171a5d9d2e8c067d8bce345c79e2d986941c5968f44b29695ce8244d1112032dbc782a3bc8aacb8f4
+  checksum: 10/ed96085623ae46a8d84112abd88348c6f161cb47ef3586cda61f63307f2db37ddd53761ede46118ee34c6dc210ed6d9253333cb4929dba013491e488c00d1e3f
   languageName: node
   linkType: hard
 
@@ -6671,7 +6671,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yauzl@npm:^3.3.0":
+"yauzl@npm:^3.3.1":
   version: 3.3.1
   resolution: "yauzl@npm:3.3.1"
   dependencies:
