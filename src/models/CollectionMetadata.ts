@@ -1,4 +1,5 @@
-import mongoose, { Schema, InferSchemaType } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
+import type { InferSchemaType } from 'mongoose';
 
 const CollectionMetadataSchema: Schema = new Schema({
   images: { type: Array },

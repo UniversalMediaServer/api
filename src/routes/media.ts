@@ -1,7 +1,7 @@
 import Router from 'koa-router';
 
-import * as MediaController from '../controllers/media';
-import { subversions } from '../helpers/subversioning';
+import * as MediaController from '../controllers/media.ts';
+import { subversions } from '../helpers/subversioning.ts';
 
 const router = new Router({ prefix: '/api/media' });
 

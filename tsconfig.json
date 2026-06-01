@@ -1,9 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es2020",
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "esModuleInterop": true
+    "target": "es2025",
+    "module": "node20",
+    "moduleResolution": "node16",
+    "esModuleInterop": true,
+    "allowImportingTsExtensions": true,
+    "strict": true,
+    "rewriteRelativeImportExtensions": true,
+    "verbatimModuleSyntax": true
   },
   "files": [
     "./src/interfaces.d.ts"

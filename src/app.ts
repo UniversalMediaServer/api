@@ -2,7 +2,7 @@ import Koa from 'koa';
 import bodyParser from 'koa-bodyparser';
 import helmet from "koa-helmet";
 import * as mongoose from 'mongoose';
-import { ParameterizedContext } from 'koa';
+import type { ParameterizedContext } from 'koa';
 import koaQs from 'koa-qs';
 import Debug from 'debug';
 import * as fs from 'fs';
@@ -10,16 +10,16 @@ import * as http from 'http';
 import * as https from 'https';
 
 const debug = Debug('universalmediaserver-api:server');
-import indexRouter from './routes/index';
-import mediaRouter  from './routes/media';
-import deprecatedMediaRouter  from './routes/deprecated/media';
-import { DeprecationError, ExternalAPIError, IMDbIDNotFoundError, MediaNotFoundError, RateLimitError, ValidationError } from './helpers/customErrors';
+import indexRouter from './routes/index.ts';
+import mediaRouter  from './routes/media.ts';
+import deprecatedMediaRouter  from './routes/deprecated/media.ts';
+import { DeprecationError, ExternalAPIError, IMDbIDNotFoundError, MediaNotFoundError, RateLimitError, ValidationError } from './helpers/customErrors.ts';
 
 const app = new Koa();
 
 koaQs(app, 'first');
 
-import connect from './models/connection';
+import connect from './models/connection.ts';
 
 const db: string = process.env.MONGO_URL;
 export const PORT: string = process.env.PORT || '3000';

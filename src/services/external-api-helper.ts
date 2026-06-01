@@ -1,19 +1,27 @@
 import { jaroWinkler } from '@skyra/jaro-winkler';
 import episodeParser from 'episode-parser';
 import _ from 'lodash';
-import { FlattenMaps } from 'mongoose';
-import { Episode, EpisodeRequest, ExternalId, SearchMovieRequest, SearchTvRequest, SimpleEpisode, TvExternalIdsResponse, TvResult } from 'moviedb-promise/dist/request-types';
+import type { FlattenMaps } from 'mongoose';
+import type { Episode, EpisodeRequest, ExternalId, SearchMovieRequest, SearchTvRequest, SimpleEpisode, TvExternalIdsResponse, TvResult } from 'moviedb-promise';
 
-import { tmdb } from './tmdb-api';
-import { ValidationError } from '../helpers/customErrors';
-import { traceLog } from '../helpers/logging';
-import CollectionMetadata, { CollectionMetadataInterface } from '../models/CollectionMetadata';
-import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
-import LocalizeMetadata, { LocalizeMetadataInterface } from '../models/LocalizeMetadata';
-import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
-import SeasonMetadata, { SeasonMetadataInterface } from '../models/SeasonMetadata';
-import SeriesMetadata, { SeriesMetadataInterface } from '../models/SeriesMetadata';
-import { mapper } from '../utils/data-mapper';
+import { tmdb } from './tmdb-api.ts';
+import { ValidationError } from '../helpers/customErrors.ts';
+import { traceLog } from '../helpers/logging.ts';
+import CollectionMetadata from '../models/CollectionMetadata.ts';
+import FailedLookups from '../models/FailedLookups.ts';
+import LocalizeMetadata from '../models/LocalizeMetadata.ts';
+import MediaMetadata from '../models/MediaMetadata.ts';
+import SeasonMetadata from '../models/SeasonMetadata.ts';
+import SeriesMetadata from '../models/SeriesMetadata.ts';
+
+import type { CollectionMetadataInterface } from '../models/CollectionMetadata.ts';
+import type { FailedLookupsInterface } from '../models/FailedLookups.ts';
+import type { LocalizeMetadataInterface } from '../models/LocalizeMetadata.ts';
+import type { MediaMetadataInterface } from '../models/MediaMetadata.ts';
+import type { SeasonMetadataInterface } from '../models/SeasonMetadata.ts';
+import type { SeriesMetadataInterface } from '../models/SeriesMetadata.ts';
+
+import { mapper } from '../utils/data-mapper.ts';
 
 const getSeriesTMDBIDFromTMDBAPI = async(imdbID?: string, seriesTitle?: string, language?: string, year?: number): Promise<number> => {
   if (imdbID) {

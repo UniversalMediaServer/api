@@ -1,12 +1,15 @@
 import _ from 'lodash';
 
-import { MediaNotFoundError, ValidationError } from '../../helpers/customErrors';
-import FailedLookups, { FailedLookupsInterface } from '../../models/FailedLookups';
-import MediaMetadata, { MediaMetadataInterface } from '../../models/MediaMetadata';
-import SeriesMetadata, { SeriesMetadataInterface } from '../../models/SeriesMetadata';
-import * as externalAPIHelper from '../../services/external-api-helper';
-import * as deprecatedExternalAPIHelper from '../../services/deprecated/external-api-helper';
-import { addSearchMatchByIMDbID } from '../media';
+import { MediaNotFoundError, ValidationError } from '../../helpers/customErrors.ts';
+import type { FailedLookupsInterface } from '../../models/FailedLookups.ts';
+import type { MediaMetadataInterface } from '../../models/MediaMetadata.ts';
+import type { SeriesMetadataInterface } from '../../models/SeriesMetadata.ts';
+import FailedLookups from '../../models/FailedLookups.ts';
+import MediaMetadata from '../../models/MediaMetadata.ts';
+import SeriesMetadata from '../../models/SeriesMetadata.ts';
+import * as externalAPIHelper from '../../services/external-api-helper.ts';
+import * as deprecatedExternalAPIHelper from '../../services/deprecated/external-api-helper.ts';
+import { addSearchMatchByIMDbID } from '../media.ts';
 
 /**
  * Since this is deprecated, it will only return a result that has been created

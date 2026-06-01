@@ -6,8 +6,7 @@ module.exports = {
   apps: [
     {
       name: 'API',
-      script: 'node_modules/.bin/ts-node',
-      args: '--transpileOnly --files ./src/app.ts',
+      script: './src/app.ts',
       env: { NODE_ENV: 'production', VERBOSE: 'false' },
       env_verbose: { NODE_ENV: 'production', VERBOSE: 'true' },
       instances: 0,

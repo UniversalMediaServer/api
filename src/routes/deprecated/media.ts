@@ -1,7 +1,7 @@
 import Router from 'koa-router';
-import * as DeprecatedMediaController from '../../controllers/deprecated/media';
-import { subversions } from '../../helpers/subversioning';
-import { DeprecationError } from '../../helpers/customErrors';
+import * as DeprecatedMediaController from '../../controllers/deprecated/media.ts';
+import { subversions } from '../../helpers/subversioning.ts';
+import { DeprecationError } from '../../helpers/customErrors.ts';
 
 const router = new Router({ prefix: '/api/media' });
 
