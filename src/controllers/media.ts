@@ -1,14 +1,17 @@
 import _ from 'lodash';
 
-import { DeprecationError, MediaNotFoundError, RateLimitError, ValidationError } from '../helpers/customErrors';
-import { CollectionMetadataInterface } from '../models/CollectionMetadata';
-import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
-import LocalizeMetadata, { LocalizeMetadataInterface } from '../models/LocalizeMetadata';
-import MediaMetadata, { MediaMetadataInterface } from '../models/MediaMetadata';
-import { SeasonMetadataInterface } from '../models/SeasonMetadata';
-import { SeriesMetadataInterface } from '../models/SeriesMetadata';
-import * as externalAPIHelper from '../services/external-api-helper';
-import { traceLog } from '../helpers/logging';
+import { DeprecationError, MediaNotFoundError, RateLimitError, ValidationError } from '../helpers/customErrors.ts';
+import type { CollectionMetadataInterface } from '../models/CollectionMetadata.ts';
+import type { FailedLookupsInterface } from '../models/FailedLookups.ts';
+import type { LocalizeMetadataInterface } from '../models/LocalizeMetadata.ts';
+import type { MediaMetadataInterface } from '../models/MediaMetadata.ts';
+import FailedLookups from '../models/FailedLookups.ts';
+import LocalizeMetadata from '../models/LocalizeMetadata.ts';
+import MediaMetadata from '../models/MediaMetadata.ts';
+import type { SeasonMetadataInterface } from '../models/SeasonMetadata.ts';
+import type { SeriesMetadataInterface } from '../models/SeriesMetadata.ts';
+import * as externalAPIHelper from '../services/external-api-helper.ts';
+import { traceLog } from '../helpers/logging.ts';
 
 const THIRTY_DAYS_IN_MILLISECONDS = 24 * 60 * 60 * 30 * 1000;
 

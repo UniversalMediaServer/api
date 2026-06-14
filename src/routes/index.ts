@@ -1,8 +1,8 @@
 import Router from 'koa-router';
 import * as v8 from 'v8';
 
-import { getConfiguration } from '../controllers/configuration';
-import { subversions } from '../helpers/subversioning';
+import { getConfiguration } from '../controllers/configuration.ts';
+import { subversions } from '../helpers/subversioning.ts';
 
 const { SYSTEM_ADMIN_KEY, NODE_APP_INSTANCE } = process.env!;
 

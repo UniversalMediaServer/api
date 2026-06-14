@@ -1,8 +1,8 @@
 import _ from 'lodash';
 
-import { getTMDBImageBaseURL } from '../../controllers/configuration';
-import { MediaMetadataInterface } from '../../models/MediaMetadata';
-import { SeriesMetadataInterface } from '../../models/SeriesMetadata';
+import { getTMDBImageBaseURL } from '../../controllers/configuration.ts';
+import type { MediaMetadataInterface } from '../../models/MediaMetadata.ts';
+import type { SeriesMetadataInterface } from '../../models/SeriesMetadata.ts';
 
 /*
  * If the incoming metadata contains a poster image within the images

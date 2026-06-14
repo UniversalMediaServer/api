@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { MovieDb } from 'moviedb-promise';
-import { CollectionInfoResponse, CollectionRequest, ConfigurationResponse, Episode, EpisodeRequest, FindRequest, FindResponse, IdAppendToResponseRequest, MovieResultsResponse, SearchMovieRequest, SearchTvRequest, ShowResponse, TvResultsResponse, TvSeasonRequest, TvSeasonResponse } from 'moviedb-promise/dist/request-types';
-import { ExternalAPIError, RateLimitError } from '../helpers/customErrors';
+import type { CollectionInfoResponse, CollectionRequest, ConfigurationResponse, Episode, EpisodeRequest, FindRequest, FindResponse, IdAppendToResponseRequest, MovieResultsResponse, SearchMovieRequest, SearchTvRequest, ShowResponse, TvResultsResponse, TvSeasonRequest, TvSeasonResponse } from 'moviedb-promise';
+import { ExternalAPIError, RateLimitError } from '../helpers/customErrors.ts';
 
 if (process.env.NODE_ENV === 'production' && !process.env.TMDB_API_KEY) {
   throw new Error('TMDB_API_KEY not set');

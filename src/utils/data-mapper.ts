@@ -1,12 +1,12 @@
 import _ from 'lodash';
-import { CollectionInfoResponse, CreditsResponse, EpisodeCreditsResponse, Genre } from 'moviedb-promise';
+import type { CollectionInfoResponse, CreditsResponse, EpisodeCreditsResponse, Genre } from 'moviedb-promise';
 import * as objectMapper from 'object-mapper';
 
-import { CollectionMetadataInterface } from '../models/CollectionMetadata';
-import { LocalizeMetadataInterface } from '../models/LocalizeMetadata';
-import { MediaMetadataInterface } from '../models/MediaMetadata';
-import { SeasonMetadataInterface } from '../models/SeasonMetadata';
-import { SeriesMetadataInterface } from '../models/SeriesMetadata';
+import type { CollectionMetadataInterface } from '../models/CollectionMetadata.ts';
+import type { LocalizeMetadataInterface } from '../models/LocalizeMetadata.ts';
+import type { MediaMetadataInterface } from '../models/MediaMetadata.ts';
+import type { SeasonMetadataInterface } from '../models/SeasonMetadata.ts';
+import type { SeriesMetadataInterface } from '../models/SeriesMetadata.ts';
 
 const tmdbEpisodeMap = {
   'air_date': [

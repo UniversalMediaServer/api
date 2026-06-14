@@ -20,9 +20,6 @@ Watches for changes to TypeScript files and compiles them to JavaScript (use `ya
 #### `yarn dev`
 Runs the development server and restarts it when any file is changed
 
-#### `yarn dev:cron`
-Runs the cron job feature using ts-node
-
 #### `yarn start`
 Runs the server
 

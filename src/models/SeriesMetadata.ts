@@ -1,7 +1,6 @@
 import * as mongoose from 'mongoose';
 import { Schema, Model } from 'mongoose';
-import { Network, SimplePerson, SimpleSeason, TvImagesResponse, TvExternalIdsResponse, CreditsResponse } from 'moviedb-promise/dist/request-types';
-import { ProductionCompany, ProductionCountry, SpokenLanguage } from 'moviedb-promise/dist/types';
+import type { Network, ProductionCompany, ProductionCountry, SpokenLanguage, SimplePerson, SimpleSeason, TvImagesResponse, TvExternalIdsResponse, CreditsResponse } from 'moviedb-promise';
 
 export interface SeriesMetadataInterface {
   actors?: Array<string>;

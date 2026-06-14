@@ -1,5 +1,6 @@
-import TMDBConfiguration, { TMDBConfigurationInterface } from '../models/TMDBConfiguration';
-import { tmdb } from '../services/tmdb-api';
+import TMDBConfiguration from '../models/TMDBConfiguration.ts';
+import type { TMDBConfigurationInterface } from '../models/TMDBConfiguration.ts';
+import { tmdb } from '../services/tmdb-api.ts';
 
 let configuration: Partial<TMDBConfigurationInterface>;
 let configurationExpiryDate: Date;

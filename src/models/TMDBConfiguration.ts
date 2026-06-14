@@ -1,4 +1,5 @@
-import mongoose, { InferSchemaType, Schema } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
+import type { InferSchemaType } from 'mongoose';
 
 const THREE_DAYS_IN_SECONDS = 259200;
 
