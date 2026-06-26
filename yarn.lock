@@ -4827,8 +4827,8 @@ __metadata:
   linkType: hard
 
 "mongoose@npm:^9.0.2":
-  version: 9.7.1
-  resolution: "mongoose@npm:9.7.1"
+  version: 9.7.2
+  resolution: "mongoose@npm:9.7.2"
   dependencies:
     kareem: "npm:3.3.0"
     mongodb: "npm:~7.2"
@@ -4836,7 +4836,7 @@ __metadata:
     mquery: "npm:6.0.0"
     ms: "npm:2.1.3"
     sift: "npm:17.1.3"
-  checksum: 10/cd212a9deffe9025e4caa3a557d4aad9b0839e7f25c6187f7934a2c3bf95f244a554fe79e170fa8a819cd5dfd0826e9d34b9b98bb6fb974fe77cf84ee0b02757
+  checksum: 10/26b2b05d30fdce43a708f8dbebf60e0e6a926e3cc7339b2a0457f3fbb922b05ee98ef2283433fe561f01846eaca4457cba9021e99e2a22149480c9673e8e88f2
   languageName: node
   linkType: hard
 
