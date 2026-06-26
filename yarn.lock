@@ -1038,6 +1038,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@standard-schema/spec@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@standard-schema/spec@npm:1.1.0"
+  checksum: 10/a209615c9e8b2ea535d7db0a5f6aa0f962fd4ab73ee86a46c100fb78116964af1f55a27c1794d4801e534a196794223daa25ff5135021e03c7828aa3d95e1763
+  languageName: node
+  linkType: hard
+
 "@tootallnate/quickjs-emscripten@npm:^0.23.0":
   version: 0.23.0
   resolution: "@tootallnate/quickjs-emscripten@npm:0.23.0"
@@ -4827,16 +4834,17 @@ __metadata:
   linkType: hard
 
 "mongoose@npm:^9.0.2":
-  version: 9.7.2
-  resolution: "mongoose@npm:9.7.2"
+  version: 9.7.3
+  resolution: "mongoose@npm:9.7.3"
   dependencies:
+    "@standard-schema/spec": "npm:^1.1.0"
     kareem: "npm:3.3.0"
     mongodb: "npm:~7.2"
     mpath: "npm:0.9.0"
     mquery: "npm:6.0.0"
     ms: "npm:2.1.3"
     sift: "npm:17.1.3"
-  checksum: 10/26b2b05d30fdce43a708f8dbebf60e0e6a926e3cc7339b2a0457f3fbb922b05ee98ef2283433fe561f01846eaca4457cba9021e99e2a22149480c9673e8e88f2
+  checksum: 10/d79b8d695785e4187f8dad5c8e1487397e4fce948fa3992fc3638182b5c140348c54e5f98ddad844ca8eceae54b3975c2fca4da8f66278ea49f73deae0e059d7
   languageName: node
   linkType: hard
 
