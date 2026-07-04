@@ -419,7 +419,7 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, language?: stri
     }
 
     for (let i = 0; i < episodeNumbers.length; i++) {
-      traceLog('Looking for episode number ' + episodeNumbers[i] + 'with', { seriesTMDBID, seasonNumber });
+      traceLog('Looking for episode number ' + episodeNumbers[i] + ' with', { seriesTMDBID, seasonNumber });
 
       const episodeRequest: EpisodeRequest = {
         append_to_response: 'images,external_ids,credits',

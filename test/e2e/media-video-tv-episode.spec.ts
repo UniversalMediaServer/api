@@ -55,6 +55,26 @@ const EPISODE_AVATAR = {
   'title': 'Avatar: The Last Airbender',
 };
 
+const EPISODE_MILO = {
+  'episodeTitle': 'Episode 1',
+  'season': '2',
+  'episode': '1',
+  'imdbID': 'tt33317394',
+  'year': 2024,
+  'seriesIMDbID': 'tt28283231',
+  'title': 'Milo',
+};
+
+const EPISODE_SILO = {
+  'episodeTitle': 'The Engineer',
+  'season': '2',
+  'episode': '1',
+  'imdbID': 'tt28077708',
+  'year': 2024,
+  'seriesIMDbID': 'tt14688458',
+  'title': 'Silo',
+};
+
 describe('get by all', () => {
   beforeAll((done) => {
     MongoMemoryServer.create()
@@ -125,6 +145,40 @@ describe('get by all', () => {
     expect(response.data.title).toEqual(EPISODE_PRISONBREAK.episodeTitle);
     expect(response.data.type).toEqual('episode');
     expect(response.data.seriesIMDbID).toEqual(EPISODE_PRISONBREAK.seriesIMDbID);
+  });
+
+  test('should return the episode from the correct series, when a similar series name exists', async() => {
+    const url = `${appUrl}/api/media/video/v2?`+
+      `title=${EPISODE_MILO.title}`+
+      `&season=${EPISODE_MILO.season}`+
+      `&episode=${EPISODE_MILO.episode}`;
+    let response = await axios.get(url) as UmsApiMediaAxiosResponse;
+    expect(response.data.title).toEqual(EPISODE_MILO.episodeTitle);
+    expect(response.data.type).toEqual('episode');
+
+    expect(response.data.seriesIMDbID).toEqual(EPISODE_MILO.seriesIMDbID);
+
+    // subsequent calls should return MongoDB result rather than calling external apis
+    response = await axios.get(url);
+    expect(response.data.title).toEqual(EPISODE_MILO.episodeTitle);
+    expect(response.data.type).toEqual('episode');
+    expect(response.data.seriesIMDbID).toEqual(EPISODE_MILO.seriesIMDbID);
+
+    const url2 = `${appUrl}/api/media/video/v2?`+
+      `title=${EPISODE_SILO.title}`+
+      `&season=${EPISODE_SILO.season}`+
+      `&episode=${EPISODE_SILO.episode}`;
+    let response2 = await axios.get(url2) as UmsApiMediaAxiosResponse;
+    expect(response2.data.title).toEqual(EPISODE_SILO.episodeTitle);
+    expect(response2.data.type).toEqual('episode');
+
+    expect(response2.data.seriesIMDbID).toEqual(EPISODE_SILO.seriesIMDbID);
+
+    // subsequent calls should return MongoDB result rather than calling external apis
+    response2 = await axios.get(url2);
+    expect(response2.data.title).toEqual(EPISODE_SILO.episodeTitle);
+    expect(response2.data.type).toEqual('episode');
+    expect(response2.data.seriesIMDbID).toEqual(EPISODE_SILO.seriesIMDbID);
   });
 
   test('should return the episode from the correct series, when multiple series exist with different years, from source APIs then store', async() => {
