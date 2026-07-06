@@ -48,13 +48,17 @@ const getSeriesTMDBIDFromTMDBAPI = async(imdbID?: string, seriesTitle?: string, 
 
       if (!searchResult) {
         searchResult = searchResults.results[0];
+        traceLog('Did not find a result based on year, using the first match: ', searchResults.results[0]);
       }
 
       if (didMatchYear) {
         // a wrong year could cause a wrong result, so also do a similarity check to be sure
         const resultNameLowerCase = searchResult.name.toLowerCase();
         const requestNameLowerCase = seriesTitle.toLowerCase();
-        if (jaroWinkler(resultNameLowerCase, requestNameLowerCase) < 0.75) {
+        const jaroWinklerSimilarity = jaroWinkler(resultNameLowerCase, requestNameLowerCase);
+
+        if (jaroWinklerSimilarity < 0.85) {
+          traceLog('Jaro-Winkler similarity was too different at ', jaroWinklerSimilarity);
           return null;
         }
       }
@@ -419,7 +423,7 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, language?: stri
     }
 
     for (let i = 0; i < episodeNumbers.length; i++) {
-      traceLog('Looking for episode number ' + episodeNumbers[i] + 'with', { seriesTMDBID, seasonNumber });
+      traceLog('Looking for episode number ' + episodeNumbers[i] + ' with', { seriesTMDBID, seasonNumber });
 
       const episodeRequest: EpisodeRequest = {
         append_to_response: 'images,external_ids,credits',
