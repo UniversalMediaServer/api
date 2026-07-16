@@ -100,25 +100,7 @@ export const getSeriesMetadata = async(
     searchMatch = language ? language + '@' + parsedTitle : parsedTitle;
   }
 
-  // there will be a way to make this automatic but I cbf rn
-  let failedLookupQuery: {
-    episode?: string;
-    failedValidation?: boolean;
-    imdbID?: string;
-    language?: string | { $exists: boolean };
-    season?: string;
-    startYear?: string;
-    title?: string;
-    tmdbID?: number;
-    type?: string;
-    year?: string | { $exists: boolean };
-    count?: number;
-    reason?: string;
-
-    // Added automatically:
-    createdAt?: string;
-    updatedAt?: string;
-  };
+  let failedLookupQuery: FailedLookupsInterface;
 
   let tmdbData: Partial<SeriesMetadataInterface> = {};
   let yearNumber = null;
