@@ -3,17 +3,20 @@ import { Schema } from 'mongoose';
 
 const THIRTY_DAYS_IN_SECONDS = 2592000;
 
+/**
+ * @todo use automatic types via mongoose instead of a manual interface
+ */
 export interface FailedLookupsInterface {
   episode?: string;
   failedValidation?: boolean;
   imdbID?: string;
-  language?: string;
+  language?: string | { $exists: boolean };
   season?: string;
   startYear?: string;
   title?: string;
   tmdbID?: number;
   type?: string;
-  year?: string;
+  year?: string | { $exists: boolean };
   count?: number;
   reason?: string;
 

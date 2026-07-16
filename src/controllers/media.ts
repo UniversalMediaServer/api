@@ -28,8 +28,7 @@ export const addSearchMatchByIMDbID = async(imdbID: string, title: string): Prom
 };
 
 /*
- * Gets localized information from TMDB since it's the only API
- * we use that has that functionality.
+ * Gets localized information from TMDB.
  */
 export const getLocalize = async(ctx): Promise<Partial<LocalizeMetadataInterface>> => {
   const { language, mediaType, imdbID, tmdbID }: UmsQueryParams = ctx.query;
@@ -259,26 +258,7 @@ export const getVideoV2 = async(ctx): Promise<MediaMetadataInterface> => {
   if (title) {
     searchMatch = language ? language + '@' + title : title;
     const titleQuery: GetVideoFilter = { searchMatches: { $in: [searchMatch] } };
-
-    // there will be a way to make this automatic but I cbf rn
-    const titleFailedQuery: {
-      episode?: string;
-      failedValidation?: boolean;
-      imdbID?: string;
-      language?: string | { $exists: boolean };
-      season?: string;
-      startYear?: string;
-      title?: string;
-      tmdbID?: number;
-      type?: string;
-      year?: string | { $exists: boolean };
-      count?: number;
-      reason?: string;
-
-      // Added automatically:
-      createdAt?: string;
-      updatedAt?: string;
-    } = { title };
+    const titleFailedQuery: FailedLookupsInterface = { title };
 
     if (language) {
       titleFailedQuery.language = language;
