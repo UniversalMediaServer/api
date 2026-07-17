@@ -1,6 +1,6 @@
 import episodeParser from 'episode-parser';
 
-import { LookupFailedInternalError, MediaNotFoundError, ValidationError } from '../../helpers/customErrors';
+import { MediaNotFoundError, ValidationError } from '../../helpers/customErrors';
 import FailedLookups, { FailedLookupsInterface } from '../../models/FailedLookups';
 import MediaMetadata, { MediaMetadataInterface } from '../../models/MediaMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../../models/SeriesMetadata';
