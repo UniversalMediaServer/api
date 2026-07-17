@@ -240,7 +240,7 @@ export const getSeriesMetadata = async(
   }
 
   if (!tmdbData || _.isEmpty(tmdbData)) {
-    const reason = `getSeriesMetadata got no tmdb data for ${failedLookupQuery.toString()}`;
+    const reason = `getSeriesMetadata got no tmdb data for ${JSON.stringify(failedLookupQuery)}`;
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 }, reason }, { upsert: true, setDefaultsOnInsert: true }).exec();
 
     // Also store a failed result for the title that the client sent
