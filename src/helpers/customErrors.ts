@@ -48,3 +48,14 @@ export class IMDbIDNotFoundError extends MediaNotFoundError {
     this.name = 'IMDbIDNotFoundError';
   }
 }
+
+/**
+ * An failure that will be logged as a "reason" in the db for debugging
+ */
+export class LookupFailedInternalError extends Error {
+  constructor(message: string) {
+    super(message);
+    Error.captureStackTrace(this, LookupFailedInternalError);
+    this.name = 'LookupFailedInternalError';
+  }
+}

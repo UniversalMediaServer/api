@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { DeprecationError, MediaNotFoundError, RateLimitError, ValidationError } from '../helpers/customErrors';
+import { DeprecationError, LookupFailedInternalError, MediaNotFoundError, RateLimitError, ValidationError } from '../helpers/customErrors';
 import { CollectionMetadataInterface } from '../models/CollectionMetadata';
 import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
 import LocalizeMetadata, { LocalizeMetadataInterface } from '../models/LocalizeMetadata';
@@ -28,8 +28,7 @@ export const addSearchMatchByIMDbID = async(imdbID: string, title: string): Prom
 };
 
 /*
- * Gets localized information from TMDB since it's the only API
- * we use that has that functionality.
+ * Gets localized information from TMDB.
  */
 export const getLocalize = async(ctx): Promise<Partial<LocalizeMetadataInterface>> => {
   const { language, mediaType, imdbID, tmdbID }: UmsQueryParams = ctx.query;
@@ -125,6 +124,11 @@ export const getSeriesV2 = async(ctx): Promise<Partial<SeriesMetadataInterface> 
 
     return ctx.body = dbMeta;
   } catch (err) {
+    if (err instanceof LookupFailedInternalError) {
+      // in this case, the error came from getSeriesMetadata on the getSeries endpoint, and that already stores the reason, so there is nothing to do here but throw
+      throw new MediaNotFoundError();
+    }
+
     // log unexpected errors
     if (!(err instanceof MediaNotFoundError)) {
       console.error(err);
@@ -173,6 +177,11 @@ export const getSeason = async(ctx): Promise<Partial<SeasonMetadataInterface>> =
     }
     return ctx.body = seasonMetadata;
   } catch (err) {
+    if (err instanceof LookupFailedInternalError) {
+      // in this case, the error came from getSeriesMetadata on the getSeason endpoint, and that does not store reasons yet. It should do that in the future
+      throw new MediaNotFoundError();
+    }
+
     // log unexpected errors
     if (!(err instanceof MediaNotFoundError)) {
       console.error(err);
@@ -259,26 +268,7 @@ export const getVideoV2 = async(ctx): Promise<MediaMetadataInterface> => {
   if (title) {
     searchMatch = language ? language + '@' + title : title;
     const titleQuery: GetVideoFilter = { searchMatches: { $in: [searchMatch] } };
-
-    // there will be a way to make this automatic but I cbf rn
-    const titleFailedQuery: {
-      episode?: string;
-      failedValidation?: boolean;
-      imdbID?: string;
-      language?: string | { $exists: boolean };
-      season?: string;
-      startYear?: string;
-      title?: string;
-      tmdbID?: number;
-      type?: string;
-      year?: string | { $exists: boolean };
-      count?: number;
-      reason?: string;
-
-      // Added automatically:
-      createdAt?: string;
-      updatedAt?: string;
-    } = { title };
+    const titleFailedQuery: FailedLookupsInterface = { title };
 
     if (language) {
       titleFailedQuery.language = language;
@@ -336,6 +326,13 @@ export const getVideoV2 = async(ctx): Promise<MediaMetadataInterface> => {
       throw err;
     }
 
+    if (err instanceof LookupFailedInternalError) {
+      const reason = `LookupFailedInternalError: ${LookupFailedInternalError}`;
+      traceLog(reason);
+      await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 }, reason }, { upsert: true, setDefaultsOnInsert: true }).exec();
+      throw new MediaNotFoundError();
+    }
+
     // Log the error but continue
     if (err.message && err.message.includes('404') && err.response?.config?.url) {
       console.log('Received 404 response from ' + err.response.config.url);
@@ -354,8 +351,8 @@ export const getVideoV2 = async(ctx): Promise<MediaMetadataInterface> => {
   }
 
   if (!tmdbData || _.isEmpty(tmdbData)) {
-    traceLog('No data was found on TMDB for this query', { title, language, imdbIdToSearch, yearNumber, seasonNumber, episodeNumbers });
     const reason = `getVideoV2 got no tmdb data for ${title}, ${language}, ${imdbIdToSearch}, ${yearNumber}, ${seasonNumber}, ${episodeNumbers}`;
+    traceLog(reason);
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 }, reason }, { upsert: true, setDefaultsOnInsert: true }).exec();
     throw new MediaNotFoundError();
   }

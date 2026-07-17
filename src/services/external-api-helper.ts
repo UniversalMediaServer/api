@@ -5,7 +5,7 @@ import { FlattenMaps } from 'mongoose';
 import { Episode, EpisodeRequest, ExternalId, SearchMovieRequest, SearchTvRequest, SimpleEpisode, TvExternalIdsResponse, TvResult } from 'moviedb-promise/dist/request-types';
 
 import { tmdb } from './tmdb-api';
-import { ValidationError } from '../helpers/customErrors';
+import { LookupFailedInternalError, ValidationError } from '../helpers/customErrors';
 import { traceLog } from '../helpers/logging';
 import CollectionMetadata, { CollectionMetadataInterface } from '../models/CollectionMetadata';
 import FailedLookups, { FailedLookupsInterface } from '../models/FailedLookups';
@@ -100,25 +100,7 @@ export const getSeriesMetadata = async(
     searchMatch = language ? language + '@' + parsedTitle : parsedTitle;
   }
 
-  // there will be a way to make this automatic but I cbf rn
-  let failedLookupQuery: {
-    episode?: string;
-    failedValidation?: boolean;
-    imdbID?: string;
-    language?: string | { $exists: boolean };
-    season?: string;
-    startYear?: string;
-    title?: string;
-    tmdbID?: number;
-    type?: string;
-    year?: string | { $exists: boolean };
-    count?: number;
-    reason?: string;
-
-    // Added automatically:
-    createdAt?: string;
-    updatedAt?: string;
-  };
+  let failedLookupQuery: FailedLookupsInterface;
 
   let tmdbData: Partial<SeriesMetadataInterface> = {};
   let yearNumber = null;
@@ -139,9 +121,7 @@ export const getSeriesMetadata = async(
       return existingSeries;
     }
 
-    // Start TMDB lookups
     const seriesID = await getSeriesTMDBIDFromTMDBAPI(imdbID);
-
     if (seriesID) {
       const seriesRequest = {
         append_to_response: 'images,external_ids,credits',
@@ -160,7 +140,6 @@ export const getSeriesMetadata = async(
         searchMatch = null;
       }
     }
-    // End TMDB lookups
   } else {
     const sortBy = {};
     const titleQuery: GetSeriesFilter = { searchMatches: { $in: [searchMatch] } };
@@ -179,8 +158,10 @@ export const getSeriesMetadata = async(
     }
 
     // Return early for previously-failed lookups
-    if (await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec()) {
-      traceLog('Found previously-failed lookup', failedLookupQuery);
+    const previousFailedLookup = await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec();
+    if (previousFailedLookup) {
+      const reason = `getSeriesMetadata found previous failed lookup ${failedLookupQuery.toString()}`;
+      traceLog(reason);
       await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
 
       // Also store a failed result for the title that the client sent
@@ -188,7 +169,7 @@ export const getSeriesMetadata = async(
         await FailedLookups.updateOne({ title: titleToCache, type: 'series' }, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
       }
 
-      return null;
+      throw new LookupFailedInternalError(reason);
     }
 
     // Return any previous match
@@ -259,7 +240,7 @@ export const getSeriesMetadata = async(
   }
 
   if (!tmdbData || _.isEmpty(tmdbData)) {
-    const reason = `getSeriesMetadata got no tmdb data for ${failedLookupQuery}`;
+    const reason = `getSeriesMetadata got no tmdb data for ${failedLookupQuery.toString()}`;
     await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 }, reason }, { upsert: true, setDefaultsOnInsert: true }).exec();
 
     // Also store a failed result for the title that the client sent
@@ -268,7 +249,7 @@ export const getSeriesMetadata = async(
       await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }, { upsert: true, setDefaultsOnInsert: true }).exec();
     }
 
-    return null;
+    throw new LookupFailedInternalError(reason);
   }
 
   if (searchMatch) {
@@ -406,19 +387,24 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, language?: stri
         traceLog('Found tvEpisodeResult and seriesTMDBID', { tvEpisodeResult, seriesTMDBID });
       } else {
         traceLog('Did not find an episode with the IMDb ID', { episodeIMDbID });
+
+        return null;
       }
     } else {
       traceLog('Looking for seriesTMDBID with', { movieOrSeriesTitle, language, yearString });
 
       const seriesMetadata = await getSeriesMetadata(null, movieOrSeriesTitle, language, yearString);
+
+      if (!seriesMetadata?.tmdbID) {
+        traceLog('Did not find seriesTMDBID with', { movieOrSeriesTitle, language, yearString });
+
+        return null;
+      }
+
       seriesTMDBID = seriesMetadata?.tmdbID;
     }
 
-    if (!seriesTMDBID) {
-      traceLog('Did not find seriesTMDBID with', { movieOrSeriesTitle, language, yearString });
-
-      return null;
-    } else {
+    if (seriesTMDBID) {
       traceLog('Found seriesTMDBID ' + seriesTMDBID + 'with', { movieOrSeriesTitle, language, yearString });
     }
 
