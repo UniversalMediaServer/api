@@ -33,7 +33,7 @@ export const addSearchMatchByIMDbID = async(imdbID: string, title: string): Prom
 export const getLocalize = async(ctx): Promise<Partial<LocalizeMetadataInterface>> => {
   const { language, mediaType, imdbID, tmdbID }: UmsQueryParams = ctx.query;
   const { episode, season }: UmsQueryParams = ctx.query;
-  let seasonNumber: number|undefined;
+  let seasonNumber: number | undefined;
   if (season) {
     seasonNumber = Number(season);
   }
