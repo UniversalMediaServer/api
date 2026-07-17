@@ -1,12 +1,11 @@
-import _ from 'lodash';
+import episodeParser from 'episode-parser';
 
 import { LookupFailedInternalError, MediaNotFoundError, ValidationError } from '../../helpers/customErrors';
 import FailedLookups, { FailedLookupsInterface } from '../../models/FailedLookups';
 import MediaMetadata, { MediaMetadataInterface } from '../../models/MediaMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../../models/SeriesMetadata';
-import * as externalAPIHelper from '../../services/external-api-helper';
 import * as deprecatedExternalAPIHelper from '../../services/deprecated/external-api-helper';
-import { addSearchMatchByIMDbID } from '../media';
+import { traceLog } from '../../helpers/logging';
 
 /**
  * Since this is deprecated, it will only return a result that has been created
@@ -94,7 +93,7 @@ export const getByImdbID = async(ctx): Promise<MediaMetadataInterface | SeriesMe
 };
 
 /**
- * @deprecated
+ * @deprecated since v11
  */
 export const getSeries = async(ctx): Promise<SeriesMetadataInterface | MediaMetadataInterface> => {
   const { imdbID, title, year }: UmsQueryParams = ctx.query;
@@ -102,8 +101,61 @@ export const getSeries = async(ctx): Promise<SeriesMetadataInterface | MediaMeta
     throw new ValidationError('Either IMDb ID or title required');
   }
 
+  let dbMeta;
   try {
-    const dbMeta = await externalAPIHelper.getSeriesMetadata(imdbID, title, null, year);
+    let searchMatch: string;
+    let parsedTitle: string;
+    if (title) {
+      // Extract the series name from the incoming string (usually not necessary)
+      const parsed = episodeParser(title);
+      parsedTitle = parsed?.show ? parsed.show : title;
+      searchMatch = parsedTitle;
+    }
+
+    let failedLookupQuery: FailedLookupsInterface;
+
+    if (imdbID) {
+      // We shouldn't have failures since we got this IMDb ID from their API
+      if (await FailedLookups.findOne({ imdbID }, '_id', { lean: true }).exec()) {
+        throw new MediaNotFoundError();
+      }
+
+      const existingSeries = await SeriesMetadata.findOne({ imdbID }, null, { lean: true }).exec();
+      if (existingSeries) {
+        dbMeta = existingSeries;
+      }
+    } else {
+      const sortBy = {};
+      const titleQuery: GetSeriesFilter = { searchMatches: { $in: [searchMatch] } };
+      failedLookupQuery = { title: parsedTitle, type: 'series' };
+
+      // language was not sent by UMS versions that used this endpoint (< v11)
+      failedLookupQuery.language = { $exists: false };
+
+      if (year) {
+        failedLookupQuery.startYear = year;
+        titleQuery.startYear = year;
+      } else {
+        sortBy['startYear'] = 1;
+      }
+
+      // Return early for previously-failed lookups
+      const previousFailedLookup = await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec();
+      if (previousFailedLookup) {
+        const reason = `getSeriesMetadata found previous failed lookup ${JSON.stringify(failedLookupQuery)}`;
+        traceLog(reason);
+        throw new MediaNotFoundError();
+      }
+
+      // Return any previous match
+      traceLog('Looking for TV series in db', { parsedTitle });
+      const seriesMetadata = await SeriesMetadata.findOne(titleQuery, null, { lean: true }).sort(sortBy).exec();
+      if (seriesMetadata) {
+        traceLog('Found TV series', seriesMetadata);
+        dbMeta = seriesMetadata;
+      }
+    }
+
     if (!dbMeta) {
       throw new MediaNotFoundError();
     }
@@ -111,11 +163,6 @@ export const getSeries = async(ctx): Promise<SeriesMetadataInterface | MediaMeta
     const dbMetaWithPosters = await deprecatedExternalAPIHelper.addPosterFromImages(dbMeta);
     return ctx.body = dbMetaWithPosters;
   } catch (err) {
-    if (err instanceof LookupFailedInternalError) {
-      // in this case, the error came from getSeriesMetadata on the getSeries endpoint, and that already stores the reason, so there is nothing to do here but throw
-      throw new MediaNotFoundError();
-    }
-
     // log unexpected errors
     if (!(err instanceof MediaNotFoundError)) {
       console.error(err);
@@ -125,17 +172,11 @@ export const getSeries = async(ctx): Promise<SeriesMetadataInterface | MediaMeta
 };
 
 /**
- * @deprecated
+ * @deprecated since v11
  */
 export const getVideo = async(ctx): Promise<MediaMetadataInterface> => {
   const { title, imdbID }: UmsQueryParams = ctx.query;
   const { episode, season, year }: UmsQueryParams = ctx.query;
-  const [seasonNumber, yearNumber] = [season, year].map(param => param ? Number(param) : null);
-  let episodeNumbers = null;
-  if (episode) {
-    const episodes = episode.split('-');
-    episodeNumbers = episodes.map(Number);
-  }
 
   if (!title && !imdbID) {
     throw new ValidationError('title or imdbId is a required parameter');
@@ -143,7 +184,7 @@ export const getVideo = async(ctx): Promise<MediaMetadataInterface> => {
 
   const query = [];
   const failedQuery = [];
-  let imdbIdToSearch = imdbID;
+  const imdbIdToSearch = imdbID;
 
   if (imdbIdToSearch) {
     query.push({ imdbID: imdbIdToSearch });
@@ -176,73 +217,5 @@ export const getVideo = async(ctx): Promise<MediaMetadataInterface> => {
     return ctx.body = existingResult;
   }
 
-  const existingFailedResult = await FailedLookups.findOne({ $or: failedQuery }, null, { lean: true }).exec();
-  if (existingFailedResult) {
-    throw new MediaNotFoundError();
-  }
-
-  // the database does not have a record of this file, so begin search for metadata on TMDB.
-
-  const failedLookupQuery = { episode, imdbID, season, title, year };
-
-  if (!title && !imdbIdToSearch) {
-    // TMDB requires either a title or IMDb ID, so return if we don't have one
-    const reason = 'getVideo (deprecated) failed because there is no title or imdbId';
-    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 }, reason }, { upsert: true, setDefaultsOnInsert: true }).exec();
-    throw new MediaNotFoundError();
-  }
-
-  // Start TMDB lookups
-  let tmdbData: MediaMetadataInterface;
-  try {
-    tmdbData = await externalAPIHelper.getFromTMDBAPI(title, null, imdbIdToSearch, yearNumber, seasonNumber, episodeNumbers);
-    imdbIdToSearch = imdbIdToSearch || tmdbData?.imdbID;
-  } catch (e) {
-    // Log the error but continue
-    if (e.message && e.message.includes('404') && e.response?.config?.url) {
-      console.log('Received 404 response from ' + e.response.config.url);
-    } else {
-      console.log(e);
-    }
-  }
-
-  // if the client did not pass an imdbID, but we found one on TMDB, see if we have an existing record for the now-known media.
-  if (!imdbID && imdbIdToSearch) {
-    {
-      const existingResult = await MediaMetadata.findOne({ imdbID: imdbIdToSearch }, null, { lean: true }).exec();
-      if (existingResult) {
-        return ctx.body = await addSearchMatchByIMDbID(imdbIdToSearch, title);
-      }
-    }
-  }
-  // End TMDB lookups
-
-  if (!tmdbData || _.isEmpty(tmdbData)) {
-    const reason = `getVideo (deprecated) failed because no data was found on TMDB for ${failedLookupQuery}`;
-    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 }, reason }, { upsert: true, setDefaultsOnInsert: true }).exec();
-    throw new MediaNotFoundError();
-  }
-
-  try {
-    if (title) {
-      tmdbData.searchMatches = [title];
-    }
-
-    // Ensure that we return and cache the same episode number that was searched for
-    if (episodeNumbers && episodeNumbers.length > 1 && episodeNumbers[0] === tmdbData.episode) {
-      tmdbData.episode = episode;
-    }
-
-    const dbMeta = await MediaMetadata.create(tmdbData);
-
-    // TODO: Investigate why we need this "as" syntax
-    let leanMeta = dbMeta.toObject({ useProjection: true }) as MediaMetadataInterface;
-    leanMeta = await deprecatedExternalAPIHelper.addPosterFromImages(leanMeta);
-    return ctx.body = leanMeta;
-  } catch (e) {
-    console.error(e, tmdbData);
-    const reason = `getVideo (deprecated) failed because an error occurred: ${e}`;
-    await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 }, reason }, { upsert: true, setDefaultsOnInsert: true }).exec();
-    throw new MediaNotFoundError();
-  }
+  throw new MediaNotFoundError();
 };
