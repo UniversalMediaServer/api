@@ -160,7 +160,7 @@ export const getSeriesMetadata = async(
     // Return early for previously-failed lookups
     const previousFailedLookup = await FailedLookups.findOne(failedLookupQuery, '_id', { lean: true }).exec();
     if (previousFailedLookup) {
-      const reason = `getSeriesMetadata found previous failed lookup ${failedLookupQuery.toString()}`;
+      const reason = `getSeriesMetadata found previous failed lookup ${JSON.stringify(failedLookupQuery)}`;
       traceLog(reason);
       await FailedLookups.updateOne(failedLookupQuery, { $inc: { count: 1 } }).exec();
 
