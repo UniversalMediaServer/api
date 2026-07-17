@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { MediaNotFoundError, ValidationError } from '../../helpers/customErrors';
+import { LookupFailedInternalError, MediaNotFoundError, ValidationError } from '../../helpers/customErrors';
 import FailedLookups, { FailedLookupsInterface } from '../../models/FailedLookups';
 import MediaMetadata, { MediaMetadataInterface } from '../../models/MediaMetadata';
 import SeriesMetadata, { SeriesMetadataInterface } from '../../models/SeriesMetadata';
@@ -111,6 +111,11 @@ export const getSeries = async(ctx): Promise<SeriesMetadataInterface | MediaMeta
     const dbMetaWithPosters = await deprecatedExternalAPIHelper.addPosterFromImages(dbMeta);
     return ctx.body = dbMetaWithPosters;
   } catch (err) {
+    if (err instanceof LookupFailedInternalError) {
+      // in this case, the error came from getSeriesMetadata on the getSeries endpoint, and that already stores the reason, so there is nothing to do here but throw
+      throw new MediaNotFoundError();
+    }
+
     // log unexpected errors
     if (!(err instanceof MediaNotFoundError)) {
       console.error(err);
