@@ -904,7 +904,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mongodb-js/saslprep@npm:^1.3.0, @mongodb-js/saslprep@npm:^1.4.11":
+"@mongodb-js/saslprep@npm:^1.4.11":
   version: 1.4.12
   resolution: "@mongodb-js/saslprep@npm:1.4.12"
   dependencies:
@@ -4704,7 +4704,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongodb-connection-string-url@npm:^7.0.0, mongodb-connection-string-url@npm:^7.0.1":
+"mongodb-connection-string-url@npm:^7.0.1":
   version: 7.0.1
   resolution: "mongodb-connection-string-url@npm:7.0.1"
   dependencies:
@@ -4744,7 +4744,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongodb@npm:^7.2.0":
+"mongodb@npm:^7.2.0, mongodb@npm:~7.5":
   version: 7.5.0
   resolution: "mongodb@npm:7.5.0"
   dependencies:
@@ -4778,52 +4778,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongodb@npm:~7.2":
-  version: 7.2.0
-  resolution: "mongodb@npm:7.2.0"
-  dependencies:
-    "@mongodb-js/saslprep": "npm:^1.3.0"
-    bson: "npm:^7.2.0"
-    mongodb-connection-string-url: "npm:^7.0.0"
-  peerDependencies:
-    "@aws-sdk/credential-providers": ^3.806.0
-    "@mongodb-js/zstd": ^7.0.0
-    gcp-metadata: ^7.0.1
-    kerberos: ^7.0.0
-    mongodb-client-encryption: ">=7.0.0 <7.1.0"
-    snappy: ^7.3.2
-    socks: ^2.8.6
-  peerDependenciesMeta:
-    "@aws-sdk/credential-providers":
-      optional: true
-    "@mongodb-js/zstd":
-      optional: true
-    gcp-metadata:
-      optional: true
-    kerberos:
-      optional: true
-    mongodb-client-encryption:
-      optional: true
-    snappy:
-      optional: true
-    socks:
-      optional: true
-  checksum: 10/9a1df6e0a1eb072efdfad3b9c452f0a225f966e890e027efbbca9f591a2a49fa6209faadfd9dfab8ee55362d0378c8f8d2dd2837873bc6aecff6ae422b359aad
-  languageName: node
-  linkType: hard
-
 "mongoose@npm:^9.0.2":
-  version: 9.7.4
-  resolution: "mongoose@npm:9.7.4"
+  version: 9.8.0
+  resolution: "mongoose@npm:9.8.0"
   dependencies:
     "@standard-schema/spec": "npm:^1.1.0"
     kareem: "npm:3.3.0"
-    mongodb: "npm:~7.2"
+    mongodb: "npm:~7.5"
     mpath: "npm:0.9.0"
     mquery: "npm:6.0.0"
     ms: "npm:2.1.3"
     sift: "npm:17.1.3"
-  checksum: 10/9635c876e4a926d23b7eea06f8f5d9afcac42d43c5c61ba0336704cf7703405e1ea459aab4d0d1f943556b95bc8091d27267f5fe156881b69fe736d73c685505
+  checksum: 10/abd8bbdb7931cb9fc6f6aeb389d093bedadbf9648ea073aeb8171bda84fda99a522194b561cff573ef68768733d8b9b9d745f354d2efdfbfa77fd223e4f22c2e
   languageName: node
   linkType: hard
 
