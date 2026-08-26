@@ -34,7 +34,7 @@
     "mongoose": "^9.0.2",
     "moviedb-promise": "4.0.8",
     "object-mapper": "6.2.0",
-    "pm2": "^6.0.13",
+    "pm2": "^7.0.0",
     "ts-node": "^10.9.2",
     "typescript": "5.9"
   },
