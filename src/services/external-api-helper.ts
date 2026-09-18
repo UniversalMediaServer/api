@@ -36,6 +36,7 @@ const getSeriesTMDBIDFromTMDBAPI = async(imdbID?: string, seriesTitle?: string, 
     if (searchResults?.results && searchResults.results[0]) {
       let searchResult: TvResult;
       let didMatchYear: boolean;
+      traceLog('searchResults: ', searchResults);
       if (year) {
         const resultWithMatchingYear = _.find(searchResults.results, function(result) {
           return result.first_air_date.substring(0, 4) === year.toString();
@@ -47,8 +48,24 @@ const getSeriesTMDBIDFromTMDBAPI = async(imdbID?: string, seriesTitle?: string, 
       }
 
       if (!searchResult) {
-        searchResult = searchResults.results[0];
-        traceLog('Did not find a result based on year, using the first match: ', searchResults.results[0]);
+        /*
+         * The first search result can be unpredictable, using TMDB magic I guess.
+         * Sometimes you get a far less popular result in first place, so let's try
+         * to correct that while retaining some magic.
+         */
+        const tmdbTopResult = searchResults.results[0];
+        const searchResultsOrderedByPopularity = _.orderBy(searchResults.results, ['popularity'], ['desc']);
+        const ourTopResult = _.find(searchResultsOrderedByPopularity, function(result) {
+          return result.name === seriesTitle;
+        });
+        if (ourTopResult && ourTopResult.popularity > tmdbTopResult.popularity) {
+          // override the TMDB order if our result is an exact title match and higher popularity
+          searchResult = ourTopResult;
+          traceLog('Overriding the TMDB order with an exact title match and higher popularity: ', [ ourTopResult, tmdbTopResult ]);
+        } else {
+          searchResult = tmdbTopResult;
+          traceLog('Using the TMDB first magic result: ', tmdbTopResult);
+        }
       }
 
       if (didMatchYear) {
