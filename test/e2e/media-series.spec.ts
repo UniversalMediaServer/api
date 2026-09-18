@@ -82,6 +82,8 @@ describe('Media Metadata endpoints', () => {
 
       const response = await axios.get(`${appUrl}/api/media/series/v2?title=${americanHorrorStorySeries.title}&imdbID=${americanHorrorStorySeries.imdbID}`) as UmsApiSeriesAxiosResponse;
       expect(response.data).toHaveProperty('credits');
+      expect(response.data.credits[0]).toHaveProperty('cast');
+      expect(response.data.credits[0]).toHaveProperty('crew');
       expect(response.data).toHaveProperty('totalSeasons');
       expect(response.data).toHaveProperty('title', americanHorrorStorySeries.title);
       expect(response.data).toHaveProperty('startYear', '2011');
