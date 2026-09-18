@@ -35,6 +35,11 @@ const MOVIE_XMEN = {
   'year': 2000,
 };
 
+const MOVIE_XMEN_THE_MUTANT_WATCH = {
+  'title': 'X-Men: The Mutant Watch',
+  'year': 2000,
+};
+
 describe('get by all', () => {
   beforeAll((done) => {
     MongoMemoryServer.create()
@@ -98,10 +103,21 @@ describe('get by all', () => {
     expect(tmdbSpy).toHaveBeenCalledTimes(2);
   });
 
-  test('should return a movie by title and year from TMDB', async() => {
-    const response = await axios.get(`${appUrl}/api/media/video/v2?title=${MOVIE_XMEN.title}&year=${MOVIE_XMEN.year}`) as UmsApiMediaAxiosResponse;
+  test('should return a movie by title and year from TMDB then store, and return it even if a similar one exists in our db', async() => {
+    const tmdbSpy = jest.spyOn(apihelper, 'getFromTMDBAPI');
+    let response = await axios.get(`${appUrl}/api/media/video/v2?title=${MOVIE_XMEN_THE_MUTANT_WATCH.title}&year=${MOVIE_XMEN_THE_MUTANT_WATCH.year}`) as UmsApiMediaAxiosResponse;
+    expect(response.data.title).toEqual(MOVIE_XMEN_THE_MUTANT_WATCH.title);
+    expect(response.data.type).toEqual('movie');
+
+    response = await axios.get(`${appUrl}/api/media/video/v2?title=${MOVIE_XMEN.title}&year=${MOVIE_XMEN.year}`) as UmsApiMediaAxiosResponse;
     expect(response.data.title).toEqual(MOVIE_XMEN.title);
     expect(response.data.type).toEqual('movie');
+
+    // subsequent calls should return MongoDB result rather than calling external apis
+    response = await axios.get(`${appUrl}/api/media/video/v2?title=${MOVIE_XMEN.title}`);
+    expect(response.data.title).toEqual(MOVIE_XMEN.title);
+    expect(response.data.type).toEqual('movie');
+    expect(tmdbSpy).toHaveBeenCalledTimes(2);
   });
 
   test('should return a movie by title AND imdbId from source APIs then store', async() => {
