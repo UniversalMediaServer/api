@@ -4797,9 +4797,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongodb-memory-server-core@npm:11.2.0":
-  version: 11.2.0
-  resolution: "mongodb-memory-server-core@npm:11.2.0"
+"mongodb-memory-server-core@npm:11.3.0":
+  version: 11.3.0
+  resolution: "mongodb-memory-server-core@npm:11.3.0"
   dependencies:
     async-mutex: "npm:^0.5.0"
     camelcase: "npm:^6.3.0"
@@ -4807,27 +4807,27 @@ __metadata:
     find-cache-dir: "npm:^3.3.2"
     follow-redirects: "npm:^1.16.0"
     https-proxy-agent: "npm:^7.0.6"
-    mongodb: "npm:^7.2.0"
+    mongodb: "npm:~7.5.0"
     new-find-package-json: "npm:^2.0.0"
-    semver: "npm:^7.7.3"
-    tar-stream: "npm:^3.1.8"
+    semver: "npm:^7.8.5"
+    tar-stream: "npm:^3.2.1"
     tslib: "npm:^2.8.1"
-    yauzl: "npm:^3.3.1"
-  checksum: 10/4282aa2837ebe1eebbffd812ba1a4830585002dde658a719b80123ad10967d4702a09d2fe609820789aee4a69e8237cad9dcaca82d9d71d32db3e21fd2de51aa
+    yauzl: "npm:^3.4.0"
+  checksum: 10/72e6d1c7ef69f2f84a6c0890dd3e4dbefe511ec595ba3430ed62a9ec8aff90b0e16cb32ddf105b06017a22d2b3d1a255bc9206a5ff381ec751e012d912a5562d
   languageName: node
   linkType: hard
 
 "mongodb-memory-server@npm:^11.0.1":
-  version: 11.2.0
-  resolution: "mongodb-memory-server@npm:11.2.0"
+  version: 11.3.0
+  resolution: "mongodb-memory-server@npm:11.3.0"
   dependencies:
-    mongodb-memory-server-core: "npm:11.2.0"
+    mongodb-memory-server-core: "npm:11.3.0"
     tslib: "npm:^2.8.1"
-  checksum: 10/ed96085623ae46a8d84112abd88348c6f161cb47ef3586cda61f63307f2db37ddd53761ede46118ee34c6dc210ed6d9253333cb4929dba013491e488c00d1e3f
+  checksum: 10/3bd5564bcd20eee3619cd6fa84f074548e80b77622554c14d9d63c0b0cbd62aeea6e86533a322bdf6e740604ba384bfab7df85698c3c5206ef2d75c7cb236f8a
   languageName: node
   linkType: hard
 
-"mongodb@npm:^7.2.0, mongodb@npm:~7.5":
+"mongodb@npm:~7.5, mongodb@npm:~7.5.0":
   version: 7.5.0
   resolution: "mongodb@npm:7.5.0"
   dependencies:
@@ -6059,15 +6059,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tar-stream@npm:^3.1.8":
-  version: 3.2.0
-  resolution: "tar-stream@npm:3.2.0"
+"tar-stream@npm:^3.2.1":
+  version: 3.2.1
+  resolution: "tar-stream@npm:3.2.1"
   dependencies:
     b4a: "npm:^1.6.4"
     bare-fs: "npm:^4.5.5"
     fast-fifo: "npm:^1.2.0"
     streamx: "npm:^2.15.0"
-  checksum: 10/ce57a81521de73ae7a3b7d55a08da50d6771427c249bfa89a208518e48faf5254c8fa7201a8f5419ab8bde9601a74e6dd512b31a13ec89774aec96178f99a8d3
+  checksum: 10/1a09f857e0789489476d99fb716fa6d209e7d19aa73b7a4b23f40eeba46792d5007ca62fde4fca8f643ed71ace1c526a293c655718a0409275a45a8aa86b562a
   languageName: node
   linkType: hard
 
@@ -6772,7 +6772,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yauzl@npm:^3.3.1":
+"yauzl@npm:^3.4.0":
   version: 3.4.0
   resolution: "yauzl@npm:3.4.0"
   dependencies:
