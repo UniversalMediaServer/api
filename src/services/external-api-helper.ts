@@ -460,13 +460,14 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, language?: stri
   } else {
     const movieIMDbID = movieOrEpisodeIMDbID;
 
-    let movieTMDBID: string | number;
+    let movieTMDBID: number | undefined;
     if (movieIMDbID) {
       const findResult = await tmdb.find({ id: movieIMDbID, external_source: ExternalId.ImdbId });
       // Using any here to make up for missing interface, should submit fix
       if (findResult?.movie_results && findResult?.movie_results[0]) {
         const movieResult = findResult.movie_results[0];
         movieTMDBID = movieResult?.id;
+        traceLog('found movieResult from IMDb ID', { movieIMDbID, movieResult });
       }
     } else {
       const tmdbQuery: SearchMovieRequest = { query: movieOrSeriesTitle };
@@ -478,7 +479,33 @@ export const getFromTMDBAPI = async(movieOrSeriesTitle?: string, language?: stri
       }
       const searchResults = await tmdb.searchMovie(tmdbQuery);
       if (searchResults?.results && searchResults.results[0] && searchResults.results[0].id) {
-        movieTMDBID = searchResults.results[0].id;
+        /*
+         * The first search result can be unpredictable, using TMDB magic I guess.
+         * Sometimes you get a far less popular result in first place, so let's try
+         * to correct that while retaining some magic.
+         */
+        const tmdbTopResult = searchResults.results[0];
+        let searchResultsOrderedByPopularity = _.orderBy(searchResults.results, ['popularity'], ['desc']);
+
+        // if year was passed in, we MUST match it (TMDB will still return results from other years)
+        if (yearString) {
+          searchResultsOrderedByPopularity = _.filter(searchResultsOrderedByPopularity, (result) => {
+            return result.release_date?.startsWith(yearString);
+          });
+        }
+
+        traceLog('Full set of results for the query was', { tmdbQuery, searchResultsOrderedByPopularity });
+        const ourTopResult = _.find(searchResultsOrderedByPopularity, function(result) {
+          // exact match or bracket match, for an alternate name
+          return result.title === movieOrSeriesTitle || result.title.includes(`(${movieOrSeriesTitle})`);
+        });
+        if (ourTopResult && ourTopResult.id !== tmdbTopResult.id) {
+          movieTMDBID = ourTopResult.id;
+          traceLog('Overriding the TMDB order with an exact title match: ', [ ourTopResult, tmdbTopResult ]);
+        } else {
+          movieTMDBID = tmdbTopResult.id;
+          traceLog('Using the TMDB first magic result: ', tmdbTopResult);
+        }
       }
     }
 
