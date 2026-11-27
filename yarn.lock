@@ -1558,10 +1558,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:4.17.27":
-  version: 4.17.27
-  resolution: "@types/lodash@npm:4.17.27"
-  checksum: 10/ae02ef86268664e5a024fd1a7d907b676fe7cd9b58b52bdddc7c42c7ffb3d05e869f6bd13e3e6cbb4001cac1d072f5e2a6e5deed2ef7dc62d7853fc735a077be
+"@types/lodash@npm:4.17.28":
+  version: 4.17.28
+  resolution: "@types/lodash@npm:4.17.28"
+  checksum: 10/8164e097e5439a891ce126de06aa917c40f7758902394d780ea9fac66c5d383dda70e79182cf682d0842dc6cc5f22aee3539fe813df2a368d25cc2944038c90d
   languageName: node
   linkType: hard
 
@@ -6667,7 +6667,7 @@ __metadata:
     "@skyra/jaro-winkler": "npm:^1.1.1"
     "@types/jest": "npm:^30.0.0"
     "@types/koa-bodyparser": "npm:4.3.13"
-    "@types/lodash": "npm:4.17.27"
+    "@types/lodash": "npm:4.17.28"
     "@types/node": "npm:24.19.4"
     "@types/object-mapper": "npm:6.2.2"
     axios: "npm:1.21.1"
